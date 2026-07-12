@@ -146,11 +146,19 @@ function mesclarProgresso(a, b) {
   /* Carteira 🌱 monotônica: ganhas/gastas só crescem → máximo nunca perde nem duplica.
      Itens comprados = união. Equipado = o cliente (b) manda, é o estado mais fresco. */
   const ca = a.cosmeticos || {}, cb = b.cosmeticos || {};
+  const bausA = ca.baus || {}, bausB = cb.baus || {};
   r.cosmeticos = {
     tem: Object.assign({}, ca.tem || {}, cb.tem || {}),
     usando: Object.assign({}, ca.usando || {}, cb.usando || {}),
     ganhas: Math.max(ca.ganhas || 0, cb.ganhas || 0),
-    gastas: Math.max(ca.gastas || 0, cb.gastas || 0)
+    gastas: Math.max(ca.gastas || 0, cb.gastas || 0),
+    /* Baús: comprados/abertos só CRESCEM (nunca perde baú comprado nem duplica
+       abertura já contada); a data do baú grátis fica a mais recente das duas. */
+    baus: {
+      comprados: Math.max(bausA.comprados || 0, bausB.comprados || 0),
+      abertos: Math.max(bausA.abertos || 0, bausB.abertos || 0),
+      ultimoGratis: [bausA.ultimoGratis, bausB.ultimoGratis].filter(Boolean).sort().pop() || null
+    }
   };
   r.medalhasPagas = Object.assign({}, a.medalhasPagas || {}, b.medalhasPagas || {});
   r.srs = Object.assign({}, a.srs || {});
@@ -237,6 +245,8 @@ async function tratarApi(req, res, rota, ip) {
 
   // Rota admin do Premium é GET (pra abrir direto no navegador do celular)
   if (rota.startsWith("/api/premium") && req.method === "GET") return ativarPremium(req, res);
+  // Rota admin pra creditar baús comprados (após confirmar pagamento manual)
+  if (rota.startsWith("/api/creditar-baus") && req.method === "GET") return creditarBaus(req, res);
   if (req.method !== "POST") return responder(res, 405, { erro: "Método não permitido" });
   const corpo = await lerCorpo(req);
   if (!corpo) return responder(res, 400, { erro: "Corpo inválido ou grande demais" });
@@ -349,6 +359,27 @@ function desligar() {
 }
 process.on("SIGTERM", desligar);
 process.on("SIGINT", desligar);
+
+  /* ---------- ADMIN: creditar baús comprados (só o Andrio) ----------
+     Depois de confirmar o Pix/pagamento manual pelo WhatsApp, abra:
+     https://SEU-SITE.onrender.com/api/creditar-baus?chave=SUACHAVE&email=aluno@email.com&qtd=200 */
+  function creditarBaus(req, res) {
+    const u = new URL(req.url, "http://x");
+    const ADMIN = process.env.ADMIN_CHAVE || "";
+    if (!ADMIN) return responder(res, 403, { erro: "Defina ADMIN_CHAVE nas variáveis do Render para usar esta rota." });
+    if ((u.searchParams.get("chave") || "") !== ADMIN) return responder(res, 403, { erro: "Chave errada." });
+    const email = (u.searchParams.get("email") || "").trim().toLowerCase();
+    const qtd = Math.max(1, Math.min(10000, parseInt(u.searchParams.get("qtd") || "0", 10) || 0));
+    const c = CONTAS[email];
+    if (!c) return responder(res, 404, { erro: "Conta não encontrada: " + email });
+    if (!c.progresso) c.progresso = { xp: 0 };
+    if (!c.progresso.cosmeticos) c.progresso.cosmeticos = { tem: {}, usando: {}, ganhas: 0, gastas: 0 };
+    if (!c.progresso.cosmeticos.baus) c.progresso.cosmeticos.baus = { comprados: 0, abertos: 0, ultimoGratis: null };
+    c.progresso.cosmeticos.baus.comprados = (c.progresso.cosmeticos.baus.comprados || 0) + qtd;
+    persistir();
+    log("🎁 Baús creditados: " + email + " +" + qtd + " (total comprados: " + c.progresso.cosmeticos.baus.comprados + ")");
+    return responder(res, 200, { ok: true, email, qtd, totalComprados: c.progresso.cosmeticos.baus.comprados });
+  }
 
   /* ---------- ADMIN: ativar Premium (só o Andrio) ----------
      Configure ADMIN_CHAVE nas variáveis de ambiente do Render.

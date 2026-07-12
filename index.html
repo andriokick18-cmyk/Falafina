@@ -529,21 +529,30 @@ body.sem-shell .topo .titulo-pagina{ visibility:hidden; }
 <style id="css-rpg">
 /* ---------- BORDAS DE AVATAR (anel animado ao redor da foto) ---------- */
 .avb{display:inline-flex;padding:3px;border-radius:50%;background:transparent;flex:none;position:relative}
+.avb::before{content:"";position:absolute;inset:-4px;border-radius:50%;z-index:-1;opacity:0}
 .avb-madeira{background:linear-gradient(135deg,#8B5A2B,#5C3A1A,#A0703C)}
 .avb-bronze{background:linear-gradient(135deg,#CD7F32,#8C5A20,#E8A85C)}
-.avb-prata{background:linear-gradient(135deg,#C0C0C0,#8E9BA6,#F2F5F7)}
-.avb-ouro{background:linear-gradient(135deg,#FFD700,#B8860B,#FFF3B0);box-shadow:0 0 8px rgba(255,215,0,.55)}
+.avb-prata{background:linear-gradient(135deg,#C0C0C0,#8E9BA6,#F2F5F7);animation:avbBrilhoSuave 2.4s ease-in-out infinite}
+.avb-ouro{background:linear-gradient(135deg,#FFD700,#B8860B,#FFF3B0);box-shadow:0 0 8px rgba(255,215,0,.55);animation:avbBrilhoSuave 2s ease-in-out infinite}
+/* Bordas giratórias: o próprio gradiente conic gira (rotate), e um brilho pulsante por fora dá profundidade — as duas animações rodam juntas, sem uma cancelar a outra. */
 .avb-selva{background:conic-gradient(#00885F,#7BC950,#0B5D3B,#7BC950,#00885F);animation:avbGira 4s linear infinite}
-.avb-fogo{background:conic-gradient(#FF4E00,#FFB800,#FF4E00,#B22200,#FF4E00);animation:avbGira 2.2s linear infinite;box-shadow:0 0 10px rgba(255,90,0,.7)}
-.avb-eletrica{background:conic-gradient(#00C2FF,#0051FF,#9BE9FF,#00C2FF);animation:avbGira 1.6s linear infinite;box-shadow:0 0 10px rgba(0,170,255,.75)}
-.avb-aurora{background:conic-gradient(#00FFA3,#00C2FF,#B266FF,#00FFA3);animation:avbGira 3s linear infinite;box-shadow:0 0 12px rgba(0,255,170,.5)}
-.avb-galaxia{background:conic-gradient(#3B0A70,#7B2FF7,#0B1D51,#B84DFF,#3B0A70);animation:avbGira 5s linear infinite;box-shadow:0 0 12px rgba(140,60,255,.7)}
-.avb-imortal{background:conic-gradient(#FFD700,#FF8C00,#FFF3B0,#FFD700);animation:avbGira 1.8s linear infinite,avbPulsa 1.2s ease-in-out infinite alternate}
-@keyframes avbGira{to{filter:hue-rotate(0)}0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
-.avb[class*="avb-"]{animation-name:none}
-.avb-selva,.avb-fogo,.avb-eletrica,.avb-aurora,.avb-galaxia,.avb-imortal{animation:avbHue 3s linear infinite}
-@keyframes avbHue{0%{filter:hue-rotate(0deg) brightness(1)}50%{filter:hue-rotate(25deg) brightness(1.25)}100%{filter:hue-rotate(0deg) brightness(1)}}
+.avb-fogo{background:conic-gradient(#FF4E00,#FFB800,#FF4E00,#B22200,#FF4E00);animation:avbGira 2.2s linear infinite}
+.avb-fogo::before{background:radial-gradient(circle,rgba(255,90,0,.85),transparent 70%);animation:avbPulsaFora 1.1s ease-in-out infinite alternate}
+.avb-eletrica{background:conic-gradient(#00C2FF,#0051FF,#9BE9FF,#00C2FF);animation:avbGira 1.1s linear infinite}
+.avb-eletrica::before{background:radial-gradient(circle,rgba(0,170,255,.85),transparent 70%);animation:avbPulsaFora .5s ease-in-out infinite alternate}
+.avb-aurora{background:conic-gradient(#00FFA3,#00C2FF,#B266FF,#00FFA3,#00FFA3);animation:avbGira 3s linear infinite}
+.avb-aurora::before{background:radial-gradient(circle,rgba(0,255,170,.7),transparent 70%);animation:avbPulsaFora 1.8s ease-in-out infinite alternate}
+.avb-galaxia{background:conic-gradient(#3B0A70,#7B2FF7,#0B1D51,#B84DFF,#3B0A70);animation:avbGira 5s linear infinite}
+.avb-galaxia::before{background:radial-gradient(circle,rgba(140,60,255,.8),transparent 70%);animation:avbPulsaFora 2.2s ease-in-out infinite alternate}
+.avb-galaxia::after{content:"✦";position:absolute;font-size:.6rem;color:#fff;top:2px;left:6px;animation:fxPisca 1.6s ease-in-out infinite}
+.avb-imortal{background:conic-gradient(#FFD700,#FF8C00,#FFF3B0,#FFD700,#FF8C00);animation:avbGira 1.8s linear infinite}
+.avb-imortal::before{background:radial-gradient(circle,rgba(255,215,0,.95),transparent 72%);animation:avbPulsaFora .9s ease-in-out infinite alternate}
+.avb-imortal::after{content:"👑";position:absolute;font-size:.85rem;top:-9px;left:50%;transform:translateX(-50%);animation:petFlutua 1.6s ease-in-out infinite}
+@keyframes avbGira{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes avbPulsaFora{from{opacity:.35;filter:blur(2px)}to{opacity:.85;filter:blur(5px)}}
+@keyframes avbBrilhoSuave{0%,100%{filter:brightness(1)}50%{filter:brightness(1.28)}}
 @keyframes avbPulsa{from{box-shadow:0 0 6px rgba(255,200,0,.6)}to{box-shadow:0 0 18px rgba(255,215,0,1)}}
+@keyframes avbHue{0%{filter:hue-rotate(0deg) brightness(1)}50%{filter:hue-rotate(25deg) brightness(1.25)}100%{filter:hue-rotate(0deg) brightness(1)}}
 .avb>*{margin:0 !important}
 /* ---------- PETS (mascotes animados) ---------- */
 .pet{display:inline-block;line-height:1;flex:none;filter:drop-shadow(0 2px 3px rgba(0,0,0,.25))}
@@ -557,22 +566,33 @@ body.sem-shell .topo .titulo-pagina{ visibility:hidden; }
 @keyframes petBrilha{from{filter:drop-shadow(0 0 2px gold)}to{filter:drop-shadow(0 0 9px gold)}}
 /* ---------- EFEITOS DE RANKING (a linha da pessoa brilha pros outros) ---------- */
 .rank-item{position:relative;overflow:hidden}
-.fx-brilho-verde{border-color:#00885F !important;box-shadow:0 0 10px rgba(0,136,95,.5) !important}
-.fx-ouro-listrado{border-color:#FFD700 !important;background-image:repeating-linear-gradient(45deg,rgba(255,215,0,.10) 0 10px,transparent 10px 20px) !important}
-.fx-neon-azul{border-color:#00C2FF !important;box-shadow:0 0 12px rgba(0,194,255,.65),inset 0 0 8px rgba(0,194,255,.15) !important}
-.fx-estrelas::after{content:"✦ ✧ ✦";position:absolute;right:8px;top:2px;font-size:.7rem;color:#FFD700;animation:fxPisca 1.4s ease-in-out infinite}
-.fx-estrelas{border-color:#FFD700 !important}
-.fx-fogo{border-color:#FF4E00 !important;box-shadow:0 0 12px rgba(255,78,0,.6) !important}
-.fx-fogo::after{content:"🔥";position:absolute;right:6px;top:-2px;animation:petPula 1s ease-in-out infinite}
-.fx-raios{border-color:#00C2FF !important}
-.fx-raios::after{content:"⚡";position:absolute;right:6px;top:-2px;animation:fxPisca .7s steps(2) infinite}
-.fx-aurora{border:2.5px solid transparent !important;background:linear-gradient(var(--branco,#fff),var(--branco,#fff)) padding-box,linear-gradient(90deg,#00FFA3,#00C2FF,#B266FF,#00FFA3) border-box !important;animation:avbHue 3s linear infinite}
-.fx-nevoa{border-color:#7B2FF7 !important;box-shadow:0 0 14px rgba(123,47,247,.55) !important}
-.fx-nevoa::after{content:"🌌";position:absolute;right:6px;top:0;animation:petFlutua 3s ease-in-out infinite}
-.fx-arcoiris{border:3px solid transparent !important;background:linear-gradient(var(--branco,#fff),var(--branco,#fff)) padding-box,linear-gradient(90deg,red,orange,gold,green,#00C2FF,violet) border-box !important;animation:avbHue 2s linear infinite}
-.fx-trono{border-color:#FFD700 !important;box-shadow:0 0 16px rgba(255,215,0,.8) !important;background-image:linear-gradient(90deg,rgba(255,215,0,.14),transparent 60%) !important}
-.fx-trono::after{content:"👑";position:absolute;right:6px;top:-2px;animation:avbPulsa 1.2s ease-in-out infinite alternate}
-@keyframes fxPisca{0%,100%{opacity:.25}50%{opacity:1}}
+.fx-brilho-verde{border-color:#00885F !important;animation:fxGlowVerde 1.8s ease-in-out infinite}
+.fx-ouro-listrado{border-color:#FFD700 !important;background-image:repeating-linear-gradient(45deg,rgba(255,215,0,.16) 0 10px,transparent 10px 20px) !important;background-size:200% 200%;animation:fxListras 3s linear infinite}
+.fx-neon-azul{border-color:#00C2FF !important;animation:fxGlowAzul 1.1s ease-in-out infinite}
+.fx-estrelas{border-color:#FFD700 !important;box-shadow:0 0 8px rgba(255,215,0,.4) !important}
+.fx-estrelas::after{content:"✦";position:absolute;right:10px;top:4px;font-size:.85rem;color:#FFD700;animation:fxPisca 1.2s ease-in-out infinite}
+.fx-estrelas::before{content:"✧";position:absolute;right:26px;bottom:4px;font-size:.7rem;color:#FFE68A;animation:fxPisca 1.2s ease-in-out infinite .4s}
+.fx-fogo{border-color:#FF4E00 !important;animation:fxGlowFogo .9s ease-in-out infinite}
+.fx-fogo::after{content:"🔥";position:absolute;right:8px;top:-6px;font-size:1rem;animation:petPula .9s ease-in-out infinite}
+.fx-raios{border-color:#00C2FF !important;animation:fxFlash 2.6s ease-in-out infinite}
+.fx-raios::after{content:"⚡";position:absolute;right:8px;top:-6px;font-size:1rem;animation:fxPisca .5s steps(2) infinite}
+.fx-aurora{border:2.5px solid transparent !important;background:linear-gradient(var(--branco,#fff),var(--branco,#fff)) padding-box,linear-gradient(90deg,#00FFA3,#00C2FF,#B266FF,#00FFA3,#00FFA3) border-box !important;background-size:300% 100%,300% 100%;animation:fxDegradeAndante 4s linear infinite}
+.fx-nevoa{border-color:#7B2FF7 !important;animation:fxGlowNevoa 2.4s ease-in-out infinite}
+.fx-nevoa::after{content:"🌌";position:absolute;right:8px;top:-6px;font-size:1rem;animation:petFlutua 3s ease-in-out infinite}
+.fx-arcoiris{border:3px solid transparent !important;background:linear-gradient(var(--branco,#fff),var(--branco,#fff)) padding-box,linear-gradient(90deg,red,orange,gold,green,#00C2FF,violet,red) border-box !important;background-size:300% 100%,300% 100%;animation:fxDegradeAndante 2.4s linear infinite}
+.fx-arcoiris::after{content:"✨";position:absolute;left:8px;top:-6px;font-size:.9rem;animation:fxPisca 1s ease-in-out infinite}
+.fx-trono{border-color:#FFD700 !important;background-image:linear-gradient(90deg,rgba(255,215,0,.18),transparent 60%,rgba(255,215,0,.18)) !important;background-size:250% 100%;animation:fxGlowTrono 1.5s ease-in-out infinite,fxDegradeAndante 3.5s linear infinite}
+.fx-trono::after{content:"👑";position:absolute;right:8px;top:-8px;font-size:1.1rem;animation:petFlutua 1.4s ease-in-out infinite}
+.fx-trono::before{content:"👑";position:absolute;left:8px;top:-8px;font-size:1.1rem;opacity:.55;animation:petFlutua 1.4s ease-in-out infinite .5s}
+@keyframes fxPisca{0%,100%{opacity:.2;transform:scale(.85)}50%{opacity:1;transform:scale(1.15)}}
+@keyframes fxGlowVerde{0%,100%{box-shadow:0 0 6px rgba(0,136,95,.4)}50%{box-shadow:0 0 18px rgba(0,136,95,.9)}}
+@keyframes fxGlowAzul{0%,100%{box-shadow:0 0 8px rgba(0,194,255,.5),inset 0 0 6px rgba(0,194,255,.1)}50%{box-shadow:0 0 20px rgba(0,194,255,1),inset 0 0 10px rgba(0,194,255,.3)}}
+@keyframes fxGlowFogo{0%,100%{box-shadow:0 0 8px rgba(255,78,0,.5)}50%{box-shadow:0 0 22px rgba(255,78,0,1)}}
+@keyframes fxGlowNevoa{0%,100%{box-shadow:0 0 8px rgba(123,47,247,.4)}50%{box-shadow:0 0 22px rgba(123,47,247,.95)}}
+@keyframes fxGlowTrono{0%,100%{box-shadow:0 0 10px rgba(255,215,0,.5)}50%{box-shadow:0 0 26px rgba(255,215,0,1)}}
+@keyframes fxFlash{0%,89%,100%{background-color:transparent}90%,94%{background-color:rgba(0,194,255,.18)}}
+@keyframes fxListras{0%{background-position:0 0}100%{background-position:60px 60px}}
+@keyframes fxDegradeAndante{0%{background-position:0 0,0 0}100%{background-position:-300% 0,-300% 0}}
 /* ---------- LOJA ---------- */
 .loja-abas{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
 .loja-aba{font-family:inherit;font-weight:800;font-size:.85rem;padding:9px 14px;border-radius:99px;border:2.5px solid rgba(33,49,58,.15);background:var(--branco,#fff);cursor:pointer}
@@ -586,8 +606,55 @@ body.sem-shell .topo .titulo-pagina{ visibility:hidden; }
 .loja-item button.usar{background:#0077C2}
 .loja-item button.emuso{background:#3d4a52}
 .loja-item button:disabled{background:#b9c2c8;cursor:not-allowed}
-.chip-semente{display:inline-flex;align-items:center;gap:6px;background:#FFF3D6;border:2px solid #E8B84C;border-radius:99px;padding:6px 14px;font-weight:800}
+.chip-girassol{display:inline-flex;align-items:center;gap:6px;background:#FFF3D6;border:2px solid #E8B84C;border-radius:99px;padding:6px 14px;font-weight:800}
+.timer-linha{width:100%;max-width:520px;margin:0 auto 12px;background:rgba(33,49,58,.12);border-radius:99px;height:14px;position:relative;overflow:hidden}
+.timer-linha i{display:block;height:100%;background:var(--verde,#00885F);border-radius:99px;transition:width .1s linear,background .3s}
+.timer-linha span{position:absolute;right:10px;top:0;font-size:.6rem;font-weight:800;color:var(--tinta,#21313A);line-height:14px}
+.leitura-box{background:#FFFDF4;border:2.5px solid #E8B84C;border-radius:14px;padding:14px;text-align:left;font-weight:600;font-size:.95rem;line-height:1.55;max-height:38vh;overflow:auto;margin-bottom:12px}
+.leitura-box b{display:block;margin-bottom:8px;font-size:1.02rem}
 .medal-bronze{border-color:#CD7F32 !important}.medal-prata{border-color:#9AA7B0 !important}.medal-ouro{border-color:#FFD700 !important}.medal-diamante{border-color:#00C2FF !important;box-shadow:0 0 8px rgba(0,194,255,.35)}
+
+/* ==================================================================
+   🎁 BAÚS — modal, cartas de baú e brilho por raridade da recompensa
+   ================================================================== */
+.bau-overlay{position:fixed;inset:0;z-index:200;background:rgba(11,25,20,.72);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;padding:18px}
+.bau-overlay.aberto{display:flex}
+.bau-caixa{background:var(--papel,#FFF8EE);border-radius:26px;max-width:480px;width:100%;max-height:90vh;overflow:auto;padding:22px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.4);animation:bauEntra .28s ease-out}
+@keyframes bauEntra{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
+.bau-titulo{font-family:var(--f-display);font-weight:700;font-size:1.3rem;margin-bottom:4px}
+.bau-sub{font-weight:700;color:var(--tinta-suave);font-size:.88rem;margin-bottom:14px}
+.bau-unico{font-size:5.5rem;line-height:1;cursor:pointer;user-select:none;filter:drop-shadow(0 6px 10px rgba(0,0,0,.25));animation:bauChacoalha 1.6s ease-in-out infinite}
+.bau-unico.abrindo{animation:bauAbrindo .5s ease-out forwards}
+@keyframes bauChacoalha{0%,100%{transform:rotate(0)}92%{transform:rotate(0)}94%{transform:rotate(-6deg)}96%{transform:rotate(6deg)}98%{transform:rotate(-4deg)}}
+@keyframes bauAbrindo{0%{transform:scale(1) rotate(0)}40%{transform:scale(1.15) rotate(-8deg)}70%{transform:scale(1.3) rotate(6deg)}100%{transform:scale(0) rotate(0);opacity:0}}
+.bau-premio{display:none;flex-direction:column;align-items:center;gap:8px;animation:premioAparece .4s ease-out}
+.bau-premio.mostrar{display:flex}
+@keyframes premioAparece{from{transform:translateY(14px) scale(.7);opacity:0}to{transform:translateY(0) scale(1);opacity:1}}
+.bau-premio .ic{font-size:4rem;filter:drop-shadow(0 0 14px currentColor)}
+.bau-premio b{font-family:var(--f-display);font-size:1.15rem}
+.bau-premio small{font-weight:800;color:var(--tinta-suave);text-transform:uppercase;letter-spacing:.5px;font-size:.72rem}
+.bau-grade{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:14px 0}
+@media (max-width:420px){.bau-grade{grid-template-columns:repeat(4,1fr)}}
+.bau-slot{aspect-ratio:1;border-radius:16px;background:var(--branco,#fff);border:2.5px solid rgba(33,49,58,.12);display:flex;align-items:center;justify-content:center;font-size:1.9rem;position:relative;cursor:default;transition:transform .2s}
+.bau-slot.fechado{animation:bauChacoalha 2s ease-in-out infinite}
+.bau-slot.revelado{animation:slotRevela .45s ease-out}
+@keyframes slotRevela{0%{transform:scale(.4) rotateY(90deg)}60%{transform:scale(1.18) rotateY(0)}100%{transform:scale(1) rotateY(0)}}
+.bau-slot small{position:absolute;bottom:-4px;font-size:.55rem;font-weight:800;background:var(--tinta,#21313A);color:#fff;padding:1px 5px;border-radius:8px;white-space:nowrap}
+.r-comum{box-shadow:0 0 0 2px #9AA7B0 inset}
+.r-incomum{box-shadow:0 0 0 2px #2D9CDB inset,0 0 10px rgba(45,156,219,.5)}
+.r-raro{box-shadow:0 0 0 2px #B266FF inset,0 0 12px rgba(178,102,255,.6)}
+.r-epico{box-shadow:0 0 0 2.5px #FF9A2E inset,0 0 14px rgba(255,154,46,.7)}
+.r-lendario{box-shadow:0 0 0 3px #FFD700 inset,0 0 18px rgba(255,215,0,.85);animation:bauLendario 1s ease-in-out infinite alternate}
+.r-mitico{box-shadow:0 0 0 3px #FF3D9A inset,0 0 22px rgba(255,61,154,.9);animation:bauMitico 1.4s linear infinite}
+@keyframes bauLendario{from{box-shadow:0 0 0 3px #FFD700 inset,0 0 10px rgba(255,215,0,.6)}to{box-shadow:0 0 0 3px #FFD700 inset,0 0 24px rgba(255,215,0,1)}}
+@keyframes bauMitico{0%{filter:hue-rotate(0deg)}100%{filter:hue-rotate(360deg)}}
+.bau-resumo{display:flex;flex-direction:column;gap:6px;text-align:left;background:var(--verde-claro);border-radius:14px;padding:12px 14px;margin-top:10px;font-weight:700;font-size:.88rem}
+.bau-estoque{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--branco,#fff);border:2px solid #E8B84C;border-radius:16px;padding:14px 16px;margin-bottom:14px}
+.bau-cta{background:var(--verde,#00885F);color:#fff;font-weight:800;border-radius:14px;padding:12px 18px;box-shadow:0 4px 0 var(--verde-escuro,#00674A);width:100%;max-width:320px;margin:6px auto 0;font-size:.95rem}
+.bau-cta:disabled{background:#b9c2c8;box-shadow:none}
+.bau-fechar{margin-top:16px;font-weight:800;color:var(--tinta-suave);background:none;border:none;padding:8px;cursor:pointer}
+.faixa-bau{display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,#FFF3D6,#FFE7B0);border:2px solid #E8B84C;border-radius:18px;padding:14px 18px;margin-top:14px;cursor:pointer;animation:faixaBauPulsa 2s ease-in-out infinite}
+@keyframes faixaBauPulsa{0%,100%{box-shadow:0 0 0 rgba(232,184,76,0)}50%{box-shadow:0 0 16px rgba(232,184,76,.6)}}
 </style>
 </head>
 <body>
@@ -884,6 +951,7 @@ body.sem-shell .topo .titulo-pagina{ visibility:hidden; }
   <button class="tb-item" data-rota="meuperfil"><span class="ic">🪪</span>Perfil</button>
 </nav>
 <div class="toast" id="toast"></div>
+<div class="bau-overlay" id="bauOverlay"><div class="bau-caixa" id="bauCaixaConteudo"></div></div>
 
 <script>
 "use strict";
@@ -2524,6 +2592,1106 @@ const NIVEIS = [
           dica:"Give up = desistir. Don't give up = não desista — nunca! 💪" },
       ]
     },
+    { id:"n3m2", temas:["gramatica","verbos"], titulo:"Artigos — A, AN e THE", icone:"🔤", corIco:"#E1F3EA",
+      intro:"A palavrinha mais usada do inglês e a mais esquecida pelo brasileiro. A, AN e THE parecem pequenas, mas decidem se você soa natural ou soa \"traduzido\".",
+      xp:95,
+      cards:[
+        { figura:"📄", pt:"Um / Uma (coisa não específica)", en:"a / an", som:"a / an",
+  quando:"Use A antes de som de consoante (a table, a job) e AN antes de som de vogal (an hour, an apple). É sobre o SOM, não a letra: \"an hour\" (a letra H é muda) mas \"a university\" (soa como \"iú\").",
+  exEn:"I need a new pair of boots.", exSom:"ái níd a niú pér óv búts.", exPt:"Eu preciso de um par novo de botas." },
+        { figura:"🎯", pt:"A coisa específica", en:"the", som:"dhi / dha",
+  quando:"THE aparece quando você e a outra pessoa já sabem do que está falando. \"Close the door\" (aquela porta específica) é diferente de \"Close a door\" (uma porta qualquer).",
+  dica:"Truque rápido: se dá pra trocar por \"aquele/aquela\" em português, é THE.",
+  exEn:"Turn off the lights before you leave.", exSom:"tôrn óf dhi láits bifór iú lív.", exPt:"Desligue as luzes antes de sair." },
+        { figura:"🚫", pt:"Sem artigo nenhum", en:"(no article)", som:"—",
+  quando:"Não usamos artigo com nomes próprios (Brazil, John), idiomas (English), refeições em geral (I eat lunch at noon) e substantivos incontáveis falando em geral (I like coffee, not \"the coffee\").",
+  dica:"Erro clássico do brasileiro: dizer \"I like the coffee\" achando que é mais educado. Pra falar de algo em geral, SEM artigo.",
+  exEn:"I drink coffee every morning.", exSom:"ái drínk cófi évri mórnin.", exPt:"Eu bebo café toda manhã." },
+        { figura:"🏢", pt:"THE com coisas únicas", en:"the sun, the internet, the USA", som:"dhi sân, dhi ínternet, dhi iu-és-ê",
+  quando:"Coisas que só existem uma (o sol, a internet) e alguns nomes de país que soam plural ou têm \"of\" (the United States, the Philippines) sempre levam THE.",
+  exEn:"I found this job on the internet.", exSom:"ái fáund dhis djób ón dhi ínternet.", exPt:"Eu achei esse emprego na internet." },
+        { figura:"🔁", pt:"A primeira vez ✕ depois", en:"a / the", som:"a / dhi",
+  quando:"Primeira menção usa A (não específico ainda); da segunda vez em diante, vira THE (agora já é específico pros dois). \"I have a supervisor. The supervisor is very kind.\"",
+  exEn:"I have a new coworker. The coworker is from Guatemala.", exSom:"ái rév a niú cou-uôrker. dhi cou-uôrker iz fróm guatemala.", exPt:"Tenho um colega novo. O colega é da Guatemala." }
+      ],
+      quiz:[
+        { pergunta:"Complete: \"I need ____ umbrella, it's raining.\"", falar:"I need an umbrella",
+  opcoes:["a","an","the","(sem artigo)"], correta:1,
+  dica:"Umbrella começa com SOM de vogal (âm-brela) → AN, mesmo a palavra começando com \"u\"." },
+        { pergunta:"Complete: \"Close ____ door, please\" (a porta que os dois já sabem qual é)", falar:"Close the door, please",
+  opcoes:["a","an","the","(sem artigo)"], correta:2,
+  dica:"Porta específica, que os dois já sabem qual é → THE." },
+        { pergunta:"Qual frase está CORRETA pra falar de café em geral?", falar:"I like coffee",
+  opcoes:["I like the coffee","I like a coffee","I like coffee","I like an coffee"], correta:2,
+  dica:"Falando em geral (não uma xícara específica), substantivo incontável NÃO leva artigo." },
+        { pergunta:"\"I found this job on ___ internet\" — o que falta?", falar:"I found this job on the internet",
+  opcoes:["a","an","the","(nada)"], correta:2,
+  dica:"Internet é única (só existe uma) → sempre THE internet." }
+      ]
+    },
+    { id:"n3m3", temas:["gramatica"], titulo:"Contáveis, Incontáveis e Quantidade", icone:"🔢", corIco:"#FFF3D1",
+      intro:"Money, information, advice... por que esses substantivos NUNCA levam \"s\"? Hoje você aprende a diferença que muda o verbo, o artigo e até o \"muito\" que você usa.",
+      xp:95,
+      cards:[
+        { figura:"📦", pt:"Dá pra contar: 1, 2, 3...", en:"countable: job, box, hour", som:"cáuntebol",
+  quando:"Substantivos contáveis têm plural normal (job → jobs) e podem vir depois de \"a/an\" e de números. \"I have three jobs this summer.\"",
+  exEn:"I have two jobs this summer.", exSom:"ái rév tú djóbs dhis sâmer.", exPt:"Eu tenho dois empregos neste verão." },
+        { figura:"💧", pt:"Não dá pra contar 1, 2, 3", en:"uncountable: money, water, advice, information", som:"ân-cáuntebol",
+  quando:"Incontáveis não têm plural (nunca \"moneys\" ou \"informations\") e nunca levam \"a/an\". São tratados como singular: \"the information IS correct\", não \"are\".",
+  exEn:"I need more information about the visa.", exSom:"ái níd mór ínformêichon abáut dhi váiza.", exPt:"Eu preciso de mais informação sobre o visto." },
+        { figura:"📊", pt:"MUCH para incontável, MANY para contável", en:"much money / many people", som:"mâtch mâni / méni pípol",
+  quando:"MUCH acompanha incontável (how much money?), MANY acompanha contável no plural (how many people?). Essa é a confusão nº1 do brasileiro no inglês intermediário.",
+  exEn:"How much money do you make per hour?", exSom:"râu mâtch mâni du iú mêik pér áuer?", exPt:"Quanto dinheiro você ganha por hora?" },
+        { figura:"🎒", pt:"A LOT OF serve pros dois", en:"a lot of money / a lot of people", som:"a lót óv",
+  quando:"Se você não quer decidir entre much e many, \"a lot of\" funciona pros dois tipos, em frases afirmativas: \"I have a lot of work\" e \"I have a lot of friends here\".",
+  exEn:"I have a lot of work to do today.", exSom:"ái rév a lót óv uôrk tu du tu-dêi.", exPt:"Eu tenho muito trabalho pra fazer hoje." },
+        { figura:"🤏", pt:"A FEW (poucos, contável) / A LITTLE (pouco, incontável)", en:"a few dollars / a little time", som:"a fiú dólers / a lítel táim",
+  quando:"A FEW = alguns, poucos, mas suficiente (contável). A LITTLE = um pouco, mas suficiente (incontável). Sem o \"a\", few/little viram negativos (quase nenhum).",
+  exEn:"I need a little more time to finish.", exSom:"ái níd a lítel mór táim tu fínich.", exPt:"Eu preciso de um pouco mais de tempo pra terminar." }
+      ],
+      quiz:[
+        { pergunta:"Complete: \"How ____ money do you need?\"", falar:"How much money do you need?",
+  opcoes:["many","much","a few","lot"], correta:1,
+  dica:"Money é incontável → MUCH money." },
+        { pergunta:"Complete: \"How ____ people work here?\"", falar:"How many people work here?",
+  opcoes:["much","many","little","a lot"], correta:1,
+  dica:"People é contável (plural de person) → MANY people." },
+        { pergunta:"Qual está ERRADA?", falar:null,
+  opcoes:["I need some information","I need an information","I have three jobs","I have a lot of work"], correta:1,
+  dica:"Information é incontável: nunca leva \"an\" nem plural. \"An information\" está errado." },
+        { pergunta:"\"I need a little more time\" quer dizer...", falar:"I need a little more time",
+  opcoes:["Eu preciso de muito mais tempo","Eu preciso de um pouco mais de tempo","Eu não preciso de tempo","Eu preciso de poucas horas"], correta:1,
+  dica:"A little (com \"a\") = um pouco, de forma positiva — tenho o suficiente, só preciso de mais um pouquinho." }
+      ]
+    },
+    { id:"n3m4", temas:["gramatica"], titulo:"SOME, ANY e NO", icone:"🧮", corIco:"#E4EDFA",
+      intro:"Três palavrinhas que resolvem \"algum/nenhum\" em qualquer frase. A regra é simples e você nunca mais vai errar depois de hoje.",
+      xp:90,
+      cards:[
+        { figura:"✅", pt:"Frase afirmativa → SOME", en:"some money, some friends", som:"sâm mâni, sâm frénds",
+  quando:"Em frases afirmativas, use SOME pra \"algum/alguma/alguns\": \"I have some questions\" (tenho algumas perguntas). Funciona com contável e incontável.",
+  exEn:"I have some experience in construction.", exSom:"ái rév sâm ex-pí-rians in cons-trâk-chon.", exPt:"Eu tenho alguma experiência em construção." },
+        { figura:"❓", pt:"Pergunta e negativa → ANY", en:"any problems? / no problems", som:"éni próblems",
+  quando:"Em perguntas e negativas, SOME vira ANY: \"Do you have any questions?\", \"I don't have any money\" (não tenho dinheiro nenhum).",
+  exEn:"I don't have any experience yet.", exSom:"ái dôunt rév éni ex-pí-rians iét.", exPt:"Eu ainda não tenho nenhuma experiência." },
+        { figura:"🙅", pt:"NO + substantivo = negativa direta", en:"no problem / no money", som:"nôu próblem / nôu mâni",
+  quando:"NO já é negativo sozinho, sem precisar de \"don't/not\": \"I have no problem with that\" = \"I don't have any problem with that\" (mesmo sentido, jeito mais direto).",
+  exEn:"No problem, I can start tomorrow.", exSom:"nôu próblem, ái quén stárt tu-mórou.", exPt:"Sem problema, posso começar amanhã." },
+        { figura:"🎁", pt:"SOME também em oferta/pedido educado", en:"Would you like some coffee?", som:"uúd iú láik sâm cófi?",
+  quando:"Regra especial: em ofertas e pedidos educados (mesmo sendo pergunta), usamos SOME, não any: \"Can I have some water?\", \"Would you like some help?\".",
+  dica:"Pense assim: se você já espera um \"sim\", use SOME mesmo na pergunta.",
+  exEn:"Would you like some water?", exSom:"uúd iú láik sâm uóter?", exPt:"Você gostaria de um pouco de água?" },
+        { figura:"👤", pt:"SOMEBODY, ANYTHING, NOWHERE...", en:"someone, anything, nowhere", som:"sâm-uân, éni-thing, nôu-uér",
+  quando:"A mesma regra vale pros compostos: SOMEbody/SOMEthing/SOMEwhere em afirmativas; ANYbody/ANYthing/ANYwhere em perguntas/negativas; NObody/NOthing/NOwhere como negativa direta.",
+  exEn:"There's nothing wrong with the paperwork.", exSom:"dhérs nâthing róng uidh dhi pêi-per-uôrk.", exPt:"Não tem nada de errado com a papelada." }
+      ],
+      quiz:[
+        { pergunta:"Complete: \"I don't have ____ money right now.\"", falar:"I don't have any money right now",
+  opcoes:["some","any","no","a"], correta:1,
+  dica:"Frase negativa → ANY. \"I don't have any money\"." },
+        { pergunta:"Complete: \"Can I have ____ water, please?\" (pedido educado)", falar:"Can I have some water, please?",
+  opcoes:["some","any","no","a"], correta:0,
+  dica:"Pedido/oferta educada usa SOME mesmo sendo pergunta." },
+        { pergunta:"\"I have no problem with the schedule\" quer dizer...", falar:"I have no problem with the schedule",
+  opcoes:["Eu tenho um problema com o horário","Eu não tenho problema nenhum com o horário","Eu não sei o horário","Eu mudei o horário"], correta:1,
+  dica:"NO + substantivo = negativa direta: não tenho problema nenhum." },
+        { pergunta:"Complete: \"Do you have ____ questions?\"", falar:"Do you have any questions?",
+  opcoes:["some","any","no","much"], correta:1,
+  dica:"Pergunta comum → ANY questions." }
+      ]
+    },
+    { id:"n3m5", temas:["gramatica"], titulo:"Comparativos e Superlativos", icone:"⚖️", corIco:"#FCE4DB",
+      intro:"Mais rápido, o mais rápido de todos, tão rápido quanto... Hoje você aprende a comparar QUALQUER coisa em inglês, do salário ao clima.",
+      xp:95,
+      cards:[
+        { figura:"📏", pt:"Adjetivo curto + ER", en:"faster, cheaper, harder", som:"fás-ter, tchí-per, rár-der",
+  quando:"Adjetivos de 1 sílaba (e alguns de 2) ganham -ER pra comparar: fast → faster, cheap → cheaper. Depois de ER, use THAN: \"This job pays more than that one\" — opa, \"more\", vem no próximo card!",
+  exEn:"This job is faster than the last one.", exSom:"dhis djób iz fás-ter dhén dhi lést uân.", exPt:"Esse trabalho é mais rápido que o último." },
+        { figura:"🎀", pt:"Adjetivo longo + MORE", en:"more expensive, more difficult", som:"mór ex-pén-siv, mór dí-fi-colt",
+  quando:"Adjetivos de 2+ sílabas (geralmente) usam MORE antes: expensive → more expensive, difficult → more difficult. Nunca junte os dois: NÃO existe \"more faster\".",
+  exEn:"This apartment is more expensive than mine.", exSom:"dhis a-párt-ment iz mór ex-pén-siv dhén máin.", exPt:"Esse apartamento é mais caro que o meu." },
+        { figura:"🏆", pt:"O MAIS de todos: THE + EST / THE MOST", en:"the fastest, the most expensive", som:"dhi fás-test, dhi môust ex-pén-siv",
+  quando:"Pra dizer \"o mais / o melhor de todos\", use THE + EST (curtos) ou THE MOST (longos): \"He's the fastest worker on the team\", \"It's the most difficult part of the job\".",
+  exEn:"She's the fastest worker on the team.", exSom:"chís dhi fás-test uôr-ker ón dhi tím.", exPt:"Ela é a trabalhadora mais rápida da equipe." },
+        { figura:"🔀", pt:"Irregulares — decore de cor", en:"good→better→best / bad→worse→worst", som:"gúd bé-ter bést",
+  quando:"Três palavras não seguem regra nenhuma e aparecem toda hora: good (bom) → better (melhor) → the best (o melhor de todos). Bad (ruim) → worse (pior) → the worst (o pior de todos).",
+  exEn:"This is the best job I've ever had.", exSom:"dhis iz dhi bést djób áiv éver rd.", exPt:"Esse é o melhor emprego que eu já tive." },
+        { figura:"⚖️", pt:"Igualdade: AS...AS", en:"as good as / not as fast as", som:"éz gúd éz",
+  quando:"Pra dizer que duas coisas são iguais, use AS + adjetivo + AS: \"This job is as good as my last one\". Na negativa, \"not as... as\" = menos que: \"not as fast as\" (não tão rápido quanto).",
+  exEn:"This place is not as cold as Minnesota.", exSom:"dhis plêis iz nót éz côuld éz mi-ne-sôu-ta.", exPt:"Esse lugar não é tão frio quanto Minnesota." }
+      ],
+      quiz:[
+        { pergunta:"Complete: \"This job pays ____ than my last one.\" (more money)", falar:"This job pays more than my last one",
+  opcoes:["more","most","much","many"], correta:0,
+  dica:"Comparativo de igualdade/superioridade com verbo (pay) usa MORE... THAN." },
+        { pergunta:"Qual está CORRETA?", falar:null,
+  opcoes:["This is more faster","This is the most fast","This is faster","This is fastest"], correta:2,
+  dica:"Faster já é o comparativo completo (fast+er). Nunca junte MORE com ER." },
+        { pergunta:"Complete: \"She is ____ worker in the company.\" (a melhor)", falar:"She is the best worker in the company",
+  opcoes:["gooder","the goodest","the best","more good"], correta:2,
+  dica:"Good é irregular: good → better → THE BEST." },
+        { pergunta:"\"This place is not as cold as Minnesota\" quer dizer...", falar:"This place is not as cold as Minnesota",
+  opcoes:["Aqui é mais frio que Minnesota","Aqui é tão frio quanto Minnesota","Aqui é menos frio que Minnesota","Minnesota não é frio"], correta:2,
+  dica:"NOT AS... AS = menos que. Aqui é MENOS frio que Minnesota." }
+      ]
+    },
+    { id:"n3m6", temas:["gramatica"], titulo:"Question Tags — \", isn't it?\"", icone:"🎣", corIco:"#F5E4F7",
+      intro:"Aquele \"né\" do fim da frase que os americanos usam o tempo todo: \"You're tired, aren't you?\". Parece complicado, mas é só um espelho.",
+      xp:100,
+      cards:[
+        { figura:"🪞", pt:"A regra do espelho", en:"affirmative → negative tag", som:"",
+  quando:"Se a frase é AFIRMATIVA, a pergunta no final é NEGATIVA: \"You are tired, aren't you?\" (você está cansado, né?). Sempre usa o MESMO verbo auxiliar da frase.",
+  exEn:"You work here, don't you?", exSom:"iú uôrk rír, dôunt iú?", exPt:"Você trabalha aqui, né?" },
+        { figura:"🔄", pt:"O espelho ao contrário", en:"negative → affirmative tag", som:"",
+  quando:"Se a frase é NEGATIVA, a pergunta no final é AFIRMATIVA: \"You don't have a car, do you?\" (você não tem carro, tem?).",
+  exEn:"You don't have a car, do you?", exSom:"iú dôunt rév a car, du iú?", exPt:"Você não tem carro, tem?" },
+        { figura:"🧱", pt:"Com TO BE, usa TO BE", en:"She's from Brazil, isn't she?", som:"chís fróm bra-zíl, í-zent chí?",
+  quando:"Se a frase principal usa o verbo TO BE, a tag também usa TO BE (is/are/was/were): \"They were here yesterday, weren't they?\".",
+  exEn:"She's your supervisor, isn't she?", exSom:"chís iór súper-váizor, í-zent chí?", exPt:"Ela é sua supervisora, né?" },
+        { figura:"⚙️", pt:"Com verbo comum, usa DO/DOES/DID", en:"He works hard, doesn't he?", som:"rí uôrks rárd, dâ-zent rí?",
+  quando:"Se a frase principal é um verbo comum (work, live, like), a tag usa DO/DOES (presente) ou DID (passado): \"You liked the job, didn't you?\".",
+  exEn:"You liked the new schedule, didn't you?", exSom:"iú láikt dhi niú ské-diul, dí-dent iú?", exPt:"Você gostou do novo horário, né?" },
+        { figura:"👑", pt:"Casos especiais", en:"I am, aren't I?", som:"ái ém, árent ái?",
+  quando:"\"I am\" é exceção: a tag vira \"aren't I?\" (nunca \"am I not\" na fala normal). Frases com \"there is/are\" usam \"there\" na tag: \"There's a problem, isn't there?\".",
+  exEn:"I'm doing a good job, aren't I?", exSom:"áim dúin a gúd djób, árent ái?", exPt:"Eu estou fazendo um bom trabalho, né?" }
+      ],
+      quiz:[
+        { pergunta:"Complete: \"You're new here, ____?\"", falar:"You're new here, aren't you?",
+  opcoes:["aren't you","don't you","isn't it","do you"], correta:0,
+  dica:"Frase afirmativa com TO BE (are) → tag negativa com TO BE: aren't you?" },
+        { pergunta:"Complete: \"She doesn't speak Spanish, ____?\"", falar:"She doesn't speak Spanish, does she?",
+  opcoes:["doesn't she","does she","isn't she","is she"], correta:1,
+  dica:"Frase NEGATIVA → tag AFIRMATIVA: does she?" },
+        { pergunta:"Complete: \"He worked overtime yesterday, ____?\"", falar:"He worked overtime yesterday, didn't he?",
+  opcoes:["doesn't he","didn't he","wasn't he","isn't he"], correta:1,
+  dica:"Verbo comum no passado (worked) → tag com DID: didn't he?" },
+        { pergunta:"A tag certa pra \"I am right\" é...", falar:"I am right, aren't I?",
+  opcoes:["am I not","amn't I","aren't I","isn't I"], correta:2,
+  dica:"Exceção clássica: \"I am\" na tag vira \"aren't I?\"." }
+      ]
+    },
+    { id:"n3m7", temas:["gramatica"], titulo:"Preposições que Grudam", icone:"🧲", corIco:"#E1F3EA",
+      intro:"afraid OF, good AT, married TO... Em inglês, muitos verbos e adjetivos vêm colados numa preposição fixa — e ela quase nunca é a que você imaginaria em português.",
+      xp:95,
+      cards:[
+        { figura:"😊", pt:"Adjetivo + preposição", en:"good at, afraid of, married to", som:"gúd ét, a-frêid óv, mé-rid tu",
+  quando:"Cada adjetivo tem seu par fixo: good AT (bom em), afraid OF (com medo de), married TO (casado com), interested IN (interessado em), proud OF (orgulhoso de).",
+  exEn:"I'm good at fixing things.", exSom:"áim gúd ét fí-xin things.", exPt:"Eu sou bom em consertar coisas." },
+        { figura:"🗣️", pt:"Verbo + preposição", en:"depend on, listen to, wait for", som:"di-pénd ón, lí-sen tu, uêit fór",
+  quando:"Verbos comuns também grudam: depend ON (depender de), listen TO (escutar — não \"listen music\", e sim \"listen TO music\"), wait FOR (esperar por), look FOR (procurar), apply FOR (se candidatar a).",
+  exEn:"I'm waiting for the bus.", exSom:"áim uêi-tin fór dhi bâs.", exPt:"Estou esperando pelo ônibus." },
+        { figura:"📅", pt:"Tempo: IN, ON, AT", en:"in July, on Monday, at 5pm", som:"in djulái, ón mân-dêi, ét fáiv pí-ém",
+  quando:"Regra de ouro do tempo: IN pra meses/anos/estações (in July, in 2024), ON pra dias e datas (on Monday, on July 4th), AT pra horários exatos (at 5pm, at noon).",
+  exEn:"The interview is on Monday at 9am.", exSom:"dhi ín-ter-viú iz ón mân-dêi ét náin ê-ém.", exPt:"A entrevista é na segunda às 9 da manhã." },
+        { figura:"📍", pt:"Lugar: IN, ON, AT", en:"in the kitchen, on the table, at work", som:"in dhi kí-tchen, ón dhi têi-bol, ét uôrk",
+  quando:"IN pra espaços fechados/grandes (in the room, in Texas), ON pra superfícies (on the table, on the wall), AT pra pontos/endereços específicos (at work, at 125 Main Street).",
+  exEn:"I left my gloves on the table.", exSom:"ái léft mái glâvs ón dhi têi-bol.", exPt:"Eu deixei minhas luvas na mesa." },
+        { figura:"⚠️", pt:"Os erros mais comuns do brasileiro", en:"married WITH → married TO", som:"",
+  quando:"\"Married WITH\" não existe — é MARRIED TO. \"Depend OF\" não existe — é DEPEND ON. \"Listen music\" está incompleto — é LISTEN TO music. Reveja essas três toda semana!",
+  exEn:"She's been married to him for ten years.", exSom:"chís bín mé-rid tu rím fór tén iérs.", exPt:"Ela é casada com ele há dez anos." }
+      ],
+      quiz:[
+        { pergunta:"Complete: \"I'm interested ____ this position.\"", falar:"I'm interested in this position",
+  opcoes:["of","in","at","for"], correta:1,
+  dica:"Interested IN — interessado em." },
+        { pergunta:"Complete: \"It depends ____ the weather.\"", falar:"It depends on the weather",
+  opcoes:["of","on","in","with"], correta:1,
+  dica:"Depend ON — depender de." },
+        { pergunta:"Qual está CORRETA?", falar:null,
+  opcoes:["She's married with a nice man","She's married to a nice man","She's married for a nice man","She's married at a nice man"], correta:1,
+  dica:"Married TO é a única forma correta — married with não existe em inglês." },
+        { pergunta:"Complete: \"The meeting is ____ Monday ____ 10am.\"", falar:"The meeting is on Monday at 10am",
+  opcoes:["in / on","on / at","at / in","in / at"], correta:1,
+  dica:"Dia da semana → ON. Horário exato → AT." }
+      ]
+    },
+    { id:"n3m8", temas:["gramatica"], titulo:"Gerúndio ✕ Infinitivo", icone:"🎭", corIco:"#FFF3D1",
+      intro:"enjoy DOING ✕ want TO DO. Dois verbos que vêm depois de outro verbo, mas cada um escolhe seu parceiro — e às vezes o parceiro muda o sentido inteiro da frase.",
+      xp:100,
+      cards:[
+        { figura:"💚", pt:"Verbos que pedem -ING", en:"enjoy, finish, avoid, keep + -ing", som:"in-djói, fí-nich, a-vóid, quíp",
+  quando:"Alguns verbos SEMPRE são seguidos de outro verbo com -ING: enjoy doing, finish working, avoid making mistakes, keep trying. Nunca \"enjoy to do\".",
+  exEn:"I enjoy working outdoors.", exSom:"ái in-djói uôr-kin áut-dórs.", exPt:"Eu gosto de trabalhar ao ar livre." },
+        { figura:"🎯", pt:"Verbos que pedem TO + infinitivo", en:"want, need, decide, plan + to", som:"uónt, níd, di-sáid, plén",
+  quando:"Outros verbos sempre pedem TO + infinitivo: want to go, need to leave, decide to stay, plan to apply. Nunca \"want going\".",
+  exEn:"I need to talk to the supervisor.", exSom:"ái níd tu tók tu dhi súper-váizor.", exPt:"Eu preciso falar com o supervisor." },
+        { figura:"🔀", pt:"Os que aceitam os dois SEM mudar sentido", en:"like, love, start, begin", som:"láik, lâv, stárt, be-guín",
+  quando:"Alguns verbos aceitam as duas formas com o mesmo sentido: \"I like working here\" = \"I like to work here\". Start e begin também: \"it started raining\" = \"it started to rain\".",
+  exEn:"I like working with my hands.", exSom:"ái láik uôr-kin uidh mái réns.", exPt:"Eu gosto de trabalhar com as mãos." },
+        { figura:"⚠️", pt:"Os que MUDAM de sentido", en:"stop doing ✕ stop to do", som:"stóp dú-in ✕ stóp tu du",
+  quando:"STOP DOING = parar de fazer algo (\"I stopped smoking\" = parei de fumar). STOP TO DO = parar PRA fazer outra coisa (\"I stopped to smoke\" = parei [o carro/o que fazia] pra fumar). Sentidos opostos!",
+  exEn:"I stopped drinking soda last year.", exSom:"ái stópt drín-kin sôu-da lést ír.", exPt:"Eu parei de beber refrigerante ano passado." },
+        { figura:"🧗", pt:"Depois de preposição, sempre -ING", en:"good at cooking, interested in learning", som:"gúd ét cú-kin",
+  quando:"Depois de QUALQUER preposição (in, at, of, about, for), o verbo seguinte é sempre -ING, nunca infinitivo: \"I'm good at fixing cars\", not \"good at to fix\".",
+  exEn:"She's interested in learning new skills.", exSom:"chís ín-tres-ted in lér-nin niú skils.", exPt:"Ela está interessada em aprender novas habilidades." }
+      ],
+      quiz:[
+        { pergunta:"Complete: \"I enjoy ____ (work) with my team.\"", falar:"I enjoy working with my team",
+  opcoes:["work","to work","working","worked"], correta:2,
+  dica:"Enjoy sempre pede -ING: enjoy working." },
+        { pergunta:"Complete: \"I need ____ (talk) to you.\"", falar:"I need to talk to you",
+  opcoes:["talk","to talk","talking","talked"], correta:1,
+  dica:"Need sempre pede TO + infinitivo: need to talk." },
+        { pergunta:"\"I stopped smoking\" e \"I stopped to smoke\" têm o MESMO sentido?", falar:null,
+  opcoes:["Sim, são iguais","Não — o primeiro é parar de fumar, o segundo é parar pra fumar","Não — o primeiro é sobre carro","Não fazem sentido nenhum dos dois"], correta:1,
+  dica:"Stop + ing = parar de fazer algo. Stop + to = interromper algo pra fazer outra coisa." },
+        { pergunta:"Complete: \"She's good at ____ (fix) things.\"", falar:"She's good at fixing things",
+  opcoes:["fix","to fix","fixing","fixed"], correta:2,
+  dica:"Depois de preposição (at), o verbo vai sempre pra -ING." }
+      ]
+    },
+    { id:"n3m9", temas:["gramatica"], titulo:"Voz Passiva — Presente e Passado", icone:"🔃", corIco:"#E4EDFA",
+      intro:"\"The room IS CLEANED every day.\" A gramática que você precisa pra entender avisos, manuais e contratos — quando quem FAZ a ação nem aparece na frase.",
+      xp:105,
+      cards:[
+        { figura:"🧩", pt:"A fórmula mágica", en:"to be + past participle", som:"tu bí + pést pár-ti-sí-pol",
+  quando:"Voz passiva = TO BE (no tempo certo) + particípio passado do verbo. \"They clean the room\" (ativa) vira \"The room IS CLEANED\" (passiva) — o foco sai de QUEM faz e vai pro QUE é feito.",
+  exEn:"The room is cleaned every morning.", exSom:"dhi rúm iz clínd évri mór-nin.", exPt:"O quarto é limpo toda manhã." },
+        { figura:"⏪", pt:"No passado: WAS/WERE + particípio", en:"the letter was sent", som:"dhi lé-ter uóz sént",
+  quando:"No passado, troque IS/ARE por WAS/WERE: \"They sent the letter\" (ativa) → \"The letter WAS SENT\" (passiva). Plural usa WERE: \"The tools were delivered yesterday.\"",
+  exEn:"The tools were delivered yesterday.", exSom:"dhi túls uér di-lí-verd iés-ter-dêi.", exPt:"As ferramentas foram entregues ontem." },
+        { figura:"👤", pt:"Quem faz a ação: BY", en:"made by, cleaned by, hired by", som:"mêid bái",
+  quando:"Se for importante dizer QUEM fez, use BY no final: \"The house was built BY my uncle.\" Mas na maioria das vezes, a passiva existe justamente pra OMITIR quem fez.",
+  exEn:"This form was signed by the manager.", exSom:"dhis fórm uóz sáind bái dhi mé-ne-djer.", exPt:"Este formulário foi assinado pelo gerente." },
+        { figura:"📋", pt:"Onde você mais vai ver isso", en:"instructions, rules, warnings", som:"ins-trâk-chons",
+  quando:"Voz passiva é a linguagem de avisos e regras: \"Gloves must be worn\" (luvas devem ser usadas), \"Smoking is not allowed\" (é proibido fumar), \"Payment is made every Friday\" (o pagamento é feito toda sexta).",
+  exEn:"Safety glasses must be worn in this area.", exSom:"séif-ti glé-ses mâst bí uôrn in dhis é-ria.", exPt:"Óculos de segurança devem ser usados nesta área." },
+        { figura:"🔁", pt:"Ativa ✕ Passiva lado a lado", en:"they built it ✕ it was built", som:"dhêi bilt it ✕ it uóz bilt",
+  quando:"Compare: ATIVA foca em quem faz (\"They built this hotel in 1990\"). PASSIVA foca na coisa (\"This hotel was built in 1990\"). As duas estão certas — a escolha depende do que é mais importante na frase.",
+  exEn:"This hotel was built in 1990.", exSom:"dhis rou-tél uóz bilt in nain-tín-nái-ti.", exPt:"Este hotel foi construído em 1990." }
+      ],
+      quiz:[
+        { pergunta:"Passe pra voz passiva: \"They clean the rooms every day.\"", falar:"The rooms are cleaned every day",
+  opcoes:["The rooms clean every day","The rooms are cleaned every day","The rooms is cleaned every day","The rooms cleaned every day"], correta:1,
+  dica:"Sujeito plural (the rooms) + ARE + particípio (cleaned)." },
+        { pergunta:"Complete a passiva no passado: \"The tools ____ delivered yesterday.\"", falar:"The tools were delivered yesterday",
+  opcoes:["was","is","were","are"], correta:2,
+  dica:"Plural no passado → WERE + particípio." },
+        { pergunta:"\"Safety glasses must be worn\" significa...", falar:"Safety glasses must be worn",
+  opcoes:["Os óculos de segurança são bonitos","Óculos de segurança devem ser usados","Alguém perdeu os óculos","Os óculos foram quebrados"], correta:1,
+  dica:"Must be worn = devem ser usados. Frase típica de aviso/regra de segurança." },
+        { pergunta:"Qual frase está na voz PASSIVA?", falar:null,
+  opcoes:["My uncle built this house","This house was built by my uncle","My uncle is building a house","My uncle builds houses"], correta:1,
+  dica:"\"Was built\" = to be (was) + particípio (built) → voz passiva." }
+      ]
+    },
+    { id:"n3m10", temas:["gramatica"], titulo:"Orações Relativas — WHO, WHICH, THAT", icone:"🔗", corIco:"#FCE4DB",
+      intro:"\"The man WHO called you\", \"the job THAT I applied for\"... a costura que junta duas frases em uma só e faz você soar muito mais natural.",
+      xp:100,
+      cards:[
+        { figura:"👤", pt:"WHO — pra pessoas", en:"the man who called", som:"dhi mén ru cóld",
+  quando:"WHO substitui uma pessoa como sujeito da oração: \"I talked to the man. He called you.\" → \"I talked to the man WHO called you.\"",
+  exEn:"The woman who trained me is very patient.", exSom:"dhi uó-men ru trêind mí iz vé-ri pêi-chent.", exPt:"A mulher que me treinou é muito paciente." },
+        { figura:"📦", pt:"WHICH — pra coisas", en:"the tool which I bought", som:"dhi túl uítch ái bót",
+  quando:"WHICH substitui uma coisa/animal: \"I bought a tool. It broke.\" → \"The tool WHICH I bought broke.\" Em inglês do dia a dia, THAT é ainda mais comum que WHICH aqui.",
+  exEn:"The van which picks us up is always late.", exSom:"dhi vén uítch píks âs âp iz ól-uêis lêit.", exPt:"A van que nos busca está sempre atrasada." },
+        { figura:"🎯", pt:"THAT — coringa (pessoas E coisas, informal)", en:"the job that I love", som:"dhi djób dhét ái lâv",
+  quando:"THAT pode substituir WHO ou WHICH na fala do dia a dia: \"the man that called\", \"the tool that broke\". É a opção mais simples e mais usada na conversa real.",
+  exEn:"This is the job that changed my life.", exSom:"dhis iz dhi djób dhét tchêindjd mái láif.", exPt:"Esse é o trabalho que mudou minha vida." },
+        { figura:"🏠", pt:"WHERE e WHOSE", en:"the place where I work / the guy whose car", som:"dhi plêis uér ái uôrk",
+  quando:"WHERE substitui um lugar (\"the hotel where I work\"). WHOSE indica posse, \"cujo\" (\"the guy WHOSE car broke down\" = o cara cujo carro quebrou).",
+  exEn:"This is the hotel where I work.", exSom:"dhis iz dhi rou-tél uér ái uôrk.", exPt:"Esse é o hotel onde eu trabalho." },
+        { figura:"✂️", pt:"Quando pode CORTAR o WHO/THAT", en:"the job (that) I applied for", som:"",
+  quando:"Se WHO/WHICH/THAT NÃO é o sujeito da oração (é objeto), dá pra cortar ele totalmente na fala informal: \"The job I applied for\" (em vez de \"the job THAT I applied for\") — os dois estão certos.",
+  exEn:"The job I applied for pays well.", exSom:"dhi djób ái a-pláid fór pêis uél.", exPt:"O emprego pro qual eu me candidatei paga bem." }
+      ],
+      quiz:[
+        { pergunta:"Complete: \"The man ____ called you is my supervisor.\"", falar:"The man who called you is my supervisor",
+  opcoes:["which","who","where","whose"], correta:1,
+  dica:"Pessoa como sujeito → WHO (ou THAT)." },
+        { pergunta:"Complete: \"This is the hotel ____ I work.\"", falar:"This is the hotel where I work",
+  opcoes:["who","which","where","whose"], correta:2,
+  dica:"Lugar → WHERE." },
+        { pergunta:"Qual frase pode CORTAR o pronome relativo?", falar:null,
+  opcoes:["The man who called is my boss","The job (that) I applied for is great","The tool which broke is old","The place where I live is quiet"], correta:1,
+  dica:"Quando o pronome é objeto da oração (não sujeito), dá pra cortar: \"The job I applied for\"." },
+        { pergunta:"\"The guy whose car broke down\" significa...", falar:"The guy whose car broke down",
+  opcoes:["O cara que dirige o carro","O cara cujo carro quebrou","O cara que comprou um carro","O carro do cara é novo"], correta:1,
+  dica:"WHOSE indica posse: \"cujo carro\"." }
+      ]
+    },
+    { id:"n3m11", temas:["gramatica"], titulo:"Advérbios — a Ordem Certa na Frase", icone:"🧭", corIco:"#F5E4F7",
+      intro:"Always, usually, never, quickly, carefully... você já usa essas palavras, mas onde exatamente elas entram na frase? Hoje a ordem fica automática.",
+      xp:90,
+      cards:[
+        { figura:"📍", pt:"Frequência vem ANTES do verbo principal", en:"I always arrive early", som:"ái ól-uêis a-ráiv ér-li",
+  quando:"Advérbios de frequência (always, usually, often, never, sometimes) ficam ANTES do verbo comum, mas DEPOIS do TO BE: \"I always arrive early\" mas \"I am always on time.\"",
+  exEn:"I am always on time for work.", exSom:"ái ém ól-uêis ón táim fór uôrk.", exPt:"Eu sempre chego no horário pro trabalho." },
+        { figura:"🎯", pt:"Modo (como) fica no FINAL", en:"she works carefully", som:"chí uôrks quér-fuli",
+  quando:"Advérbios de modo (carefully, quickly, well, hard) geralmente vêm no final da frase: \"He drives carefully\", \"She learned English quickly.\"",
+  exEn:"He always drives carefully in the snow.", exSom:"rí ól-uêis dráivs quér-fuli in dhi snôu.", exPt:"Ele sempre dirige com cuidado na neve." },
+        { figura:"📅", pt:"Tempo (quando) fica no INÍCIO ou no FINAL", en:"Yesterday, I finished the job. / I finished the job yesterday.", som:"",
+  quando:"Advérbios de tempo (yesterday, today, tomorrow, last week) ficam no início OU no final da frase — nunca no meio, entre sujeito e verbo.",
+  exEn:"I finished the job early yesterday.", exSom:"ái fí-nicht dhi djób ér-li iés-ter-dêi.", exPt:"Eu terminei o trabalho cedo ontem." },
+        { figura:"🧠", pt:"Ordem completa quando junta tudo", en:"subject + verb + manner + place + time", som:"",
+  quando:"Quando várias informações aparecem juntas, a ordem natural é: sujeito + verbo + modo + lugar + tempo. \"She worked (S+V) carefully (modo) at the hotel (lugar) last summer (tempo).\"",
+  exEn:"She worked carefully at the hotel last summer.", exSom:"chí uôrkt quér-fuli ét dhi rou-tél lést sâ-mer.", exPt:"Ela trabalhou com cuidado no hotel no verão passado." },
+        { figura:"💪", pt:"Advérbios que confundem: HARD ✕ HARDLY", en:"he works hard ✕ he hardly works", som:"rí uôrks rárd ✕ rí rárd-li uôrks",
+  quando:"HARD (sem -ly) = duro, com esforço — advérbio normal. HARDLY = quase não, mal. \"He works hard\" (trabalha duro/muito) é o OPOSTO de \"He hardly works\" (ele quase não trabalha).",
+  exEn:"He works hard every single day.", exSom:"rí uôrks rárd évri sín-gol dêi.", exPt:"Ele trabalha duro todos os dias." }
+      ],
+      quiz:[
+        { pergunta:"Qual frase está na ORDEM certa?", falar:null,
+  opcoes:["I always am on time","I am always on time","Always I am on time","I am on time always"], correta:1,
+  dica:"Com TO BE, o advérbio de frequência vem DEPOIS: I am always on time." },
+        { pergunta:"Complete: \"She learned English ____.\" (rápido)", falar:"She learned English quickly",
+  opcoes:["quick","quickly","in quick","fast quickly"], correta:1,
+  dica:"Advérbio de modo formado com -ly: quickly, no final da frase." },
+        { pergunta:"\"He hardly works\" significa...", falar:"He hardly works",
+  opcoes:["Ele trabalha muito","Ele trabalha duro","Ele quase não trabalha","Ele trabalha rápido"], correta:2,
+  dica:"HARDLY = quase não. É bem diferente de HARD (duro/muito)." },
+        { pergunta:"Qual é a ordem certa: sujeito+verbo+modo+lugar+tempo?", falar:null,
+  opcoes:["She worked at the hotel carefully last summer","She worked carefully at the hotel last summer","Carefully she worked last summer at the hotel","She worked last summer carefully at the hotel"], correta:1,
+  dica:"Ordem natural: verbo, depois modo, depois lugar, depois tempo." }
+      ]
+    },
+    { id:"n3m12", temas:["gramatica","revisao"], titulo:"Simulado — Revisão Nível B1", icone:"🏁", corIco:"#E1F3EA",
+      intro:"Você passou por artigos, contáveis, comparativos, question tags, preposições, gerúndio/infinitivo, voz passiva, orações relativas e advérbios. Hora de misturar tudo e provar que aprendeu de verdade.",
+      xp:130,
+      cards:[
+        { figura:"🔤", pt:"THE ou sem artigo?", en:"the internet / coffee in general", som:"",
+  quando:"Lembre: coisas únicas (the internet, the sun) levam THE. Substantivo em geral (coffee, money) não leva artigo nenhum.",
+  exEn:"I found this job on the internet.", exSom:"ái fáund dhis djób ón dhi ín-ter-net.", exPt:"Eu achei esse emprego na internet." },
+        { figura:"⚖️", pt:"Comparar sem errar", en:"more expensive than / the best", som:"",
+  quando:"Curto → -ER + THAN. Longo → MORE + THAN. Superlativo → THE + EST ou THE MOST.",
+  exEn:"This is the best job I've ever had.", exSom:"dhis iz dhi bést djób áiv éver rd.", exPt:"Esse é o melhor emprego que eu já tive." },
+        { figura:"🎣", pt:"O espelho da question tag", en:"affirmative → negative tag", som:"",
+  quando:"Frase afirmativa → tag negativa. Frase negativa → tag afirmativa. Sempre usa o mesmo auxiliar da frase.",
+  exEn:"You work here, don't you?", exSom:"iú uôrk rír, dôunt iú?", exPt:"Você trabalha aqui, né?" },
+        { figura:"🔃", pt:"A passiva no dia a dia", en:"gloves must be worn", som:"glâvs mâst bí uôrn",
+  quando:"TO BE + particípio passado = passiva. Muito usada em regras e avisos de trabalho.",
+  exEn:"Safety glasses must be worn here.", exSom:"séif-ti glé-ses mâst bí uôrn rír.", exPt:"Óculos de segurança devem ser usados aqui." },
+        { figura:"🔗", pt:"Juntando frases com relativas", en:"the job that I love", som:"dhi djób dhét ái lâv",
+  quando:"WHO pra pessoas, WHICH pra coisas, THAT pros dois na fala informal, WHERE pra lugar.",
+  exEn:"This is the job that changed my life.", exSom:"dhis iz dhi djób dhét tchêindjd mái láif.", exPt:"Esse é o trabalho que mudou minha vida." }
+      ],
+      quiz:[
+        { pergunta:"Complete: \"I need ____ information about the job.\" (em geral, sem artigo)", falar:"I need some information about the job",
+  opcoes:["a","an","the","(sem artigo)"], correta:3,
+  dica:"Information é incontável e está sendo usada de forma geral aqui — sem artigo (ou com SOME, dependendo do contexto)." },
+        { pergunta:"Complete: \"This apartment is ____ than mine.\" (mais caro)", falar:"This apartment is more expensive than mine",
+  opcoes:["expensiver","more expensive","the most expensive","expensivest"], correta:1,
+  dica:"Adjetivo longo (expensive) → MORE + adjetivo + THAN." },
+        { pergunta:"Complete: \"She doesn't like the new schedule, ____?\"", falar:"She doesn't like the new schedule, does she?",
+  opcoes:["doesn't she","does she","isn't she","didn't she"], correta:1,
+  dica:"Frase negativa → tag afirmativa: does she?" },
+        { pergunta:"\"The tools were delivered yesterday\" está em qual voz?", falar:null,
+  opcoes:["Ativa","Passiva","Nenhuma das duas","Futuro"], correta:1,
+  dica:"WERE + particípio (delivered) = voz passiva no passado." },
+        { pergunta:"Complete: \"This is the hotel ____ I work.\"", falar:"This is the hotel where I work",
+  opcoes:["who","which","where","whose"], correta:2,
+  dica:"Lugar → WHERE." }
+      ]
+    },
+    { id:"n3m13", temas:["gramatica"], titulo:"Condicional Zero e Primeiro — IF", icone:"🌦️", corIco:"#FFF3D1",
+      intro:"\"If it rains, we don't work.\" \"If you finish early, I'll pay you today.\" As duas formas de IF que você usa toda semana no trabalho, mesmo sem saber o nome.",
+      xp:100,
+      cards:[
+        { figura:"🔁", pt:"Condicional Zero: verdade sempre", en:"if + present, present", som:"if ái mix uó-ter énd flâuer, ái guét dâu",
+  quando:"Usamos pra fatos sempre verdadeiros, regras e ciência: IF + PRESENT SIMPLE, PRESENT SIMPLE. \"If it rains, the field gets muddy.\" (Sempre acontece assim.)",
+  exEn:"If it rains, we don't work outside.", exSom:"if it rêins, uí dôunt uôrk áut-sáid.", exPt:"Se chove, a gente não trabalha lá fora." },
+        { figura:"🔮", pt:"Primeiro Condicional: futuro real e possível", en:"if + present, will + verb", som:"if iú fí-nich ér-li, ái uíl pêi iú tu-dêi",
+  quando:"Usamos pra uma situação futura possível e realista: IF + PRESENT SIMPLE, WILL + VERBO. \"If you finish early, I will pay you today.\"",
+  exEn:"If you work overtime, you'll earn more money.", exSom:"if iú uôrk ôu-ver-táim, iúl érn mór mâni.", exPt:"Se você fizer hora extra, vai ganhar mais dinheiro." },
+        { figura:"🔄", pt:"A ordem pode inverter", en:"will + verb, if + present", som:"",
+  quando:"Dá pra começar pelo WILL também, sem vírgula: \"I will pay you today if you finish early.\" (mesmo sentido, ordem invertida — sem vírgula quando IF vem depois.)",
+  exEn:"I'll call you if there's a problem.", exSom:"áil cól iú if dhérs a próblem.", exPt:"Eu vou te ligar se tiver algum problema." },
+        { figura:"⚠️", pt:"Erro clássico: WILL depois de IF", en:"if it rains ✕ if it will rain", som:"",
+  quando:"NUNCA use WILL na parte do IF: \"if it will rain\" está ERRADO. O certo é \"if it rains\" (presente simples), mesmo falando do futuro.",
+  exEn:"If it snows tomorrow, we'll stay home.", exSom:"if it snôus tu-mórou, uíl stêi rôum.", exPt:"Se nevar amanhã, vamos ficar em casa." },
+        { figura:"💡", pt:"Outras palavras no lugar de WILL", en:"if..., can / should / might", som:"",
+  quando:"No primeiro condicional, além de WILL, dá pra usar CAN (possibilidade), SHOULD (conselho) ou MIGHT (talvez): \"If you're tired, you should rest.\"",
+  exEn:"If you're not sure, you can ask your supervisor.", exSom:"if iór nót chúr, iú quén ésk iór súper-váizor.", exPt:"Se você não tiver certeza, pode perguntar ao seu supervisor." }
+      ],
+      quiz:[
+        { pergunta:"Complete (condicional zero): \"If you heat ice, it ____.\" (melts)", falar:"If you heat ice, it melts",
+  opcoes:["melts","will melt","melted","is melting"], correta:0,
+  dica:"Fato sempre verdadeiro → presente simples nas duas partes: it melts." },
+        { pergunta:"Complete (primeiro condicional): \"If you finish early, I ____ you today.\" (pay)", falar:"If you finish early, I will pay you today",
+  opcoes:["pay","paid","will pay","am paying"], correta:2,
+  dica:"Futuro possível → IF + presente, WILL + verbo." },
+        { pergunta:"Qual está CORRETA?", falar:null,
+  opcoes:["If it will rain, we'll stay home","If it rains, we'll stay home","If it rain, we'll stay home","If it's raining, we stay will home"], correta:1,
+  dica:"Nunca WILL depois de IF: o certo é \"if it rains\"." },
+        { pergunta:"\"If you're not sure, you can ask your supervisor\" quer dizer...", falar:null,
+  opcoes:["Você tem que perguntar ao supervisor","Se não tiver certeza, você pode perguntar ao supervisor","O supervisor não sabe nada","Nunca pergunte ao supervisor"], correta:1,
+  dica:"CAN aqui expressa uma opção possível, não obrigação." }
+      ]
+    },
+    { id:"n3m14", temas:["gramatica"], titulo:"Segundo Condicional — Situações Imaginárias", icone:"💭", corIco:"#E4EDFA",
+      intro:"\"If I had more money, I would buy a car.\" A gramática dos sonhos, planos e situações que ainda não são realidade — mas podem ser um dia.",
+      xp:100,
+      cards:[
+        { figura:"💭", pt:"A fórmula: IF + passado, WOULD + verbo", en:"if I had, I would", som:"if ái réd, ái úud",
+  quando:"Pra imaginar uma situação IRREAL ou pouco provável no presente/futuro: IF + PAST SIMPLE, WOULD + VERBO. \"If I had more money, I would buy a car.\" (mas não tenho, é hipotético).",
+  exEn:"If I had more time, I would study every day.", exSom:"if ái réd mór táim, ái úud stâ-di évri dêi.", exPt:"Se eu tivesse mais tempo, eu estudaria todo dia." },
+        { figura:"🌟", pt:"WERE pra todo mundo (até I/he/she)", en:"if I were you...", som:"if ái uér iú",
+  quando:"No segundo condicional, é comum usar WERE mesmo com I/he/she/it (em vez de WAS) — principalmente na expressão \"If I were you...\" (se eu fosse você...), que dá conselhos.",
+  exEn:"If I were you, I would call the landlord today.", exSom:"if ái uér iú, ái úud cól dhi lénd-lord tu-dêi.", exPt:"Se eu fosse você, eu ligaria pro proprietário hoje." },
+        { figura:"🆚", pt:"Diferença do Primeiro Condicional", en:"real/possível ✕ hipotético/improvável", som:"",
+  quando:"Primeiro condicional = pode realmente acontecer (\"If it rains, I'll stay home\"). Segundo condicional = hipótese distante ou impossível agora (\"If I won the lottery, I would travel the world\").",
+  exEn:"If I won the lottery, I would help my family.", exSom:"if ái uón dhi ló-teri, ái úud rélp mái fé-mili.", exPt:"Se eu ganhasse na loteria, eu ajudaria minha família." },
+        { figura:"❓", pt:"Perguntas com o segundo condicional", en:"What would you do if...?", som:"uót úud iú du if...?",
+  quando:"Ótima estrutura pra conversas mais profundas: \"What would you do if you lost your job?\" (o que você faria se perdesse o emprego?).",
+  exEn:"What would you do if you had a day off?", exSom:"uót úud iú du if iú réd a dêi óf?", exPt:"O que você faria se tivesse um dia de folga?" },
+        { figura:"🔡", pt:"WOULD encurtado: 'D", en:"I'd buy / he'd travel", som:"áid bái / rid tré-vol",
+  quando:"Na fala, WOULD sempre encurta pra 'D: \"I'd buy a house\" (eu compraria uma casa), \"she'd love that\" (ela ia adorar isso).",
+  exEn:"I'd love to visit my family this year.", exSom:"áid lâv tu ví-zit mái fé-mili dhis ír.", exPt:"Eu adoraria visitar minha família esse ano." }
+      ],
+      quiz:[
+        { pergunta:"Complete: \"If I ____ more money, I would travel.\" (had)", falar:"If I had more money, I would travel",
+  opcoes:["have","had","will have","would have"], correta:1,
+  dica:"Segundo condicional: IF + PAST SIMPLE (had), depois WOULD + verbo." },
+        { pergunta:"Complete: \"If I ____ you, I would talk to him.\" (were)", falar:"If I were you, I would talk to him",
+  opcoes:["was","were","am","will be"], correta:1,
+  dica:"No segundo condicional, usa-se WERE mesmo com \"I\": \"If I were you...\"." },
+        { pergunta:"Qual frase é HIPOTÉTICA/pouco provável (segundo condicional)?", falar:null,
+  opcoes:["If it rains, I'll take an umbrella","If I won the lottery, I would travel the world","If you finish early, call me","If she's tired, she rests"], correta:1,
+  dica:"Ganhar na loteria é hipotético/improvável → segundo condicional." },
+        { pergunta:"\"I'd love to visit my family\" — o que é \"I'd\"?", falar:null,
+  opcoes:["I would","I did","I had","I will"], correta:0,
+  dica:"'D aqui é a forma reduzida de WOULD: I'd = I would." }
+      ]
+    },
+    { id:"n3m15", temas:["gramatica"], titulo:"Discurso Indireto — Contando o que Alguém Disse", icone:"🗣️", corIco:"#FCE4DB",
+      intro:"\"She said she WAS tired.\" Quando você conta pro seu chefe o que o cliente disse, ou conta pra família o que o supervisor falou, é disso que você precisa.",
+      xp:105,
+      cards:[
+        { figura:"⏪", pt:"O tempo verbal volta um passo", en:"\"I am tired\" → she said she was tired", som:"chi séd chi uóz táierd",
+  quando:"Quando reportamos o que alguém disse, o tempo verbal geralmente \"volta um passo\": presente → passado, presente perfeito → passado perfeito. \"I am tired\" → \"She said she WAS tired.\"",
+  exEn:"He said he was working overtime.", exSom:"rí séd rí uóz uôr-kin ôu-ver-táim.", exPt:"Ele disse que estava trabalhando hora extra." },
+        { figura:"⏮️", pt:"Passado Simples → Passado Perfeito", en:"\"I finished\" → he said he had finished", som:"rí séd rí réd fí-nicht",
+  quando:"Se a pessoa falou no passado simples, no discurso indireto vira passado perfeito: \"I finished the job\" → \"He said he HAD FINISHED the job.\"",
+  exEn:"She said she had already called the landlord.", exSom:"chi séd chi réd ól-ré-di cóld dhi lénd-lord.", exPt:"Ela disse que já tinha ligado pro proprietário." },
+        { figura:"🔮", pt:"WILL vira WOULD", en:"\"I will call you\" → she said she would call", som:"chi séd chi úud cól",
+  quando:"WILL no discurso direto vira WOULD no indireto: \"I will call you tomorrow\" → \"She said she WOULD call me tomorrow\" (repare que \"tomorrow\" pode virar \"the next day\" dependendo de quando você conta).",
+  exEn:"He said he would finish by Friday.", exSom:"rí séd rí úud fí-nich bái frái-dêi.", exPt:"Ele disse que terminaria até sexta." },
+        { figura:"🔄", pt:"Pronomes e \"meu/seu\" também mudam", en:"\"I\" → he/she, \"my\" → his/her", som:"",
+  quando:"Troque os pronomes pra bater com quem está contando: \"I like MY job\" (ele disse) vira \"He said he liked HIS job.\" (você contando).",
+  exEn:"She said she loved her new position.", exSom:"chi séd chi lâvd rer niú po-zí-chon.", exPt:"Ela disse que amava seu novo cargo." },
+        { figura:"🔑", pt:"SAY x TELL", en:"she said (that) / she told me (that)", som:"chi séd / chi tôuld mí",
+  quando:"SAY nunca leva a pessoa direto depois (say to me, não \"say me\"). TELL sempre precisa da pessoa: \"She told ME that...\", nunca só \"she told that\".",
+  exEn:"She told me that the schedule changed.", exSom:"chi tôuld mí dhét dhi ské-diul tchêindjd.", exPt:"Ela me disse que o horário mudou." }
+      ],
+      quiz:[
+        { pergunta:"\"I am tired\", she said. → No discurso indireto:", falar:"She said she was tired",
+  opcoes:["She said she is tired","She said she was tired","She said she tired","She said she has been tired"], correta:1,
+  dica:"Presente → passado no discurso indireto: was tired." },
+        { pergunta:"\"I will call you\", he said. → No discurso indireto:", falar:"He said he would call me",
+  opcoes:["He said he will call me","He said he calls me","He said he would call me","He said he called me"], correta:2,
+  dica:"WILL vira WOULD no discurso indireto." },
+        { pergunta:"Qual está CORRETA?", falar:null,
+  opcoes:["She told that she was busy","She told me that she was busy","She said me that she was busy","She say me she was busy"], correta:1,
+  dica:"TELL sempre precisa da pessoa depois: told ME." },
+        { pergunta:"\"I finished the report\", she said. → No discurso indireto:", falar:"She said she had finished the report",
+  opcoes:["She said she finished the report","She said she has finished the report","She said she had finished the report","She said she finishes the report"], correta:2,
+  dica:"Passado simples → passado perfeito no discurso indireto: had finished." }
+      ]
+    },
+    { id:"n3m16", temas:["gramatica"], titulo:"Discurso Indireto — Perguntas e Ordens", icone:"❔", corIco:"#F5E4F7",
+      intro:"\"He asked ME IF I was OK.\" \"She told me TO wait.\" Contar perguntas e ordens em inglês tem um truque que ninguém te conta: a pergunta desaparece.",
+      xp:100,
+      cards:[
+        { figura:"🔄", pt:"Pergunta de SIM/NÃO → IF ou WHETHER", en:"\"Are you ok?\" → he asked if I was ok", som:"ri éskt if ái uóz ôu-quêi",
+  quando:"Pergunta que se responde com sim/não vira uma afirmação com IF (ou WHETHER): \"Are you ready?\" → \"He asked if I was ready.\" Repare: sem ponto de interrogação, ordem de afirmação.",
+  exEn:"She asked if I was available on Saturday.", exSom:"chi éskt if ái uóz a-véi-le-bol ón sé-tur-dêi.", exPt:"Ela perguntou se eu estava disponível no sábado." },
+        { figura:"❓", pt:"Pergunta com WH- mantém a palavra", en:"\"Where do you live?\" → he asked where I lived", som:"ri éskt uér ái livd",
+  quando:"Perguntas com what/where/when/why/how mantêm a palavra, mas a ORDEM vira de afirmação (sujeito antes do verbo), sem DO/DOES: \"Where do you live?\" → \"He asked where I lived.\"",
+  exEn:"He asked what time I finished work.", exSom:"ri éskt uót táim ái fí-nicht uôrk.", exPt:"Ele perguntou que horas eu terminava o trabalho." },
+        { figura:"👉", pt:"Ordem/pedido → TELL/ASK + pessoa + TO", en:"\"Wait here\" → she told me to wait here", som:"chi tôuld mí tu uêit rír",
+  quando:"Comandos e pedidos viram TELL/ASK + pessoa + TO + verbo: \"Wait here\" → \"She told me TO wait here.\" \"Please help me\" → \"She asked me TO help her.\"",
+  exEn:"The manager told us to be here at 8am.", exSom:"dhi mé-ne-djer tôuld âs tu bí rír ét êit ê-ém.", exPt:"O gerente nos disse pra estar aqui às 8h." },
+        { figura:"🚫", pt:"Ordem negativa: NOT TO", en:"\"Don't touch that\" → he told me not to touch it", som:"ri tôuld mí nót tu tâtch it",
+  quando:"Pra ordem negativa, use NOT TO + verbo: \"Don't be late\" → \"She told me NOT TO be late.\"",
+  exEn:"He told me not to be late for the interview.", exSom:"ri tôuld mí nót tu bí lêit fór dhi ín-ter-viú.", exPt:"Ele me disse pra não me atrasar pra entrevista." },
+        { figura:"🎯", pt:"Juntando tudo num exemplo real", en:"he asked if / where / told me to", som:"",
+  quando:"\"Are you free? Where do you live? Please call me.\" vira: \"He asked if I was free, where I lived, and told me to call him.\" — é assim que se conta uma conversa inteira em inglês.",
+  exEn:"He asked if I was free and told me to call him back.", exSom:"ri éskt if ái uóz frí énd tôuld mí tu cól rím bék.", exPt:"Ele perguntou se eu estava livre e me disse pra retornar a ligação." }
+      ],
+      quiz:[
+        { pergunta:"\"Are you ready?\" he asked. → No discurso indireto:", falar:"He asked if I was ready",
+  opcoes:["He asked am I ready","He asked if I was ready","He asked that I was ready","He asked I was ready"], correta:1,
+  dica:"Pergunta de sim/não → IF + ordem de afirmação (sujeito antes do verbo)." },
+        { pergunta:"\"Where do you live?\" she asked. → No discurso indireto:", falar:"She asked where I lived",
+  opcoes:["She asked where do I live","She asked where I lived","She asked where I live","She asked where did I live"], correta:1,
+  dica:"Pergunta com WH- mantém a palavra, mas sem DO/DOES e no passado." },
+        { pergunta:"\"Wait here\", she said. → No discurso indireto:", falar:"She told me to wait here",
+  opcoes:["She said to wait here","She told me to wait here","She told me wait here","She asked wait here"], correta:1,
+  dica:"Ordem → TELL + pessoa + TO + verbo." },
+        { pergunta:"\"Don't be late\", he said. → No discurso indireto:", falar:"He told me not to be late",
+  opcoes:["He told me to not be late","He told me not to be late","He told me don't be late","He said not be late"], correta:1,
+  dica:"Ordem negativa → NOT TO + verbo." }
+      ]
+    },
+    { id:"n3m17", temas:["gramatica"], titulo:"Modais de Dedução — MUST, MIGHT, CAN'T", icone:"🕵️", corIco:"#E1F3EA",
+      intro:"\"He must be tired.\" \"She might be at work.\" \"That can't be right.\" Como fazer suposições em inglês soando 100% natural, sem dizer \"I think\" toda hora.",
+      xp:100,
+      cards:[
+        { figura:"💯", pt:"Quase certeza positiva: MUST BE", en:"he must be the new guy", som:"rí mâst bí dhi niú gái",
+  quando:"MUST BE = você tem quase certeza que é verdade, baseado em evidência: \"The light is on, he must be home\" (a luz está acesa, ele deve estar em casa).",
+  exEn:"You must be tired after that shift.", exSom:"iú mâst bí táierd áf-ter dhét chift.", exPt:"Você deve estar cansado depois desse turno." },
+        { figura:"🤔", pt:"Talvez: MIGHT / MAY / COULD BE", en:"she might be at work", som:"chi máit bí ét uôrk",
+  quando:"MIGHT/MAY/COULD BE = possibilidade, sem certeza: \"She's not answering, she might be in a meeting\" (talvez ela esteja em reunião).",
+  exEn:"He might be running late today.", exSom:"rí máit bí rá-nin lêit tu-dêi.", exPt:"Ele pode estar atrasado hoje." },
+        { figura:"🚫", pt:"Certeza que NÃO é verdade: CAN'T BE", en:"that can't be right", som:"dhét quént bí ráit",
+  quando:"CAN'T BE = você tem quase certeza que NÃO é verdade: \"He can't be at work, I just saw him at home\" (não pode ser, eu acabei de vê-lo em casa).",
+  exEn:"That can't be true, I saw her yesterday.", exSom:"dhét quént bí trú, ái só rer iés-ter-dêi.", exPt:"Isso não pode ser verdade, eu a vi ontem." },
+        { figura:"⏪", pt:"No passado: MUST HAVE / MIGHT HAVE + particípio", en:"he must have forgotten", som:"ri mâst rév for-gó-ten",
+  quando:"Pra deduzir sobre o passado, acrescente HAVE + particípio: \"He's not here, he must have forgotten\" (ele deve ter esquecido). \"She might have called while I was out.\"",
+  exEn:"He must have left early this morning.", exSom:"ri mâst rév léft ér-li dhis mór-nin.", exPt:"Ele deve ter saído cedo hoje de manhã." },
+        { figura:"🎯", pt:"Comparando os três níveis de certeza", en:"must (quase certo) > might (talvez) > can't (quase certo que não)", som:"",
+  quando:"Pense numa régua: MUST BE (95% certeza que É) — MIGHT/MAY BE (50%, talvez) — CAN'T BE (95% certeza que NÃO é). Escolher o modal certo muda o quanto você parece confiante.",
+  exEn:"She must be the new supervisor, she has the keys.", exSom:"chi mâst bí dhi niú súper-váizor, chi réz dhi quíz.", exPt:"Ela deve ser a nova supervisora, ela tem as chaves." }
+      ],
+      quiz:[
+        { pergunta:"O carro dele está na garagem: \"He ____ be home.\" (quase certeza)", falar:"He must be home",
+  opcoes:["must","might","can't","would"], correta:0,
+  dica:"Evidência forte (o carro está lá) → MUST BE (quase certeza positiva)." },
+        { pergunta:"Você não tem certeza onde ela está: \"She ____ be at the store.\"", falar:"She might be at the store",
+  opcoes:["must","might","can't","should"], correta:1,
+  dica:"Sem certeza, só possibilidade → MIGHT BE." },
+        { pergunta:"Você viu a pessoa ontem em casa, então: \"That ____ be true.\" (não acredita)", falar:"That can't be true",
+  opcoes:["must","might","can't","will"], correta:2,
+  dica:"Certeza de que NÃO é verdade → CAN'T BE." },
+        { pergunta:"Complete (dedução no passado): \"He's not answering, he ____ forgotten his phone.\"", falar:"He must have forgotten his phone",
+  opcoes:["must have","must","might","can't have"], correta:0,
+  dica:"Dedução sobre o passado → MUST HAVE + particípio." }
+      ]
+    },
+    { id:"n3m18", temas:["gramatica"], titulo:"Present Perfect Continuous", icone:"⏳", corIco:"#FFF3D1",
+      intro:"\"I've been working here for 3 years.\" O tempo verbal que mostra uma ação que começou no passado e CONTINUA acontecendo agora — perfeito pra falar de experiência de trabalho.",
+      xp:100,
+      cards:[
+        { figura:"🧩", pt:"A fórmula: HAVE/HAS BEEN + -ING", en:"I have been working", som:"ái rév bín uôr-kin",
+  quando:"Present Perfect Continuous = HAVE/HAS + BEEN + verbo-ING. Mostra uma ação que começou no passado e continua até agora (ou acabou de parar, com resultado visível).",
+  exEn:"I've been working here for three years.", exSom:"áiv bín uôr-kin rír fór thrí íers.", exPt:"Eu trabalho aqui há três anos (e continuo)." },
+        { figura:"⏰", pt:"FOR e SINCE — os parceiros de sempre", en:"for three years / since 2021", som:"fór thrí íers / síns tu-táu-sen-tuén-ti-uân",
+  quando:"FOR + duração (for two hours, for three years). SINCE + ponto no tempo (since 2021, since Monday, since I arrived). Os dois aparecem MUITO com esse tempo verbal.",
+  exEn:"She's been living in Texas since 2021.", exSom:"chís bín lí-vin in téx-as síns tu-táu-sen-tuén-ti-uân.", exPt:"Ela mora no Texas desde 2021." },
+        { figura:"🆚", pt:"✕ Present Perfect simples", en:"I've been cleaning ✕ I've cleaned", som:"",
+  quando:"CONTINUOUS foca no PROCESSO/duração (\"I've been cleaning all day\" = venho limpando o dia todo, ênfase na ação em si). SIMPLES foca no RESULTADO (\"I've cleaned the room\" = a limpeza está pronta).",
+  exEn:"I've been cleaning all morning, the house looks great now.", exSom:"áiv bín clí-nin ól mór-nin, dhi ráus lúks grêit náu.", exPt:"Venho limpando a manhã toda, a casa está ótima agora." },
+        { figura:"💬", pt:"Pergunta: How long have you been...?", en:"How long have you been working here?", som:"râu lóng rév iú bín uôr-kin rír?",
+  quando:"A pergunta clássica de entrevista de emprego e conversa: \"How long have you been living in the US?\" (há quanto tempo você mora nos EUA?).",
+  exEn:"How long have you been working in construction?", exSom:"râu lóng rév iú bín uôr-kin in cons-trâk-chon?", exPt:"Há quanto tempo você trabalha na construção?" },
+        { figura:"🔥", pt:"Sinal de reclamação/cansaço", en:"I've been waiting for an hour!", som:"áiv bín uêi-tin fór en áuer!",
+  quando:"Esse tempo verbal também expressa frustração por algo que está demorando: \"I've been waiting for an hour!\" (estou esperando há uma hora!).",
+  exEn:"I've been trying to call you all day!", exSom:"áiv bín trá-in tu cól iú ól dêi!", exPt:"Estou tentando te ligar o dia todo!" }
+      ],
+      quiz:[
+        { pergunta:"Complete: \"I ____ working here for three years.\" (have been)", falar:"I've been working here for three years",
+  opcoes:["have","have been","am","was"], correta:1,
+  dica:"Present Perfect Continuous: HAVE BEEN + verbo-ING." },
+        { pergunta:"Complete: \"She's been living in Texas ____ 2021.\"", falar:"She's been living in Texas since 2021",
+  opcoes:["for","since","from","during"], correta:1,
+  dica:"Ponto específico no tempo (2021) → SINCE." },
+        { pergunta:"Complete: \"They ____ waiting for an hour!\" (for = duração)", falar:"They've been waiting for an hour",
+  opcoes:["have been","has been","are","were"], correta:0,
+  dica:"Sujeito plural (they) → HAVE BEEN + verbo-ing." },
+        { pergunta:"\"How long have you been working here?\" pergunta sobre...", falar:null,
+  opcoes:["O salário","Há quanto tempo você trabalha lá","Se você gosta do trabalho","Onde fica o trabalho"], correta:1,
+  dica:"How long + present perfect continuous = há quanto tempo (uma ação que continua)." }
+      ]
+    },
+    { id:"n3m19", temas:["gramatica"], titulo:"Past Perfect Continuous", icone:"⏮️", corIco:"#E4EDFA",
+      intro:"\"I had been working there for a year when they closed.\" A ação que já vinha acontecendo havia um tempo, ANTES de outra coisa no passado interromper.",
+      xp:100,
+      cards:[
+        { figura:"🧩", pt:"A fórmula: HAD BEEN + -ING", en:"I had been working", som:"ái réd bín uôr-kin",
+  quando:"Past Perfect Continuous = HAD BEEN + verbo-ING. Mostra uma ação em andamento ANTES de outro momento no passado. \"I had been working there for a year when they closed.\"",
+  exEn:"I had been working there for a year when they closed.", exSom:"ái réd bín uôr-kin dhér fór a ír uén dhêi clôuzd.", exPt:"Eu vinha trabalhando lá há um ano quando fecharam." },
+        { figura:"⏱️", pt:"Duas ações no passado, uma interrompe a outra", en:"had been -ing + when + past simple", som:"",
+  quando:"A estrutura clássica: [ação longa em andamento] + WHEN + [ação curta que interrompe, no passado simples]. \"She had been driving for two hours when the car broke down.\"",
+  exEn:"She had been driving for two hours when the car broke down.", exSom:"chi réd bín drái-vin fór tú áuers uén dhi car brôuk dáun.", exPt:"Ela vinha dirigindo há duas horas quando o carro quebrou." },
+        { figura:"🆚", pt:"✕ Past Perfect simples", en:"had been working (processo) ✕ had worked (resultado)", som:"",
+  quando:"PAST PERFECT CONTINUOUS foca no processo/duração antes de outro evento. PAST PERFECT simples foca no resultado já completo antes de outro evento: \"I had already finished when she arrived.\"",
+  exEn:"I had already finished the report when she arrived.", exSom:"ái réd ól-ré-di fí-nicht dhi ri-pórt uén chi a-ráivd.", exPt:"Eu já tinha terminado o relatório quando ela chegou." },
+        { figura:"💭", pt:"Explicando a causa de algo no passado", en:"he was tired because he had been working all night", som:"",
+  quando:"Muito usado pra explicar POR QUE algo estava acontecendo: \"He was exhausted because he had been working all night.\" (ele estava exausto porque vinha trabalhando a noite toda).",
+  exEn:"She was exhausted because she had been cleaning all day.", exSom:"chi uóz ig-zós-ted bi-cóz chi réd bín clí-nin ól dêi.", exPt:"Ela estava exausta porque tinha ficado limpando o dia todo." },
+        { figura:"🎯", pt:"Mais comum em histórias e relatos", en:"had been waiting, had been working...", som:"réd bín uêi-tin",
+  quando:"Esse tempo verbal aparece mais em histórias, explicações e relatos mais elaborados — não é tão comum na conversa rápida do dia a dia, mas é essencial pra contar uma experiência com detalhes.",
+  exEn:"They had been waiting for hours before the bus finally came.", exSom:"dhêi réd bín uêi-tin fór áuers bi-fór dhi bâs fái-nali quêim.", exPt:"Eles esperavam fazia horas antes do ônibus finalmente chegar." }
+      ],
+      quiz:[
+        { pergunta:"Complete: \"I ____ working there for a year when they closed.\" (had been)", falar:"I had been working there for a year when they closed",
+  opcoes:["have been","had been","was","have"], correta:1,
+  dica:"Past Perfect Continuous: HAD BEEN + verbo-ing, pra ação em andamento antes de outro evento passado." },
+        { pergunta:"\"She was tired because she had been cleaning all day\" explica...", falar:null,
+  opcoes:["Por que ela vai limpar amanhã","Por que ela estava cansada","Que ela nunca limpa","Que ela gosta de limpar"], correta:1,
+  dica:"Past Perfect Continuous explicando a CAUSA de um estado no passado." },
+        { pergunta:"Qual frase usa Past Perfect CONTINUOUS corretamente?", falar:null,
+  opcoes:["I had finished when she arrived","I had been working for two hours when she arrived","I have been working for two hours","I was working for two hours"], correta:1,
+  dica:"HAD BEEN + verbo-ing = past perfect continuous, focando na duração antes de outro evento passado." },
+        { pergunta:"A estrutura típica desse tempo verbal é...", falar:null,
+  opcoes:["ação longa + WHEN + ação curta no passado simples","duas ações no futuro","uma pergunta simples","um fato sempre verdadeiro"], correta:0,
+  dica:"Ação em andamento (had been -ing) interrompida por outra ação mais curta (past simples), ligadas por WHEN." }
+      ]
+    },
+    { id:"n3m20", temas:["gramatica"], titulo:"Voz Passiva — Todos os Tempos Verbais", icone:"🔧", corIco:"#FCE4DB",
+      intro:"Você já sabe presente e passado. Agora vamos completar o quadro: futuro, present perfect e modais na voz passiva — pra você entender qualquer contrato, manual ou aviso.",
+      xp:105,
+      cards:[
+        { figura:"🔮", pt:"Futuro passivo: WILL BE + particípio", en:"the report will be sent tomorrow", som:"dhi ri-pórt uíl bí sént tu-mó-rou",
+  quando:"Futuro na passiva: WILL BE + particípio. \"They will send the report\" → \"The report WILL BE SENT tomorrow.\"",
+  exEn:"The new schedule will be posted on Friday.", exSom:"dhi niú ské-diul uíl bí póus-ted ón frái-dêi.", exPt:"O novo horário será postado na sexta." },
+        { figura:"🌉", pt:"Present Perfect passivo: HAS/HAVE BEEN + particípio", en:"the form has been signed", som:"dhi fórm réz bín sáind",
+  quando:"Present Perfect na passiva: HAS/HAVE BEEN + particípio. \"Someone has signed the form\" → \"The form HAS BEEN SIGNED.\" Muito comum em atualizações de status.",
+  exEn:"The application has already been submitted.", exSom:"dhi é-pli-kêi-chon réz ól-ré-di bín sâb-mí-ted.", exPt:"A aplicação já foi enviada." },
+        { figura:"💪", pt:"Modais na passiva: MUST/CAN/SHOULD BE + particípio", en:"this must be done today", som:"dhis mâst bí dân tu-dêi",
+  quando:"Modal + BE + particípio: \"This must be done today\" (isto deve ser feito hoje), \"the machine can be fixed\" (a máquina pode ser consertada), \"it should be checked\" (deveria ser checado).",
+  exEn:"This form must be signed before Friday.", exSom:"dhis fórm mâst bí sáind bi-fór frái-dêi.", exPt:"Este formulário deve ser assinado antes de sexta." },
+        { figura:"📋", pt:"Onde isso aparece: contratos e instruções oficiais", en:"payment will be made / rent must be paid", som:"",
+  quando:"Voz passiva com modais e futuro é a língua oficial de contratos: \"Rent must be paid by the 5th\", \"Payment will be made every two weeks\", \"Damages must be reported immediately.\"",
+  exEn:"Rent must be paid by the fifth of each month.", exSom:"rént mâst bí pêid bái dhi fifth óv ítch mânth.", exPt:"O aluguel deve ser pago até o dia 5 de cada mês." },
+        { figura:"🧠", pt:"Resumo de todos os tempos na passiva", en:"is/was/will be/has been + particípio", som:"",
+  quando:"Presente: IS/ARE + particípio. Passado: WAS/WERE + particípio. Futuro: WILL BE + particípio. Perfeito: HAS/HAVE BEEN + particípio. Modal: MODAL + BE + particípio. Sempre o mesmo padrão, só muda o \"antes\".",
+  exEn:"The keys are kept in the office, and they must be returned every night.", exSom:"dhi quíz ar quépt in dhi ó-fis, énd dhêi mâst bí ri-térnd évri náit.", exPt:"As chaves ficam guardadas no escritório, e devem ser devolvidas toda noite." }
+      ],
+      quiz:[
+        { pergunta:"Complete (futuro passivo): \"The schedule ____ posted on Friday.\"", falar:"The schedule will be posted on Friday",
+  opcoes:["will be","is","was","has been"], correta:0,
+  dica:"Futuro na passiva: WILL BE + particípio." },
+        { pergunta:"Complete (present perfect passivo): \"The application has already ____ submitted.\"", falar:"The application has already been submitted",
+  opcoes:["be","been","was","being"], correta:1,
+  dica:"Present Perfect passivo: HAS/HAVE BEEN + particípio." },
+        { pergunta:"Complete (modal passivo): \"This form ____ signed before Friday.\" (obrigação)", falar:"This form must be signed before Friday",
+  opcoes:["must be","must","is being","was"], correta:0,
+  dica:"Modal + BE + particípio: must be signed." },
+        { pergunta:"\"Rent must be paid by the fifth\" significa...", falar:null,
+  opcoes:["O aluguel pode ser pago quando quiser","O aluguel deve ser pago até o dia 5","O aluguel já foi pago","Ninguém precisa pagar aluguel"], correta:1,
+  dica:"MUST BE PAID = deve ser pago (obrigação) na voz passiva." }
+      ]
+    },
+    { id:"n3m21", temas:["verbos","gramatica"], titulo:"Phrasal Verbs e Idioms do Trabalho — Nível Avançado", icone:"🧠", corIco:"#F5E4F7",
+      intro:"\"Let's figure this out.\" \"I burned out last season.\" As expressões que separam quem \"fala inglês\" de quem realmente CONVIVE em inglês no trabalho americano.",
+      xp:110,
+      cards:[
+        { figura:"🧩", pt:"Resolver / Descobrir", en:"figure out", som:"fí-guier áut",
+  quando:"FIGURE OUT = descobrir, resolver, entender depois de pensar: \"Let's figure out a better schedule\" (vamos descobrir um horário melhor).",
+  exEn:"We need to figure out a solution together.", exSom:"uí níd tu fí-guier áut a so-lú-chon tu-gué-dher.", exPt:"Precisamos descobrir uma solução juntos." },
+        { figura:"🔥", pt:"Esgotado de tanto trabalhar", en:"burned out", som:"bérnd áut",
+  quando:"BURN OUT / BURNED OUT = esgotamento total por excesso de trabalho: \"I was burned out after the busy season\" (eu estava esgotado depois da temporada cheia).",
+  exEn:"Many workers get burned out during the holiday season.", exSom:"mé-ni uôr-kers guét bérnd áut dú-rin dhi ró-li-dêi sí-zon.", exPt:"Muitos trabalhadores ficam esgotados durante a temporada de festas." },
+        { figura:"💪", pt:"Aguentar / Lidar com algo difícil", en:"put up with", som:"pút âp uídh",
+  quando:"PUT UP WITH = tolerar, aguentar algo chato ou difícil: \"I can't put up with this noise anymore\" (não aguento mais esse barulho).",
+  exEn:"I won't put up with being disrespected.", exSom:"ái uôunt pút âp uídh bí-in dis-ri-spék-ted.", exPt:"Eu não vou tolerar ser desrespeitado." },
+        { figura:"📈", pt:"Melhorar / Aumentar aos poucos", en:"pick up (business is picking up)", som:"pík âp",
+  quando:"PICK UP também significa melhorar, ganhar força: \"Business is picking up this month\" (os negócios estão melhorando esse mês). Note: é o mesmo phrasal verb de \"buscar\" — o sentido muda com o contexto!",
+  exEn:"Business always picks up in the summer.", exSom:"bí-znes ól-uêis píks âp in dhi sâ-mer.", exPt:"Os negócios sempre melhoram no verão." },
+        { figura:"🤝", pt:"Bater um papo informal / Idioms de trabalho", en:"break the ice / on the same page", som:"brêik dhi áis",
+  quando:"BREAK THE ICE = quebrar o gelo, começar uma conversa. ON THE SAME PAGE = estar alinhado/de acordo: \"Let's make sure we're on the same page before we start.\"",
+  exEn:"Let's make sure we're on the same page.", exSom:"léts mêik chúr uír ón dhi sêim pêidj.", exPt:"Vamos garantir que estamos alinhados." },
+        { figura:"⏱️", pt:"Correr contra o tempo / Trabalhar duro", en:"crunch time / hit the ground running", som:"crântch táim",
+  quando:"CRUNCH TIME = período de pressão/prazo apertado. HIT THE GROUND RUNNING = começar já produzindo, sem enrolação: \"On your first day, you need to hit the ground running.\"",
+  exEn:"It's crunch time, we need everyone focused.", exSom:"its crântch táim, uí níd évri-uân fôu-cast.", exPt:"É hora de correr, precisamos de todo mundo focado." }
+      ],
+      quiz:[
+        { pergunta:"\"We need to figure out a solution\" significa...", falar:null,
+  opcoes:["Precisamos ignorar o problema","Precisamos descobrir/resolver uma solução","Precisamos desenhar uma solução","Precisamos comprar uma solução"], correta:1,
+  dica:"Figure out = descobrir, resolver depois de pensar." },
+        { pergunta:"\"I was burned out\" significa...", falar:null,
+  opcoes:["Eu estava com fome","Eu estava esgotado de tanto trabalhar","Eu estava atrasado","Eu fui demitido"], correta:1,
+  dica:"Burned out = esgotamento total por excesso de trabalho." },
+        { pergunta:"\"I won't put up with that\" significa...", falar:null,
+  opcoes:["Eu não vou levantar isso","Eu não vou tolerar isso","Eu não vou comprar isso","Eu não vou esquecer isso"], correta:1,
+  dica:"Put up with = tolerar, aguentar." },
+        { pergunta:"\"Let's make sure we're on the same page\" quer dizer...", falar:null,
+  opcoes:["Vamos ler o mesmo livro","Vamos garantir que estamos alinhados/de acordo","Vamos escrever no mesmo papel","Vamos trabalhar na mesma página do site"], correta:1,
+  dica:"On the same page = alinhado, de acordo — expressão muito comum em reuniões de trabalho." }
+      ]
+    },
+    { id:"n3m22", temas:["gramatica","revisao"], titulo:"Simulado — Revisão Nível B2", icone:"🎓", corIco:"#E1F3EA",
+      intro:"Condicionais, discurso indireto, dedução, perfect continuous, passiva completa e idioms de trabalho — tudo junto num único desafio. Se você passar aqui, seu inglês já resolve qualquer situação real de trabalho.",
+      xp:140,
+      cards:[
+        { figura:"🌦️", pt:"Condicionais em revisão", en:"if it rains, we don't work / if I had time, I would study", som:"",
+  quando:"Zero (fato sempre verdadeiro), Primeiro (futuro real: if + presente, will), Segundo (hipotético: if + passado, would).",
+  exEn:"If I had more time, I would study every day.", exSom:"if ái réd mór táim, ái úud stâ-di évri dêi.", exPt:"Se eu tivesse mais tempo, eu estudaria todo dia." },
+        { figura:"🗣️", pt:"Discurso indireto em revisão", en:"she said she was tired / he asked if I was ready", som:"",
+  quando:"Presente vira passado; will vira would; perguntas de sim/não usam IF; ordens usam TELL + pessoa + TO.",
+  exEn:"She said she would call me tomorrow.", exSom:"chi séd chi úud cól mí tu-mó-rou.", exPt:"Ela disse que me ligaria amanhã." },
+        { figura:"🕵️", pt:"Dedução em revisão", en:"must be (certeza) / might be (talvez) / can't be (certeza negativa)", som:"",
+  quando:"MUST BE pra quase certeza positiva, MIGHT/MAY BE pra possibilidade, CAN'T BE pra quase certeza negativa. No passado: MUST HAVE + particípio.",
+  exEn:"He must have forgotten his phone at home.", exSom:"ri mâst rév for-gó-ten ris fôun ét rôum.", exPt:"Ele deve ter esquecido o celular em casa." },
+        { figura:"⏳", pt:"Perfect continuous em revisão", en:"I've been working / I had been working", som:"",
+  quando:"Present Perfect Continuous (ação que começou e continua) usa HAVE BEEN + -ING. Past Perfect Continuous (ação em andamento antes de outro evento passado) usa HAD BEEN + -ING.",
+  exEn:"I've been working here for three years.", exSom:"áiv bín uôr-kin rír fór thrí íers.", exPt:"Eu trabalho aqui há três anos." },
+        { figura:"🔧", pt:"Voz passiva completa em revisão", en:"is done / was done / will be done / has been done / must be done", som:"",
+  quando:"O particípio se mantém, só o TO BE muda de tempo: presente, passado, futuro, perfeito ou depois de um modal.",
+  exEn:"This form must be signed before Friday.", exSom:"dhis fórm mâst bí sáind bi-fór frái-dêi.", exPt:"Este formulário deve ser assinado antes de sexta." }
+      ],
+      quiz:[
+        { pergunta:"Complete: \"If I ____ more money, I would buy a car.\" (had)", falar:"If I had more money, I would buy a car",
+  opcoes:["have","had","will have","would have"], correta:1,
+  dica:"Segundo condicional: IF + PAST SIMPLE, WOULD + verbo." },
+        { pergunta:"\"I will call you\", he said. → discurso indireto:", falar:"He said he would call me",
+  opcoes:["He said he will call me","He said he would call me","He said he calls me","He said he is calling me"], correta:1,
+  dica:"WILL vira WOULD no discurso indireto." },
+        { pergunta:"O carro dele está na garagem: \"He ____ be home.\"", falar:"He must be home",
+  opcoes:["must","might","can't","would"], correta:0,
+  dica:"Evidência forte → MUST BE (quase certeza)." },
+        { pergunta:"Complete: \"I ____ working here for three years.\"", falar:"I've been working here for three years",
+  opcoes:["have been","had been","was","am"], correta:0,
+  dica:"Ação que começou no passado e continua até agora → PRESENT PERFECT CONTINUOUS." },
+        { pergunta:"Complete (voz passiva, futuro): \"The schedule ____ posted on Friday.\"", falar:"The schedule will be posted on Friday",
+  opcoes:["will be","is","was","has been"], correta:0,
+  dica:"Futuro na passiva: WILL BE + particípio." }
+      ]
+    },
+    { id:"n3m23", temas:["gramatica"], titulo:"Terceiro Condicional e Condicional Misto", icone:"⏳", corIco:"#FFF3D1",
+      intro:"\"If I had known, I would have gone.\" A gramática do arrependimento e do \"e se\" sobre o passado — essencial pra falar de decisões e consequências com maturidade.",
+      xp:110,
+      cards:[
+        { figura:"💔", pt:"Terceiro Condicional: passado que não aconteceu", en:"if I had known, I would have gone", som:"if ái réd nôun, ái úud rév gón",
+  quando:"Fala de uma situação IRREAL no PASSADO — algo que não aconteceu: IF + PAST PERFECT, WOULD HAVE + particípio. \"If I had known about the job, I would have applied.\"",
+  exEn:"If I had known about the job, I would have applied.", exSom:"if ái réd nôun a-báut dhi djób, ái úud rév a-pláid.", exPt:"Se eu soubesse do emprego, eu teria me candidatado." },
+        { figura:"😔", pt:"Expressando arrependimento", en:"I wish I had studied more", som:"ái uích ái réd stâ-did mór",
+  quando:"O terceiro condicional é a estrutura do arrependimento: \"If I had saved more money, I wouldn't have had problems.\" (se eu tivesse economizado mais, eu não teria tido problemas).",
+  exEn:"If I had saved more money, I wouldn't have had problems.", exSom:"if ái réd sêivd mór mâni, ái úudnt rév réd próblems.", exPt:"Se eu tivesse economizado mais, eu não teria tido problemas." },
+        { figura:"🔀", pt:"Condicional Misto: passado afeta o presente", en:"if I hadn't taken this job, I wouldn't be here now", som:"",
+  quando:"CONDICIONAL MISTO mistura tempos: causa no PASSADO (if + past perfect) + resultado no PRESENTE (would + verbo simples): \"If I hadn't taken this job, I wouldn't be here now.\"",
+  exEn:"If I hadn't moved to the US, I wouldn't have this life today.", exSom:"if ái réd-ent múvd tu dhi iu-és, ái úud-ent rév dhis láif tu-dêi.", exPt:"Se eu não tivesse me mudado pros EUA, eu não teria essa vida hoje." },
+        { figura:"🔡", pt:"As formas encurtadas que você vai ouvir", en:"I'd have gone / I wouldn't've known", som:"áid rév gón",
+  quando:"Na fala rápida, \"would have\" vira \"would've\" (soa \"úud-ov\"), e no negativo \"wouldn't have\" vira \"wouldn't've\". Não se assuste ao ouvir isso.",
+  exEn:"I would've called you if I had known.", exSom:"ái úud-ov cóld iú if ái réd nôun.", exPt:"Eu teria te ligado se eu soubesse." },
+        { figura:"🎯", pt:"Comparando os quatro condicionais", en:"zero, first, second, third — a régua completa", som:"",
+  quando:"ZERO: sempre verdade. FIRST: futuro real. SECOND: hipótese no presente/futuro. THIRD: hipótese sobre o PASSADO (já não tem volta). Cada um muda o tempo verbal das duas partes da frase.",
+  exEn:"If I had left earlier, I wouldn't have missed the bus.", exSom:"if ái réd léft ér-li-er, ái úud-ent rév mist dhi bâs.", exPt:"Se eu tivesse saído mais cedo, eu não teria perdido o ônibus." }
+      ],
+      quiz:[
+        { pergunta:"Complete: \"If I ____ known about the job, I would have applied.\" (had)", falar:"If I had known about the job, I would have applied",
+  opcoes:["have","had","has","would have"], correta:1,
+  dica:"Terceiro condicional: IF + PAST PERFECT (had known)." },
+        { pergunta:"Complete: \"If I had saved more, I ____ had problems.\" (wouldn't have)", falar:"If I had saved more, I wouldn't have had problems",
+  opcoes:["wouldn't have","won't have","wouldn't","don't have"], correta:0,
+  dica:"Resultado no terceiro condicional: WOULD HAVE (ou WOULDN'T HAVE) + particípio." },
+        { pergunta:"Qual frase é um CONDICIONAL MISTO (passado afeta o presente)?", falar:null,
+  opcoes:["If it rains, I stay home","If I hadn't moved here, I wouldn't have this life now","If I had more money, I would travel","If I had known, I would have gone"], correta:1,
+  dica:"Causa no passado (hadn't moved) + resultado no PRESENTE (wouldn't have = wouldn't) é a marca do condicional misto." },
+        { pergunta:"\"I would've called you\" — o que é \"would've\"?", falar:null,
+  opcoes:["would have","would be","will have","was"], correta:0,
+  dica:"Would've é a forma reduzida e falada de \"would have\"." }
+      ]
+    },
+    { id:"n3m24", temas:["gramatica"], titulo:"Modo Subjuntivo", icone:"🎩", corIco:"#E4EDFA",
+      intro:"\"I suggest that he BE on time.\" \"If I WERE you...\" O jeito mais formal e educado de dar sugestões, exigências e desejos em inglês.",
+      xp:105,
+      cards:[
+        { figura:"💡", pt:"Sugestões formais: SUGGEST/RECOMMEND THAT", en:"I suggest that he be on time", som:"ái sâ-djest dhét rí bí ón táim",
+  quando:"Depois de SUGGEST, RECOMMEND, PROPOSE + THAT, o verbo fica na forma BASE (infinitivo sem TO), mesmo com he/she/it: \"I suggest that she call the office\" (não \"calls\").",
+  exEn:"I suggest that everyone arrive fifteen minutes early.", exSom:"ái sâ-djest dhét évri-uân a-ráiv fif-tín mí-nits ér-li.", exPt:"Sugiro que todos cheguem quinze minutos mais cedo." },
+        { figura:"📋", pt:"Exigências formais: REQUIRE/DEMAND/INSIST THAT", en:"the company requires that he wear a uniform", som:"dhi câm-pa-ni ri-quáiers dhét rí uér a iú-ni-form",
+  quando:"O mesmo padrão vale pra exigências: REQUIRE, DEMAND, INSIST + THAT + sujeito + verbo na forma base. \"The manager insists that everyone be on time.\"",
+  exEn:"The company requires that all workers wear safety gear.", exSom:"dhi câm-pa-ni ri-quáiers dhét ól uôr-kers uér séif-ti guír.", exPt:"A empresa exige que todos os trabalhadores usem equipamento de segurança." },
+        { figura:"🌟", pt:"IF I WERE... — o subjuntivo mais usado", en:"if I were you, I would ask for help", som:"if ái uér iú",
+  quando:"Você já viu isso no segundo condicional! É subjuntivo puro: WERE em vez de WAS, mesmo com I/he/she, pra falar de algo hipotético/contrário à realidade.",
+  exEn:"If I were in your position, I would negotiate.", exSom:"if ái uér in iór po-zí-chon, ái úud ni-gô-chi-êit.", exPt:"Se eu estivesse na sua posição, eu negociaria." },
+        { figura:"🙏", pt:"Desejos: WISH + passado / WISH + had", en:"I wish I knew more English", som:"ái uích ái niú mór ín-glich",
+  quando:"WISH + passado simples = desejo sobre o presente (\"I wish I knew\" = queria saber, mas não sei). WISH + had + particípio = desejo sobre o passado (\"I wish I had studied\" = queria ter estudado).",
+  exEn:"I wish I had learned English sooner.", exSom:"ái uích ái réd lérnd ín-glich sú-ner.", exPt:"Eu gostaria de ter aprendido inglês antes." },
+        { figura:"🎯", pt:"Onde você mais vai usar isso", en:"recomendações no trabalho, feedback educado", som:"",
+  quando:"Esse padrão aparece o tempo todo em ambiente profissional formal: e-mails, avaliações, reuniões — dar uma sugestão soando respeitoso e não-impositivo.",
+  exEn:"I recommend that she review the schedule again.", exSom:"ái ré-co-mend dhét chi ri-viú dhi ské-diul a-guén.", exPt:"Recomendo que ela revise o horário novamente." }
+      ],
+      quiz:[
+        { pergunta:"Complete: \"I suggest that he ____ on time.\" (forma base)", falar:"I suggest that he be on time",
+  opcoes:["is","be","was","being"], correta:1,
+  dica:"Depois de SUGGEST THAT, o verbo fica na forma base: be (não is)." },
+        { pergunta:"Complete: \"The company requires that all workers ____ safety gear.\"", falar:"The company requires that all workers wear safety gear",
+  opcoes:["wears","wear","wearing","wore"], correta:1,
+  dica:"Verbo na forma base depois de REQUIRE THAT: wear (sem S mesmo sendo \"workers\", regra do subjuntivo)." },
+        { pergunta:"\"If I were you, I would ask for help\" usa qual forma de TO BE?", falar:null,
+  opcoes:["was","is","were","am"], correta:2,
+  dica:"Subjuntivo: WERE mesmo com \"I\", em situação hipotética." },
+        { pergunta:"\"I wish I had studied more\" expressa desejo sobre...", falar:null,
+  opcoes:["O futuro","O presente","O passado","Nada específico"], correta:2,
+  dica:"WISH + HAD + particípio = desejo/arrependimento sobre o PASSADO." }
+      ]
+    },
+    { id:"n3m25", temas:["gramatica"], titulo:"Inversão Enfática", icone:"🔃", corIco:"#FCE4DB",
+      intro:"\"Never have I seen such dedication.\" \"Not only did she finish early, she also helped others.\" A estrutura que dá ÊNFASE dramática — o inglês \"chique\" que impressiona em discursos e entrevistas.",
+      xp:100,
+      cards:[
+        { figura:"🚫", pt:"NEVER / RARELY no início → inverte", en:"never have I seen such dedication", som:"né-ver rév ái sín sâtch de-di-quêi-chon",
+  quando:"Quando um advérbio negativo (never, rarely, seldom) começa a frase, o auxiliar vem ANTES do sujeito, como numa pergunta: \"I have never seen this\" → \"Never HAVE I seen this.\"",
+  exEn:"Never have I worked with such a great team.", exSom:"né-ver rév ái uôrkt uídh sâtch a grêit tím.", exPt:"Nunca trabalhei com uma equipe tão boa." },
+        { figura:"➕", pt:"NOT ONLY... BUT ALSO", en:"not only did she finish, she also helped", som:"nót ôun-li did chi fí-nich",
+  quando:"NOT ONLY no início também inverte: \"She not only finished early\" → \"Not only DID SHE finish early, (but) she also helped others.\"",
+  exEn:"Not only did he arrive on time, he also brought coffee for everyone.", exSom:"nót ôun-li did rí a-ráiv ón táim, rí ól-sôu bró-rt cófi fór évri-uân.", exPt:"Ele não só chegou no horário, como também trouxe café pra todo mundo." },
+        { figura:"🎯", pt:"LITTLE no início — surpresa/ironia", en:"little did I know...", som:"lí-tel did ái nôu",
+  quando:"\"Little did I know\" = \"eu mal sabia que...\" — clássico de história/narrativa, indicando que algo surpreendente viria a seguir.",
+  exEn:"Little did I know that this job would change my life.", exSom:"lí-tel did ái nôu dhét dhis djób úud tchêindj mái láif.", exPt:"Eu mal sabia que esse trabalho mudaria minha vida." },
+        { figura:"💬", pt:"Uso principal: registro formal e discursos", en:"fala/escrita formal, não conversa casual", som:"",
+  quando:"Essa estrutura aparece em discursos, apresentações, textos formais e narrativas — NÃO é usada na conversa casual do dia a dia (lá, o normal é \"I have never seen this\", sem inverter).",
+  exEn:"Rarely do we see such commitment to quality.", exSom:"rér-li du uí sí sâtch co-mít-ment tu quá-li-ti.", exPt:"Raramente vemos tanto compromisso com a qualidade." },
+        { figura:"🧠", pt:"O padrão sempre é o mesmo", en:"advérbio negativo + auxiliar + sujeito + verbo", som:"",
+  quando:"Fórmula fixa: [advérbio negativo/limitador] + [auxiliar: have/do/does/did] + [sujeito] + [verbo]. Funciona com qualquer advérbio desse grupo: never, rarely, seldom, hardly, not only, little.",
+  exEn:"Seldom have I seen a team work so well together.", exSom:"sél-dom rév ái sín a tím uôrk sôu uél tu-gué-dher.", exPt:"Raramente eu vi uma equipe trabalhar tão bem junta." }
+      ],
+      quiz:[
+        { pergunta:"Complete: \"Never ____ I seen such dedication.\" (inversão)", falar:"Never have I seen such dedication",
+  opcoes:["I have","have I","did I have","I did have"], correta:1,
+  dica:"Advérbio negativo no início → auxiliar antes do sujeito: Never HAVE I seen." },
+        { pergunta:"Complete: \"Not only ____ she finish early, she also helped others.\"", falar:"Not only did she finish early, she also helped others",
+  opcoes:["she did","did she","she does","does she"], correta:1,
+  dica:"NOT ONLY no início → inversão: did she finish." },
+        { pergunta:"Onde essa estrutura é mais usada?", falar:null,
+  opcoes:["Só em mensagens de texto","Em discursos, apresentações e textos formais","Só em gírias","Nunca é usada"], correta:1,
+  dica:"Inversão enfática é característica de fala/escrita formal, não da conversa casual." },
+        { pergunta:"\"Little did I know\" significa...", falar:null,
+  opcoes:["Eu sabia pouco de tudo","Eu mal sabia que...","Eu não sabia nada","Eu sabia demais"], correta:1,
+  dica:"\"Little did I know\" = eu mal sabia — indicando surpresa sobre o que vem a seguir." }
+      ]
+    },
+    { id:"n3m26", temas:["gramatica"], titulo:"Nominalização — Verbo Vira Substantivo", icone:"🏛️", corIco:"#F5E4F7",
+      intro:"\"We decided\" vira \"we made a decision\". Transformar verbos e adjetivos em substantivos é o segredo do inglês formal — de e-mails profissionais a relatórios.",
+      xp:100,
+      cards:[
+        { figura:"🔄", pt:"Verbo → substantivo com -TION/-SION", en:"decide → decision, apply → application", som:"di-sáid → di-sí-jon",
+  quando:"Muitos verbos formam substantivo com -TION/-SION: decide→decision, apply→application, inform→information, discuss→discussion. \"We made a decision\" soa mais formal que \"we decided\".",
+  exEn:"We need to make a decision about the schedule.", exSom:"uí níd tu mêik a di-sí-jon a-báut dhi ské-diul.", exPt:"Precisamos tomar uma decisão sobre o horário." },
+        { figura:"📈", pt:"Verbo → substantivo com -MENT", en:"improve → improvement, develop → development", som:"im-prúv → im-prúv-ment",
+  quando:"Outro padrão comum: improve→improvement, develop→development, employ→employment, achieve→achievement. \"There has been an improvement in your work\" (houve uma melhoria no seu trabalho).",
+  exEn:"There has been a big improvement in your performance.", exSom:"dhér réz bín a big im-prúv-ment in iór per-fór-mans.", exPt:"Houve uma grande melhoria no seu desempenho." },
+        { figura:"💭", pt:"Adjetivo → substantivo com -NESS/-ITY", en:"happy → happiness, able → ability", som:"ré-pi-nes",
+  quando:"Adjetivos também viram substantivo: happy→happiness, able→ability, responsible→responsibility, honest→honesty. \"Your honesty is appreciated\" (sua honestidade é apreciada).",
+  exEn:"Your responsibility is to check every room.", exSom:"iór ris-pón-si-bí-li-ti iz tu tchék évri rúm.", exPt:"Sua responsabilidade é checar todos os quartos." },
+        { figura:"📊", pt:"Por que usar isso: soa mais formal/profissional", en:"we discussed it → there was a discussion", som:"",
+  quando:"Nominalização deixa o texto mais formal e \"objetivo\", tirando o foco da pessoa que age. É a linguagem de relatórios, e-mails formais e avaliações de desempenho.",
+  exEn:"There was a discussion about the new policy.", exSom:"dhér uóz a dis-câ-chon a-báut dhi niú pó-li-si.", exPt:"Houve uma discussão sobre a nova política." },
+        { figura:"⚖️", pt:"Cuidado: não exagere na fala do dia a dia", en:"informal: we talked / formal: there was a discussion", som:"",
+  quando:"Na conversa casual com colegas, ainda é mais natural usar o verbo direto (\"we talked about it\"). Guarde a nominalização pra e-mails, relatórios e situações formais.",
+  exEn:"We talked about the new schedule at lunch.", exSom:"uí tókt a-báut dhi niú ské-diul ét lântch.", exPt:"Conversamos sobre o novo horário no almoço." }
+      ],
+      quiz:[
+        { pergunta:"Qual é o substantivo de \"decide\"?", falar:null,
+  opcoes:["decideness","decision","decidement","decidity"], correta:1,
+  dica:"decide → decision (padrão -TION/-SION)." },
+        { pergunta:"Qual é o substantivo de \"improve\"?", falar:null,
+  opcoes:["improvement","improveness","improvation","improvity"], correta:0,
+  dica:"improve → improvement (padrão -MENT)." },
+        { pergunta:"Qual é o substantivo de \"responsible\"?", falar:null,
+  opcoes:["responsibleness","responsibility","responsiblement","responsibletion"], correta:1,
+  dica:"responsible → responsibility (padrão -ITY)." },
+        { pergunta:"\"There has been an improvement in your work\" é uma frase mais...", falar:null,
+  opcoes:["Informal e de rua","Formal e profissional","Errada gramaticalmente","Usada só entre amigos"], correta:1,
+  dica:"Nominalização é característica de um registro mais formal, típico de avaliações profissionais." }
+      ]
+    },
+    { id:"n3m27", temas:["gramatica"], titulo:"Conectores Formais — However, Moreover, Therefore", icone:"🧷", corIco:"#E1F3EA",
+      intro:"\"But\" e \"so\" funcionam, mas \"however\" e \"therefore\" são a versão de terno e gravata das mesmas ideias — essenciais pra e-mails e conversas mais sérias.",
+      xp:100,
+      cards:[
+        { figura:"🔄", pt:"Contraste: HOWEVER (= but, mais formal)", en:"the job is hard; however, it pays well", som:"",
+  quando:"HOWEVER expressa contraste, como BUT, mas com pontuação diferente e tom mais formal — geralmente com ponto e vírgula ou ponto final antes: \"The job is hard. However, it pays well.\"",
+  exEn:"The schedule is tight. However, we always finish on time.", exSom:"dhi ské-diul iz táit. râu-é-ver, uí ól-uêis fí-nich ón táim.", exPt:"O horário é apertado. Porém, sempre terminamos no prazo." },
+        { figura:"➕", pt:"Adicionar informação: MOREOVER / FURTHERMORE", en:"moreover, it includes health insurance", som:"mór-óu-ver",
+  quando:"MOREOVER e FURTHERMORE = \"além disso\", pra adicionar um argumento mais forte: \"This job pays well. Moreover, it includes health insurance.\"",
+  exEn:"The position offers good pay. Moreover, it includes benefits.", exSom:"dhi po-zí-chon ó-fers gúd pêi. mór-óu-ver, it in-clúds bé-ne-fits.", exPt:"A vaga oferece bom salário. Além disso, inclui benefícios." },
+        { figura:"➡️", pt:"Consequência: THEREFORE / AS A RESULT", en:"he was late; therefore, he lost the bonus", som:"déar-fór",
+  quando:"THEREFORE e AS A RESULT = \"portanto\", \"como resultado\" — ligam causa e efeito de forma formal: \"He arrived late. Therefore, he lost the bonus.\"",
+  exEn:"She worked extra hours. As a result, she earned a bonus.", exSom:"chi uôrkt éx-tra áuers. és a ri-zâlt, chi érnd a bôu-nas.", exPt:"Ela trabalhou horas extras. Como resultado, ganhou um bônus." },
+        { figura:"⚔️", pt:"Contraste direto: WHEREAS / ON THE OTHER HAND", en:"some like the morning shift, whereas others prefer nights", som:"uér-éz",
+  quando:"WHEREAS e ON THE OTHER HAND comparam duas coisas diferentes: \"Some workers like the morning shift, WHEREAS others prefer the night shift.\"",
+  exEn:"Some prefer working outdoors, whereas others prefer the kitchen.", exSom:"sâm pri-fér uôr-kin áut-dórs, uér-éz â-ders pri-fér dhi kí-tchen.", exPt:"Alguns preferem trabalhar ao ar livre, enquanto outros preferem a cozinha." },
+        { figura:"📝", pt:"Onde usar: e-mails e conversas formais", en:"não é pra usar toda hora na fala casual", som:"",
+  quando:"Esses conectores brilham em e-mails formais, relatórios e situações profissionais sérias. Na conversa do dia a dia com colegas, \"but\", \"so\" e \"also\" continuam sendo o mais natural.",
+  exEn:"I understand your concern. However, the policy cannot change.", exSom:"ái ân-der-ständ iór con-sérn. râu-é-ver, dhi pó-li-si quént tchêindj.", exPt:"Entendo sua preocupação. Porém, a política não pode mudar." }
+      ],
+      quiz:[
+        { pergunta:"Complete: \"The job is hard. ____, it pays well.\" (contraste formal)", falar:"The job is hard. However, it pays well",
+  opcoes:["Moreover","However","Therefore","Because"], correta:1,
+  dica:"HOWEVER = contraste, versão formal de BUT." },
+        { pergunta:"Complete: \"He arrived late. ____, he lost the bonus.\" (consequência)", falar:"He arrived late. Therefore, he lost the bonus",
+  opcoes:["However","Moreover","Therefore","Whereas"], correta:2,
+  dica:"THEREFORE = portanto, liga causa e consequência." },
+        { pergunta:"Qual conector serve pra ADICIONAR um argumento mais forte?", falar:null,
+  opcoes:["However","Moreover","Whereas","Because"], correta:1,
+  dica:"MOREOVER = além disso, adiciona informação." },
+        { pergunta:"\"Some like mornings, whereas others prefer nights\" usa WHEREAS para...", falar:null,
+  opcoes:["Mostrar consequência","Comparar duas coisas diferentes","Adicionar informação","Pedir desculpas"], correta:1,
+  dica:"WHEREAS compara/contrasta duas situações diferentes." }
+      ]
+    },
+    { id:"n3m28", temas:["gramatica"], titulo:"Orações Reduzidas com Particípio", icone:"✂️", corIco:"#FFF3D1",
+      intro:"\"Having finished the work, he left.\" Como cortar uma frase longa em uma versão mais elegante e compacta, sem perder o sentido — marca registrada de textos avançados.",
+      xp:105,
+      cards:[
+        { figura:"🏃", pt:"Particípio presente (-ING) = ação simultânea/ativa", en:"working hard, she finished early", som:"uôr-kin rárd",
+  quando:"Quando o sujeito FAZ a ação, use o particípio presente pra encurtar: \"Because she worked hard, she finished early\" → \"Working hard, she finished early.\"",
+  exEn:"Working quickly, he finished all the rooms by noon.", exSom:"uôr-kin quík-li, rí fí-nicht ól dhi rúms bái nún.", exPt:"Trabalhando rápido, ele terminou todos os quartos até o meio-dia." },
+        { figura:"📦", pt:"Particípio passado = sujeito recebe a ação", en:"exhausted after work, she fell asleep", som:"ig-zós-ted áf-ter uôrk",
+  quando:"Quando o sujeito RECEBE a ação (sentido passivo), use o particípio passado: \"Because she was exhausted, she fell asleep\" → \"Exhausted after work, she fell asleep.\"",
+  exEn:"Exhausted after the long shift, he went straight to bed.", exSom:"ig-zós-ted áf-ter dhi lóng chift, rí uént strêit tu béd.", exPt:"Exausto depois do turno longo, ele foi direto pra cama." },
+        { figura:"⏮️", pt:"HAVING + particípio = uma ação antes da outra", en:"having finished the work, he left", som:"ré-vin fí-nicht dhi uôrk",
+  quando:"HAVING + particípio mostra que uma ação aconteceu ANTES da outra: \"After he had finished the work, he left\" → \"Having finished the work, he left.\"",
+  exEn:"Having worked there for five years, she knew every detail.", exSom:"ré-vin uôrkt dhér fór fáiv íers, chi niú évri di-têil.", exPt:"Tendo trabalhado lá por cinco anos, ela sabia cada detalhe." },
+        { figura:"🎯", pt:"Sempre o mesmo sujeito nas duas partes", en:"cuidado com o sujeito errado", som:"",
+  quando:"Regra de ouro: o sujeito da oração reduzida tem que ser o MESMO da frase principal. \"Walking to work, the rain started\" está errado (quem anda é a pessoa, não a chuva) — o certo é \"Walking to work, I got caught in the rain.\"",
+  exEn:"Walking to work, I got caught in the rain.", exSom:"uó-quin tu uôrk, ái gót cót in dhi rêin.", exPt:"Andando pro trabalho, eu fui pego pela chuva." },
+        { figura:"📝", pt:"Onde aparece: textos escritos e histórias", en:"mais comum na escrita do que na fala", som:"",
+  quando:"Orações reduzidas com particípio aparecem mais em textos escritos, narrativas e inglês mais literário/formal — na fala do dia a dia, é mais comum simplesmente usar duas frases com \"because\" ou \"after\".",
+  exEn:"Having saved enough money, they finally bought a car.", exSom:"ré-vin sêivd i-nâf mâni, dhêi fái-na-li bót a car.", exPt:"Tendo economizado dinheiro suficiente, eles finalmente compraram um carro." }
+      ],
+      quiz:[
+        { pergunta:"\"Because she worked hard, she finished early\" reduzida vira:", falar:"Working hard, she finished early",
+  opcoes:["Worked hard, she finished early","Working hard, she finished early","Having work hard, she finished early","Work hard, she finished early"], correta:1,
+  dica:"Sujeito ativo (ela trabalha) → particípio presente: Working hard." },
+        { pergunta:"\"Because she was exhausted, she fell asleep\" reduzida vira:", falar:"Exhausted, she fell asleep",
+  opcoes:["Exhausting, she fell asleep","Exhausted, she fell asleep","Having exhaust, she fell asleep","Exhaust, she fell asleep"], correta:1,
+  dica:"Sujeito recebe a ação (ela é/está exausta) → particípio passado: Exhausted." },
+        { pergunta:"\"After he had finished the work, he left\" reduzida vira:", falar:"Having finished the work, he left",
+  opcoes:["Finished the work, he left","Finishing the work, he left","Having finished the work, he left","Have finished the work, he left"], correta:2,
+  dica:"Uma ação antes da outra → HAVING + particípio: Having finished." },
+        { pergunta:"Qual é o ERRO na frase \"Walking to work, the rain started\"?", falar:null,
+  opcoes:["Não tem erro","O sujeito das duas partes é diferente (quem anda não é a chuva)","Falta um artigo","O verbo está no tempo errado"], correta:1,
+  dica:"Regra de ouro: o sujeito da oração reduzida precisa ser o mesmo da frase principal." }
+      ]
+    },
+    { id:"n3m29", temas:["gramatica"], titulo:"Voz Causativa — HAVE/GET Something Done", icone:"🔧", corIco:"#E4EDFA",
+      intro:"\"I had my car fixed.\" Como dizer que ALGUÉM fez algo pra você — não foi você quem fez, você pagou/pediu pra fazerem.",
+      xp:100,
+      cards:[
+        { figura:"🔧", pt:"A fórmula: HAVE + objeto + particípio", en:"I had my car fixed", som:"ái réd mái car fíkst",
+  quando:"HAVE + coisa + particípio = você contratou/pediu pra alguém fazer algo por você: \"I had my car fixed\" (mandei consertar meu carro — não fui eu quem consertou).",
+  exEn:"I had my hair cut yesterday.", exSom:"ái réd mái rér cât iés-ter-dêi.", exPt:"Eu cortei o cabelo ontem (alguém cortou pra mim)." },
+        { figura:"💵", pt:"GET no lugar de HAVE — mais informal", en:"I got my phone fixed", som:"ái gót mái fôun fíkst",
+  quando:"GET + coisa + particípio tem o mesmo sentido, só que mais informal e às vezes com a ideia de \"consegui que fizessem\": \"I got my phone fixed at the shop downtown.\"",
+  exEn:"I got my documents translated last week.", exSom:"ái gót mái dó-kiu-ments trans-lêi-ted lést uík.", exPt:"Eu mandei traduzir meus documentos semana passada." },
+        { figura:"🆚", pt:"✕ fazer você mesmo", en:"I fixed my car (eu mesmo) ✕ I had my car fixed (mandei consertar)", som:"",
+  quando:"Compare: \"I cut my hair\" (eu mesmo cortei, provavelmente ficou torto) ✕ \"I had my hair cut\" (fui ao salão, alguém cortou pra mim). A diferença muda TUDO no sentido.",
+  exEn:"I painted my house myself, but I had the roof fixed by a professional.", exSom:"ái pêin-ted mái ráus mái-sélf, bât ái réd dhi rúf fíkst bái a pro-fé-cho-nal.", exPt:"Eu pintei minha casa sozinho, mas mandei consertar o telhado por um profissional." },
+        { figura:"⚠️", pt:"Sentido negativo: algo ruim aconteceu com você", en:"she had her wallet stolen", som:"chi réd rer uó-let stôu-len",
+  quando:"A mesma estrutura também descreve algo ruim que aconteceu (sem querer): \"She had her wallet stolen\" (a carteira dela foi roubada) — ela não pediu isso, mas a construção é a mesma.",
+  exEn:"He had his car broken into last night.", exSom:"rí réd ris car brô-quen ín-tu lést náit.", exPt:"O carro dele foi arrombado ontem à noite." },
+        { figura:"🎯", pt:"Onde você mais vai usar isso", en:"serviços: cabelo, carro, documentos, casa", som:"",
+  quando:"Essencial pra falar de qualquer serviço contratado: \"I need to have this translated\", \"I'm going to get my car checked\", \"We had the kitchen renovated.\"",
+  exEn:"We're having the kitchen renovated next month.", exSom:"uír ré-vin dhi kí-tchen ré-no-vêi-ted néxt mânth.", exPt:"Estamos mandando reformar a cozinha mês que vem." }
+      ],
+      quiz:[
+        { pergunta:"\"I had my car fixed\" significa...", falar:null,
+  opcoes:["Eu mesmo consertei o carro","Eu mandei/paguei alguém pra consertar o carro","Meu carro quebrou de novo","Eu vendi meu carro"], correta:1,
+  dica:"HAVE + objeto + particípio = alguém fez isso por você, você não fez sozinho." },
+        { pergunta:"Complete: \"I need to ____ my documents translated.\" (mandar traduzir)", falar:"I need to have my documents translated",
+  opcoes:["do","make","have","go"], correta:2,
+  dica:"HAVE + objeto + particípio: have my documents translated." },
+        { pergunta:"\"She had her wallet stolen\" significa...", falar:null,
+  opcoes:["Ela roubou uma carteira","A carteira dela foi roubada","Ela perdeu a carteira de propósito","Ela comprou uma carteira nova"], correta:1,
+  dica:"Mesma estrutura causativa pode descrever algo ruim que aconteceu (sem querer)." },
+        { pergunta:"Qual frase mostra que a PRÓPRIA pessoa fez o trabalho?", falar:null,
+  opcoes:["I had my house painted","I got my hair cut","I painted my house myself","I'm having the kitchen renovated"], correta:2,
+  dica:"\"Myself\" deixa claro que foi a própria pessoa — sem a estrutura causativa." }
+      ]
+    },
+    { id:"n3m30", temas:["gramatica"], titulo:"Registro — Formal ✕ Informal", icone:"🎭", corIco:"#FCE4DB",
+      intro:"\"Hey, what's up?\" com o chefe? Melhor não. Hoje você aprende a trocar de roupa gramatical dependendo de com quem está falando.",
+      xp:95,
+      cards:[
+        { figura:"👔", pt:"Cumprimentos: informal ✕ formal", en:"Hey! / Good morning, how are you?", som:"",
+  quando:"Com colegas próximos: \"Hey! What's up?\", \"Hi, how's it going?\". Com chefe, cliente ou em e-mail: \"Good morning\", \"I hope this email finds you well.\"",
+  exEn:"Good morning. I hope you're doing well.", exSom:"gúd mór-nin. ái rôup iór dú-in uél.", exPt:"Bom dia. Espero que você esteja bem." },
+        { figura:"🙏", pt:"Pedidos: informal ✕ formal", en:"Can you...? / Would you mind...? / I would appreciate if...", som:"",
+  quando:"Informal: \"Can you send me that?\" Mais educado: \"Could you send me that, please?\" Formal/e-mail: \"I would appreciate it if you could send me that.\"",
+  exEn:"I would appreciate it if you could confirm the schedule.", exSom:"ái úud a-prí-chi-êit it if iú cúd con-férm dhi ské-diul.", exPt:"Eu agradeceria se você pudesse confirmar o horário." },
+        { figura:"🚫", pt:"Contrações: use na fala, evite no formal", en:"I'm / I don't ✕ I am / I do not", som:"",
+  quando:"Na fala e mensagens casuais, contrações (I'm, don't, can't) são normais e naturais. Em e-mails formais e cartas, evite contrações: \"I am unable to attend\" em vez de \"I can't come\".",
+  exEn:"I am unable to attend the meeting today.", exSom:"ái ém â-nê-bol tu a-ténd dhi mí-tin tu-dêi.", exPt:"Não poderei comparecer à reunião hoje." },
+        { figura:"💬", pt:"Gírias ✕ vocabulário neutro", en:"guys / folks — kids / children", som:"gáis / fôuks",
+  quando:"Gírias (guys, kids, stuff, awesome) são ótimas entre amigos, mas em contexto formal use versões neutras: folks/everyone, children, items/things, excellent/great.",
+  exEn:"Thank you, everyone, for your hard work this week.", exSom:"thénk iú, évri-uân, fór iór rárd uôrk dhis uík.", exPt:"Obrigado a todos pelo trabalho duro essa semana." },
+        { figura:"📧", pt:"E-mail profissional: estrutura básica", en:"Dear / I am writing to... / Best regards", som:"",
+  quando:"E-mail formal segue um roteiro: saudação (Dear Mr. Smith / Hi team), motivo (I am writing to ask about...), corpo, e despedida (Best regards / Sincerely).",
+  exEn:"Dear Mr. Johnson, I am writing to confirm my start date.", exSom:"dír mís-ter djón-son, ái ém rái-tin tu con-férm mái stárt dêit.", exPt:"Prezado Sr. Johnson, escrevo para confirmar minha data de início." }
+      ],
+      quiz:[
+        { pergunta:"Qual é a versão MAIS FORMAL de \"Can you send me that?\"", falar:null,
+  opcoes:["Send me that!","Can you send that?","I would appreciate it if you could send me that.","Gimme that."], correta:2,
+  dica:"Formal/e-mail usa estruturas mais longas e educadas: \"I would appreciate it if...\"." },
+        { pergunta:"Em um e-mail formal, é melhor usar...", falar:null,
+  opcoes:["I can't come","I am unable to attend","I ain't coming","Can't make it"], correta:1,
+  dica:"E-mails formais evitam contrações e gírias: \"I am unable to attend\"." },
+        { pergunta:"Qual saudação é mais adequada pro CHEFE por e-mail?", falar:null,
+  opcoes:["Hey boss!","Yo!","Good morning,","Sup"], correta:2,
+  dica:"\"Good morning\" é neutro e apropriado em contexto profissional." },
+        { pergunta:"\"Folks\" no lugar de \"guys\" é um exemplo de...", falar:null,
+  opcoes:["Erro gramatical","Vocabulário mais neutro pra contexto formal","Gíria ainda mais informal","Palavra que não existe"], correta:1,
+  dica:"Folks/everyone são alternativas mais neutras a \"guys\" em contextos mistos ou formais." }
+      ]
+    },
+    { id:"n3m31", temas:["verbos","gramatica"], titulo:"Idioms Avançados do Dia a Dia Americano", icone:"💎", corIco:"#F5E4F7",
+      intro:"\"It's not rocket science.\" \"Let's cut to the chase.\" As expressões que fazem um americano pensar \"nossa, esse aqui já manja mesmo de inglês\".",
+      xp:110,
+      cards:[
+        { figura:"🚀", pt:"Não é complicado", en:"it's not rocket science", som:"its nót rók-et sái-ens",
+  quando:"Usado quando algo é simples, não precisa complicar: \"Just follow the steps, it's not rocket science.\"",
+  exEn:"Cleaning the room isn't rocket science, just follow the checklist.", exSom:"clí-nin dhi rúm í-zent rók-et sái-ens, djâst fó-lou dhi tchék-list.", exPt:"Limpar o quarto não é complicado, só siga a lista." },
+        { figura:"✂️", pt:"Ir direto ao ponto", en:"cut to the chase", som:"cât tu dhi tchêis",
+  quando:"Pedir pra alguém parar de enrolar e ir direto ao assunto: \"Let's cut to the chase — are you accepting the offer or not?\"",
+  exEn:"Let's cut to the chase, what's the final price?", exSom:"léts cât tu dhi tchêis, uóts dhi fái-nal práis?", exPt:"Vamos direto ao ponto, qual é o preço final?" },
+        { figura:"🎯", pt:"Acertar em cheio / entender exatamente", en:"hit the nail on the head", som:"rít dhi nêil ón dhi réd",
+  quando:"Usado quando alguém identifica exatamente o problema ou a solução certa: \"You hit the nail on the head — that's exactly the issue.\"",
+  exEn:"You hit the nail on the head, that's exactly what happened.", exSom:"iú rít dhi nêil ón dhi réd, dhéts ig-zékt-li uót ré-pend.", exPt:"Você acertou em cheio, foi exatamente isso que aconteceu." },
+        { figura:"💰", pt:"Custar muito caro", en:"cost an arm and a leg", som:"cóst en árm énd a lég",
+  quando:"Pra dizer que algo é muito caro: \"That apartment costs an arm and a leg.\" (aquele apartamento custa os olhos da cara).",
+  exEn:"Renting downtown costs an arm and a leg.", exSom:"rén-tin dáun-táun cósts en árm énd a lég.", exPt:"Alugar no centro custa os olhos da cara." },
+        { figura:"🌧️", pt:"Problemas vêm em bando", en:"when it rains, it pours", som:"uén it rêins, it pórs",
+  quando:"Quando vários problemas acontecem ao mesmo tempo: \"First the car broke down, then I lost my phone — when it rains, it pours.\"",
+  exEn:"First the car broke down, then the rent went up — when it rains, it pours.", exSom:"férst dhi car brôuk dáun, dhén dhi rént uént âp — uén it rêins, it pórs.", exPt:"Primeiro o carro quebrou, depois o aluguel subiu — desgraça pouca é bobagem." }
+      ],
+      quiz:[
+        { pergunta:"\"It's not rocket science\" significa...", falar:null,
+  opcoes:["É muito complicado","Não é complicado, é simples","É sobre ciência","Ninguém entende isso"], correta:1,
+  dica:"Rocket science = algo extremamente complexo; \"not rocket science\" = é simples." },
+        { pergunta:"\"Let's cut to the chase\" significa...", falar:null,
+  opcoes:["Vamos correr","Vamos direto ao ponto","Vamos cortar alguma coisa","Vamos assistir um filme"], correta:1,
+  dica:"Cut to the chase = ir direto ao assunto, sem enrolação." },
+        { pergunta:"\"You hit the nail on the head\" significa...", falar:null,
+  opcoes:["Você bateu com um martelo","Você acertou exatamente o ponto certo","Você se machucou","Você errou completamente"], correta:1,
+  dica:"Hit the nail on the head = acertar em cheio, identificar exatamente o certo." },
+        { pergunta:"\"That costs an arm and a leg\" significa...", falar:null,
+  opcoes:["Isso é barato","Isso é muito caro","Isso machuca","Isso não tem preço definido"], correta:1,
+  dica:"Cost an arm and a leg = custar muito caro, os olhos da cara." }
+      ]
+    },
+    { id:"n3m32", temas:["gramatica","revisao"], titulo:"Simulado Final — Nível C1", icone:"👑", corIco:"#FFF3D1",
+      intro:"O desafio final da trilha de gramática: terceiro condicional, subjuntivo, inversão, nominalização, causativa e idioms — tudo junto. Se você passar aqui, seu inglês está pronto pra qualquer situação, do chão de fábrica à sala de reunião.",
+      xp:150,
+      cards:[
+        { figura:"⏳", pt:"Terceiro condicional em revisão", en:"if I had known, I would have gone", som:"",
+  quando:"IF + PAST PERFECT, WOULD HAVE + particípio — pra falar de um passado que não aconteceu.",
+  exEn:"If I had known about the job, I would have applied.", exSom:"if ái réd nôun a-báut dhi djób, ái úud rév a-pláid.", exPt:"Se eu soubesse do emprego, eu teria me candidatado." },
+        { figura:"🎩", pt:"Subjuntivo em revisão", en:"I suggest that he be on time", som:"",
+  quando:"Depois de suggest/recommend/require + THAT, o verbo fica na forma base, mesmo com he/she/it.",
+  exEn:"I recommend that she review the schedule again.", exSom:"ái ré-co-mend dhét chi ri-viú dhi ské-diul a-guén.", exPt:"Recomendo que ela revise o horário novamente." },
+        { figura:"🔃", pt:"Inversão enfática em revisão", en:"never have I seen such dedication", som:"",
+  quando:"Advérbio negativo no início (never, rarely, not only) → auxiliar antes do sujeito.",
+  exEn:"Never have I worked with such a great team.", exSom:"né-ver rév ái uôrkt uídh sâtch a grêit tím.", exPt:"Nunca trabalhei com uma equipe tão boa." },
+        { figura:"🏛️", pt:"Nominalização em revisão", en:"decide → decision, improve → improvement", som:"",
+  quando:"Verbos e adjetivos viram substantivo com -tion/-sion, -ment, -ness/-ity — marca do inglês formal.",
+  exEn:"There has been a big improvement in your performance.", exSom:"dhér réz bín a big im-prúv-ment in iór per-fór-mans.", exPt:"Houve uma grande melhoria no seu desempenho." },
+        { figura:"🔧", pt:"Causativa em revisão", en:"I had my car fixed", som:"",
+  quando:"HAVE/GET + objeto + particípio = alguém fez isso por você.",
+  exEn:"I had my documents translated last week.", exSom:"ái réd mái dó-kiu-ments trans-lêi-ted lést uík.", exPt:"Eu mandei traduzir meus documentos semana passada." }
+      ],
+      quiz:[
+        { pergunta:"Complete: \"If I ____ known, I would have gone.\" (had)", falar:"If I had known, I would have gone",
+  opcoes:["have","had","has","would have"], correta:1,
+  dica:"Terceiro condicional: IF + PAST PERFECT." },
+        { pergunta:"Complete: \"I suggest that he ____ on time.\"", falar:"I suggest that he be on time",
+  opcoes:["is","be","was","being"], correta:1,
+  dica:"Subjuntivo: verbo na forma base depois de SUGGEST THAT." },
+        { pergunta:"Complete: \"Never ____ I seen such dedication.\"", falar:"Never have I seen such dedication",
+  opcoes:["I have","have I","did I have","I did"], correta:1,
+  dica:"Inversão: advérbio negativo + auxiliar + sujeito." },
+        { pergunta:"Qual é o substantivo de \"decide\"?", falar:null,
+  opcoes:["decideness","decision","decidement","decidity"], correta:1,
+  dica:"decide → decision." },
+        { pergunta:"\"I had my car fixed\" significa...", falar:null,
+  opcoes:["Eu mesmo consertei","Alguém consertou pra mim","Meu carro quebrou","Vendi meu carro"], correta:1,
+  dica:"Estrutura causativa: HAVE + objeto + particípio." }
+      ]
+    }
   ]
 }
 ];
@@ -2628,6 +3796,7 @@ function tituloPorXP(xp){
    Intervalos: agora, 10min, 1 dia, 3 dias, 7 dias, 21 dias. */
 const SRS_INTERVALOS_MIN = [0, 10, 1440, 4320, 10080, 30240];
 function atualizarSRS(q, certo){
+  if(!q || !q.chave) return;
   if(!q || !q.chave) return;
   const p = Progresso.dados;
   if(!p.srs) p.srs = {};
@@ -3084,6 +4253,12 @@ function concluirNivelamento(){
 /* Resultado unificado: SRS + streak + XP + fila (múltipla escolha E montar frase) */
 function aplicarResultado(certo, q){
   if(typeof registrarEstat === "function") registrarEstat(q, certo);
+  if(quizEstado.escalada && quizEstado._tqLimite){
+    const gasto = Date.now() - (quizEstado._tq || 0);
+    pararTimerPergunta();
+    quizEstado._foiRelampago = !!(certo && gasto <= quizEstado._tqLimite * 0.25);
+    if(quizEstado._foiRelampago) quizEstado.relampagos = (quizEstado.relampagos || 0) + 1;
+  }
   if(quizEstado.nivelamento){
     quizEstado.fila.shift();
     const nv = q._nvTeste || 0;
@@ -3165,7 +4340,7 @@ function renderMontar(q){
     const fb = $("#quizFeedback");
     if(certo){
       fb.className = "feedback certo";
-      fb.innerHTML = `<div class="titulo">✅ Frase perfeita!${quizEstado.infinito ? ` 🔥 ${quizEstado.streak} seguidas (+2 XP)` : ""}</div><div class="dica">${esc(q.dica)}</div>`;
+      fb.innerHTML = `<div class="titulo">✅ Frase perfeita!${quizEstado._foiRelampago ? " ⚡ RELÂMPAGO!" : ""}${quizEstado.infinito ? ` 🔥 ${quizEstado.streak} seguidas (+2 XP)` : ""}</div><div class="dica">${esc(q.dica)}</div>`;
       Fala.dizer(q.falarDepois);
       setTimeout(avancarQuiz, 2200);
     } else {
@@ -3195,7 +4370,8 @@ function renderQuizPergunta(){
     $("#quizBarra").style.width = Math.round((feitas / quizEstado.total) * 100) + "%";
     $("#quizCont").textContent = `${feitas}/${quizEstado.total}`;
   }
-  if(q.tipo === "montar"){ renderMontar(q); return; }
+  if(q.tipo === "montar"){ renderMontar(q); iniciarTimerPergunta(q); return; }
+  if(q.tipo === "digitar"){ renderDigitar(q); iniciarTimerPergunta(q); return; }
   /* CORREÇÃO: embaralha as opções a CADA exibição e recalcula a certa.
      Antes, quizzes escritos à mão tinham a resposta quase sempre na
      letra B — dava pra passar de fase sem aprender nada. */
@@ -3203,7 +4379,8 @@ function renderQuizPergunta(){
   const opcoesVista = embaralhar(q.opcoes.slice());
   const idxCerto = opcoesVista.indexOf(textoCerto);
   const letras = ["A","B","C","D"];
-  let html = (q.figura ? `<div class="quiz-figura">${q.figura}</div>` : "") + `<h2 class="quiz-pergunta">${esc(q.pergunta)}</h2>`;
+  let html = (q.texto ? `<div class="leitura-box">${q.titulo ? `<b>${esc(q.titulo)}</b>` : ""}${esc(q.texto).replace(/\n/g, "<br>")}</div>` : "")
+    + (q.figura ? `<div class="quiz-figura">${q.figura}</div>` : "") + `<h2 class="quiz-pergunta">${esc(q.pergunta)}</h2>`;
   if(q.falar){
     html += `<div class="quiz-sub"><button class="btn-som" data-falar="${esc(q.falar)}" aria-label="Ouvir">🔊</button> Ouça antes de responder</div>`;
   }
@@ -3214,7 +4391,7 @@ function renderQuizPergunta(){
   html += `</div>
   <div class="feedback" id="quizFeedback"></div>`;
   if(quizEstado.escalada){
-    html += `<div class="aviso-rigor">🗼 <span>Escalada: aqui o erro NÃO volta pra fila — ele custa um coração. Perdeu todos, ${quizEstado.ehPulo ? "<b>volta pro nível 1</b>" : "falhou o nível"}. Capricha!</span></div>`;
+    html += `<div class="aviso-rigor">🗼 <span>Escalada: erro custa coração e o TEMPO CORRE ⏱️ — estourou, conta como erro. Responder rápido dá ⚡ Relâmpago (até XP ×2 na fase). ${quizEstado.ehPulo ? "<b>Falhou o pulo: volta pro nível 1.</b>" : ""}</span></div>`;
   } else if(quizEstado.infinito){
     html += `<div class="aviso-rigor">♾️ <span>Modo Infinito: os desafios nunca acabam. Cada acerto vale <b>+2 XP</b>; errou, a sequência 🔥 zera. Vá até onde aguentar!</span></div>
     <button class="btn-principal" id="btnPararInfinito" style="margin-top:16px">🏁 Encerrar e guardar meu XP</button>`;
@@ -3242,7 +4419,7 @@ function renderQuizPergunta(){
         fb.className = "feedback certo";
         fb.innerHTML = quizEstado.infinito
           ? `<div class="titulo">✅ Isso aí! 🔥 ${quizEstado.streak} seguidas (+2 XP)</div><div class="dica">${esc(q.dica)}</div>`
-          : `<div class="titulo">✅ Isso aí!</div><div class="dica">${esc(q.dica)}</div>`;
+          : `<div class="titulo">✅ Isso aí!${quizEstado._foiRelampago ? " ⚡ RELÂMPAGO!" : ""}</div><div class="dica">${esc(q.dica)}</div>`;
         setTimeout(avancarQuiz, quizEstado.infinito ? 1200 : 1500);
       } else {
         btn.classList.add("errada");
@@ -3255,6 +4432,7 @@ function renderQuizPergunta(){
       }
     });
   });
+  iniciarTimerPergunta(q);
 }
 function avancarQuiz(){
   quizEstado.respondendo = false;
@@ -3310,7 +4488,7 @@ function concluirModuloAtual(){
 }
 
 /* ==================================================================
-   COSMÉTICOS RPG — moeda 🌱 Sementes, loja, bordas, pets, efeitos.
+   COSMÉTICOS RPG — moeda 🌻 Girassóis, loja, bordas, pets, efeitos.
    Carteira à prova de sync: guardamos GANHAS e GASTAS na vida toda
    (só crescem → o servidor mescla pelo maior e nada se perde nem
    duplica). Saldo = ganhas − gastas.
@@ -3360,13 +4538,15 @@ const COSM = {
     if(!p.cosmeticos) p.cosmeticos = { tem:{}, usando:{}, ganhas:0, gastas:0 };
     const c = p.cosmeticos;
     c.tem = c.tem || {}; c.usando = c.usando || {}; c.ganhas = c.ganhas || 0; c.gastas = c.gastas || 0;
+    if(!c.baus) c.baus = { ultimoGratis:null, comprados:0, abertos:0 };
+    c.baus.comprados = c.baus.comprados || 0; c.baus.abertos = c.baus.abertos || 0;
     return c;
   },
   saldo(){ const c = this.est(); return Math.max(0, Math.round((c.ganhas || 0) - (c.gastas || 0))); },
   ganhar(n, motivo){
     if(!(n > 0)) return;
     const c = this.est(); c.ganhas += Math.round(n); Progresso.salvar();
-    if(motivo && typeof mostrarToast === "function") mostrarToast(`🌱 +${Math.round(n)} — ${motivo}`);
+    if(motivo && typeof mostrarToast === "function") mostrarToast(`🌻 +${Math.round(n)} — ${motivo}`);
   },
   todos(){ return this.BORDAS.concat(this.PETS, this.EFEITOS); },
   item(id){ return this.todos().find(x => x.id === id && true) || this.todos().find(x => x.id === id); },
@@ -3378,7 +4558,7 @@ const COSM = {
     const c = this.est(), chave = slot + ":" + id;
     if(c.tem[chave]){ mostrarToast("Você já tem este item 😉"); return; }
     if(!this.liberado(it)){ mostrarToast(`🔒 Exige recorde nível ${it.req} na Escalada`); return; }
-    if(this.saldo() < it.preco){ mostrarToast(`Faltam 🌱 ${(it.preco - this.saldo()).toLocaleString("pt-BR")} sementes`); return; }
+    if(this.saldo() < it.preco){ mostrarToast(`Faltam 🌻 ${(it.preco - this.saldo()).toLocaleString("pt-BR")} girassóis`); return; }
     c.gastas += it.preco; c.tem[chave] = true; c.usando[slot] = id;
     Progresso.salvar(); mostrarToast(`🎉 ${it.nome} é seu — e já está EQUIPADO!`);
     if(typeof renderLoja === "function") renderLoja();
@@ -3395,6 +4575,162 @@ const COSM = {
   },
   qtdItens(){ return Object.keys(this.est().tem).length; }
 };
+/* ==================================================================
+   🎁 BAÚS — recompensa diária grátis + baús comprados (loja de dinheiro
+   real). Regra de ouro: nada aqui pode "sumir" — girassóis somam na
+   carteira monotônica (ganhas), bordas/efeitos somam no mesmo `tem`
+   da Loja, e comprados/abertos só CRESCEM (mesmo padrão ganhas/gastas),
+   então o servidor mescla pelo maior e ninguém perde baú comprado.
+   ================================================================== */
+const BAU = {
+  /* Tabela de chances: pesos relativos (soma não precisa ser 100).
+     10/20/50/100 = fácil e comum · 150 = incomum · 200 = raro (10x mais
+     difícil que o comum) · borda = muito raro (100x mais difícil) ·
+     efeito de ranking = raríssimo (200x mais difícil). */
+  POOL: [
+    { tipo:"moeda", valor:10,  peso:3000, raridade:"r-comum" },
+    { tipo:"moeda", valor:20,  peso:2500, raridade:"r-comum" },
+    { tipo:"moeda", valor:50,  peso:2000, raridade:"r-incomum" },
+    { tipo:"moeda", valor:100, peso:1500, raridade:"r-incomum" },
+    { tipo:"moeda", valor:150, peso:800,  raridade:"r-raro" },
+    { tipo:"moeda", valor:200, peso:300,  raridade:"r-epico" },
+    { tipo:"borda",  peso:30, raridade:"r-lendario" },
+    { tipo:"efeito", peso:15, raridade:"r-mitico" }
+  ],
+  /* Pacotes de baús — pagamento manual via WhatsApp (mesmo fluxo já usado
+     pro Premium), até o Pix automático entrar no ar. */
+  PACOTES: [
+    { id:"b10",  qtd:10,  rs:"4,90" },
+    { id:"b50",  qtd:50,  rs:"14,90" },
+    { id:"b100", qtd:100, rs:"22,90" },
+    { id:"b200", qtd:200, rs:"29,90" }
+  ],
+  totalPeso(){ return this.POOL.reduce((s,x) => s + x.peso, 0); },
+  /* Sorteia 1 prêmio. Bordas/efeitos nunca saem repetidos nem no nível
+     máximo (imortal / trono) — se o jogador já tem todos os elegíveis,
+     vira um bônus de girassóis pra não sair "baú vazio". */
+  sortear(){
+    const pool = this.POOL, total = this.totalPeso();
+    let r = Math.random() * total, escolhido = pool[pool.length - 1];
+    for(const item of pool){ if(r < item.peso){ escolhido = item; break; } r -= item.peso; }
+    if(escolhido.tipo === "moeda") return { tipo:"moeda", valor:escolhido.valor, raridade:escolhido.raridade };
+    if(escolhido.tipo === "borda"){
+      const elegiveis = COSM.BORDAS.filter(b => b.id !== "imortal" && !COSM.tem("borda", b.id));
+      if(!elegiveis.length) return { tipo:"moeda", valor:500, raridade:"r-epico", bonus:true };
+      const b = elegiveis[Math.floor(Math.random() * elegiveis.length)];
+      return { tipo:"borda", id:b.id, nome:b.nome, raridade:"r-lendario" };
+    }
+    const elegiveis = COSM.EFEITOS.filter(e => e.id !== "trono" && !COSM.tem("efeito", e.id));
+    if(!elegiveis.length) return { tipo:"moeda", valor:800, raridade:"r-lendario", bonus:true };
+    const e = elegiveis[Math.floor(Math.random() * elegiveis.length)];
+    return { tipo:"efeito", id:e.id, nome:e.nome, raridade:"r-mitico" };
+  },
+  aplicar(resultado){
+    const c = COSM.est();
+    if(resultado.tipo === "moeda"){ c.ganhas += resultado.valor; }
+    else { c.tem[resultado.tipo + ":" + resultado.id] = true; }
+    c.baus.abertos = (c.baus.abertos || 0) + 1;
+    Progresso.salvar();
+  },
+  podeAbrirGratis(){ return COSM.est().baus.ultimoGratis !== hojeStr(); },
+  resgatarGratis(){
+    const c = COSM.est();
+    if(c.baus.ultimoGratis === hojeStr()) return null;
+    c.baus.ultimoGratis = hojeStr();
+    Progresso.salvar();
+    const r = this.sortear();
+    this.aplicar(r);
+    return r;
+  },
+  estoque(){ const c = COSM.est().baus; return Math.max(0, (c.comprados || 0) - (c.abertos || 0)); },
+  comprar(qtd){
+    const c = COSM.est();
+    c.baus.comprados = (c.baus.comprados || 0) + qtd;
+    Progresso.salvar();
+  },
+  abrirLote(qtd){
+    qtd = Math.max(1, Math.min(qtd, this.estoque()));
+    const resultados = [];
+    for(let i = 0; i < qtd; i++){ resultados.push(this.sortear()); }
+    resultados.forEach(r => this.aplicar(r));
+    return resultados;
+  },
+  /* Texto/ícone de exibição de um prêmio sorteado */
+  desenhar(resultado){
+    if(resultado.tipo === "moeda") return { ic:"🌻", titulo:`+${resultado.valor} Girassóis`, sub: resultado.bonus ? "Bônus (você já tinha tudo!)" : "Girassóis" };
+    if(resultado.tipo === "borda") return { ic:"🖼️", titulo: resultado.nome, sub:"Nova borda de avatar!" };
+    return { ic:"✨", titulo: resultado.nome, sub:"Novo efeito de ranking!" };
+  }
+};
+/* ---------- MODAL DE ABERTURA DE BAÚ (único ou em lote de 10) ---------- */
+function fecharBauModal(){ $("#bauOverlay").classList.remove("aberto"); }
+$("#bauOverlay") && $("#bauOverlay").addEventListener("click", e => { if(e.target.id === "bauOverlay") fecharBauModal(); });
+
+function abrirBauGratisModal(){
+  const r = BAU.podeAbrirGratis();
+  if(!r) return;
+  const alvo = $("#bauCaixaConteudo");
+  alvo.innerHTML = `
+    <p class="bau-titulo">🎁 Baú Grátis do Dia!</p>
+    <p class="bau-sub">Toque no baú pra abrir — é só uma vez por dia 😉</p>
+    <div class="bau-unico" id="bauUnico">🎁</div>
+    <div class="bau-premio" id="bauPremioUnico"></div>
+    <button class="bau-fechar" id="bauFecharUnico">Fechar</button>`;
+  $("#bauOverlay").classList.add("aberto");
+  $("#bauFecharUnico").addEventListener("click", fecharBauModal);
+  $("#bauUnico").addEventListener("click", function aoClicar(){
+    this.removeEventListener("click", aoClicar);
+    this.classList.add("abrindo");
+    const resultado = BAU.resgatarGratis();
+    setTimeout(() => {
+      const d = BAU.desenhar(resultado);
+      const pr = $("#bauPremioUnico");
+      pr.innerHTML = `<span class="ic ${resultado.raridade}" style="border-radius:50%;padding:14px">${d.ic}</span><b>${esc(d.titulo)}</b><small>${esc(d.sub)}</small>`;
+      pr.classList.add("mostrar");
+      if(typeof renderLoja === "function" && telaAtual === "tela-loja") renderLoja();
+      atualizarXP();
+    }, 480);
+  });
+}
+function abrirLoteBauModal(qtd){
+  qtd = Math.max(1, Math.min(qtd, BAU.estoque()));
+  if(qtd < 1){ mostrarToast("Você não tem baús pra abrir 😉"); return; }
+  const alvo = $("#bauCaixaConteudo");
+  alvo.innerHTML = `
+    <p class="bau-titulo">🎁 Abrindo ${qtd} baú${qtd > 1 ? "s" : ""}...</p>
+    <p class="bau-sub">Toque em "Abrir todos" pra revelar tudo de uma vez</p>
+    <div class="bau-grade" id="bauGrade">${Array.from({length:qtd}).map((_,i) => `<div class="bau-slot fechado" data-i="${i}">🎁</div>`).join("")}</div>
+    <div class="bau-resumo" id="bauResumo" style="display:none"></div>
+    <button class="bau-cta" id="bauAbrirTodos">Abrir todos 🎉</button>
+    <button class="bau-fechar" id="bauFecharLote">Fechar</button>`;
+  $("#bauOverlay").classList.add("aberto");
+  $("#bauFecharLote").addEventListener("click", fecharBauModal);
+  $("#bauAbrirTodos").addEventListener("click", function(){
+    this.disabled = true; this.textContent = "Abrindo...";
+    const resultados = BAU.abrirLote(qtd);
+    const slots = $("#bauGrade").querySelectorAll(".bau-slot");
+    const contagem = { moeda:0, girassoisTotal:0, borda:0, efeito:0 };
+    resultados.forEach((r, i) => {
+      setTimeout(() => {
+        const d = BAU.desenhar(r);
+        const slot = slots[i];
+        slot.classList.remove("fechado"); slot.classList.add("revelado", r.raridade);
+        slot.innerHTML = `${d.ic}<small>${r.tipo === "moeda" ? "+" + r.valor : d.titulo}</small>`;
+        if(r.tipo === "moeda"){ contagem.moeda++; contagem.girassoisTotal += r.valor; }
+        else contagem[r.tipo]++;
+        if(i === resultados.length - 1){
+          const rs = $("#bauResumo");
+          rs.style.display = "flex";
+          rs.innerHTML = `<span>🌻 Girassóis ganhos: <b>${contagem.girassoisTotal}</b></span>` +
+            (contagem.borda ? `<span>🖼️ Bordas novas: <b>${contagem.borda}</b></span>` : "") +
+            (contagem.efeito ? `<span>✨ Efeitos novos: <b>${contagem.efeito}</b></span>` : "");
+          if(typeof renderLoja === "function" && telaAtual === "tela-loja") renderLoja();
+          atualizarXP();
+        }
+      }, i * 260);
+    });
+  });
+}
 /* Avatar com borda equipada (qualquer tamanho) e pet animado */
 function bordaWrap(avatarHTML, bordaId){
   return `<span class="avb ${bordaId ? "avb-" + bordaId : ""}">${avatarHTML}</span>`;
@@ -3407,7 +4743,7 @@ function petHTML(petId, tam){
     ? `<img src="${it.img}" class="pet anim-${it.anim}" style="width:${s}px;height:auto" alt="pet">`
     : `<span class="pet anim-${it.anim}" style="font-size:${Math.round(s * 0.85)}px">${it.emo}</span>`;
 }
-/* Medalhas: paga 🌱 uma única vez por medalha conquistada (metal define o prêmio) */
+/* Medalhas: paga 🌻 uma única vez por medalha conquistada (metal define o prêmio) */
 function creditarMedalhas(){
   if(typeof listaConquistas !== "function") return;
   const p = Progresso.dados; p.medalhasPagas = p.medalhasPagas || {};
@@ -3418,7 +4754,7 @@ function creditarMedalhas(){
   });
   if(total > 0){
     COSM.ganhar(total, null);
-    mostrarToast(`🏅 ${qtd} medalha${qtd > 1 ? "s" : ""} nova${qtd > 1 ? "s" : ""}! +🌱 ${total.toLocaleString("pt-BR")}`);
+    mostrarToast(`🏅 ${qtd} medalha${qtd > 1 ? "s" : ""} nova${qtd > 1 ? "s" : ""}! +🌻 ${total.toLocaleString("pt-BR")}`);
   }
 }
 
@@ -3458,6 +4794,183 @@ function regrasDoNivel(n){
     faixa: fx
   };
 }
+/* ==================================================================
+   LOTE B — LEITURAS: mini-textos (Reino das Lendas, nv 500-999) e
+   PROVAS GIGANTES (O Topo, nv 1000). Textos 100% originais do
+   FalaFina, tema vida real de trabalho H-2B/H-2A nos EUA.
+   A 1ª opção é sempre a certa AQUI — o render embaralha na tela.
+   ================================================================== */
+const LEITURAS_MINI = [
+  { titulo:"📖 First Day at the Hotel", texto:"Today is my first day at the Ocean View Hotel. My supervisor, Karen, shows me the housekeeping cart and explains the routine. \"Clean the bathroom first, then make the bed, and always knock on the door before you enter,\" she says. I have fifteen rooms to clean before three o'clock. It sounds like a lot, but Karen says I will get faster every week. At lunch, a coworker from Mexico teaches me a new word: \"linen\" means the sheets and towels. I write it in my little notebook. I am tired, but I am proud. My American dream starts with a clean room.",
+    perguntas:[
+      { p:"O que a Karen manda fazer PRIMEIRO em cada quarto?", o:["Limpar o banheiro","Fazer a cama","Bater na porta e ir embora","Trocar a TV"], d:"\"Clean the bathroom first\" = limpe o banheiro primeiro." },
+      { p:"Quantos quartos ele precisa limpar antes das 15h?", o:["Quinze","Cinco","Cinquenta","Três"], d:"\"fifteen rooms\" = quinze quartos (fifteen soa \"fíftin\")." },
+      { p:"O que significa \"linen\", a palavra nova do caderninho?", o:["Lençóis e toalhas","Produto de limpeza","Carrinho de limpeza","Hora do almoço"], d:"\"Linen means the sheets and towels\" = lençóis e toalhas." }
+    ] },
+  { titulo:"📖 At the Diner", texto:"After work, I go to a small diner with my roommates. The waitress smiles and says, \"What can I get you, honey?\" I order a cheeseburger with fries and a large Coke. My friend Paulo wants his burger without onions, so he says, \"No onions, please.\" The waitress brings the food fast and asks, \"Is everything okay here?\" We say, \"Yes, everything is great, thank you!\" At the end, she brings the check. The total is twenty-eight dollars, and we leave five dollars as a tip. In America, the tip is very important for the servers.",
+    perguntas:[
+      { p:"Como o Paulo pediu o hambúrguer dele?", o:["Sem cebola","Sem queijo","Sem batata","Bem passado"], d:"\"No onions, please\" = sem cebola, por favor." },
+      { p:"Quanto eles deixaram de gorjeta (tip)?", o:["Cinco dólares","Vinte e oito dólares","Dez dólares","Nada"], d:"\"we leave five dollars as a tip\" — tip = gorjeta." },
+      { p:"O que a garçonete pergunta quando traz a comida?", o:["Se está tudo bem","Se querem a conta","Se querem sobremesa","Se são turistas"], d:"\"Is everything okay here?\" = está tudo bem por aqui?" }
+    ] },
+  { titulo:"📖 The Kitchen Shift", texto:"The kitchen at the resort is very busy tonight. Chef Daniel shouts the orders: \"Two burgers, one salad, no tomato!\" My job is prep cook. I cut vegetables, wash the lettuce, and keep my station clean. The most important rule in the kitchen is safety: we always say \"Behind you!\" when we walk with something hot. At nine o'clock, the rush is over. Chef Daniel looks at my station and says, \"Good job today. Tomorrow you will learn the grill.\" I smile all the way home. In three months, I went from washing dishes to cooking. Hard work speaks every language.",
+    perguntas:[
+      { p:"O que os funcionários gritam quando passam com algo quente?", o:["\"Behind you!\"","\"Good job!\"","\"No tomato!\"","\"Two burgers!\""], d:"\"Behind you!\" = atrás de você — regra de segurança na cozinha." },
+      { p:"Qual é a função dele na cozinha hoje?", o:["Prep cook (cozinheiro de preparação)","Chef principal","Garçom","Lavador de pratos"], d:"\"My job is prep cook\" — ele corta legumes e prepara os ingredientes." },
+      { p:"O que o Chef Daniel promete pra amanhã?", o:["Ensinar a chapa (grill)","Um aumento","Uma folga","Lavar a alface"], d:"\"Tomorrow you will learn the grill\" = amanhã você vai aprender a chapa." }
+    ] },
+  { titulo:"📖 A Call to the Landlord", texto:"There is a problem in our apartment: the heater is broken and it is very cold outside. I call the landlord, Mr. Johnson. \"Hello, this is Lucas from apartment 4B. Our heater is not working,\" I say slowly. He asks, \"Since when?\" and I answer, \"Since last night.\" Mr. Johnson says he will send a repairman tomorrow morning between nine and eleven. \"Someone needs to be home,\" he explains. My roommate works late, so he will wait for the repairman. Before hanging up, I say, \"Thank you so much, have a good day.\" Solving problems by phone in English — one year ago, this was impossible for me.",
+    perguntas:[
+      { p:"Qual é o problema do apartamento?", o:["O aquecedor quebrou","O chuveiro vaza","A porta não abre","A luz acabou"], d:"\"the heater is not working\" — heater = aquecedor." },
+      { p:"Quando o técnico (repairman) vai aparecer?", o:["Amanhã de manhã, entre 9h e 11h","Hoje à noite","Sábado à tarde","Em uma semana"], d:"\"tomorrow morning between nine and eleven\"." },
+      { p:"O que o Sr. Johnson avisa que é necessário?", o:["Alguém precisa estar em casa","Pagar adiantado","Comprar a peça","Ligar de novo amanhã"], d:"\"Someone needs to be home\" = alguém precisa estar em casa." }
+    ] },
+  { titulo:"📖 Snow Season", texto:"It is my first winter in Colorado, and I have never seen so much snow. I work at a ski resort carrying luggage and driving the shuttle. Every morning I wear three layers of clothes, a heavy jacket, gloves, and a warm hat. My boss, Amanda, always checks the weather report. \"Storm coming tonight, twelve inches of snow,\" she says. \"Tomorrow we start one hour earlier.\" The guests are usually friendly and ask me where I am from. When I say Brazil, they laugh: \"From the beach to the mountain!\" Yes — and this beach boy now knows how to use a snow shovel better than anyone.",
+    perguntas:[
+      { p:"Qual é o trabalho dele no resort de esqui?", o:["Carregar bagagem e dirigir o shuttle","Ensinar esqui","Cozinhar","Vender casacos"], d:"\"carrying luggage and driving the shuttle\" — luggage = bagagem." },
+      { p:"Por que amanhã eles começam uma hora mais cedo?", o:["Vem tempestade com 12 polegadas de neve","É feriado","Chegou um grupo grande","A chefe viaja"], d:"\"Storm coming tonight, twelve inches of snow\" — por isso começam mais cedo." },
+      { p:"O que os hóspedes acham engraçado?", o:["Ele veio da praia pra montanha","O chapéu dele","O sotaque da chefe","O shuttle ser lento"], d:"\"From the beach to the mountain!\" — do Brasil (praia) pra neve." }
+    ] },
+  { titulo:"📖 At the Pharmacy", texto:"My throat hurts and I have a small fever, so after my shift I walk to the pharmacy. The pharmacist asks, \"What are your symptoms?\" I answer, \"Sore throat, fever, and I feel tired.\" She recommends a medicine and says, \"Take one pill every eight hours, with food. If you are not better in three days, see a doctor.\" I also buy cough drops and a big bottle of water. The medicine costs eleven dollars. At home, my roommate makes me hot tea with honey, just like my mother does in Brazil. Some things are the same in every country.",
+    perguntas:[
+      { p:"Quais são os sintomas dele?", o:["Dor de garganta, febre e cansaço","Dor nas costas e tosse","Dor de cabeça e enjoo","Só febre alta"], d:"\"Sore throat, fever, and I feel tired\" — sore throat = dor de garganta." },
+      { p:"Como ele deve tomar o remédio?", o:["Um comprimido a cada 8 horas, com comida","Dois por dia, em jejum","Só antes de dormir","Metade de manhã"], d:"\"Take one pill every eight hours, with food\"." },
+      { p:"O que a farmacêutica manda fazer se não melhorar em 3 dias?", o:["Procurar um médico","Dobrar a dose","Voltar na farmácia","Fazer chá com mel"], d:"\"If you are not better in three days, see a doctor\"." }
+    ] }
+];
+const PROVAS_GIGANTES = [
+  { titulo:"🏔️ PROVA GIGANTE — The Season", texto:"When Marcos arrived at the small airport in Maine, the cold wind hit his face like a wall. He had two suitcases, four hundred dollars, and a work contract for the summer season at the Pine Lake Resort. His English was basic — hello, thank you, where is the bathroom — but his hands knew how to work, and that was why he was here.\n\nThe first weeks were the hardest of his life. He woke up at five in the morning, walked twenty minutes to the resort, and spent nine hours in the kitchen washing dishes. The water was hot, the plates never stopped coming, and the chef, a serious man named Robert, rarely smiled. At night, Marcos studied English on his phone until his eyes closed. His roommates, two guys from Jamaica and one from Guatemala, became his first friends. They cooked together on Sundays, sharing rice, beans, and stories about home. On his one day off, Marcos explored the small town, learned the bus schedule, and discovered that the library had free internet and a very patient librarian who corrected his pronunciation with a smile.\n\nOne Tuesday in July, the prep cook quit without warning. The kitchen was in chaos: two hundred guests, a wedding party, and nobody to cut the vegetables. Marcos dried his hands, walked to Robert, and said the sentence he had practiced a hundred times in the mirror: \"Chef, I can help. I know how to do it.\" Robert looked at him for three long seconds and said, \"Show me.\" Marcos cut onions, peppers, and tomatoes faster and cleaner than anyone Robert had seen that summer. He never washed dishes again.\n\nBy the end of August, Marcos was making twelve dollars an hour, plus overtime on weekends. He sent money home to his mother every month and still saved enough to buy a used laptop. His English grew with his confidence: he could take orders, joke with the waitresses, and even complain politely when the schedule was wrong. Robert, the serious chef, wrote him a recommendation letter. \"Best worker I had in years,\" it said. \"Rehire immediately.\" Marcos read that letter maybe fifty times, and he keeps a photo of it on his phone until today.\n\nOn his last day, the whole kitchen signed a card for him. Marcos cried in the walk-in freezer where nobody could see. Six months before, he was a stranger who could not order a coffee. Now he had a profession, friends from five countries, and a letter that guaranteed his return next season. At the airport, he called his mother and said: \"Mãe, it worked. I will be back next year — as a cook, not a dishwasher.\"",
+    perguntas:[
+      { p:"Com o que o Marcos chegou no Maine?", o:["Duas malas, 400 dólares e um contrato de trabalho","Uma mala e mil dólares","Só a passagem e o passaporte","Um laptop e o visto de turista"], d:"\"two suitcases, four hundred dollars, and a work contract\"." },
+      { p:"Qual era o primeiro trabalho dele no resort?", o:["Lavar pratos na cozinha","Cortar legumes","Servir mesas","Carregar bagagem"], d:"\"nine hours in the kitchen washing dishes\"." },
+      { p:"O que ele fazia à noite até os olhos fecharem?", o:["Estudava inglês no celular","Jogava videogame","Trabalhava dobrado","Ligava pra família"], d:"\"Marcos studied English on his phone until his eyes closed\"." },
+      { p:"De onde eram os colegas de quarto dele?", o:["Jamaica e Guatemala","México e Brasil","Filipinas e Peru","Haiti e Colômbia"], d:"\"two guys from Jamaica and one from Guatemala\"." },
+      { p:"Qual foi a crise da terça-feira de julho?", o:["O prep cook pediu demissão sem avisar","O chef ficou doente","Faltou comida pro casamento","A cozinha pegou fogo"], d:"\"the prep cook quit without warning\" — quit = pediu demissão." },
+      { p:"Qual frase o Marcos tinha treinado no espelho?", o:["\"Chef, I can help. I know how to do it.\"","\"Chef, I need a break.\"","\"Chef, where is the bathroom?\"","\"Chef, I want more money.\""], d:"Ele treinou cem vezes: \"Chef, eu posso ajudar. Eu sei fazer.\"" },
+      { p:"Quanto ele passou a ganhar no fim de agosto?", o:["12 dólares por hora + hora extra","8 dólares por hora","20 dólares por dia","Salário fixo mensal"], d:"\"twelve dollars an hour, plus overtime on weekends\"." },
+      { p:"O que o chef Robert escreveu pra ele?", o:["Uma carta de recomendação","Um cheque de bônus","Um novo contrato","Uma advertência"], d:"\"Robert... wrote him a recommendation letter\" — \"recontratar imediatamente\"." },
+      { p:"Onde o Marcos chorou no último dia?", o:["No freezer, onde ninguém via","No aeroporto","No ônibus","Na frente de todos"], d:"\"Marcos cried in the walk-in freezer where nobody could see\"." },
+      { p:"O que ele disse pra mãe no aeroporto?", o:["Que volta ano que vem como cozinheiro, não lavador de pratos","Que não volta mais","Que vai ficar ilegal","Que odiou o frio"], d:"\"I will be back next year — as a cook, not a dishwasher.\"" }
+    ] },
+  { titulo:"🏔️ PROVA GIGANTE — A New Life in Vermont", texto:"Ana never imagined that her life would change because of snow. She was thirty-two, a hotel housekeeper from Minas Gerais, when her H-2B visa was approved for a winter season at the Green Mountain Lodge in Vermont. On the plane, she repeated English phrases from a small notebook: \"Nice to meet you. Where do I sign? What time does my shift start?\"\n\nThe lodge sat between white mountains, and the air was so cold that her phone battery died in minutes when she walked outside. Her supervisor, an older woman named Patricia, trained her for one week. Ana learned the American way of making beds — tight corners, four pillows, a chocolate on the blanket — and the golden rule of the job: if a guest leaves a \"Do Not Disturb\" sign, you never, ever knock. Patricia also taught her the names of every product on the cart, one by one, and made her repeat them out loud every morning until the words felt natural in her mouth.\n\nThe work was heavy. Sixteen rooms a day, each one inspected by Patricia with white gloves. But Ana had a secret weapon: organization. She prepared her cart the night before, cleaned rooms in a smart order, and finished thirty minutes before everyone else. Patricia noticed. In February, when the head housekeeper broke her leg on the ice, Patricia called Ana to her office. \"I want you to lead the morning team,\" she said. \"You will train the new workers and check the rooms. It pays three dollars more per hour.\" Ana said yes before Patricia finished the sentence.\n\nLeading was harder than cleaning. She had to correct people older than her, explain schedules, and report problems to the manager — all in English. Some nights she wanted to give up. But she remembered her daughter in Brazil, who told everyone at school: \"My mother works in America.\" So Ana opened her notebook and added new pages: \"The bathroom in 208 needs maintenance. Can you cover Saturday? Great job today, team.\" Little by little, the sentences stopped being lines in a notebook and became simply the way she spoke at work.\n\nWhen the season ended in April, the lodge gave Ana a certificate and a promise in writing: next winter, she returns as head housekeeper. At the farewell dinner, Patricia raised her glass and said, \"To Ana, who arrived speaking with a notebook and leaves speaking with her heart.\" Everyone laughed and clapped. Ana understood every single word — and that, more than the money, more than the title, was her real victory.",
+    perguntas:[
+      { p:"Qual era a profissão da Ana e de onde ela era?", o:["Camareira de hotel, de Minas Gerais","Cozinheira, de São Paulo","Babá, do Rio","Recepcionista, da Bahia"], d:"\"a hotel housekeeper from Minas Gerais\" — housekeeper = camareira." },
+      { p:"O que acontecia com o celular dela no frio?", o:["A bateria morria em minutos","A tela quebrava","Ele travava","Perdia o sinal"], d:"\"her phone battery died in minutes\" — o frio extremo mata a bateria." },
+      { p:"Qual é a regra de ouro do trabalho?", o:["Nunca bater se tem placa \"Do Not Disturb\"","Sempre bater duas vezes","Limpar o banheiro primeiro","Deixar dois chocolates"], d:"\"Do Not Disturb\" = não perturbe — nunca bata na porta." },
+      { p:"Quantos quartos por dia, e quem inspecionava?", o:["16 quartos, inspeção da Patricia com luvas brancas","10 quartos, sem inspeção","20 quartos, inspeção do gerente","16 quartos, autoavaliação"], d:"\"Sixteen rooms a day, each one inspected by Patricia with white gloves\"." },
+      { p:"Qual era a \"arma secreta\" da Ana?", o:["Organização","Força física","Falar espanhol","Acordar às 4h"], d:"\"Ana had a secret weapon: organization\" — carrinho pronto na noite anterior." },
+      { p:"Por que a chefe do andar saiu em fevereiro?", o:["Quebrou a perna no gelo","Pediu demissão","Foi promovida","Voltou pro país dela"], d:"\"the head housekeeper broke her leg on the ice\"." },
+      { p:"O que a Patricia ofereceu pra Ana?", o:["Liderar a equipe da manhã, com +3 dólares por hora","Férias pagas","Um quarto melhor","Turno da noite"], d:"\"I want you to lead the morning team... three dollars more per hour\"." },
+      { p:"O que era mais difícil do que limpar?", o:["Liderar: corrigir pessoas e reportar em inglês","Acordar cedo","O frio","Fazer camas"], d:"\"Leading was harder than cleaning\" — corrigir, explicar escalas, reportar." },
+      { p:"O que a filha dela contava na escola?", o:["\"Minha mãe trabalha na América\"","\"Minha mãe é rica\"","\"Minha mãe volta amanhã\"","\"Minha mãe fala 3 línguas\""], d:"\"My mother works in America\" — o combustível da Ana." },
+      { p:"Qual foi a \"vitória real\" da Ana no jantar de despedida?", o:["Entender cada palavra do discurso","O certificado","O aumento","O título de chefe"], d:"\"Ana understood every single word — that was her real victory\"." }
+    ] }
+];
+function perguntasDaLeitura(L){
+  return L.perguntas.map(pg => ({
+    texto: L.texto, titulo: L.titulo,
+    pergunta: pg.p, opcoes: pg.o.slice(), correta: 0,
+    dica: pg.d || "", chave: null, figura: null, falar: null, temas: []
+  }));
+}
+/* Perguntas de DIGITAÇÃO (Ouro+) e ÁUDIO-DITADO (Diamante+): sem opções,
+   sem muleta — a pessoa ESCREVE o inglês. */
+function gerarDigitarEscalada(tiers, comAudio){
+  const menor = usuarioMenor();
+  const cards = tiers.flatMap(t => ((NIVEIS[t] || {}).modulos || [])).flatMap(m => m.cards).filter(c => !(c.adulto && menor));
+  const out = [];
+  for(const c of cards){
+    out.push({ tipo:"digitar", pergunta:`⌨️ Digite em INGLÊS: "${c.pt}"`, resposta:c.en,
+      dica:`${c.en} soa "${c.som}" = ${c.pt}`, falarDepois:c.en, falar:null,
+      chave:c.en, figura:null, opcoes:[], correta:0, temas:[] });
+    if(comAudio) out.push({ tipo:"digitar", pergunta:"🎧 DITADO: ouça e digite exatamente o que ouviu", resposta:c.en,
+      dica:`Era "${c.en}" (soa: ${c.som}) = ${c.pt}`, falarDepois:c.en, falar:c.en,
+      chave:c.en, figura:null, opcoes:[], correta:0, temas:[] });
+  }
+  return out;
+}
+/* ==================================================================
+   LOTE C — CRONÔMETRO: cada pergunta da Escalada tem limite de tempo
+   com barra visual. Responder certo em até 25% do tempo = ⚡ RELÂMPAGO
+   (conta pra dobrar o XP da fase). Estourar o tempo = erro: custa
+   coração e a palavra volta pra revisão (SRS zera a caixa).
+   ================================================================== */
+let escTimerInt = null;
+function pararTimerPergunta(){ if(escTimerInt){ clearInterval(escTimerInt); escTimerInt = null; } }
+function limiteDaPergunta(q, fxi){
+  if(q.texto) return 60000;
+  if(q.tipo === "montar") return Math.max(25, 40 - fxi * 2) * 1000;
+  if(q.tipo === "digitar") return Math.max(22, 35 - fxi) * 1000;
+  return Math.round(Math.max(10, 20 - fxi * 1.5) * 1000);
+}
+function iniciarTimerPergunta(q){
+  pararTimerPergunta();
+  if(!quizEstado || !quizEstado.escalada) return;
+  const fxi = FAIXAS_ESCALADA.indexOf(faixaDoNivel(quizEstado.alvoNivel));
+  const limite = limiteDaPergunta(q, fxi);
+  quizEstado._tq = Date.now(); quizEstado._tqLimite = limite;
+  const alvo = $("#quizConteudo"); if(!alvo) return;
+  const barra = document.createElement("div");
+  barra.className = "timer-linha";
+  barra.innerHTML = `<i style="width:100%"></i><span>⚡ até ${Math.max(1, Math.round(limite * 0.25 / 1000))}s = RELÂMPAGO</span>`;
+  alvo.insertBefore(barra, alvo.firstChild);
+  const i = barra.querySelector("i");
+  escTimerInt = setInterval(() => {
+    if(!quizEstado || telaAtual !== "tela-quiz" || quizEstado.respondendo){ pararTimerPergunta(); return; }
+    const resta = 1 - (Date.now() - quizEstado._tq) / limite;
+    i.style.width = Math.max(0, resta * 100) + "%";
+    i.style.background = resta < 0.25 ? "#D9481C" : (resta < 0.5 ? "#E8952E" : "var(--verde,#00885F)");
+    if(resta <= 0){
+      pararTimerPergunta();
+      quizEstado.respondendo = true;
+      document.querySelectorAll("#quizConteudo button, #quizConteudo input").forEach(b => { if(b.id !== "btnPararInfinito") b.disabled = true; });
+      const certa = (q.opcoes && q.opcoes.length) ? q.opcoes[q.correta] : (q.resposta || "");
+      aplicarResultado(false, q);
+      const fb = $("#quizFeedback");
+      if(fb){
+        fb.className = "feedback erro";
+        fb.innerHTML = `<div class="titulo">⏰ TEMPO ESGOTADO! A certa era "${esc(certa)}"</div><div class="dica">${esc(q.dica || "")}<br><b>Ela volta pra sua revisão — na montanha, o relógio também é adversário.</b></div>`;
+      }
+      setTimeout(avancarQuiz, 3200);
+    }
+  }, 100);
+}
+/* ⌨️ RENDER DO MODO DIGITAÇÃO */
+function renderDigitar(q){
+  let html = `<h2 class="quiz-pergunta">${esc(q.pergunta)}</h2>`;
+  if(q.falar) html += `<div class="quiz-sub"><button class="btn-som" data-falar="${esc(q.falar)}" aria-label="Ouvir">🔊</button> Toque pra ouvir de novo</div>`;
+  html += `<input type="text" id="digResposta" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Digite em inglês..." style="width:100%;max-width:420px;font-family:inherit;font-weight:800;font-size:1.1rem;padding:14px;border:2.5px solid rgba(33,49,58,.25);border-radius:14px;text-align:center">
+  <button class="btn-principal" id="digConferir" style="margin-top:12px;max-width:420px">Conferir ✔</button>
+  <div class="feedback" id="quizFeedback"></div>
+  <div class="aviso-rigor">⌨️ <span>Faixa avançada: aqui você ESCREVE o inglês. Sem opções, sem muleta — memória de verdade.</span></div>`;
+  $("#quizConteudo").innerHTML = html;
+  $("#quizConteudo").querySelectorAll("[data-falar]").forEach(btn => btn.addEventListener("click", () => Fala.dizer(btn.dataset.falar, btn)));
+  if(q.falar) setTimeout(() => Fala.dizer(q.falar), 350);
+  const inp = $("#digResposta");
+  setTimeout(() => inp.focus(), 100);
+  const norm = s => String(s || "").toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9' ]/g, "").replace(/\s+/g, " ");
+  const conferir = () => {
+    if(quizEstado.respondendo) return;
+    quizEstado.respondendo = true;
+    inp.disabled = true; const bc = $("#digConferir"); if(bc) bc.disabled = true;
+    const certo = norm(inp.value) === norm(q.resposta);
+    aplicarResultado(certo, q);
+    const fb = $("#quizFeedback");
+    if(certo){
+      fb.className = "feedback certo";
+      fb.innerHTML = `<div class="titulo">✅ Escreveu certinho!${quizEstado._foiRelampago ? " ⚡ RELÂMPAGO!" : ""}</div><div class="dica">${esc(q.dica)}</div>`;
+      if(q.falarDepois) Fala.dizer(q.falarDepois);
+      setTimeout(avancarQuiz, 1800);
+    } else {
+      fb.className = "feedback erro";
+      fb.innerHTML = `<div class="titulo">❌ Era: "${esc(q.resposta)}"</div><div class="dica">${esc(q.dica)}<br><b>Você escreveu: "${esc(inp.value || "(nada)")}"</b></div>`;
+      setTimeout(avancarQuiz, 3400);
+    }
+  };
+  $("#digConferir").addEventListener("click", conferir);
+  inp.addEventListener("keydown", e => { if(e.key === "Enter") conferir(); });
+}
+
 function gerarDesafioEscalada(n){
   const r = regrasDoNivel(n);
   let banco = [];
@@ -3469,18 +4982,39 @@ function gerarDesafioEscalada(n){
     const alvo = new Set(p.focos.flatMap(f => FOCO_TEMAS[f] || []));
     banco = banco.concat(banco.filter(q => (q.temas || []).some(t => alvo.has(t))));
   }
+  /* LOTE B — O FORMATO escala com a faixa (não só o conteúdo):
+     Base: escolha com figura · Bronze+: SEM figura · Prata+: mais cloze/montar
+     Ouro+: DIGITAÇÃO · Diamante+: DITADO por áudio · Mestres: digitação pesada
+     Lendas: + MINI-LEITURA (3 perguntas) · Topo: PROVA GIGANTE (texto 400+ palavras, 10 perguntas) */
+  const fxi = FAIXAS_ESCALADA.indexOf(r.faixa);
+  if(fxi >= 1) banco = banco.map(q => q.figura ? Object.assign({}, q, { figura:null }) : q);
   const montar = embaralhar(banco.filter(q => q.tipo === "montar"));
-  const resto = embaralhar(banco.filter(q => q.tipo !== "montar"));
-  const qtdMontar = Math.min(Math.round(r.perguntas * Math.min(0.15 + n * 0.02, 0.5)), montar.length);
-  return { regras: r, perguntas: embaralhar(montar.slice(0, qtdMontar).concat(resto.slice(0, r.perguntas - qtdMontar))) };
+  const cloze = embaralhar(banco.filter(q => q.tipo !== "montar" && /^Complete:/.test(q.pergunta || "")));
+  const resto = embaralhar(banco.filter(q => q.tipo !== "montar" && !/^Complete:/.test(q.pergunta || "")));
+  const digitar = fxi >= 3 ? embaralhar(gerarDigitarEscalada(r.tiers, fxi >= 4)) : [];
+  const PESOS = [[0.10,0.05,0],[0.20,0.10,0],[0.25,0.25,0],[0.20,0.20,0.25],[0.15,0.15,0.35],[0.15,0.10,0.50],[0.15,0.10,0.40],[0,0,0.50]][fxi];
+  let escolhidas = [], alvoTotal = r.perguntas, totalFase = r.perguntas;
+  if(fxi === 6){ const L = LEITURAS_MINI[n % LEITURAS_MINI.length]; escolhidas = perguntasDaLeitura(L); alvoTotal = r.perguntas - escolhidas.length; }
+  if(fxi === 7){ const G = PROVAS_GIGANTES[n % PROVAS_GIGANTES.length]; escolhidas = perguntasDaLeitura(G); alvoTotal = 10; totalFase = 20; }
+  const qtd = f => Math.round(alvoTotal * f);
+  escolhidas = escolhidas.concat(montar.slice(0, Math.min(qtd(PESOS[0]), montar.length)));
+  escolhidas = escolhidas.concat(cloze.slice(0, Math.min(qtd(PESOS[1]), cloze.length)));
+  escolhidas = escolhidas.concat(digitar.slice(0, Math.min(qtd(PESOS[2]), digitar.length)));
+  const falta = Math.max(0, totalFase - escolhidas.length);
+  escolhidas = escolhidas.concat(resto.slice(0, falta));
+  /* Leitura fica em BLOCO no início (o texto acompanha suas perguntas); o resto embaralha */
+  const comTexto = escolhidas.filter(q => q.texto);
+  const semTexto = embaralhar(escolhidas.filter(q => !q.texto));
+  return { regras: r, perguntas: comTexto.concat(semTexto) };
 }
 function iniciarEscalada(alvo, ehPulo){
   const d = gerarDesafioEscalada(alvo);
   moduloAberto = null;
   quizEstado = {
     perguntas: d.perguntas,
-    fila: embaralhar(d.perguntas.map((q,i) => i)),
+    fila: d.perguntas.some(q => q.texto) ? d.perguntas.map((q,i) => i) : embaralhar(d.perguntas.map((q,i) => i)),
     total: d.perguntas.length,
+    relampagos: 0,
     acertosUnicos: new Set(),
     erros: 0, errosFeitos: 0,
     respondendo: false, treino: false, infinito: false,
@@ -3521,7 +5055,7 @@ function renderEscalada(){
   $("#escJogar").addEventListener("click", () => iniciarEscalada(Progresso.dados.escalada.nivel, false));
   const chipLoja = document.createElement("button");
   chipLoja.className = "loja-aba"; chipLoja.style.cssText = "display:block;margin:12px auto 0;border-color:#E8B84C;background:#FFF3D6";
-  chipLoja.textContent = `🛍️ Loja · 🌱 ${COSM.saldo().toLocaleString("pt-BR")}`;
+  chipLoja.textContent = `🛍️ Loja · 🌻 ${COSM.saldo().toLocaleString("pt-BR")}`;
   chipLoja.addEventListener("click", () => navPara("loja"));
   $("#escaladaConteudo").appendChild(chipLoja);
   document.querySelectorAll("[data-pulo]").forEach(b => b.addEventListener("click", () => iniciarEscalada(Number(b.dataset.pulo), true)));
@@ -3537,23 +5071,27 @@ function vencerEscalada(){
   const vencido = quizEstado.alvoNivel;
   e.nivel = Math.min(vencido + 1, ESCALADA_TOPO);
   if(vencido > (e.recorde || 1)) e.recorde = vencido;
-  registrarAtividade(quizEstado.xpNivel);
-  /* 🌱 ECONOMIA: sementes por vitória + baú de dezena + recorde de tempo */
+  /* ⚡ RELÂMPAGO: cada resposta-relâmpago devolve uma fração do XP — fase 100% relâmpago = XP ×2 */
+  const rel = quizEstado.relampagos || 0;
+  const bonusRel = Math.round(quizEstado.xpNivel * rel / Math.max(1, quizEstado.total));
+  registrarAtividade(quizEstado.xpNivel + bonusRel);
+  /* 🌻 ECONOMIA: girassóis por vitória + baú de dezena + recorde de tempo */
   e.tempos = e.tempos || {}; e.baus = e.baus || {};
   let ganhoSem = 5 + Math.floor(vencido / 5), extras = [];
   const seg = quizEstado.t0 ? Math.max(1, Math.round((Date.now() - quizEstado.t0) / 1000)) : null;
   if(seg){
-    if(e.tempos[vencido] && seg < e.tempos[vencido]){ ganhoSem += 15; extras.push("⏱️ RECORDE DE TEMPO +🌱15"); }
+    if(e.tempos[vencido] && seg < e.tempos[vencido]){ ganhoSem += 15; extras.push("⏱️ RECORDE DE TEMPO +🌻15"); }
     if(!e.tempos[vencido] || seg < e.tempos[vencido]) e.tempos[vencido] = seg;
     const ritmo = Math.round((seg / Math.max(1, quizEstado.total)) * 10) / 10;
     if(!e.melhorRitmo || ritmo < e.melhorRitmo) e.melhorRitmo = ritmo;
   }
+  if(rel > 0) extras.push(`⚡ ${rel} RELÂMPAGO${rel > 1 ? "S" : ""} = +${bonusRel} XP`);
   if(vencido % 10 === 0 && !e.baus[vencido]){
     e.baus[vencido] = true; const bau = 50 + vencido;
-    ganhoSem += bau; extras.push(`🎁 BAÚ DO NÍVEL ${vencido} +🌱${bau}`);
+    ganhoSem += bau; extras.push(`🎁 BAÚ DO NÍVEL ${vencido} +🌻${bau}`);
   }
   COSM.ganhar(ganhoSem, null);
-  const linhaSem = ` Você ganhou 🌱 ${ganhoSem} sementes${extras.length ? " (" + extras.join(" · ") + ")" : ""}${seg ? ` · tempo: ${seg}s` : ""}.`;
+  const linhaSem = ` Você ganhou 🌻 ${ganhoSem} girassóis${extras.length ? " (" + extras.join(" · ") + ")" : ""}${seg ? ` · tempo: ${seg}s` : ""}.`;
   const fxAntes = faixaDoNivel(vencido), fxDepois = faixaDoNivel(e.nivel);
   $("#concluTitulo").textContent = vencido >= ESCALADA_TOPO ? "⛰️ O TOPO DO MUNDO É SEU!" : `🗼 Nível ${vencido} conquistado!`;
   $("#concluTexto").textContent = vencido >= ESCALADA_TOPO
@@ -3563,7 +5101,7 @@ function vencerEscalada(){
       : (quizEstado.ehPulo
         ? "PULO PERFEITO! Coragem premiada — você provou que aguentava."
         : `Subindo! Próximo desafio: nível ${e.nivel}. O topo fica no 1000... até onde você vai?`)) + linhaSem;
-  $("#concluXP").textContent = String(quizEstado.xpNivel);
+  $("#concluXP").textContent = String(quizEstado.xpNivel + bonusRel);
   $("#btnProximoModulo").style.display = "none";
   irPara("tela-conclusao");
 }
@@ -4546,11 +6084,21 @@ function renderHome(){
       <div class="secao-t">📊 Ranking <button class="btn-link" style="padding:0;font-size:.85rem" data-ir="ranking">Ver completo →</button></div>
       <div id="homeRankMini">${rankMiniHtml}</div>
     </div>
+    ${(typeof BAU !== "undefined") ? `<div class="${BAU.podeAbrirGratis() ? "faixa-bau" : "faixa-trofeu"}" id="homeBauFaixa" style="${BAU.podeAbrirGratis() ? "" : "cursor:pointer"}">
+      <span style="font-size:1.8rem">🎁</span>
+      <div style="min-width:0"><b>${BAU.podeAbrirGratis() ? "Seu baú grátis do dia está esperando!" : `Estoque: ${BAU.estoque()} baú${BAU.estoque() === 1 ? "" : "s"} · 🌻 ${COSM.saldo().toLocaleString("pt-BR")}`}</b><br>
+      <small style="font-weight:700">${BAU.podeAbrirGratis() ? "Toque aqui pra abrir agora" : "Toque pra abrir ou comprar mais na Loja"}</small></div>
+    </div>` : ""}
     <div class="dica-card" style="margin-top:14px"><img src="mascote.png" alt=""><p><b>Dica do FalaFina:</b> ${dicaDoDia()}</p></div>
   </div>`;
   $("#homePasso").addEventListener("click", () => {
     if(revisarPrimeiro){ revTab = "inteligente"; navPara("revisao"); }
     else abrirModulo(prox.id);
+  });
+  const homeBauFaixa = $("#homeBauFaixa");
+  if(homeBauFaixa) homeBauFaixa.addEventListener("click", () => {
+    if(typeof BAU !== "undefined" && BAU.podeAbrirGratis()) abrirBauGratisModal();
+    else { lojaAba = "baus"; navPara("loja"); }
   });
   ligarAcoes($("#homeConteudo"));
   $("#homeConteudo").querySelectorAll("[data-hj]").forEach(b => b.addEventListener("click", () => {
@@ -4834,7 +6382,7 @@ function renderDesafios(){
     p.resgates[k] = true;
     registrarAtividade(d.xp);
     COSM.ganhar(20, null);
-    mostrarToast(`🎁 +${d.xp} XP e 🌱 +20 — ${d.nome} concluído!`);
+    mostrarToast(`🎁 +${d.xp} XP e 🌻 +20 — ${d.nome} concluído!`);
     renderDesafios();
   }));
 }
@@ -4910,7 +6458,7 @@ function renderConquistas(){
       <div class="anel" style="--p:${Math.round(ok / l.length * 100)};--cor:var(--sol)"><div><b>${ok}/${l.length}</b><small>TROFÉUS</small></div></div>
       <p style="font-weight:700">Cada conquista conta a história do seu inglês. ${ok ? "Continue colecionando! 🏆" : "A primeira está a UMA aula de distância. 😉"}</p>
     </div>
-    <div class="conq-grid">${l.map(c => `<div class="conq ${c.ok ? "medal-" + c.metal : "trancada"}"><span class="ic">${c.ok ? c.ic : "🔒"}</span><b>${c.nome}</b><small>${c.desc}</small><small style="font-weight:800;color:#8C5A20">${({bronze:"🥉 Bronze · 🌱50",prata:"🥈 Prata · 🌱150",ouro:"🥇 Ouro · 🌱400",diamante:"💎 Diamante · 🌱1.000"})[c.metal]}</small></div>`).join("")}</div>`;
+    <div class="conq-grid">${l.map(c => `<div class="conq ${c.ok ? "medal-" + c.metal : "trancada"}"><span class="ic">${c.ok ? c.ic : "🔒"}</span><b>${c.nome}</b><small>${c.desc}</small><small style="font-weight:800;color:#8C5A20">${({bronze:"🥉 Bronze · 🌻50",prata:"🥈 Prata · 🌻150",ouro:"🥇 Ouro · 🌻400",diamante:"💎 Diamante · 🌻1.000"})[c.metal]}</small></div>`).join("")}</div>`;
   if(typeof creditarMedalhas === "function") creditarMedalhas();
 }
 /* ---------- PRÁTICA ---------- */
@@ -4990,7 +6538,7 @@ function renderMeuPerfil(){
     <div style="flex:1;min-width:160px">
       <h2 style="font-family:var(--f-display);display:flex;align-items:center;gap:8px">${esc(c.nome)} ${petHTML((COSM.usando("pet") || {}).id, 34)}</h2>
       <p style="font-weight:800;color:var(--tinta-suave)">${tituloPorXP(p.xp || 0)} · Nível ${nivelNum()}${pos ? ` · ${pos}º no ranking` : ""} · ${(faixaDoNivel((p.escalada || {}).recorde || 1)).emoji} ${(faixaDoNivel((p.escalada || {}).recorde || 1)).nome}</p>
-      <p class="chip-semente" style="margin-top:6px">🌱 ${COSM.saldo().toLocaleString("pt-BR")} sementes</p>
+      <p class="chip-girassol" style="margin-top:6px">🌻 ${COSM.saldo().toLocaleString("pt-BR")} girassóis</p>
     </div>
     <button class="btn-resg" style="width:auto;padding:10px 16px" id="mpEditar">✏️ Editar perfil</button>
   </div>
@@ -5015,7 +6563,7 @@ function renderMeuPerfil(){
   $("#mpCfg").addEventListener("click", () => navPara("config"));
 }
 /* ==================================================================
-   🛍️ LOJA RPG — bordas, pets, efeitos e pacotes de sementes.
+   🛍️ LOJA RPG — bordas, pets, efeitos e pacotes de girassóis.
    ================================================================== */
 let lojaAba = "borda";
 function renderLoja(){
@@ -5035,36 +6583,64 @@ function renderLoja(){
     if(emUso) botao = `<button class="emuso" data-eq="${chave}">Em uso ✅ (tirar)</button>`;
     else if(tem) botao = `<button class="usar" data-eq="${chave}">Usar</button>`;
     else if(bloqueado) botao = `<button disabled>🔒 Exige nível ${it.req}</button>`;
-    else botao = `<button data-buy="${chave}">Comprar 🌱 ${it.preco.toLocaleString("pt-BR")}</button>`;
-    return `<div class="loja-item ${tem ? "tem" : ""}">${preview}<b>${it.nome}</b><small style="font-weight:700;color:var(--tinta-suave)">${it.desc}</small>${tem ? "" : `<span class="preco">🌱 ${it.preco.toLocaleString("pt-BR")}</span>`}${botao}</div>`;
+    else botao = `<button data-buy="${chave}">Comprar 🌻 ${it.preco.toLocaleString("pt-BR")}</button>`;
+    return `<div class="loja-item ${tem ? "tem" : ""}">${preview}<b>${it.nome}</b><small style="font-weight:700;color:var(--tinta-suave)">${it.desc}</small>${tem ? "" : `<span class="preco">🌻 ${it.preco.toLocaleString("pt-BR")}</span>`}${botao}</div>`;
   };
   const catalogo = lojaAba === "borda" ? COSM.BORDAS : (lojaAba === "pet" ? COSM.PETS : (lojaAba === "efeito" ? COSM.EFEITOS : null));
   let corpo;
   if(catalogo){
     corpo = `<div class="loja-grid">${catalogo.map(cartao).join("")}</div>`;
+  } else if(lojaAba === "baus"){
+    const estoque = BAU.estoque();
+    const podeGratis = BAU.podeAbrirGratis();
+    corpo = `
+    <div class="bau-estoque">
+      <div><b style="font-family:var(--f-display);font-size:1.1rem">🎁 ${estoque} baú${estoque === 1 ? "" : "s"} no estoque</b><br>
+      <small style="font-weight:700;color:var(--tinta-suave)">Abra de 10 em 10 pra ver tudo brilhando na tela</small></div>
+      <button class="bau-cta" style="width:auto;max-width:none;margin:0" id="btAbrirEstoque" ${estoque < 1 ? "disabled" : ""}>Abrir ${Math.min(10, estoque)} 🎉</button>
+    </div>
+    ${podeGratis ? `<div class="faixa-bau" id="btBauGratisLoja"><span style="font-size:1.8rem">🎁</span><div><b>Seu baú grátis do dia está esperando!</b><br><small style="font-weight:700">Toque aqui pra abrir agora</small></div></div>` : ""}
+    <div class="cardb" style="margin:14px 0">
+      <b>🍀 Chances por baú</b>
+      <p style="font-weight:700;color:var(--tinta-suave);font-size:.85rem;margin-top:6px">🌻10 · 🌻20 · 🌻50 · 🌻100 — comuns e fáceis &nbsp;·&nbsp; 🌻150 incomum &nbsp;·&nbsp; 🌻200 raro (10x mais difícil) &nbsp;·&nbsp; 🖼️ borda de avatar muito rara (100x) &nbsp;·&nbsp; ✨ efeito de ranking raríssimo (200x)</p>
+    </div>
+    <div class="secao-t">💰 Comprar mais baús</div>
+    <div class="loja-grid">${BAU.PACOTES.map(pc => `<div class="loja-item"><div style="font-size:2rem">🎁</div><b>${pc.qtd} baús</b><span class="preco">R$ ${pc.rs}</span><button data-baupack="${pc.id}">Comprar</button></div>`).join("")}</div>
+    <p style="font-weight:700;color:var(--tinta-suave);font-size:.8rem;margin-top:8px">Pagamento combinado direto com a equipe pelo WhatsApp — seus baús caem na conta assim que confirmarmos 😊</p>`;
   } else {
-    corpo = `<div class="cardb" style="margin-bottom:12px"><b>💰 Comprar sementes (em breve)</b>
-      <p style="font-weight:700;color:var(--tinta-suave);font-size:.9rem;margin-top:6px">Pagamento por Pix está chegando. Por enquanto, TODAS as sementes podem ser ganhas jogando — de graça:</p>
-      <p style="font-weight:700;font-size:.88rem;margin-top:8px">🗼 Vencer nível da Escalada: <b>🌱 5 + nível÷5</b> &nbsp;·&nbsp; 🎁 Baú a cada 10 níveis: <b>🌱 50 + nível</b><br>
-      🎯 Desafio diário resgatado: <b>🌱 20</b> &nbsp;·&nbsp; ☀️ Primeiro estudo do dia: <b>🌱 10</b><br>
-      ⏱️ Recorde de tempo batido: <b>🌱 15</b> &nbsp;·&nbsp; 🏅 Medalhas: <b>🌱 50 a 1.000</b> cada</p></div>
-    <div class="loja-grid">${COSM.PACOTES.map(pc => `<div class="loja-item"><div style="font-size:2rem">💰</div><b>🌱 ${pc.s.toLocaleString("pt-BR")}</b><span class="preco">R$ ${pc.rs}</span><button disabled>Em breve 🔜</button></div>`).join("")}</div>`;
+    corpo = `<div class="cardb" style="margin-bottom:12px"><b>💰 Comprar girassóis (em breve)</b>
+      <p style="font-weight:700;color:var(--tinta-suave);font-size:.9rem;margin-top:6px">Pagamento por Pix está chegando. Por enquanto, TODAS as girassóis podem ser ganhas jogando — de graça:</p>
+      <p style="font-weight:700;font-size:.88rem;margin-top:8px">🗼 Vencer nível da Escalada: <b>🌻 5 + nível÷5</b> &nbsp;·&nbsp; 🎁 Baú a cada 10 níveis: <b>🌻 50 + nível</b><br>
+      🎯 Desafio diário resgatado: <b>🌻 20</b> &nbsp;·&nbsp; ☀️ Primeiro estudo do dia: <b>🌻 10</b><br>
+      ⏱️ Recorde de tempo batido: <b>🌻 15</b> &nbsp;·&nbsp; 🏅 Medalhas: <b>🌻 50 a 1.000</b> cada</p></div>
+    <div class="loja-grid">${COSM.PACOTES.map(pc => `<div class="loja-item"><div style="font-size:2rem">💰</div><b>🌻 ${pc.s.toLocaleString("pt-BR")}</b><span class="preco">R$ ${pc.rs}</span><button disabled>Em breve 🔜</button></div>`).join("")}</div>`;
   }
   $("#lojaConteudo").innerHTML = `
   <div class="cardb" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-    <span class="chip-semente" style="font-size:1.05rem">🌱 ${COSM.saldo().toLocaleString("pt-BR")} sementes</span>
+    <span class="chip-girassol" style="font-size:1.05rem">🌻 ${COSM.saldo().toLocaleString("pt-BR")} girassóis</span>
     <small style="font-weight:800;color:var(--tinta-suave)">Seu recorde: 🗼 nível ${rec} — itens lendários exigem níveis altos</small>
   </div>
   <div class="loja-abas">
     <button class="loja-aba ${lojaAba === "borda" ? "ativa" : ""}" data-laba="borda">🖼️ Bordas</button>
     <button class="loja-aba ${lojaAba === "pet" ? "ativa" : ""}" data-laba="pet">🐾 Pets</button>
     <button class="loja-aba ${lojaAba === "efeito" ? "ativa" : ""}" data-laba="efeito">✨ Efeitos</button>
-    <button class="loja-aba ${lojaAba === "semente" ? "ativa" : ""}" data-laba="semente">🌱 Sementes</button>
+    <button class="loja-aba ${lojaAba === "baus" ? "ativa" : ""}" data-laba="baus" style="border-color:#E8B84C;background:${lojaAba === "baus" ? "" : "#FFF3D6"}">🎁 Baús</button>
+    <button class="loja-aba ${lojaAba === "girassol" ? "ativa" : ""}" data-laba="girassol">🌻 Girassóis</button>
   </div>
   ${corpo}`;
   $("#lojaConteudo").querySelectorAll("[data-laba]").forEach(b => b.addEventListener("click", () => { lojaAba = b.dataset.laba; renderLoja(); }));
   $("#lojaConteudo").querySelectorAll("[data-buy]").forEach(b => b.addEventListener("click", () => { const [s, id] = b.dataset.buy.split(":"); COSM.comprar(s, id); }));
   $("#lojaConteudo").querySelectorAll("[data-eq]").forEach(b => b.addEventListener("click", () => { const [s, id] = b.dataset.eq.split(":"); COSM.equipar(s, id); }));
+  const btAbrirEstoque = $("#btAbrirEstoque");
+  if(btAbrirEstoque) btAbrirEstoque.addEventListener("click", () => abrirLoteBauModal(Math.min(10, BAU.estoque())));
+  const btBauGratisLoja = $("#btBauGratisLoja");
+  if(btBauGratisLoja) btBauGratisLoja.addEventListener("click", abrirBauGratisModal);
+  $("#lojaConteudo").querySelectorAll("[data-baupack]").forEach(b => b.addEventListener("click", () => {
+    const pc = BAU.PACOTES.find(p => p.id === b.dataset.baupack); if(!pc) return;
+    const eu = Contas.sessao() || "";
+    abrirZap(`Olá! Quero comprar o pacote de ${pc.qtd} baús do FalaFina por R$ ${pc.rs} 🎁 Meu e-mail de cadastro: ${eu}`);
+    mostrarToast("Combine o pagamento no WhatsApp — assim que confirmarmos, seus baús entram na conta! 🎁");
+  }));
 }
 /* ---------- NAVEGAÇÃO DO SHELL ---------- */
 const FF_ROTAS = {
@@ -5121,7 +6697,10 @@ iniciarPWA();
 const contaBoot = Contas.atual();
 if(contaBoot){
   if(!contaBoot.perfil){ abrirPerfil(); }
-  else { renderHome(); irPara("tela-home"); }
+  else {
+    renderHome(); irPara("tela-home");
+    setTimeout(() => { if(typeof BAU !== "undefined" && BAU.podeAbrirGratis()) abrirBauGratisModal(); }, 900);
+  }
 } else {
   irPara("tela-inicio");
 }
