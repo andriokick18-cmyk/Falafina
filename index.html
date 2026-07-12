@@ -1,0 +1,2621 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#00885F">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="description" content="FalaFina — Inglês para brasileiros, do zero. Aprenda com português, inglês e a pronúncia escrita do jeito que soa.">
+<title>FalaFina · Inglês para Brasileiros</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   FALAFINA — DESIGN TOKENS
+   Assinatura visual: o "Card Bilíngue" — verde = português,
+   azul = inglês, faixa amarela = como soa. A cor É o método.
+   ============================================================ */
+:root{
+  --papel:#FFF8EE;
+  --papel-2:#FFF1DC;
+  --tinta:#21313A;
+  --tinta-suave:#5A6B74;
+  --verde:#00885F;
+  --verde-escuro:#00674A;
+  --verde-claro:#E1F3EA;
+  --azul:#2D5DA8;
+  --azul-escuro:#234A87;
+  --azul-claro:#E4EDFA;
+  --sol:#FFC53D;
+  --sol-claro:#FFF3D1;
+  --coral:#E4572E;
+  --coral-claro:#FCE4DB;
+  --branco:#FFFFFF;
+  --sombra:0 4px 0 rgba(33,49,58,.12);
+  --raio:18px;
+  --raio-g:26px;
+  --f-display:'Fredoka',system-ui,sans-serif;
+  --f-body:'Nunito',system-ui,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.001s !important;transition-duration:.001s !important}
+}
+body{
+  font-family:var(--f-body);
+  background:var(--papel);
+  color:var(--tinta);
+  min-height:100vh;
+  min-height:100dvh;
+  font-size:17px;
+  line-height:1.55;
+}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+button:focus-visible,a:focus-visible{outline:3px solid var(--azul);outline-offset:3px;border-radius:8px}
+
+/* ---------- BARRA SUPERIOR ---------- */
+.topo{
+  position:sticky;top:0;z-index:50;
+  background:var(--papel);
+  border-bottom:2px solid rgba(33,49,58,.08);
+  padding:10px 16px;
+  padding-top:calc(10px + env(safe-area-inset-top));
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+}
+.logo{font-family:var(--f-display);font-weight:700;font-size:1.3rem;color:var(--verde);letter-spacing:.2px;display:flex;align-items:center;gap:6px}
+.logo small{font-family:var(--f-body);font-weight:700;font-size:.62rem;color:var(--tinta-suave);letter-spacing:1.2px;text-transform:uppercase;margin-top:6px}
+.xp-pill{
+  display:flex;align-items:center;gap:6px;
+  background:var(--sol-claro);border:2px solid var(--sol);
+  border-radius:999px;padding:5px 14px;
+  font-weight:800;font-size:.95rem;color:#7A5A00;
+}
+.btn-voltar{
+  display:none;align-items:center;gap:6px;
+  font-weight:800;color:var(--tinta-suave);font-size:.95rem;
+  padding:6px 10px;border-radius:12px;
+}
+.btn-voltar:active{background:rgba(33,49,58,.06)}
+
+/* ---------- ESTRUTURA GERAL ---------- */
+.tela{display:none;max-width:560px;margin:0 auto;padding:20px 16px 90px}
+.tela.ativa{display:block;animation:entrar .28s ease}
+@keyframes entrar{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* ---------- ONBOARDING ---------- */
+.hero{text-align:center;padding:26px 6px 10px}
+.hero .mascote{font-size:4.2rem;line-height:1;display:block;margin-bottom:8px}
+.hero h1{font-family:var(--f-display);font-weight:700;font-size:2rem;line-height:1.15;color:var(--tinta)}
+.hero h1 .br{color:var(--verde)} .hero h1 .us{color:var(--azul)}
+.hero p{margin-top:10px;color:var(--tinta-suave);font-weight:600;font-size:1.02rem}
+.pergunta-nivel{
+  margin:26px 0 12px;text-align:center;
+  font-family:var(--f-display);font-weight:600;font-size:1.15rem;
+}
+.opcoes-nivel{display:flex;flex-direction:column;gap:12px}
+.op-nivel{
+  display:flex;align-items:center;gap:14px;text-align:left;
+  background:var(--branco);border:2.5px solid rgba(33,49,58,.12);
+  border-radius:var(--raio);padding:15px 16px;
+  box-shadow:var(--sombra);
+  transition:transform .12s ease,border-color .12s ease;
+}
+.op-nivel:active{transform:translateY(2px)}
+.op-nivel .ico{font-size:1.9rem;flex-shrink:0}
+.op-nivel b{display:block;font-size:1.05rem}
+.op-nivel span{display:block;color:var(--tinta-suave);font-size:.88rem;font-weight:600;line-height:1.35}
+.op-nivel[data-nivel="0"]:active{border-color:var(--verde)}
+.aviso-construcao{
+  margin-top:18px;text-align:center;font-size:.85rem;color:var(--tinta-suave);font-weight:600;
+}
+
+/* ---------- TRILHA (MAPA DE NÍVEIS) ---------- */
+.cabecalho-trilha{margin-bottom:6px}
+.cabecalho-trilha h2{font-family:var(--f-display);font-weight:700;font-size:1.5rem}
+.cabecalho-trilha p{color:var(--tinta-suave);font-weight:600;font-size:.95rem}
+.nivel-bloco{margin-top:26px}
+.nivel-titulo{
+  display:flex;align-items:center;gap:10px;margin-bottom:14px;
+}
+.nivel-titulo .tag{
+  font-family:var(--f-display);font-weight:600;font-size:.78rem;letter-spacing:.6px;
+  padding:4px 12px;border-radius:999px;color:#fff;
+}
+.nivel-titulo h3{font-family:var(--f-display);font-weight:600;font-size:1.15rem}
+.nivel-titulo .cadeado{margin-left:auto;font-size:1.1rem}
+.trilha{position:relative;padding-left:26px}
+.trilha::before{
+  content:"";position:absolute;left:10px;top:8px;bottom:8px;
+  width:4px;border-radius:4px;background:rgba(33,49,58,.1);
+}
+.modulo{
+  position:relative;
+  display:flex;align-items:center;gap:14px;width:100%;text-align:left;
+  background:var(--branco);border:2.5px solid rgba(33,49,58,.12);
+  border-radius:var(--raio);padding:14px 15px;margin-bottom:12px;
+  box-shadow:var(--sombra);
+  transition:transform .12s ease;
+}
+.modulo:active{transform:translateY(2px)}
+.modulo::before{
+  content:"";position:absolute;left:-22px;top:50%;transform:translateY(-50%);
+  width:14px;height:14px;border-radius:50%;
+  background:var(--papel);border:4px solid rgba(33,49,58,.18);
+}
+.modulo.feito::before{background:var(--verde);border-color:var(--verde)}
+.modulo.atual::before{background:var(--sol);border-color:var(--sol);box-shadow:0 0 0 5px var(--sol-claro)}
+.modulo .ico{
+  width:52px;height:52px;flex-shrink:0;border-radius:16px;
+  display:flex;align-items:center;justify-content:center;font-size:1.7rem;
+}
+.modulo b{display:block;font-size:1.02rem;line-height:1.25}
+.modulo span{display:block;color:var(--tinta-suave);font-size:.85rem;font-weight:700}
+.modulo .status{margin-left:auto;font-size:1.25rem;flex-shrink:0}
+.modulo.bloqueado{opacity:.55}
+.modulo.bloqueado:active{transform:none}
+.barra-prog{height:8px;border-radius:99px;background:rgba(33,49,58,.1);margin-top:7px;overflow:hidden;max-width:150px}
+.barra-prog i{display:block;height:100%;border-radius:99px;background:var(--verde);transition:width .4s ease}
+
+/* ---------- LIÇÃO: CARDS BILÍNGUES (assinatura) ---------- */
+.cab-licao{margin-bottom:16px}
+.cab-licao .modtag{font-weight:800;font-size:.8rem;letter-spacing:1px;text-transform:uppercase;color:var(--tinta-suave)}
+.cab-licao h2{font-family:var(--f-display);font-weight:700;font-size:1.6rem;display:flex;align-items:center;gap:10px}
+.cab-licao p{color:var(--tinta-suave);font-weight:600;font-size:.95rem;margin-top:4px}
+.dica-audio{
+  display:flex;gap:10px;align-items:center;
+  background:var(--azul-claro);border:2px dashed var(--azul);
+  border-radius:var(--raio);padding:10px 14px;margin:14px 0 20px;
+  font-size:.9rem;font-weight:700;color:var(--azul-escuro);
+}
+.card{
+  background:var(--branco);border-radius:var(--raio-g);
+  border:2.5px solid rgba(33,49,58,.12);
+  box-shadow:var(--sombra);
+  margin-bottom:18px;overflow:hidden;
+}
+.card .figura{
+  text-align:center;font-size:3.4rem;line-height:1;
+  padding:22px 16px 6px;
+}
+.linha-idioma{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 18px;
+}
+.linha-idioma .bandeira{
+  font-family:var(--f-display);font-weight:600;font-size:.68rem;letter-spacing:.8px;
+  padding:4px 10px;border-radius:8px;color:#fff;flex-shrink:0;min-width:44px;text-align:center;
+}
+.linha-idioma.pt .bandeira{background:var(--verde)}
+.linha-idioma.en .bandeira{background:var(--azul)}
+.linha-idioma .palavra{font-weight:800;font-size:1.35rem;flex:1;line-height:1.2}
+.linha-idioma.pt .palavra{color:var(--verde-escuro)}
+.linha-idioma.en .palavra{color:var(--azul-escuro)}
+.btn-som{
+  width:46px;height:46px;flex-shrink:0;border-radius:50%;
+  background:var(--azul);color:#fff;font-size:1.2rem;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 3px 0 var(--azul-escuro);
+  transition:transform .1s ease;
+}
+.btn-som:active{transform:translateY(2px);box-shadow:none}
+.btn-som.tocando{background:var(--sol);box-shadow:0 3px 0 #D9A00E;color:var(--tinta)}
+.faixa-som{
+  background:var(--sol-claro);border-top:3px solid var(--sol);border-bottom:3px solid var(--sol);
+  padding:14px 18px;display:flex;flex-direction:column;gap:2px;
+}
+.faixa-som .rot{font-family:var(--f-display);font-weight:600;font-size:.72rem;letter-spacing:1px;color:#8A6400}
+.faixa-som .som{font-weight:800;font-size:1.6rem;color:#6B4E00;font-style:italic;letter-spacing:.3px;line-height:1.2}
+.bloco-info{padding:12px 18px}
+.bloco-info + .bloco-info{padding-top:0}
+.bloco-info .rot{font-weight:800;font-size:.75rem;letter-spacing:.8px;text-transform:uppercase;color:var(--tinta-suave);display:flex;align-items:center;gap:6px;margin-bottom:3px}
+.bloco-info .txt{font-weight:600;font-size:.95rem;color:var(--tinta)}
+.exemplo{
+  margin:4px 18px 16px;background:var(--papel-2);
+  border-radius:14px;padding:12px 14px;
+}
+.exemplo .rot{font-weight:800;font-size:.75rem;letter-spacing:.8px;text-transform:uppercase;color:var(--tinta-suave);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.exemplo .en-frase{font-weight:800;font-size:1.05rem;color:var(--azul-escuro);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.exemplo .en-frase .btn-som{width:36px;height:36px;font-size:.95rem}
+.exemplo .som-frase{font-style:italic;font-weight:800;color:#6B4E00;font-size:1.08rem;margin-top:4px;background:var(--sol-claro);border-radius:8px;padding:4px 10px;display:inline-block}
+.exemplo .pt-frase{font-weight:600;color:var(--verde-escuro);font-size:.95rem;margin-top:2px}
+.rodape-licao{
+  position:fixed;left:0;right:0;bottom:0;z-index:40;
+  background:linear-gradient(to top,var(--papel) 65%,transparent);
+  padding:14px 16px calc(14px + env(safe-area-inset-bottom));
+  display:none;justify-content:center;
+}
+.rodape-licao.visivel{display:flex}
+.btn-principal{
+  font-family:var(--f-display);font-weight:600;font-size:1.1rem;letter-spacing:.3px;
+  background:var(--verde);color:#fff;
+  border-radius:999px;padding:15px 20px;width:100%;max-width:520px;
+  box-shadow:0 4px 0 var(--verde-escuro);
+  transition:transform .1s ease;
+}
+.btn-principal:active{transform:translateY(3px);box-shadow:none}
+.btn-principal.azul{background:var(--azul);box-shadow:0 4px 0 var(--azul-escuro)}
+.btn-principal:disabled{opacity:.5}
+
+/* ---------- QUIZ ---------- */
+.quiz-topo{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.quiz-topo .barra-prog{flex:1;max-width:none;height:12px}
+.quiz-topo .cont{font-weight:800;color:var(--tinta-suave);font-size:.9rem;flex-shrink:0}
+.quiz-pergunta{
+  font-family:var(--f-display);font-weight:600;font-size:1.3rem;line-height:1.3;
+  margin-bottom:6px;
+}
+.quiz-sub{color:var(--tinta-suave);font-weight:700;font-size:.9rem;margin-bottom:18px;display:flex;align-items:center;gap:8px}
+.quiz-sub .btn-som{width:38px;height:38px;font-size:1rem}
+.quiz-opcoes{display:flex;flex-direction:column;gap:12px}
+.quiz-op{
+  background:var(--branco);border:2.5px solid rgba(33,49,58,.14);
+  border-radius:var(--raio);padding:15px 16px;
+  font-weight:800;font-size:1.05rem;text-align:left;
+  box-shadow:var(--sombra);
+  display:flex;align-items:center;gap:12px;
+  transition:transform .1s ease,border-color .12s,background .12s;
+}
+.quiz-op:active{transform:translateY(2px)}
+.quiz-op .letra{
+  width:32px;height:32px;flex-shrink:0;border-radius:10px;
+  background:var(--papel-2);display:flex;align-items:center;justify-content:center;
+  font-family:var(--f-display);font-weight:600;font-size:.9rem;color:var(--tinta-suave);
+}
+.quiz-op.certa{border-color:var(--verde);background:var(--verde-claro)}
+.quiz-op.certa .letra{background:var(--verde);color:#fff}
+.quiz-op.errada{border-color:var(--coral);background:var(--coral-claro)}
+.quiz-op.errada .letra{background:var(--coral);color:#fff}
+.quiz-op:disabled{cursor:default}
+.feedback{
+  margin-top:18px;border-radius:var(--raio);padding:14px 16px;
+  font-weight:700;display:none;
+}
+.feedback.certo{display:block;background:var(--verde-claro);border:2px solid var(--verde);color:var(--verde-escuro)}
+.feedback.erro{display:block;background:var(--coral-claro);border:2px solid var(--coral);color:#8C3212}
+.feedback .titulo{font-family:var(--f-display);font-weight:600;font-size:1.05rem;display:flex;gap:8px;align-items:center;margin-bottom:4px}
+.feedback .dica{font-size:.92rem;font-weight:600}
+.aviso-rigor{
+  margin-top:14px;font-size:.85rem;font-weight:700;color:var(--tinta-suave);
+  display:flex;gap:8px;align-items:flex-start;
+}
+
+/* ---------- CONCLUSÃO ---------- */
+.conclusao{text-align:center;padding-top:40px}
+.conclusao .estrela{font-size:5rem;display:block;animation:pular .6s ease}
+@keyframes pular{0%{transform:scale(.3)}60%{transform:scale(1.15)}100%{transform:scale(1)}}
+.conclusao h2{font-family:var(--f-display);font-weight:700;font-size:1.7rem;margin-top:10px}
+.conclusao p{color:var(--tinta-suave);font-weight:700;margin-top:6px}
+.conclusao .ganho-xp{
+  display:inline-flex;align-items:center;gap:8px;margin-top:18px;
+  background:var(--sol-claro);border:2px solid var(--sol);border-radius:999px;
+  padding:10px 22px;font-weight:800;font-size:1.15rem;color:#7A5A00;
+}
+.conclusao .acoes{margin-top:30px;display:flex;flex-direction:column;gap:12px}
+
+/* ---------- FORMULÁRIOS (cadastro/login/perfil) ---------- */
+.form{display:flex;flex-direction:column;gap:14px;margin-top:14px}
+.campo{display:flex;flex-direction:column;gap:6px}
+.campo > span{font-weight:800;font-size:.85rem;color:var(--tinta-suave);letter-spacing:.2px}
+.campo input{font-family:inherit;font-size:1.05rem;font-weight:700;color:var(--tinta);background:var(--branco);border:2.5px solid rgba(33,49,58,.15);border-radius:14px;padding:13px 15px;width:100%}
+.campo input:focus{outline:none;border-color:var(--verde)}
+.form-erro{color:#8C3212;background:var(--coral-claro);border:2px solid var(--coral);border-radius:12px;padding:10px 14px;font-weight:700;font-size:.9rem;display:none}
+.form-erro.mostrar{display:block}
+.btn-link{font-weight:800;color:var(--azul);font-size:.95rem;padding:8px;text-align:center}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.fchip{background:var(--branco);border:2.5px solid rgba(33,49,58,.15);border-radius:999px;padding:9px 15px;font-weight:800;font-size:.92rem;color:var(--tinta-suave)}
+.fchip.ativo{border-color:var(--verde);background:var(--verde-claro);color:var(--verde-escuro)}
+.foto-area{display:flex;align-items:center;gap:16px}
+.avatar-grande{width:84px;height:84px;border-radius:50%;background:var(--papel-2);border:3px solid var(--sol);display:flex;align-items:center;justify-content:center;font-size:2.2rem;overflow:hidden;flex-shrink:0}
+.avatar-grande img{width:100%;height:100%;object-fit:cover}
+.avatar-mini{width:38px;height:38px;border-radius:50%;background:var(--papel-2);border:2.5px solid var(--sol);display:flex;align-items:center;justify-content:center;font-size:1.1rem;overflow:hidden;flex-shrink:0}
+.avatar-mini img{width:100%;height:100%;object-fit:cover}
+.rank-item{display:flex;align-items:center;gap:12px;background:var(--branco);border:2.5px solid rgba(33,49,58,.12);border-radius:var(--raio);padding:12px 14px;margin-bottom:10px;box-shadow:var(--sombra)}
+.rank-item.eu{border-color:var(--verde);background:var(--verde-claro)}
+.rank-pos{font-family:var(--f-display);font-weight:700;font-size:1.2rem;width:34px;text-align:center;flex-shrink:0}
+.rank-item b{display:block;font-size:1rem}
+.rank-item small{display:block;color:var(--tinta-suave);font-weight:700;font-size:.8rem}
+.rank-xp{margin-left:auto;font-weight:800;color:#7A5A00;flex-shrink:0}
+.quiz-figura{font-size:3.2rem;text-align:center;line-height:1;margin-bottom:10px}
+.esc-nivel{font-family:var(--f-display);font-weight:700;font-size:3rem;text-align:center;color:var(--verde);line-height:1}
+.esc-card{background:var(--branco);border:2.5px solid rgba(33,49,58,.12);border-radius:var(--raio-g);padding:20px 16px;box-shadow:var(--sombra);text-align:center;margin-bottom:14px}
+
+/* ---------- BOTÃO FLUTUANTE PWA ---------- */
+.pwa-flutuante{position:fixed;right:14px;bottom:14px;z-index:80;display:flex;align-items:flex-start;filter:drop-shadow(0 6px 14px rgba(33,49,58,.25))}
+.pwa-btn{display:flex;align-items:center;gap:10px;background:var(--tinta);color:#fff;border-radius:16px;padding:12px 16px;font-size:1.4rem}
+.pwa-btn span{text-align:left;line-height:1.2}
+.pwa-btn b{display:block;font-size:.95rem}
+.pwa-btn small{display:block;font-size:.72rem;font-weight:700;opacity:.8}
+.pwa-x{position:absolute;top:-9px;left:-9px;width:26px;height:26px;border-radius:50%;background:var(--coral);color:#fff;font-weight:800;font-size:.8rem;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 4px rgba(0,0,0,.3)}
+
+/* ---------- MONTAR FRASE ---------- */
+.montar-resposta{min-height:60px;background:var(--branco);border:2.5px dashed rgba(33,49,58,.28);border-radius:var(--raio);padding:10px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px}
+.montar-resposta .mDica{color:var(--tinta-suave);font-weight:700;font-size:.85rem}
+.montar-banco{display:flex;flex-wrap:wrap;gap:10px}
+.chip{background:var(--branco);border:2.5px solid var(--azul);color:var(--azul-escuro);font-weight:800;font-size:1.05rem;border-radius:12px;padding:9px 15px;box-shadow:0 3px 0 var(--azul-escuro);transition:transform .1s}
+.chip:active{transform:translateY(2px);box-shadow:none}
+.chip.usado{border-color:var(--verde);color:var(--verde-escuro);box-shadow:0 3px 0 var(--verde-escuro)}
+
+/* ---------- DIÁLOGO (conversa de verdade) ---------- */
+.dialogo-bloco{margin:8px 0 26px}
+.dialogo-titulo{font-family:var(--f-display);font-weight:700;font-size:1.25rem;margin-bottom:2px}
+.dialogo-sub{color:var(--tinta-suave);font-weight:700;font-size:.88rem;margin-bottom:14px}
+.balao{max-width:88%;border-radius:18px;padding:11px 14px;margin-bottom:12px;box-shadow:var(--sombra);border:2px solid rgba(33,49,58,.1);background:var(--branco)}
+.balao.eles{margin-right:auto;border-bottom-left-radius:6px}
+.balao.voce{margin-left:auto;border-bottom-right-radius:6px;background:var(--verde-claro);border-color:var(--verde)}
+.balao .vez{font-size:.68rem;font-weight:800;letter-spacing:.8px;color:var(--verde-escuro);margin-bottom:2px}
+.balao .en{font-weight:800;font-size:1.05rem;color:var(--azul-escuro);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.balao .en .btn-som{width:38px;height:38px;font-size:1rem}
+.balao .som{font-style:italic;font-weight:800;color:#6B4E00;font-size:.98rem;margin-top:3px}
+.balao .pt{font-weight:600;color:var(--tinta-suave);font-size:.88rem;margin-top:2px}
+.btn-som.mic{background:var(--verde);box-shadow:0 3px 0 var(--verde-escuro)}
+
+/* ---------- TOAST ---------- */
+.toast{
+  position:fixed;left:50%;bottom:100px;transform:translateX(-50%) translateY(20px);
+  background:var(--tinta);color:#fff;font-weight:800;font-size:.95rem;
+  padding:12px 20px;border-radius:999px;opacity:0;pointer-events:none;
+  transition:opacity .25s,transform .25s;z-index:99;white-space:nowrap;
+}
+.toast.mostrar{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<header class="topo">
+  <button class="btn-voltar" id="btnVoltar" aria-label="Voltar">← Voltar</button>
+  <div class="logo">FalaFina <small>inglês BR</small></div>
+  <div style="display:flex;gap:8px;align-items:center">
+    <div class="xp-pill" style="background:#FCE4DB;border-color:var(--coral);color:#8C3212" title="Dias seguidos estudando">🔥 <span id="streakValor">0</span></div>
+    <div class="xp-pill" title="Seus pontos de experiência">⭐ <span id="xpValor">0</span> XP</div>
+    <button class="avatar-mini" id="btnAvatar" aria-label="Meu perfil">👤</button>
+  </div>
+</header>
+
+<!-- ================= TELA: INÍCIO (LANDING) ================= -->
+<main class="tela" id="tela-inicio">
+  <div class="hero">
+    <span class="mascote" aria-hidden="true">🦜</span>
+    <h1>FalaFina — <span class="us">inglês</span> para <span class="br">brasileiros</span>, de 8 a 80 anos</h1>
+    <p>O método: cada palavra em <b style="color:var(--verde)">português</b>, em <b style="color:var(--azul)">inglês</b> e com a <b style="color:#8A6400">pronúncia escrita do nosso jeito</b> (water = "uórer"). Áudio nativo, microfone pra testar sua fala e desafios que <b>nunca acabam</b>.</p>
+  </div>
+  <div class="acoes" style="display:flex;flex-direction:column;gap:12px;margin-top:10px">
+    <button class="btn-principal" id="btnIrCadastro">✨ Criar minha conta grátis</button>
+    <button class="btn-principal azul" id="btnIrLogin">🔑 Já tenho conta — Entrar</button>
+  </div>
+  <div style="margin-top:26px;display:flex;flex-direction:column;gap:10px">
+    <div class="op-nivel" style="cursor:default"><span class="ico">🗣️</span><span><b>Pronúncia escrita + voz nativa + microfone</b><span>Você lê como soa, ouve a voz americana e testa sua fala no 🎤</span></span></div>
+    <div class="op-nivel" style="cursor:default"><span class="ico">🧠</span><span><b>Revisão na hora certa (ciência da memória)</b><span>O site sabe quando você vai esquecer e te chama pra revisar antes</span></span></div>
+    <div class="op-nivel" style="cursor:default"><span class="ico">♾️</span><span><b>Escalada infinita de níveis</b><span>Nível 1, 2, 3... até onde você aguentar. Pode tentar pular — mas se falhar, volta pro início!</span></span></div>
+    <div class="op-nivel" style="cursor:default"><span class="ico">👨‍👩‍👧</span><span><b>Para todas as idades</b><span>O conteúdo se adapta à idade do perfil — do seu filho de 8 anos até o vovô</span></span></div>
+    <div class="op-nivel" style="cursor:default"><span class="ico">🏆</span><span><b>Ranking entre os perfis</b><span>Cada pessoa cria sua conta e a família compete no XP</span></span></div>
+  </div>
+</main>
+
+<!-- ================= TELA: CADASTRO ================= -->
+<main class="tela" id="tela-cadastro">
+  <div class="hero"><span class="mascote">✨</span><h1>Criar conta</h1><p>Rapidinho: e-mail e senha. Fica salvo pra sempre neste aparelho.</p></div>
+  <div class="form">
+    <label class="campo"><span>Seu nome</span><input type="text" id="cadNome" maxlength="30" autocomplete="name" placeholder="Como quer ser chamado(a)?"></label>
+    <label class="campo"><span>E-mail</span><input type="email" id="cadEmail" autocomplete="email" placeholder="voce@email.com"></label>
+    <label class="campo"><span>Senha</span><input type="password" id="cadSenha" autocomplete="new-password" placeholder="mínimo 4 caracteres"></label>
+    <label class="campo"><span>Confirmar senha</span><input type="password" id="cadSenha2" autocomplete="new-password" placeholder="repita a senha"></label>
+    <div class="form-erro" id="cadErro"></div>
+    <button class="btn-principal" id="btnCadastrar">Criar conta ✔</button>
+    <button class="btn-link" id="linkParaLogin">Já tenho conta → Entrar</button>
+  </div>
+</main>
+
+<!-- ================= TELA: LOGIN ================= -->
+<main class="tela" id="tela-login">
+  <div class="hero"><span class="mascote">🔑</span><h1>Entrar</h1><p>Bem-vindo(a) de volta!</p></div>
+  <div class="form">
+    <label class="campo"><span>E-mail</span><input type="email" id="logEmail" autocomplete="email" placeholder="voce@email.com"></label>
+    <label class="campo"><span>Senha</span><input type="password" id="logSenha" autocomplete="current-password" placeholder="sua senha"></label>
+    <div class="form-erro" id="logErro"></div>
+    <button class="btn-principal" id="btnLogar">Entrar ✔</button>
+    <button class="btn-link" id="linkParaCadastro">Não tenho conta → Criar agora</button>
+  </div>
+</main>
+
+<!-- ================= TELA: PERFIL ================= -->
+<main class="tela" id="tela-perfil">
+  <div class="hero" style="padding-bottom:0"><span class="mascote">🪪</span><h1>Seu perfil</h1><p>O FalaFina usa isso pra montar aulas do SEU jeito e da SUA idade.</p></div>
+  <div class="form">
+    <div class="foto-area">
+      <div class="avatar-grande" id="fotoPreview">👤</div>
+      <label class="btn-principal azul" style="padding:10px 18px;font-size:.95rem;cursor:pointer">📷 Escolher foto
+        <input type="file" id="fotoInput" accept="image/*" style="display:none">
+      </label>
+    </div>
+    <label class="campo"><span>Idade (obrigatória — o conteúdo se adapta a ela)</span><input type="number" id="perfIdade" min="4" max="99" placeholder="ex: 8, 25, 40..."></label>
+    <div class="campo"><span>Seu inglês hoje</span>
+      <div class="chips" id="perfNivel">
+        <button class="fchip" data-v="0">🌱 Nunca aprendi</button>
+        <button class="fchip" data-v="1">🚶 Sei umas palavras</button>
+        <button class="fchip" data-v="2">🏃 Me viro um pouco</button>
+        <button class="fchip" data-v="3">🚀 Quero aperfeiçoar</button>
+      </div>
+    </div>
+    <div class="campo"><span>O que você quer aprender? (pode marcar vários)</span>
+      <div class="chips" id="perfFocos">
+        <button class="fchip" data-v="verbos">⚡ Verbos</button>
+        <button class="fchip" data-v="entrevista">🎤 Entrevista de trabalho</button>
+        <button class="fchip" data-v="h2x">🌾 Visto H-2B / H-2A</button>
+        <button class="fchip" data-v="diaadia">🍽️ Dia a dia</button>
+        <button class="fchip" data-v="viagem">✈️ Viagem</button>
+        <button class="fchip" data-v="kids">🧸 Inglês pra criança</button>
+      </div>
+    </div>
+    <div class="form-erro" id="perfErro"></div>
+    <button class="btn-principal" id="btnSalvarPerfil">Salvar perfil ✔</button>
+    <button class="btn-link" id="btnSair">Sair da conta</button>
+  </div>
+</main>
+
+<!-- ================= TELA: RANKING ================= -->
+<main class="tela" id="tela-ranking">
+  <div class="cabecalho-trilha"><h2>🏆 Ranking</h2><p>Quem estuda mais, sobe. Ranking dos perfis deste aparelho — perfeito pra família competir!</p></div>
+  <div id="rankingLista"></div>
+</main>
+
+<!-- ================= TELA: ESCALADA ================= -->
+<main class="tela" id="tela-escalada">
+  <div class="cabecalho-trilha"><h2>🗼 Escalada Infinita</h2><p>Nível 1, 2, 3... <b>sem fim</b>. Quanto mais alto, mais difícil: mais perguntas e menos erros permitidos. Pode tentar <b>pular</b> níveis — mas se falhar no pulo, <b>volta pro nível 1</b>. Coragem?</p></div>
+  <div id="escaladaConteudo"></div>
+</main>
+
+<!-- ================= BOTÃO FLUTUANTE: BAIXAR APP ================= -->
+<div class="pwa-flutuante" id="pwaFlutuante" style="display:none">
+  <button class="pwa-x" id="pwaFechar" aria-label="Fechar">✕</button>
+  <button class="pwa-btn" id="pwaBaixar">📲 <span><b>Baixar o aplicativo</b><small>Grátis · funciona offline</small></span></button>
+</div>
+
+<!-- ================= TELA 1: ONBOARDING ================= -->
+<main class="tela ativa" id="tela-onboarding">
+  <div class="hero">
+    <span class="mascote" aria-hidden="true">🦜</span>
+    <h1>Aprenda <span class="us">inglês</span> pensando em <span class="br">português</span></h1>
+    <p>Cada palavra vem com o significado, a escrita em inglês e <b>como ela soa</b> — escrito do nosso jeito.</p>
+  </div>
+  <p class="pergunta-nivel">Pra começar: como está seu inglês hoje?</p>
+  <div class="opcoes-nivel" role="group" aria-label="Escolha seu nível">
+    <button class="op-nivel" data-nivel="0">
+      <span class="ico">🌱</span>
+      <span><b>Nunca aprendi inglês</b><span>Começar do absoluto zero, com calma e figuras</span></span>
+    </button>
+    <button class="op-nivel" data-nivel="1">
+      <span class="ico">🚶</span>
+      <span><b>Sei umas palavrinhas</b><span>Reconheço "hello" e "thank you", mas só isso</span></span>
+    </button>
+    <button class="op-nivel" data-nivel="2">
+      <span class="ico">🏃</span>
+      <span><b>Me viro um pouco</b><span>Monto frases simples, mas travo na hora de falar</span></span>
+    </button>
+    <button class="op-nivel" data-nivel="3">
+      <span class="ico">🚀</span>
+      <span><b>Quero aperfeiçoar</b><span>Já converso, quero corrigir erros e soar natural</span></span>
+    </button>
+  </div>
+  <p class="aviso-construcao">♾️ Comece de onde quiser — dá pra mudar depois. E pode tentar chegar no fim: o FalaFina <b>gera desafios novos pra sempre</b>.</p>
+</main>
+
+<!-- ================= TELA 2: TRILHA ================= -->
+<main class="tela" id="tela-trilha">
+  <div class="cabecalho-trilha">
+    <h2 id="trilhaSaudacao">Sua trilha 🦜</h2>
+    <p>Termine um módulo com <b>100% de acerto</b> para destravar o próximo. E leia sempre a faixa amarela <b>🗣️ COMO SOA</b> em voz alta — é ela que solta sua língua!</p>
+  </div>
+  <div id="trilhaConteudo"></div>
+</main>
+
+<!-- ================= TELA 3: LIÇÃO ================= -->
+<main class="tela" id="tela-licao">
+  <div id="licaoConteudo"></div>
+</main>
+<div class="rodape-licao" id="rodapeLicao">
+  <button class="btn-principal" id="btnIrQuiz">Fazer o desafio ✏️</button>
+</div>
+
+<!-- ================= TELA 4: QUIZ ================= -->
+<main class="tela" id="tela-quiz">
+  <div class="quiz-topo">
+    <div class="barra-prog"><i id="quizBarra" style="width:0%"></i></div>
+    <span class="cont" id="quizCont"></span>
+  </div>
+  <div id="quizConteudo"></div>
+</main>
+
+<!-- ================= TELA 5: CONCLUSÃO ================= -->
+<main class="tela" id="tela-conclusao">
+  <div class="conclusao">
+    <span class="estrela" aria-hidden="true">🌟</span>
+    <h2 id="concluTitulo">Módulo concluído!</h2>
+    <p id="concluTexto">Você acertou tudo. É assim que se aprende.</p>
+    <div class="ganho-xp">⭐ +<span id="concluXP">0</span> XP</div>
+    <div class="acoes">
+      <button class="btn-principal" id="btnProximoModulo">Próximo módulo →</button>
+      <button class="btn-principal azul" id="btnVoltarTrilha">Ver minha trilha</button>
+    </div>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+/* ==================================================================
+   FALAFINA v0.6 — MOTOR + NÍVEL 0
+   Arquitetura: CONTEÚDO É DADO, MOTOR É UM SÓ.
+   Para escalar às "mil páginas": só se adiciona objetos em NIVEIS.
+   O motor renderiza qualquer módulo novo automaticamente.
+   ================================================================== */
+
+/* ---------- ARMAZENAMENTO SEGURO (funciona no site publicado;
+   em ambientes sem localStorage cai para memória sem quebrar) ---------- */
+const Store = (() => {
+  let mem = {};
+  let ok = false;
+  try { localStorage.setItem("__t","1"); localStorage.removeItem("__t"); ok = true; } catch(e){ ok = false; }
+  return {
+    get(k, padrao){
+      try{
+        const v = ok ? localStorage.getItem(k) : mem[k];
+        return v == null ? padrao : JSON.parse(v);
+      }catch(e){ return padrao; }
+    },
+    set(k, v){
+      try{
+        const s = JSON.stringify(v);
+        if(ok) localStorage.setItem(k, s); else mem[k] = s;
+      }catch(e){ mem[k] = JSON.stringify(v); }
+    }
+  };
+})();
+
+/* ---------- CONTAS: cadastro com e-mail + senha (hash SHA-256).
+   Salvas pra sempre neste aparelho; estrutura pronta para sincronizar
+   com um servidor no futuro (mesmo formato de objeto). ---------- */
+async function hashSenha(txt){
+  try{
+    const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode("falafina:" + txt));
+    return Array.from(new Uint8Array(b)).map(x => x.toString(16).padStart(2, "0")).join("");
+  }catch(e){
+    let h = 5381; const s = "falafina:" + txt;
+    for(let i = 0; i < s.length; i++){ h = ((h << 5) + h + s.charCodeAt(i)) | 0; }
+    return "fb" + (h >>> 0).toString(16);
+  }
+}
+const Contas = {
+  todas(){ return Store.get("ff_contas", {}); },
+  salvarTodas(c){ Store.set("ff_contas", c); },
+  sessao(){ return Store.get("ff_sessao", null); },
+  logar(email){ Store.set("ff_sessao", email); },
+  sair(){ Store.set("ff_sessao", null); },
+  atual(){ const s = this.sessao(); const c = this.todas(); return (s && c[s]) ? c[s] : null; },
+  salvarAtual(conta){ const s = this.sessao(); if(!s) return; const c = this.todas(); c[s] = conta; this.salvarTodas(c); }
+};
+function perfilAtual(){ const c = Contas.atual(); return c ? (c.perfil || null) : null; }
+function idadeUsuario(){
+  const p = perfilAtual();
+  if(!p || !p.anoNascimento) return null;
+  return new Date().getFullYear() - p.anoNascimento; // idade recalculada sempre — cresce com a pessoa
+}
+function usuarioMenor(){ const i = idadeUsuario(); return i !== null && i < 18; }
+function usuarioCrianca(){ const i = idadeUsuario(); return i !== null && i < 12; }
+
+/* ---------- ÁUDIO: voz nativa do aparelho (en-US), custo zero ---------- */
+const Fala = (() => {
+  const suportado = "speechSynthesis" in window;
+  let vozEN = null;
+  function escolherVoz(){
+    if(!suportado) return;
+    const vozes = speechSynthesis.getVoices();
+    vozEN = vozes.find(v => v.lang === "en-US") || vozes.find(v => v.lang && v.lang.startsWith("en")) || null;
+  }
+  if(suportado){
+    escolherVoz();
+    speechSynthesis.onvoiceschanged = escolherVoz;
+  }
+  function dizer(texto, botao){
+    if(!suportado){ mostrarToast("Seu navegador não tem áudio de voz 😕"); return; }
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(texto);
+    u.lang = "en-US";
+    u.rate = 0.85;                 // um pouco mais devagar: aluno iniciante
+    if(vozEN) u.voice = vozEN;
+    if(botao){
+      botao.classList.add("tocando");
+      u.onend = () => botao.classList.remove("tocando");
+      u.onerror = () => botao.classList.remove("tocando");
+    }
+    speechSynthesis.speak(u);
+  }
+  /* Reconhecimento de fala: teste de pronúncia com o microfone (Android Chrome).
+     Se o navegador não tiver a API, os botões 🎤 simplesmente não aparecem. */
+  const Rec = window.SpeechRecognition || window.webkitSpeechRecognition;
+  function ouvir(alvo, botao){
+    if(!Rec){ mostrarToast("🎤 Seu navegador não tem reconhecimento de voz"); return; }
+    let r;
+    try{ r = new Rec(); }catch(e){ mostrarToast("🎤 Microfone indisponível"); return; }
+    r.lang = "en-US";
+    r.interimResults = false;
+    r.maxAlternatives = 3;
+    if(botao){ botao.classList.add("tocando"); botao.textContent = "👂"; }
+    const soltar = () => { if(botao){ botao.classList.remove("tocando"); botao.textContent = "🎤"; } };
+    r.onresult = e => {
+      const ditos = Array.from(e.results[0]).map(a => a.transcript);
+      const norm = s => s.toLowerCase().replace(/[^a-z' ]/g, " ").split(/\s+/).filter(Boolean);
+      const alvoP = norm(alvo);
+      const ok = ditos.some(d => { const dp = norm(d); return alvoP.every(w => dp.includes(w)); });
+      mostrarToast(ok ? "🎯 Perfeito! Pronúncia reconhecida!" : `👂 Ouvi: "${(ditos[0] || "...").trim()}" — tenta de novo!`);
+    };
+    r.onend = soltar;
+    r.onerror = () => { soltar(); mostrarToast("🎤 Não consegui ouvir — fala mais perto!"); };
+    try{ r.start(); }catch(e){ soltar(); }
+  }
+  return { dizer, ouvir, temMic: !!Rec };
+})();
+
+/* ==================================================================
+   CONTEÚDO — NÍVEL 0 (conteúdo 100% original FalaFina)
+   Formato de cada card:
+   figura | pt | en | som (pronúncia escrita em português) |
+   quando (em que situação usar) | dica (opcional) |
+   exEn / exSom / exPt (frase de exemplo)
+   ================================================================== */
+const NIVEIS = [
+{
+  id:"n0", nome:"Primeiro Contato", tag:"NÍVEL 0", cor:"#00885F",
+  descricao:"Para quem nunca viu inglês na vida. Com figuras, calma e sem pressa.",
+  modulos:[
+  {
+    id:"n0m1", temas:["basico","apresentacao"], titulo:"Saudações — os primeiros sons", icone:"👋", corIco:"#E1F3EA",
+    intro:"Todo mundo começa por aqui: cumprimentar. Repita em voz alta junto com o áudio — falar errado sozinho agora é o que evita falar errado na frente dos outros depois.",
+    xp:50,
+    cards:[
+      { figura:"👋", pt:"Oi", en:"Hi", som:"rái",
+        quando:"Cumprimento rápido e informal, entre amigos ou colegas. Igual ao nosso \"oi\".",
+        dica:"O H do inglês tem som de R fraco, como em \"rato\" falado bem de leve. Nunca é mudo como no português!",
+        exEn:"Hi, John!", exSom:"rái, djón!", exPt:"Oi, John!" },
+      { figura:"🙋", pt:"Olá", en:"Hello", som:"relôu",
+        quando:"Cumprimento um pouco mais formal que \"Hi\". Serve para qualquer pessoa, qualquer hora. Também é o que se fala ao atender o telefone.",
+        exEn:"Hello! How are you?", exSom:"relôu! ráu ar iú?", exPt:"Olá! Como você está?" },
+      { figura:"🌅", pt:"Bom dia", en:"Good morning", som:"gud mórnin",
+        quando:"Da hora que acorda até o meio-dia. \"Good\" = bom, \"morning\" = manhã.",
+        exEn:"Good morning, teacher!", exSom:"gud mórnin, títcher!", exPt:"Bom dia, professor(a)!" },
+      { figura:"☀️", pt:"Boa tarde", en:"Good afternoon", som:"gud áfter-nún",
+        quando:"Do meio-dia até o fim da tarde (umas 18h). \"Afternoon\" = tarde.",
+        exEn:"Good afternoon, everyone.", exSom:"gud áfter-nún, évri-uan.", exPt:"Boa tarde a todos." },
+      { figura:"🌙", pt:"Boa noite (chegando)", en:"Good evening", som:"gud ívinin",
+        quando:"Quando você CHEGA em algum lugar à noite. É saudação de chegada, não de despedida.",
+        dica:"Pegadinha clássica: em inglês existem DUAS \"boa noite\". Esta é a de quem chega.",
+        exEn:"Good evening, welcome!", exSom:"gud ívinin, uél-cãm!", exPt:"Boa noite, bem-vindo!" },
+      { figura:"😴", pt:"Boa noite (indo dormir)", en:"Good night", som:"gud náit",
+        quando:"Só na despedida: indo embora à noite ou indo dormir. Nunca use para cumprimentar quem chega.",
+        exEn:"Good night, mom.", exSom:"gud náit, mãm.", exPt:"Boa noite, mãe." },
+      { figura:"👉", pt:"Tchau", en:"Bye", som:"bái",
+        quando:"Despedida rápida do dia a dia. \"Goodbye\" (gud-bái) é a versão completa, mais formal.",
+        exEn:"Bye! See you tomorrow.", exSom:"bái! sí iú tumórou.", exPt:"Tchau! Até amanhã." },
+      { figura:"🙏", pt:"Obrigado / Obrigada", en:"Thank you", som:"thênk iú",
+        quando:"Para agradecer qualquer coisa. Serve para homem e mulher — em inglês não muda.",
+        dica:"O TH se faz com a ponta da língua entre os dentes soprando o ar. Se sair \"tênk iú\", todo mundo entende — mas treine o jeito certo desde já.",
+        exEn:"Thank you very much!", exSom:"thênk iú véri mãtch!", exPt:"Muito obrigado!" },
+      { figura:"🤲", pt:"Por favor", en:"Please", som:"plíz",
+        quando:"Ao pedir qualquer coisa. Nos Estados Unidos, pedir sem \"please\" soa mal-educado — use sempre.",
+        exEn:"Water, please.", exSom:"uórer, plíz.", exPt:"Água, por favor." },
+      { figura:"😅", pt:"Desculpa", en:"Sorry", som:"sóri",
+        quando:"Para pedir desculpas por algo que você fez. Para chamar atenção de alguém (\"com licença\"), use \"Excuse me\" (eks-kiúz mi).",
+        exEn:"Sorry, I'm late.", exSom:"sóri, áim lêit.", exPt:"Desculpa, estou atrasado." },
+    ],
+    dialogo:[
+      { quem:"eles", en:"Hi! How are you?", som:"rái! ráu ar iú?", pt:"Oi! Como você está?" },
+      { quem:"voce", en:"Hello! I'm fine, thanks. And you?", som:"relôu! áim fáin, thênks. énd iú?", pt:"Olá! Estou bem, obrigado. E você?" },
+      { quem:"eles", en:"I'm good! Have a nice day!", som:"áim gud! rév a náis dêi!", pt:"Estou bem! Tenha um bom dia!" },
+      { quem:"voce", en:"Thank you! Bye!", som:"thênk iú! bái!", pt:"Obrigado! Tchau!" },
+    ],
+    quiz:[
+      { pergunta:"Como se diz \"obrigado\" em inglês?", falar:null,
+        opcoes:["Please","Thank you","Sorry","Hello"], correta:1,
+        dica:"\"Please\" é POR FAVOR (quando você pede). \"Thank you\" é quando você AGRADECE." },
+      { pergunta:"São 8 da manhã e você chega no trabalho. O que você fala?", falar:null,
+        opcoes:["Good night","Good afternoon","Good morning","Bye"], correta:2,
+        dica:"Morning = manhã. \"Good night\" é só para se despedir à noite ou ir dormir." },
+      { pergunta:"Como SOA a palavra \"Hi\"?", falar:"Hi",
+        opcoes:["í","rái","ri","ái"], correta:1,
+        dica:"O H em inglês tem som de R fraco (como em \"rato\" bem de leve). Hi = rái." },
+      { pergunta:"Você vai DORMIR. Qual é a despedida certa?", falar:null,
+        opcoes:["Good evening","Good morning","Hello","Good night"], correta:3,
+        dica:"Good evening = boa noite de quem CHEGA. Good night = boa noite de quem VAI (embora ou dormir)." },
+      { pergunta:"O que significa \"Sorry\"?", falar:"Sorry",
+        opcoes:["Por favor","Desculpa","Tchau","Obrigado"], correta:1,
+        dica:"Sorry (sóri) = desculpa. Você usa quando fez algo errado ou lamenta algo." },
+      { pergunta:"Você quer pedir um café educadamente. O que NÃO pode faltar?", falar:null,
+        opcoes:["Bye","Please","Good night","Hi"], correta:1,
+        dica:"Please (plíz) = por favor. Nos EUA, pedir sem \"please\" soa grosseiro." },
+    ]
+  },
+  {
+    id:"n0m2", temas:["diaadia"], titulo:"Coisas do dia a dia", icone:"☕", corIco:"#FFF3D1",
+    intro:"Agora as coisas que você vê todo dia no Brasil — e como os americanos chamam cada uma. Olhe a figura, fale em voz alta e aperte o áudio para comparar.",
+    xp:50,
+    cards:[
+      { figura:"💧", pt:"Água", en:"Water", som:"uórer",
+        quando:"A palavra mais útil do mundo. Nos EUA, o T entre vogais vira um som de R fraco: uó-RER.",
+        exEn:"I want water.", exSom:"ái uônt uórer.", exPt:"Eu quero água." },
+      { figura:"☕", pt:"Café", en:"Coffee", som:"cófi",
+        quando:"A bebida. Atenção: \"café da manhã\" é outra palavra — \"breakfast\" (brék-fest).",
+        exEn:"Coffee, please.", exSom:"cófi, plíz.", exPt:"Café, por favor." },
+      { figura:"🍞", pt:"Pão", en:"Bread", som:"bréd",
+        quando:"Pão em geral. O nosso pãozinho francês não existe lá — o mais parecido é \"roll\" (rôul).",
+        exEn:"I like bread.", exSom:"ái láik bréd.", exPt:"Eu gosto de pão." },
+      { figura:"🍚", pt:"Arroz", en:"Rice", som:"ráis",
+        quando:"Cuidado com o som: se falar \"rice\" com I de \"rio\" vira outra palavra. É RÁIS, com \"ái\".",
+        exEn:"Rice and beans.", exSom:"ráis énd bins.", exPt:"Arroz e feijão." },
+      { figura:"🫘", pt:"Feijão", en:"Beans", som:"bins",
+        quando:"Quase sempre no plural (beans), porque são vários grãos. O prato brasileiro? Pode apresentar como \"Brazilian rice and beans\".",
+        exEn:"Brazilians love beans.", exSom:"brasílians lâv bins.", exPt:"Brasileiros amam feijão." },
+      { figura:"🏠", pt:"Casa", en:"House", som:"ráus",
+        quando:"O prédio, a construção. \"Lar\" (no sentido de aconchego) é \"home\" (rôum).",
+        exEn:"My house is small.", exSom:"mái ráus iz smól.", exPt:"Minha casa é pequena." },
+      { figura:"🚗", pt:"Carro", en:"Car", som:"cár",
+        quando:"Fácil de lembrar: parece \"carro\" sem o final. O R americano é puxado, como no interior de São Paulo.",
+        exEn:"The car is new.", exSom:"dâ cár iz niú.", exPt:"O carro é novo." },
+      { figura:"💼", pt:"Trabalho", en:"Work", som:"uôrk",
+        quando:"Serve para o trabalho (atividade) e para trabalhar (verbo). \"Job\" (djób) é o emprego, a vaga.",
+        exEn:"I go to work.", exSom:"ái gôu tchu uôrk.", exPt:"Eu vou para o trabalho." },
+      { figura:"💵", pt:"Dinheiro", en:"Money", som:"mâni",
+        quando:"Dinheiro em geral. Dólar = dollar (dólar), troco = change (tchêindj).",
+        exEn:"I need money.", exSom:"ái níd mâni.", exPt:"Eu preciso de dinheiro." },
+      { figura:"📱", pt:"Celular", en:"Cell phone", som:"sél fôun",
+        quando:"Nos EUA fala-se \"cell phone\" ou só \"phone\". \"Mobile\" é mais comum na Inglaterra.",
+        exEn:"Where is my phone?", exSom:"uér iz mái fôun?", exPt:"Onde está meu celular?" },
+    ],
+    quiz:[
+      { pergunta:"Você está com sede num restaurante. O que você pede?", falar:null,
+        opcoes:["Money, please","Water, please","House, please","Work, please"], correta:1,
+        dica:"Water (uórer) = água. Money é dinheiro, house é casa, work é trabalho." },
+      { pergunta:"O que significa \"bread\"?", falar:"Bread",
+        opcoes:["Feijão","Arroz","Pão","Café"], correta:2,
+        dica:"Bread (bréd) = pão. Lembre: pão de forma nos mercados é \"sliced bread\"." },
+      { pergunta:"Como SOA a palavra \"water\" no inglês americano?", falar:"Water",
+        opcoes:["vá-ter","uó-rer","uá-ti","vô-ter"], correta:1,
+        dica:"Nos EUA o T entre vogais vira um R fraquinho: uó-RER." },
+      { pergunta:"\"Rice and beans\" é...", falar:"Rice and beans",
+        opcoes:["Pão e café","Casa e carro","Arroz e feijão","Água e dinheiro"], correta:2,
+        dica:"Rice (ráis) = arroz. Beans (bins) = feijão. O prato mais brasileiro que existe!" },
+      { pergunta:"Qual a diferença entre \"work\" e \"job\"?", falar:null,
+        opcoes:["São a mesma coisa sempre","Work = trabalho/trabalhar; job = o emprego, a vaga","Job é trabalho de casa","Work só serve para escritório"], correta:1,
+        dica:"Work = o ato de trabalhar. Job = o emprego em si. \"I need a job\" = preciso de um emprego." },
+      { pergunta:"O que significa \"My house is small\"?", falar:"My house is small",
+        opcoes:["Meu carro é novo","Minha casa é pequena","Meu celular sumiu","Minha casa é grande"], correta:1,
+        dica:"My = minha, house (ráus) = casa, is = é, small (smól) = pequena." },
+    ]
+  },
+  {
+    id:"n0m3", temas:["familia","basico"], titulo:"Eu, você e a família", icone:"👨‍👩‍👧", corIco:"#E4EDFA",
+    intro:"As palavrinhas que aparecem em TODA frase do inglês: eu, você, ele, ela. E a família, que é assunto que todo mundo puxa. Atenção especial no \"I\" — ele engana muito brasileiro.",
+    xp:60,
+    cards:[
+      { figura:"🙋", pt:"Eu", en:"I", som:"ái",
+        quando:"É só UMA letra, mas some sempre com letra MAIÚSCULA, em qualquer lugar da frase. E o som não é \"i\" — é \"ÁI\".",
+        dica:"Erro nº 1 do brasileiro: ler \"I\" como \"i\". Grava assim: I = ÁI, sempre.",
+        exEn:"I am Brazilian.", exSom:"ái ém brasílian.", exPt:"Eu sou brasileiro(a)." },
+      { figura:"👉", pt:"Você", en:"You", som:"iú",
+        quando:"Serve para \"você\" e para \"vocês\" — em inglês é a mesma palavra para um ou vários.",
+        exEn:"You are my friend.", exSom:"iú ar mái frend.", exPt:"Você é meu amigo." },
+      { figura:"👨", pt:"Ele", en:"He", som:"rí",
+        quando:"Para homem ou menino. O H de novo com aquele som de R fraco: RÍ.",
+        exEn:"He is my brother.", exSom:"rí iz mái brôder.", exPt:"Ele é meu irmão." },
+      { figura:"👩", pt:"Ela", en:"She", som:"chí",
+        quando:"Para mulher ou menina. SH tem som de CH do português: CHÍ, como em \"chinelo\".",
+        exEn:"She is my sister.", exSom:"chí iz mái síster.", exPt:"Ela é minha irmã." },
+      { figura:"👩‍🦱", pt:"Mãe", en:"Mother / Mom", som:"môder / mãm",
+        quando:"\"Mother\" é a palavra completa (mãe). \"Mom\" é o carinhoso, tipo \"mãezinha, mainha\".",
+        exEn:"My mom is at home.", exSom:"mái mãm iz ét rôum.", exPt:"Minha mãe está em casa." },
+      { figura:"👨‍🦱", pt:"Pai", en:"Father / Dad", som:"fáder / déd",
+        quando:"\"Father\" é a palavra completa (pai). \"Dad\" é o carinhoso, tipo \"painho, papai\".",
+        exEn:"My dad works a lot.", exSom:"mái déd uôrks a lót.", exPt:"Meu pai trabalha muito." },
+      { figura:"🧒", pt:"Filho / Filha", en:"Son / Daughter", som:"sân / dórer",
+        quando:"Son = filho (homem). Daughter = filha (mulher). \"Daughter\" assusta na escrita, mas o som é simples: DÓ-RER.",
+        exEn:"This is my son.", exSom:"díss iz mái sân.", exPt:"Este é meu filho." },
+      { figura:"🤝", pt:"Amigo / Amiga", en:"Friend", som:"frend",
+        quando:"Uma palavra só para amigo e amiga — não muda com o gênero.",
+        exEn:"He is my best friend.", exSom:"rí iz mái bést frend.", exPt:"Ele é meu melhor amigo." },
+    ],
+    quiz:[
+      { pergunta:"Como SOA a palavra \"I\" (eu)?", falar:"I",
+        opcoes:["i","ái","êi","ú"], correta:1,
+        dica:"I = ÁI, sempre. E na escrita é sempre MAIÚSCULO." },
+      { pergunta:"Complete: \"___ am Brazilian.\" (Eu sou brasileiro)", falar:null,
+        opcoes:["You","She","I","He"], correta:2,
+        dica:"Eu = I. \"I am Brazilian\" (ái ém brasílian)." },
+      { pergunta:"Sua irmã chegou. Como você diz \"ELA é minha irmã\"?", falar:null,
+        opcoes:["He is my sister","She is my sister","You is my sister","I is my sister"], correta:1,
+        dica:"Ela = She (chí). He é ELE." },
+      { pergunta:"O que significa \"friend\"?", falar:"Friend",
+        opcoes:["Família","Irmão","Amigo(a)","Filho"], correta:2,
+        dica:"Friend (frend) = amigo ou amiga — a palavra não muda." },
+      { pergunta:"\"Mom\" e \"Dad\" são...", falar:null,
+        opcoes:["Filho e filha","Mãe e pai (jeito carinhoso)","Irmão e irmã","Avô e avó"], correta:1,
+        dica:"Mom (mãm) = mãe/mainha. Dad (déd) = pai/papai." },
+      { pergunta:"Em inglês, \"you\" serve para...", falar:"You",
+        opcoes:["Só uma pessoa","Só várias pessoas","Você E vocês — um ou vários","Só pessoas mais velhas"], correta:2,
+        dica:"You (iú) é você e vocês ao mesmo tempo. O inglês não separa." },
+    ]
+  }
+,
+  {
+    id:"n0m4", temas:["numeros","basico"], titulo:"Números — de 0 a 100", icone:"🔢", corIco:"#FCE4DB",
+    intro:"Número aparece em tudo: preço, hora, telefone, idade. Aqui você aprende de 0 a 10 um por um, e depois o truque que destrava até o 100.",
+    xp:60,
+    cards:[
+      { figura:"0️⃣", pt:"Zero", en:"Zero", som:"zí-rou",
+        quando:"Igual ao nosso. Em números de telefone os americanos também falam \"oh\" (ôu) para o zero.",
+        exEn:"The score is zero.", exSom:"dâ scór iz zí-rou.", exPt:"O placar está zerado." },
+      { figura:"1️⃣", pt:"Um / Uma", en:"One", som:"uan",
+        quando:"Serve para masculino e feminino — em inglês número não tem gênero.",
+        exEn:"One coffee, please.", exSom:"uan cófi, plíz.", exPt:"Um café, por favor." },
+      { figura:"2️⃣", pt:"Dois / Duas", en:"Two", som:"tchú",
+        quando:"O W não faz som aqui: é TCHÚ, igual \"tu\" com CH.",
+        exEn:"I have two kids.", exSom:"ái rév tchú kids.", exPt:"Eu tenho dois filhos." },
+      { figura:"3️⃣", pt:"Três", en:"Three", som:"thrí",
+        quando:"Aquele TH de língua entre os dentes de novo. Se sair \"trí\", entendem — mas treine o sopro.",
+        dica:"Cuidado: \"tree\" (trí, sem sopro) é ÁRVORE. Three com TH é o número 3.",
+        exEn:"Three dollars.", exSom:"thrí dólars.", exPt:"Três dólares." },
+      { figura:"4️⃣", pt:"Quatro", en:"Four", som:"fór",
+        quando:"Mesmo som de \"for\" (para). No contexto ninguém confunde.",
+        exEn:"A table for four.", exSom:"a têi-bol fór fór.", exPt:"Uma mesa para quatro." },
+      { figura:"5️⃣", pt:"Cinco", en:"Five", som:"fáiv",
+        quando:"O I tem som de ÁI, como em \"pai\".",
+        exEn:"Give me five!", exSom:"guiv mi fáiv!", exPt:"Toca aqui! (bater as mãos)" },
+      { figura:"6️⃣", pt:"Seis", en:"Six", som:"siks",
+        quando:"Curtinho e seco: SIKS.",
+        exEn:"Six days of work.", exSom:"siks dêiz óv uôrk.", exPt:"Seis dias de trabalho." },
+      { figura:"7️⃣", pt:"Sete", en:"Seven", som:"séven",
+        quando:"Fácil: parece \"séven\" mesmo. A loja 7-Eleven vem daí.",
+        exEn:"Seven days a week.", exSom:"séven dêiz a uík.", exPt:"Sete dias por semana." },
+      { figura:"8️⃣", pt:"Oito", en:"Eight", som:"êit",
+        quando:"A escrita assusta (eight!), mas o som é simples: ÊIT.",
+        exEn:"It's eight o'clock.", exSom:"its êit oclók.", exPt:"São oito horas." },
+      { figura:"9️⃣", pt:"Nove", en:"Nine", som:"náin",
+        quando:"O I de novo com som de ÁI: NÁIN.",
+        exEn:"Nine dollars, please.", exSom:"náin dólars, plíz.", exPt:"Nove dólares, por favor." },
+      { figura:"🔟", pt:"Dez", en:"Ten", som:"tén",
+        quando:"Curtinho: TÉN.",
+        exEn:"Ten minutes, please.", exSom:"tén mínits, plíz.", exPt:"Dez minutos, por favor." },
+      { figura:"🧒", pt:"11 a 19 (os \"teen\")", en:"Eleven, twelve, thirteen…", som:"iléven, tuélv, thãr-TÍN…",
+        quando:"11 = eleven, 12 = twelve. Do 13 ao 19 é só somar -TEEN (tín) no final: fourteen (14), fifteen (15), sixteen (16)… É daí que vem \"teenager\" — adolescente, quem tem idade terminada em -teen.",
+        exEn:"She is fifteen years old.", exSom:"chí iz fif-TÍN íers ôuld.", exPt:"Ela tem quinze anos." },
+      { figura:"💯", pt:"20, 30, 40… até 100", en:"Twenty, thirty, forty…", som:"tuêni, thãr-ti, fór-ti…",
+        quando:"As dezenas terminam em -TY (ti): twenty (20), thirty (30), forty (40), fifty (50)… Cem = one hundred (uan rân-dred). Para montar: twenty-one (21), thirty-five (35) — dezena + número.",
+        dica:"Pegadinha de ouro: thirTEEN (13) tem o final FORTE e longo (tíín); THIRty (30) tem o final fraco e curto (ti). Errar isso muda o preço da compra!",
+        exEn:"It costs twenty-five dollars.", exSom:"it cósts tuêni-fáiv dólars.", exPt:"Custa vinte e cinco dólares." },
+    ],
+    quiz:[
+      { pergunta:"Como SOA o número \"five\" (5)?", falar:"Five",
+        opcoes:["fi-ve","fáiv","fí","fêiv"], correta:1,
+        dica:"O I do inglês vira ÁI: five = FÁIV, nine = NÁIN." },
+      { pergunta:"O que significa \"eight\"?", falar:"Eight",
+        opcoes:["Oito","Onze","Dezoito","Oitenta"], correta:0,
+        dica:"Eight (êit) = 8. A escrita é feia, mas o som é ÊIT." },
+      { pergunta:"\"A table for four\" é uma mesa para quantas pessoas?", falar:"A table for four",
+        opcoes:["Duas","Quatro","Cinco","Quarenta"], correta:1,
+        dica:"Four (fór) = 4." },
+      { pergunta:"Qual é a diferença de som entre 13 e 30?", falar:null,
+        opcoes:["Nenhuma, são iguais","13 = thirTÍN (final forte), 30 = THIRti (final fraco)","30 termina em -teen","13 termina em -ty"], correta:1,
+        dica:"-TEEN (tín, forte) = 13 a 19. -TY (ti, fraco) = dezenas. Treine: thirteen ✕ thirty." },
+      { pergunta:"Como se diz 25 em inglês?", falar:"Twenty-five",
+        opcoes:["Two-five","Twenty-five","Five-twenty","Teen-five"], correta:1,
+        dica:"Dezena + número: twenty (20) + five (5) = twenty-five." },
+      { pergunta:"\"She is fifteen years old\" significa...", falar:"She is fifteen years old",
+        opcoes:["Ela tem 50 anos","Ela tem 15 anos","Ele tem 15 anos","Ela tem 5 anos"], correta:1,
+        dica:"She = ela, fifteen (fif-tín) = 15. Fifty (fíf-ti) seria 50 — o final -teen/-ty muda tudo." },
+    ]
+  },
+  {
+    id:"n0m5", temas:["cores","basico"], titulo:"Cores", icone:"🎨", corIco:"#F5E4F7",
+    intro:"Cores servem pra descrever tudo: roupa, carro, comida. E duas delas você já ama: o verde e o amarelo da nossa bandeira.",
+    xp:50,
+    cards:[
+      { figura:"🔴", pt:"Vermelho", en:"Red", som:"réd",
+        quando:"Curtinho e seco. O R americano é puxado, quase mordido.",
+        exEn:"The car is red.", exSom:"dâ cár iz réd.", exPt:"O carro é vermelho." },
+      { figura:"🔵", pt:"Azul", en:"Blue", som:"blú",
+        quando:"Também significa \"triste\" em expressões: \"I'm feeling blue\" = estou pra baixo.",
+        exEn:"The sky is blue.", exSom:"dâ skái iz blú.", exPt:"O céu é azul." },
+      { figura:"🟢", pt:"Verde", en:"Green", som:"grín",
+        quando:"Verde da bandeira! Também é a cor do dólar — \"greens\" pode ser gíria pra dinheiro.",
+        exEn:"Brazil's flag is green and yellow.", exSom:"brasíls flég iz grín énd iélou.", exPt:"A bandeira do Brasil é verde e amarela." },
+      { figura:"🟡", pt:"Amarelo", en:"Yellow", som:"iélou",
+        quando:"O Y tem som de I: IÉ-LOU.",
+        exEn:"I like the yellow shirt.", exSom:"ái láik dâ iélou chãrt.", exPt:"Eu gosto da camisa amarela." },
+      { figura:"⚫", pt:"Preto", en:"Black", som:"blék",
+        quando:"Café preto = black coffee (blék cófi). Sem açúcar e sem leite, do jeito americano.",
+        exEn:"Black coffee, please.", exSom:"blék cófi, plíz.", exPt:"Café preto, por favor." },
+      { figura:"⚪", pt:"Branco", en:"White", som:"uáit",
+        quando:"O WH tem som de U: UÁIT. A Casa Branca é a White House (uáit ráus).",
+        exEn:"White rice, please.", exSom:"uáit ráis, plíz.", exPt:"Arroz branco, por favor." },
+      { figura:"🟠", pt:"Laranja", en:"Orange", som:"órendj",
+        quando:"A cor E a fruta usam a mesma palavra, igual no português. Suco de laranja = orange juice (órendj djús).",
+        exEn:"Orange juice, please.", exSom:"órendj djús, plíz.", exPt:"Suco de laranja, por favor." },
+      { figura:"🩷", pt:"Rosa", en:"Pink", som:"pinc",
+        quando:"Direto: PINC.",
+        exEn:"She loves pink.", exSom:"chí lâvs pinc.", exPt:"Ela ama rosa." },
+      { figura:"🟣", pt:"Roxo", en:"Purple", som:"pãr-pol",
+        quando:"O som mais estranho das cores: PÃR-POL, com o R puxado americano.",
+        exEn:"The purple bag is mine.", exSom:"dâ pãr-pol bég iz máin.", exPt:"A bolsa roxa é minha." },
+      { figura:"🟤", pt:"Marrom", en:"Brown", som:"bráun",
+        quando:"OW aqui tem som de ÁU: BRÁUN. Pão integral = brown bread.",
+        exEn:"My eyes are brown.", exSom:"mái áis ar bráun.", exPt:"Meus olhos são castanhos." },
+    ],
+    quiz:[
+      { pergunta:"Quais são as cores da bandeira do Brasil em inglês?", falar:null,
+        opcoes:["Red and blue","Green and yellow","Black and white","Pink and purple"], correta:1,
+        dica:"Green (grín) = verde, yellow (iélou) = amarelo. Green and yellow!" },
+      { pergunta:"Você quer café preto. O que pede?", falar:null,
+        opcoes:["White coffee","Blue coffee","Black coffee","Brown coffee"], correta:2,
+        dica:"Black (blék) = preto. Black coffee = café puro, sem leite." },
+      { pergunta:"Como SOA a palavra \"white\"?", falar:"White",
+        opcoes:["ví-te","uáit","rít","uét"], correta:1,
+        dica:"WH tem som de U: white = UÁIT." },
+      { pergunta:"O que significa \"The sky is blue\"?", falar:"The sky is blue",
+        opcoes:["O mar é azul","O céu é azul","A camisa é azul","O céu está escuro"], correta:1,
+        dica:"Sky (skái) = céu, blue (blú) = azul." },
+      { pergunta:"\"Orange\" é...", falar:"Orange",
+        opcoes:["Só a fruta laranja","Só a cor laranja","A fruta E a cor, igual no português","Uma marca de suco"], correta:2,
+        dica:"Orange (órendj) serve para a cor e para a fruta — igualzinho ao nosso \"laranja\"." },
+      { pergunta:"Qual cor é \"purple\"?", falar:"Purple",
+        opcoes:["Rosa","Roxo","Marrom","Cinza"], correta:1,
+        dica:"Purple (pãr-pol) = roxo. Pink (pinc) = rosa." },
+    ]
+  },
+  {
+    id:"n0m6", temas:["tempo","diaadia"], titulo:"Dias da semana e o tempo", icone:"📅", corIco:"#E1F3EA",
+    intro:"\"Que dia você pode?\" — essa pergunta aparece em trabalho, consulta, entrevista. Detalhe importante: em inglês, dia da semana se escreve SEMPRE com letra maiúscula.",
+    xp:50,
+    cards:[
+      { figura:"😩", pt:"Segunda-feira", en:"Monday", som:"mãn-dêi",
+        quando:"Todos os dias terminam em -day (dêi). Monday vem de \"moon\" (lua) — dia da Lua, igual ao nosso \"segunda\" vem de ordem.",
+        dica:"Regra pra sempre: dias da semana e meses em inglês são com MAIÚSCULA. \"monday\" minúsculo é erro de escrita.",
+        exEn:"I work on Monday.", exSom:"ái uôrk on mãn-dêi.", exPt:"Eu trabalho na segunda." },
+      { figura:"💪", pt:"Terça-feira", en:"Tuesday", som:"tchúz-dêi",
+        quando:"TCHÚZ-DÊI. Nos EUA é o famoso dia do taco: Taco Tuesday!",
+        exEn:"See you on Tuesday.", exSom:"sí iú on tchúz-dêi.", exPt:"Te vejo na terça." },
+      { figura:"🐪", pt:"Quarta-feira", en:"Wednesday", som:"uénz-dêi",
+        quando:"A escrita mais traiçoeira da semana: escreve WED-NES-DAY, mas fala só UÉNZ-DÊI — o D do meio é mudo.",
+        dica:"Não tente ler letra por letra. Grave o som: UÉNZ-DÊI.",
+        exEn:"The meeting is on Wednesday.", exSom:"dâ mírin iz on uénz-dêi.", exPt:"A reunião é na quarta." },
+      { figura:"⏳", pt:"Quinta-feira", en:"Thursday", som:"thãrz-dêi",
+        quando:"Começa com aquele TH de língua nos dentes: THÃRZ-DÊI.",
+        exEn:"Thursday is almost Friday!", exSom:"thãrz-dêi iz ólmoust frái-dêi!", exPt:"Quinta é quase sexta!" },
+      { figura:"🎉", pt:"Sexta-feira", en:"Friday", som:"frái-dêi",
+        quando:"O dia favorito de todo mundo. TGIF = \"Thank God It's Friday\" (graças a Deus é sexta) — expressão famosíssima.",
+        exEn:"Finally, it's Friday!", exSom:"fái-nali, its frái-dêi!", exPt:"Finalmente é sexta!" },
+      { figura:"🏖️", pt:"Sábado", en:"Saturday", som:"sáter-dêi",
+        quando:"SÁ-TER-DÊI. Sábado e domingo juntos = weekend (uík-end), o fim de semana.",
+        exEn:"Let's go out on Saturday.", exSom:"léts gôu áut on sáter-dêi.", exPt:"Vamos sair no sábado." },
+      { figura:"⛪", pt:"Domingo", en:"Sunday", som:"sãn-dêi",
+        quando:"Vem de \"sun\" (sol) — o dia do Sol.",
+        exEn:"Sunday is family day.", exSom:"sãn-dêi iz fémili dêi.", exPt:"Domingo é dia de família." },
+      { figura:"📍", pt:"Hoje", en:"Today", som:"tchu-dêi",
+        quando:"TCHU-DÊI. Junto com tomorrow e yesterday, forma o trio que você vai usar todo santo dia.",
+        exEn:"Today is my day!", exSom:"tchu-dêi iz mái dêi!", exPt:"Hoje é meu dia!" },
+      { figura:"➡️", pt:"Amanhã", en:"Tomorrow", som:"tu-mó-rou",
+        quando:"TU-MÓ-ROU. Escreve com um M e dois R... esquece a escrita agora, grava o som.",
+        exEn:"See you tomorrow!", exSom:"sí iú tu-mó-rou!", exPt:"Até amanhã!" },
+      { figura:"⬅️", pt:"Ontem", en:"Yesterday", som:"iés-ter-dêi",
+        quando:"IÉS-TER-DÊI. Também é nome de uma das músicas mais famosas do mundo — você já ouviu.",
+        exEn:"Yesterday was hard.", exSom:"iés-ter-dêi uóz rárd.", exPt:"Ontem foi difícil." },
+    ],
+    quiz:[
+      { pergunta:"Que dia é \"Friday\"?", falar:"Friday",
+        opcoes:["Segunda","Quarta","Sexta","Domingo"], correta:2,
+        dica:"Friday (frái-dêi) = sexta. TGIF = Thank God It's Friday!" },
+      { pergunta:"Como SOA \"Wednesday\" (quarta)?", falar:"Wednesday",
+        opcoes:["ued-nes-dai","uénz-dêi","vé-nes-dei","uên-dis-dêi"], correta:1,
+        dica:"O D do meio é MUDO: fala-se só UÉNZ-DÊI." },
+      { pergunta:"Em inglês, dias da semana se escrevem...", falar:null,
+        opcoes:["Sempre com letra minúscula","Sempre com letra MAIÚSCULA","Tanto faz","Só domingo é maiúsculo"], correta:1,
+        dica:"Monday, Tuesday, Friday... sempre maiúsculo. É regra de escrita do inglês." },
+      { pergunta:"\"See you tomorrow\" significa...", falar:"See you tomorrow",
+        opcoes:["Te vejo hoje","Te vi ontem","Até amanhã","Até domingo"], correta:2,
+        dica:"Tomorrow (tu-mó-rou) = amanhã. See you = te vejo." },
+      { pergunta:"O que é \"weekend\"?", falar:"Weekend",
+        opcoes:["A semana toda","Segunda-feira","O fim de semana (sábado + domingo)","Feriado"], correta:2,
+        dica:"Week (uík) = semana, end (end) = fim. Weekend = fim de semana." },
+      { pergunta:"\"Today is my day!\" quer dizer...", falar:"Today is my day",
+        opcoes:["Amanhã é meu dia","Hoje é meu dia","Ontem foi meu dia","Meu aniversário é hoje"], correta:1,
+        dica:"Today (tchu-dêi) = hoje. My day = meu dia." },
+    ]
+  },
+  {
+    id:"n0m7", temas:["comida","diaadia"], titulo:"Comida e bebida", icone:"🍽️", corIco:"#FFF3D1",
+    intro:"Ninguém sobrevive sem saber pedir comida. Aqui vai o essencial da mesa — incluindo como apresentar nosso churrasco pros gringos.",
+    xp:60,
+    cards:[
+      { figura:"🍗", pt:"Frango", en:"Chicken", som:"tchíken",
+        quando:"A carne mais pedida do mundo. CH aqui tem som de TCH: TCHÍ-KEN.",
+        exEn:"Chicken with rice, please.", exSom:"tchíken uíth ráis, plíz.", exPt:"Frango com arroz, por favor." },
+      { figura:"🥩", pt:"Carne (de boi)", en:"Beef / Meat", som:"bíf / mít",
+        quando:"\"Meat\" (mít) é carne em geral, qualquer uma. \"Beef\" (bíf) é especificamente de boi.",
+        exEn:"I don't eat meat.", exSom:"ái dont ít mít.", exPt:"Eu não como carne." },
+      { figura:"🐟", pt:"Peixe", en:"Fish", som:"fích",
+        quando:"Serve pro animal e pra comida. FÍCH, com CH de \"chinelo\" no final.",
+        exEn:"Fish is healthy.", exSom:"fích iz rélthi.", exPt:"Peixe é saudável." },
+      { figura:"🥚", pt:"Ovo", en:"Egg", som:"ég",
+        quando:"Curtinho: ÉG. Ovos mexidos = scrambled eggs (scrém-bold égs), clássico do café americano.",
+        exEn:"Two eggs, please.", exSom:"tchú égs, plíz.", exPt:"Dois ovos, por favor." },
+      { figura:"🥛", pt:"Leite", en:"Milk", som:"mílk",
+        quando:"MÍLK, com o L bem falado antes do K.",
+        exEn:"Coffee with milk.", exSom:"cófi uíth mílk.", exPt:"Café com leite." },
+      { figura:"🧀", pt:"Queijo", en:"Cheese", som:"tchíz",
+        quando:"TCHÍZ. É o que os fotógrafos pedem pra você sorrir: \"Say cheese!\" — porque falar TCHÍÍZ estica o sorriso.",
+        exEn:"Extra cheese, please!", exSom:"éks-tra tchíz, plíz!", exPt:"Queijo extra, por favor!" },
+      { figura:"🍎", pt:"Fruta / Maçã", en:"Fruit / Apple", som:"frút / épol",
+        quando:"Fruit (frút) = fruta em geral. Apple (épol) = maçã — sim, a da marca do celular.",
+        exEn:"An apple a day.", exSom:"an épol a dêi.", exPt:"Uma maçã por dia. (ditado famoso de saúde)" },
+      { figura:"🍌", pt:"Banana", en:"Banana", som:"ba-né-na",
+        quando:"Mesma escrita do português, som diferente: ba-NÉ-na, com É no meio.",
+        exEn:"Bananas are cheap here.", exSom:"ba-né-nas ar tchíp rír.", exPt:"Banana é barato aqui." },
+      { figura:"🧃", pt:"Suco", en:"Juice", som:"djús",
+        quando:"DJÚS. O J do inglês sempre tem som de DJ, como em \"jazz\".",
+        exEn:"Orange juice, no ice.", exSom:"órendj djús, nôu áis.", exPt:"Suco de laranja, sem gelo." },
+      { figura:"🍺", adulto:true, pt:"Cerveja", en:"Beer", som:"bír",
+        quando:"BÍR. Nos EUA só se compra e bebe com 21 anos ou mais — e pedem documento mesmo!",
+        exEn:"A cold beer, please.", exSom:"a côuld bír, plíz.", exPt:"Uma cerveja gelada, por favor." },
+      { figura:"🍖", pt:"Churrasco", en:"Barbecue (BBQ)", som:"bár-bi-kiú",
+        quando:"O nosso churrasco é famoso lá fora: \"Brazilian barbecue\". Nos cardápios aparece abreviado: BBQ.",
+        exEn:"Brazilian barbecue is the best!", exSom:"brasílian bár-bi-kiú iz dâ bést!", exPt:"Churrasco brasileiro é o melhor!" },
+      { figura:"😋", pt:"Delicioso / Gostoso", en:"Delicious", som:"de-lí-chos",
+        quando:"O elogio universal de comida. Ou o informal: \"yummy\" (iâ-mi), tipo nosso \"que delícia\".",
+        exEn:"This is delicious!", exSom:"díss iz de-lí-chos!", exPt:"Isso está delicioso!" },
+    ],
+    quiz:[
+      { pergunta:"Como se diz \"frango\" em inglês?", falar:null,
+        opcoes:["Cheese","Chicken","Kitchen","Fish"], correta:1,
+        dica:"Chicken (tchíken) = frango. Cuidado: kitchen (kít-chen) = cozinha! Parecem, mas são diferentes." },
+      { pergunta:"Qual a diferença entre \"meat\" e \"beef\"?", falar:null,
+        opcoes:["São iguais","Meat = carne em geral; beef = carne de boi","Beef é peixe","Meat é frango"], correta:1,
+        dica:"Meat (mít) = qualquer carne. Beef (bíf) = só de boi." },
+      { pergunta:"Por que o fotógrafo pede \"Say cheese!\"?", falar:"Say cheese",
+        opcoes:["Porque queijo é bonito","Porque falar TCHÍÍZ estica o sorriso","Porque é o nome da câmera","Por nada"], correta:1,
+        dica:"Cheese (tchíz) = queijo. O ÍÍ longo abre a boca em formato de sorriso." },
+      { pergunta:"Como SOA \"juice\" (suco)?", falar:"Juice",
+        opcoes:["ju-í-se","djús","iús","rús"], correta:1,
+        dica:"J em inglês = DJ. Juice = DJÚS." },
+      { pergunta:"Você quer elogiar a comida. O que fala?", falar:null,
+        opcoes:["This is delicious!","This is yesterday!","This is expensive!","This is Monday!"], correta:0,
+        dica:"Delicious (de-lí-chos) = delicioso. Expensive é CARO — cuidado pra não elogiar errado!" },
+      { pergunta:"\"Brazilian barbecue\" é...", falar:"Brazilian barbecue",
+        opcoes:["Feijoada","Churrasco brasileiro","Pão de queijo","Picanha crua"], correta:1,
+        dica:"Barbecue (bár-bi-kiú) = churrasco. Nos cardápios: BBQ." },
+    ]
+  },
+  {
+    id:"n0m8", temas:["cidade","viagem"], titulo:"Lugares da cidade", icone:"🏙️", corIco:"#E4EDFA",
+    intro:"Pra não se perder na rua: os lugares que você mais vai precisar achar — e a pergunta mais valiosa do inglês inteiro: \"Where is the bathroom?\"",
+    xp:60,
+    cards:[
+      { figura:"🚻", pt:"Banheiro", en:"Bathroom", som:"béth-rum",
+        quando:"A palavra mais urgente do idioma. Em lugares públicos também se usa \"restroom\" (rést-rum).",
+        dica:"Decore a frase inteira: \"Where is the bathroom?\" (uér iz dâ béth-rum?) = Onde é o banheiro? Vale ouro.",
+        exEn:"Where is the bathroom?", exSom:"uér iz dâ béth-rum?", exPt:"Onde é o banheiro?" },
+      { figura:"🛒", pt:"Supermercado", en:"Supermarket", som:"sú-per-márket",
+        quando:"Quase igual ao português. Nos EUA também se fala \"grocery store\" (grôu-se-ri stór).",
+        exEn:"The supermarket is open.", exSom:"dâ sú-per-márket iz ôupen.", exPt:"O supermercado está aberto." },
+      { figura:"🍽️", pt:"Restaurante", en:"Restaurant", som:"rés-to-rant",
+        quando:"Palavra irmã do português — só muda o sotaque: RÉS-TO-RANT, com força no início.",
+        exEn:"This restaurant is good.", exSom:"díss rés-to-rant iz gud.", exPt:"Este restaurante é bom." },
+      { figura:"🏥", pt:"Hospital", en:"Hospital", som:"rós-pi-rol",
+        quando:"Mesma escrita do português! Mas o som muda: RÓS-PI-ROL, com o H virando R fraco.",
+        exEn:"I need a hospital.", exSom:"ái níd a rós-pi-rol.", exPt:"Eu preciso de um hospital." },
+      { figura:"💊", pt:"Farmácia", en:"Pharmacy / Drugstore", som:"fár-ma-si / drâg-stór",
+        quando:"As duas palavras servem. \"Drugstore\" não é lugar de droga ilegal — \"drug\" também significa remédio!",
+        exEn:"Is there a pharmacy near here?", exSom:"iz dér a fár-ma-si níar rír?", exPt:"Tem uma farmácia perto daqui?" },
+      { figura:"🏫", pt:"Escola", en:"School", som:"skúl",
+        quando:"SKÚL. Faculdade = college (có-ledj) ou university (iú-ni-vãr-si-ti).",
+        exEn:"My kids are at school.", exSom:"mái kids ar ét skúl.", exPt:"Meus filhos estão na escola." },
+      { figura:"⛪", pt:"Igreja", en:"Church", som:"tchãrtch",
+        quando:"TCHÃRTCH — começa e termina com o som TCH.",
+        exEn:"The church is beautiful.", exSom:"dâ tchãrtch iz biú-ri-ful.", exPt:"A igreja é linda." },
+      { figura:"🏦", pt:"Banco", en:"Bank", som:"bénk",
+        quando:"O banco de dinheiro. Banco de sentar é \"bench\" (bêntch) — não confunda!",
+        exEn:"The bank closes at five.", exSom:"dâ bénk clôuzes ét fáiv.", exPt:"O banco fecha às cinco." },
+      { figura:"✈️", pt:"Aeroporto", en:"Airport", som:"ér-pórt",
+        quando:"Air (ér) = ar + port (pórt) = porto. Porto do ar!",
+        exEn:"Take me to the airport, please.", exSom:"têik mi tchu di ér-pórt, plíz.", exPt:"Me leve ao aeroporto, por favor." },
+      { figura:"🏖️", pt:"Praia", en:"Beach", som:"bíítch",
+        quando:"Atenção máxima aqui: o I é LONGO — BÍÍTCH, bem esticado.",
+        dica:"Se falar com i curto, vira um palavrão feio em inglês. Estique o Í sem medo: bíííítch. Melhor sobrar do que faltar!",
+        exEn:"Let's go to the beach!", exSom:"léts gôu tchu dâ bíítch!", exPt:"Vamos pra praia!" },
+      { figura:"🛣️", pt:"Rua", en:"Street", som:"strít",
+        quando:"STRÍT. Avenida = avenue (é-ve-niu). Estrada = road (rôud).",
+        exEn:"I live on this street.", exSom:"ái lív on díss strít.", exPt:"Eu moro nesta rua." },
+      { figura:"🏪", pt:"Loja", en:"Store / Shop", som:"stór / chóp",
+        quando:"Nos EUA, \"store\" é mais comum. \"Shopping\" lá não é o prédio — o nosso shopping center eles chamam de \"mall\" (mól).",
+        dica:"Erro clássico: dizer \"I'm going to the shopping\". O certo nos EUA: \"I'm going to the mall\".",
+        exEn:"The store is closed.", exSom:"dâ stór iz clôuzd.", exPt:"A loja está fechada." },
+    ],
+    quiz:[
+      { pergunta:"Qual é a pergunta mais valiosa do inglês?", falar:"Where is the bathroom?",
+        opcoes:["What time is it?","Where is the bathroom?","How are you?","What's your name?"], correta:1,
+        dica:"Where is the bathroom? (uér iz dâ béth-rum?) = Onde é o banheiro? Decore pra vida." },
+      { pergunta:"Por que \"beach\" precisa do Í bem longo?", falar:"Beach",
+        opcoes:["Porque é bonito","Porque com i curto vira um palavrão","Porque é regra de praia","Não precisa"], correta:1,
+        dica:"Beach = BÍÍTCH, i longo. Com i curto é xingamento. Estique sempre!" },
+      { pergunta:"O nosso \"shopping\" nos EUA se chama...", falar:"Mall",
+        opcoes:["Shopping","Store","Mall","Market"], correta:2,
+        dica:"Mall (mól) = shopping center. \"Shopping\" pra eles é o ato de fazer compras." },
+      { pergunta:"\"Drugstore\" é...", falar:"Drugstore",
+        opcoes:["Loja de droga ilegal","Farmácia","Mercado","Bar"], correta:1,
+        dica:"Drug também significa REMÉDIO. Drugstore = farmácia, tranquilo e legal." },
+      { pergunta:"Você passou mal e precisa de ajuda. O que fala?", falar:"I need a hospital",
+        opcoes:["I need a beach","I need a hospital","I need a bank","I need a mall"], correta:1,
+        dica:"I need (ái níd) = eu preciso. Hospital = rós-pi-rol." },
+      { pergunta:"Banco de dinheiro e banco de sentar em inglês são...", falar:null,
+        opcoes:["A mesma palavra","Bank (dinheiro) e bench (sentar)","Bench (dinheiro) e bank (sentar)","Money e chair"], correta:1,
+        dica:"Bank (bénk) = banco financeiro. Bench (bêntch) = banco de praça." },
+    ]
+  }
+,
+  {
+    id:"n0m9", temas:["saude","diaadia"], titulo:"Corpo e saúde", icone:"🩺", corIco:"#FCE4DB",
+    intro:"Saber dizer onde dói pode literalmente salvar sua vida. E tem uma surpresa aqui: 'olho' em inglês soa IGUAL a 'eu'!",
+    xp:60,
+    cards:[
+      { figura:"🧠", pt:"Cabeça", en:"Head", som:"réd",
+        quando:"Dor de cabeça = headache (réd-êik). \"I have a headache\" = estou com dor de cabeça.",
+        exEn:"I have a headache.", exSom:"ái rév a réd-êik.", exPt:"Estou com dor de cabeça." },
+      { figura:"👁️", pt:"Olho", en:"Eye", som:"ái",
+        quando:"Surpresa: EYE (olho) soa exatamente igual a I (eu) — os dois são ÁI! Só o contexto diferencia.",
+        dica:"\"My eye\" (mái ái) = meu olho. Os americanos brincam com isso o tempo todo em trocadilhos.",
+        exEn:"My eye hurts.", exSom:"mái ái rãrts.", exPt:"Meu olho está doendo." },
+      { figura:"👄", pt:"Boca", en:"Mouth", som:"máuth",
+        quando:"MÁUTH, terminando com o TH de língua entre os dentes.",
+        exEn:"Open your mouth.", exSom:"ôupen iór máuth.", exPt:"Abra a boca. (o que o dentista fala)" },
+      { figura:"✋", pt:"Mão", en:"Hand", som:"rénd",
+        quando:"RÉND. Apertar a mão = shake hands (chêik rénds), o cumprimento padrão nos EUA.",
+        exEn:"Wash your hands.", exSom:"uóch iór rénds.", exPt:"Lave as mãos." },
+      { figura:"🦶", pt:"Pé / Pés", en:"Foot / Feet", som:"fút / fít",
+        quando:"O plural mais rebelde do inglês: UM pé = foot (fút), DOIS pés = feet (fít). Não é \"foots\"!",
+        dica:"Alguns plurais do inglês mudam a palavra inteira: foot→feet, tooth→teeth (dente), man→men, woman→women. São poucos — vá gravando aos poucos.",
+        exEn:"My feet hurt.", exSom:"mái fít rãrt.", exPt:"Meus pés estão doendo." },
+      { figura:"🫃", pt:"Estômago / Barriga", en:"Stomach", som:"stâ-mek",
+        quando:"A escrita engana: o CH final tem som de K. STÂ-MEK. Dor de barriga = stomachache (stâ-mek-êik).",
+        exEn:"My stomach hurts.", exSom:"mái stâ-mek rãrts.", exPt:"Minha barriga está doendo." },
+      { figura:"😖", pt:"Dói / Está doendo", en:"It hurts", som:"it rãrts",
+        quando:"A frase-chave da saúde. Aponte pro lugar e fale: \"It hurts here\" (it rãrts rír) = dói aqui. Qualquer médico entende.",
+        dica:"Fórmula universal: [parte do corpo] + hurts. My head hurts, my hand hurts, my stomach hurts. Uma regra, dezenas de frases.",
+        exEn:"It hurts here.", exSom:"it rãrts rír.", exPt:"Dói aqui." },
+      { figura:"🤒", pt:"Doente", en:"Sick", som:"sík",
+        quando:"I'm sick = estou doente. No trabalho: \"I'm sick today, I can't come\" = estou doente hoje, não posso ir.",
+        exEn:"I'm sick today.", exSom:"áim sík tchu-dêi.", exPt:"Estou doente hoje." },
+      { figura:"🧑‍⚕️", pt:"Médico / Médica", en:"Doctor", som:"dóc-tor",
+        quando:"Uma palavra para os dois gêneros. \"I need a doctor\" = preciso de um médico — frase de emergência, decore.",
+        exEn:"I need a doctor!", exSom:"ái níd a dóc-tor!", exPt:"Eu preciso de um médico!" },
+      { figura:"💊", pt:"Remédio", en:"Medicine", som:"mé-di-sin",
+        quando:"MÉ-DI-SIN. Nos EUA, remédio comum se compra na drugstore/pharmacy — que você já aprendeu!",
+        exEn:"I need medicine for pain.", exSom:"ái níd mé-di-sin fór pêin.", exPt:"Preciso de remédio para dor." },
+      { figura:"🥱", pt:"Cansado / Cansada", en:"Tired", som:"tái-erd",
+        quando:"I'm tired = estou cansado. Depois de um dia de work hard, é a palavra do brasileiro nos EUA.",
+        exEn:"I'm tired, but happy.", exSom:"áim tái-erd, bât répi.", exPt:"Estou cansado, mas feliz." },
+      { figura:"💪", pt:"Melhor / Estou melhor", en:"Better / I'm better", som:"bérer / áim bérer",
+        quando:"O T entre vogais virando R de novo (como em water): BÉ-RER. \"I'm better, thanks\" = estou melhor, obrigado.",
+        exEn:"I'm better now, thanks.", exSom:"áim bérer náu, thênks.", exPt:"Estou melhor agora, obrigado." },
+    ],
+    quiz:[
+      { pergunta:"Qual palavra soa IGUAL a \"I\" (eu)?", falar:"Eye",
+        opcoes:["Ear","Eye","Egg","Ice"], correta:1,
+        dica:"Eye (olho) e I (eu) soam os dois ÁI. Só o contexto diferencia." },
+      { pergunta:"Complete a fórmula universal da dor: \"My stomach ___\"", falar:null,
+        opcoes:["is pain","hurts","sick","doctor"], correta:1,
+        dica:"[Parte do corpo] + hurts = dói. My stomach hurts = minha barriga dói." },
+      { pergunta:"O plural de \"foot\" (pé) é...", falar:"Feet",
+        opcoes:["Foots","Feets","Feet","Footes"], correta:2,
+        dica:"Foot → feet (fít). É plural irregular: a palavra muda inteira, sem S." },
+      { pergunta:"Você acordou doente e precisa avisar o trabalho. O que diz?", falar:"I'm sick today",
+        opcoes:["I'm tired today","I'm sick today, I can't come","I'm better today","I'm doctor today"], correta:1,
+        dica:"Sick (sík) = doente. I can't come = não posso ir." },
+      { pergunta:"Emergência! Como você pede um médico?", falar:"I need a doctor",
+        opcoes:["I want a medicine","I need a doctor!","Where is doctor?","Help doctor me"], correta:1,
+        dica:"I need a doctor! (ái níd a dóc-tor) = preciso de um médico. Frase de emergência — decore." },
+      { pergunta:"Por que \"better\" soa \"bérer\"?", falar:"Better",
+        opcoes:["Porque o B é mudo","Porque o T entre vogais vira som de R no inglês americano","Porque é gíria","Não soa assim"], correta:1,
+        dica:"Mesma regra de water (uórer): T entre vogais nos EUA vira um R fraquinho. Better = bérer." },
+    ]
+  }
+  ]
+},
+{
+  id:"n1", nome:"Sobrevivência", tag:"NÍVEL 1", cor:"#2D5DA8",
+  descricao:"Montar as primeiras frases: se apresentar, pedir, perguntar preço, se localizar.",
+  modulos:[
+    {
+      id:"n1m1", temas:["apresentacao","entrevista"], titulo:"Me apresentando", icone:"🗣️", corIco:"#E4EDFA",
+      intro:"Sua primeira conversa de verdade! Aqui entra a gramática mais importante do inglês (o verbo TO BE) e a correção do erro nº 1 do brasileiro: a idade.",
+      xp:70,
+      cards:[
+        { figura:"🙋", pt:"Eu sou / Eu estou", en:"I am / I'm", som:"ái ém / áim",
+          quando:"Uma palavra só do inglês vale por dois verbos nossos: SER e ESTAR. \"I'm\" é a forma encurtada — é como todo mundo fala no dia a dia.",
+          dica:"O inglês não separa ser de estar. \"I am happy\" = eu ESTOU feliz. \"I am Brazilian\" = eu SOU brasileiro. O contexto resolve.",
+          exEn:"I'm Brazilian.", exSom:"áim brasílian.", exPt:"Eu sou brasileiro(a)." },
+        { figura:"📛", pt:"Meu nome é...", en:"My name is...", som:"mái nêim iz...",
+          quando:"O jeito clássico de se apresentar. Mais informal: \"I'm Andrio\" (áim Andrio) — direto ao ponto.",
+          exEn:"My name is Ana.", exSom:"mái nêim iz Ana.", exPt:"Meu nome é Ana." },
+        { figura:"🇧🇷", pt:"Eu sou do Brasil", en:"I'm from Brazil", som:"áim fróm brasíl",
+          quando:"\"From\" (fróm) = de (origem). Frase que abre sorrisos: americano adora brasileiro.",
+          dica:"Brasil em inglês é com Z: Brazil. E o som é bra-SÍL, com força no fim.",
+          exEn:"I'm from Brazil. And you?", exSom:"áim fróm brasíl. énd iú?", exPt:"Eu sou do Brasil. E você?" },
+        { figura:"🤝", pt:"Prazer em te conhecer", en:"Nice to meet you", som:"náis tchu mít iú",
+          quando:"Fala-se na hora do aperto de mão, ao conhecer alguém. A resposta é \"Nice to meet you too\" (…tchú) = prazer é meu.",
+          exEn:"Nice to meet you, Mike!", exSom:"náis tchu mít iú, máik!", exPt:"Prazer em te conhecer, Mike!" },
+        { figura:"❓", pt:"Como você está?", en:"How are you?", som:"ráu ar iú?",
+          quando:"O cumprimento-pergunta mais usado dos EUA. Atenção: muitas vezes é só educação, tipo nosso \"e aí, beleza?\" — não é pra contar a vida.",
+          exEn:"Hi! How are you?", exSom:"rái! ráu ar iú?", exPt:"Oi! Como você está?" },
+        { figura:"👍", pt:"Estou bem, obrigado", en:"I'm fine, thanks", som:"áim fáin, thênks",
+          quando:"A resposta padrão. Variações: \"I'm good\" (áim gud), \"I'm great\" (áim grêit = estou ótimo). Educado é devolver: \"And you?\" (énd iú?).",
+          exEn:"I'm fine, thanks. And you?", exSom:"áim fáin, thênks. énd iú?", exPt:"Estou bem, obrigado. E você?" },
+        { figura:"🏷️", pt:"Qual é o seu nome?", en:"What's your name?", som:"uóts iór nêim?",
+          quando:"\"What is\" encurta para \"What's\" (uóts). Your (iór) = seu/sua.",
+          exEn:"What's your name?", exSom:"uóts iór nêim?", exPt:"Qual é o seu nome?" },
+        { figura:"🎂", pt:"Eu tenho ... anos", en:"I am ... years old", som:"ái ém ... íers ôuld",
+          quando:"AQUI mora o erro nº 1 do brasileiro. Em inglês você não TEM idade — você É a idade. Nunca diga \"I have 25 years\".",
+          dica:"✖ I have 25 years (errado!) → ✔ I am 25 years old (ái ém tuêni-fáiv íers ôuld). Pode até encurtar: \"I'm 25\".",
+          exEn:"I am 30 years old.", exSom:"ái ém thãr-ti íers ôuld.", exPt:"Eu tenho 30 anos." },
+        { figura:"🧩", pt:"Você é / Ele é / Ela é", en:"You are / He is / She is", som:"iú ar / rí iz / chí iz",
+          quando:"O verbo TO BE muda com a pessoa: I AM, you ARE, he/she IS. É a tabelinha mais importante do inglês — ela aparece em tudo.",
+          dica:"Grave o trio: AM (eu), ARE (você/nós/eles), IS (ele/ela/isso). Só isso já monta centenas de frases.",
+          exEn:"She is my wife. He is my son.", exSom:"chí iz mái uáif. rí iz mái sân.", exPt:"Ela é minha esposa. Ele é meu filho." },
+        { figura:"🌎", pt:"De onde você é?", en:"Where are you from?", som:"uér ar iú fróm?",
+          quando:"A pergunta que você mais vai ouvir como brasileiro no exterior. Agora você já sabe a resposta: I'm from Brazil!",
+          exEn:"Where are you from? — Brazil!", exSom:"uér ar iú fróm? — brasíl!", exPt:"De onde você é? — Do Brasil!" },
+      ],
+      quiz:[
+        { pergunta:"Como se diz \"Eu tenho 25 anos\" em inglês?", falar:null,
+          opcoes:["I have 25 years","I am 25 years old","I have 25 years old","Me 25 years"], correta:1,
+          dica:"Em inglês você É a idade, não TEM: I AM 25 years old. \"I have 25 years\" é o erro clássico do brasileiro — nunca mais!" },
+        { pergunta:"Complete a tabelinha do TO BE: I ___, you ___, she ___.", falar:null,
+          opcoes:["is / am / are","am / are / is","are / is / am","am / is / are"], correta:1,
+          dica:"I AM, you ARE, he/she IS. Decore esse trio — ele monta o inglês inteiro." },
+        { pergunta:"Alguém diz \"Nice to meet you\". O que você responde?", falar:"Nice to meet you",
+          opcoes:["Good night","Nice to meet you too","I am Brazil","Sorry"], correta:1,
+          dica:"Nice to meet you too (náis tchu mít iú tchú) = o prazer é meu." },
+        { pergunta:"\"Where are you from?\" pergunta o quê?", falar:"Where are you from?",
+          opcoes:["Sua idade","Seu nome","De onde você é","Onde você mora agora"], correta:2,
+          dica:"Where (uér) = onde, from (fróm) = de/origem. A resposta: I'm from Brazil!" },
+        { pergunta:"\"I'm\" é a forma curta de...", falar:"I'm",
+          opcoes:["I is","I am","I have","My"], correta:1,
+          dica:"I am = I'm (áim). É assim que os americanos falam de verdade no dia a dia." },
+        { pergunta:"\"How are you?\" nos EUA geralmente é...", falar:"How are you?",
+          opcoes:["Um convite pra contar a vida","Só educação, tipo \"e aí, beleza?\"","Uma pergunta médica","Uma despedida"], correta:1,
+          dica:"Na maioria das vezes é cumprimento automático. Responda \"I'm fine, thanks. And you?\" e siga o jogo." },
+      ]
+    },
+    {
+      id:"n1m2", temas:["perguntas","viagem"], titulo:"As perguntas mágicas", icone:"❓", corIco:"#FFF3D1",
+      intro:"Com 7 palavrinhas você pergunta QUALQUER coisa em inglês: what, where, when, who, why, how... Dominou elas, destravou a conversa.",
+      xp:70,
+      cards:[
+        { figura:"❔", pt:"O quê / Qual", en:"What", som:"uót",
+          quando:"A pergunta coringa. What time...? (que horas), What's this? (o que é isso).",
+          exEn:"What's this?", exSom:"uóts díss?", exPt:"O que é isso?" },
+        { figura:"📍", pt:"Onde", en:"Where", som:"uér",
+          quando:"Para lugares. Você já conhece a frase de ouro: Where is the bathroom?",
+          exEn:"Where is the bus stop?", exSom:"uér iz dâ bâs stóp?", exPt:"Onde é o ponto de ônibus?" },
+        { figura:"🕐", pt:"Quando", en:"When", som:"uén",
+          quando:"Para tempo. Cuidado: WHERE (uér) = onde, WHEN (uén) = quando. Um R de diferença muda tudo.",
+          exEn:"When do you work?", exSom:"uén du iú uôrk?", exPt:"Quando você trabalha?" },
+        { figura:"👤", pt:"Quem", en:"Who", som:"rú",
+          quando:"Para pessoas. O W aqui é mudo: RÚ.",
+          exEn:"Who is she?", exSom:"rú iz chí?", exPt:"Quem é ela?" },
+        { figura:"🤔", pt:"Por quê", en:"Why", som:"uái",
+          quando:"Para motivos. A resposta começa com \"Because\" (bi-cóz) = porque.",
+          exEn:"Why are you sad?", exSom:"uái ar iú séd?", exPt:"Por que você está triste?" },
+        { figura:"⚙️", pt:"Como", en:"How", som:"ráu",
+          quando:"Para modo e jeito. How are you? (como vai), How do you say...? (como se diz...) — sua ferramenta pra aprender mais inglês!",
+          dica:"Frase de aluno esperto: \"How do you say ___ in English?\" (ráu du iú sêi ___ in ínglich?) = como se diz ___ em inglês? Use sempre!",
+          exEn:"How do you say 'saudade' in English?", exSom:"ráu du iú sêi saudade in ínglich?", exPt:"Como se diz 'saudade' em inglês? (spoiler: não tem tradução exata!)" },
+        { figura:"💲", pt:"Quanto custa", en:"How much", som:"ráu mãtch",
+          quando:"A pergunta do bolso: How much is it? = quanto custa? Para coisas incontáveis (água, dinheiro) também é how much.",
+          exEn:"How much is it?", exSom:"ráu mãtch iz it?", exPt:"Quanto custa?" },
+        { figura:"🔢", pt:"Quantos / Quantas", en:"How many", som:"ráu mêni",
+          quando:"Para coisas que dá pra contar: how many kids? (quantos filhos), how many days? (quantos dias).",
+          dica:"How MUCH = quantidade (não conta: água, dinheiro). How MANY = número (conta: 1, 2, 3 filhos, dias, dólares em notas).",
+          exEn:"How many hours do you work?", exSom:"ráu mêni áuers du iú uôrk?", exPt:"Quantas horas você trabalha?" },
+        { figura:"🆘", pt:"Você pode me ajudar?", en:"Can you help me?", som:"quén iú rélp mi?",
+          quando:"A frase salva-vidas. \"Can\" (quén) = poder. Sempre com \"please\" no final pra ficar educado.",
+          exEn:"Can you help me, please?", exSom:"quén iú rélp mi, plíz?", exPt:"Você pode me ajudar, por favor?" },
+        { figura:"😵", pt:"Eu não entendi", en:"I don't understand", som:"ái dont ãnder-sténd",
+          quando:"Sem vergonha de usar! Complete com: \"Can you repeat, please?\" (quén iú ri-pít, plíz?) = pode repetir? Ou \"Slowly, please\" (slôu-li) = devagar, por favor.",
+          exEn:"Sorry, I don't understand. Slowly, please.", exSom:"sóri, ái dont ãnder-sténd. slôu-li, plíz.", exPt:"Desculpa, não entendi. Devagar, por favor." },
+      ],
+      quiz:[
+        { pergunta:"Qual palavra pergunta ONDE?", falar:null,
+          opcoes:["When","Where","Who","Why"], correta:1,
+          dica:"WHERE (uér) = onde. WHEN (uén) = quando. Grave: whERe tem R de lugaR." },
+        { pergunta:"Você quer saber o preço. O que pergunta?", falar:null,
+          opcoes:["How many is it?","How much is it?","What is it?","Who is it?"], correta:1,
+          dica:"How much is it? (ráu mãtch iz it?) = quanto custa? A pergunta do bolso." },
+        { pergunta:"\"How many\" se usa para...", falar:"How many",
+          opcoes:["Coisas que não dá pra contar","Coisas que dá pra contar (1, 2, 3...)","Só dinheiro","Só comida"], correta:1,
+          dica:"How MANY = contável (kids, days, dollars). How MUCH = incontável (water, money em geral)." },
+        { pergunta:"Não entendeu o que o americano falou. O que você diz?", falar:"I don't understand",
+          opcoes:["I am understand","I don't understand. Can you repeat?","No entendo","Goodbye"], correta:1,
+          dica:"I don't understand (ái dont ãnder-sténd) + Can you repeat, please? Resolve 90% dos apuros." },
+        { pergunta:"\"Who is she?\" significa...", falar:"Who is she?",
+          opcoes:["Onde ela está?","Quem é ela?","Como ela está?","Por que ela?"], correta:1,
+          dica:"Who (rú) = quem. She = ela." },
+        { pergunta:"Qual frase te ajuda a APRENDER mais inglês?", falar:"How do you say",
+          opcoes:["How much is it?","How do you say ___ in English?","Where is the bathroom?","I'm fine, thanks"], correta:1,
+          dica:"\"How do you say ___ in English?\" transforma qualquer americano no seu professor particular. Use sem medo!" },
+      ]
+    },
+    {
+      id:"n1m3", temas:["comida","viagem","diaadia"], titulo:"No mercado e no restaurante", icone:"🛒", corIco:"#E1F3EA",
+      intro:"Hora de gastar o inglês (e uns dólares). Tudo que você precisa pra pedir, pagar e sair satisfeito — do jeito educado que os americanos esperam.",
+      xp:70,
+      cards:[
+        { figura:"🙏", pt:"Eu gostaria de...", en:"I would like...", som:"ái wud láik...",
+          quando:"O jeito EDUCADO de pedir. \"I want\" (eu quero) funciona, mas soa seco. \"I would like\" é o nosso \"eu gostaria\". Encurtado: \"I'd like\" (áid láik).",
+          dica:"Fórmula do pedido perfeito: I'd like + a coisa + please. \"I'd like a coffee, please.\"",
+          exEn:"I'd like a coffee, please.", exSom:"áid láik a cófi, plíz.", exPt:"Eu gostaria de um café, por favor." },
+        { figura:"📋", pt:"Cardápio", en:"Menu", som:"mê-niu",
+          quando:"MÊ-NIU, com força no começo. \"Can I see the menu?\" = posso ver o cardápio?",
+          exEn:"The menu, please.", exSom:"dâ mê-niu, plíz.", exPt:"O cardápio, por favor." },
+        { figura:"❓", pt:"Vocês têm...?", en:"Do you have...?", som:"du iú rév...?",
+          quando:"Pra perguntar se tem algo: Do you have rice? Do you have Wi-Fi? Serve em loja, mercado, hotel, tudo.",
+          exEn:"Do you have juice?", exSom:"du iú rév djús?", exPt:"Vocês têm suco?" },
+        { figura:"🧾", pt:"A conta, por favor", en:"The check, please", som:"dâ tchék, plíz",
+          quando:"Nos EUA se fala \"check\". Na Inglaterra, \"bill\" (bíl). Um gesto de assinar no ar também funciona no mundo inteiro!",
+          exEn:"The check, please.", exSom:"dâ tchék, plíz.", exPt:"A conta, por favor." },
+        { figura:"💳", pt:"Cartão", en:"Credit card / Debit card", som:"cré-dit cárd / dé-bit cárd",
+          quando:"Crédito = credit, débito = debit. A pergunta que você vai ouvir no caixa: \"Cash or card?\" (quéch ór cárd?) = dinheiro ou cartão?",
+          exEn:"Credit card, please.", exSom:"cré-dit cárd, plíz.", exPt:"Cartão de crédito, por favor." },
+        { figura:"💵", pt:"Dinheiro vivo", en:"Cash", som:"quéch",
+          quando:"Dinheiro em espécie, na mão. Troco = change (tchêindj). \"Keep the change\" = pode ficar com o troco.",
+          exEn:"I'll pay in cash.", exSom:"áil pêi in quéch.", exPt:"Vou pagar em dinheiro." },
+        { figura:"🥡", pt:"Pra viagem / Pra comer aqui", en:"To go / For here", som:"tchu gôu / fór rír",
+          quando:"A pergunta de todo fast-food americano: \"For here or to go?\" = pra comer aqui ou pra levar? Responda com um dos dois e pronto.",
+          exEn:"To go, please.", exSom:"tchu gôu, plíz.", exPt:"Pra viagem, por favor." },
+        { figura:"💰", pt:"Barato / Caro", en:"Cheap / Expensive", som:"tchíp / eks-pên-siv",
+          quando:"Cheap (tchíp) = barato. Expensive (eks-pên-siv) = caro. \"Too expensive!\" (tchú eks-pên-siv) = caro demais! — sua arma de pechincha.",
+          exEn:"It's too expensive!", exSom:"its tchú eks-pên-siv!", exPt:"Está caro demais!" },
+        { figura:"💧", pt:"Água da torneira / com gás", en:"Tap water / Sparkling water", som:"tép uórer / spár-klin uórer",
+          quando:"Nos EUA, \"tap water\" (água da torneira, filtrada) é grátis nos restaurantes — pode pedir sem medo! Com gás = sparkling.",
+          dica:"Dica de economia: peça \"tap water, please\" e beba de graça. Refrigerante e água de garrafa custam caro lá.",
+          exEn:"Tap water is fine, thanks.", exSom:"tép uórer iz fáin, thênks.", exPt:"Água da torneira está ótimo, obrigado." },
+        { figura:"🎁", pt:"Gorjeta", en:"Tip", som:"típ",
+          quando:"Nos EUA a gorjeta NÃO é opcional como aqui: em restaurante com garçom, o costume é dar 15% a 20% da conta. Não dar é considerado muito feio.",
+          exEn:"Don't forget the tip!", exSom:"dont for-guét dâ típ!", exPt:"Não esqueça a gorjeta!" },
+      ],
+      dialogo:[
+      { quem:"eles", en:"Hello! For here or to go?", som:"relôu! fór rír ór tchu gôu?", pt:"Olá! Pra comer aqui ou pra viagem?" },
+      { quem:"voce", en:"For here, please. I'd like chicken with rice.", som:"fór rír, plíz. áid láik tchíken uíth ráis.", pt:"Pra comer aqui. Eu gostaria de frango com arroz." },
+      { quem:"eles", en:"Anything to drink?", som:"êni-thin tchu drínk?", pt:"Algo pra beber?" },
+      { quem:"voce", en:"Tap water is fine, thanks.", som:"tép uórer iz fáin, thênks.", pt:"Água da torneira está ótimo, obrigado." },
+      { quem:"eles", en:"Cash or card?", som:"quéch ór cárd?", pt:"Dinheiro ou cartão?" },
+      { quem:"voce", en:"Credit card, please. Thank you!", som:"cré-dit cárd, plíz. thênk iú!", pt:"Cartão de crédito, por favor. Obrigado!" },
+    ],
+    quiz:[
+        { pergunta:"Qual é o jeito mais EDUCADO de pedir um café?", falar:null,
+          opcoes:["Give me a coffee","I'd like a coffee, please","Coffee now","I want coffee"], correta:1,
+          dica:"I'd like... please = eu gostaria... por favor. A fórmula de ouro do pedido educado." },
+        { pergunta:"\"For here or to go?\" — o atendente quer saber...", falar:"For here or to go?",
+          opcoes:["Se você vai pagar agora","Se é pra comer aqui ou levar","Se você quer a conta","Pra onde você vai viajar"], correta:1,
+          dica:"For here = comer no local. To go = pra viagem. Pergunta padrão de todo fast-food americano." },
+        { pergunta:"Como você pede a conta nos EUA?", falar:"The check, please",
+          opcoes:["The bill of money","The check, please","The paper, please","How much you?"], correta:1,
+          dica:"The check, please (dâ tchék, plíz). Na Inglaterra seria \"the bill\"." },
+        { pergunta:"Sobre gorjeta (tip) nos EUA...", falar:"Tip",
+          opcoes:["É proibida","É opcional como no Brasil","O costume é 15-20% e não dar é muito feio","Só se dá em hotel"], correta:2,
+          dica:"Nos EUA o garçom vive da gorjeta. Em restaurante com atendimento: 15% a 20% da conta." },
+        { pergunta:"Como beber água DE GRAÇA num restaurante americano?", falar:"Tap water, please",
+          opcoes:["Pedindo \"sparkling water\"","Pedindo \"tap water, please\"","Pedindo \"bottle water\"","Não tem como"], correta:1,
+          dica:"Tap water (tép uórer) = água da torneira filtrada, grátis por costume nos EUA. Sparkling e de garrafa custam caro." },
+        { pergunta:"\"It's too expensive\" significa...", falar:"It's too expensive",
+          opcoes:["Está muito barato","Está caro demais","São dois preços","Está delicioso"], correta:1,
+          dica:"Expensive (eks-pên-siv) = caro. Too = demais. Cheap (tchíp) = barato." },
+      ]
+    },
+    {
+      id:"n1m4", temas:["verbos"], titulo:"Os 10 verbos que resolvem tudo", icone:"⚡", corIco:"#FCE4DB",
+      intro:"Com estes 10 verbos + o que você já aprendeu, você monta centenas de frases. É o canivete suíço do inglês. E a boa notícia: no presente, o verbo quase não muda!",
+      xp:80,
+      cards:[
+        { figura:"🙌", pt:"Querer", en:"Want", som:"uônt",
+          quando:"I want = eu quero. Direto e útil: I want water, I want this, I want a job.",
+          exEn:"I want a new job.", exSom:"ái uônt a niú djób.", exPt:"Eu quero um emprego novo." },
+        { figura:"🆘", pt:"Precisar", en:"Need", som:"níd",
+          quando:"I need = eu preciso. Mais forte que want: é necessidade. I need help, I need money.",
+          exEn:"I need help.", exSom:"ái níd rélp.", exPt:"Eu preciso de ajuda." },
+        { figura:"✊", pt:"Ter", en:"Have", som:"rév",
+          quando:"I have = eu tenho. I have two kids, I have a car. (Lembra: idade NÃO usa have — idade é com am/is/are!)",
+          exEn:"I have a question.", exSom:"ái rév a qués-tchon.", exPt:"Eu tenho uma pergunta." },
+        { figura:"❤️", pt:"Gostar", en:"Like", som:"láik",
+          quando:"I like = eu gosto. Amar = love (lâv). O \"like\" das redes sociais é exatamente esse verbo: \"curtir\".",
+          exEn:"I like Brazilian food.", exSom:"ái láik brasílian fúd.", exPt:"Eu gosto de comida brasileira." },
+        { figura:"🚶", pt:"Ir", en:"Go", som:"gôu",
+          quando:"I go = eu vou. Go home (ir pra casa), go to work (ir pro trabalho). \"Let's go!\" (léts gôu) = vamos!, bora!",
+          exEn:"Let's go to the beach!", exSom:"léts gôu tchu dâ bíítch!", exPt:"Bora pra praia!" },
+        { figura:"🍽️", pt:"Comer", en:"Eat", som:"ít",
+          quando:"I eat = eu como. Café da manhã, almoço e janta: breakfast (brék-fest), lunch (lãntch), dinner (díner).",
+          exEn:"I eat rice every day.", exSom:"ái ít ráis évri dêi.", exPt:"Eu como arroz todo dia." },
+        { figura:"🥤", pt:"Beber", en:"Drink", som:"drínk",
+          quando:"I drink = eu bebo. Também é o substantivo \"bebida\": \"a drink\" pode ser qualquer bebida, inclusive a com álcool.",
+          exEn:"I drink coffee in the morning.", exSom:"ái drínk cófi in dâ mórnin.", exPt:"Eu bebo café de manhã." },
+        { figura:"💼", pt:"Trabalhar", en:"Work", som:"uôrk",
+          quando:"I work = eu trabalho. Work hard (uôrk rárd) = trabalhar duro — expressão que define o brasileiro lá fora.",
+          exEn:"I work hard every day.", exSom:"ái uôrk rárd évri dêi.", exPt:"Eu trabalho duro todo dia." },
+        { figura:"💬", pt:"Falar (idioma)", en:"Speak", som:"spík",
+          quando:"I speak = eu falo. E aqui está a frase mais honesta e mais útil do seu momento atual:",
+          dica:"Decore com orgulho: \"I speak a little English\" (ái spík a lírol ínglich) = eu falo um pouquinho de inglês. Dizer isso com um sorriso abre todas as portas — o americano passa a falar devagar e te ajudar.",
+          exEn:"I speak a little English.", exSom:"ái spík a lírol ínglich.", exPt:"Eu falo um pouquinho de inglês." },
+        { figura:"🤲", pt:"Ajudar", en:"Help", som:"rélp",
+          quando:"I help = eu ajudo. Help! sozinho = SOCORRO! E \"Can you help me?\" você já domina do módulo anterior.",
+          exEn:"I can help you!", exSom:"ái quén rélp iú!", exPt:"Eu posso te ajudar!" },
+      ],
+      quiz:[
+        { pergunta:"Qual a diferença entre \"want\" e \"need\"?", falar:null,
+          opcoes:["São iguais","Want = querer; need = precisar (mais forte)","Need = querer; want = precisar","Want é só pra comida"], correta:1,
+          dica:"Want (uônt) = quero (desejo). Need (níd) = preciso (necessidade). \"I need water\" é mais urgente que \"I want water\"." },
+        { pergunta:"Como se diz \"Eu falo um pouquinho de inglês\"?", falar:"I speak a little English",
+          opcoes:["I speak very English","I speak a little English","I little speak English","Me speak English little"], correta:1,
+          dica:"I speak a little English (ái spík a lírol ínglich). A frase mais útil do seu inglês atual — use com orgulho!" },
+        { pergunta:"\"Let's go!\" significa...", falar:"Let's go!",
+          opcoes:["Deixa pra lá","Vamos! / Bora!","Vá embora","Estou indo dormir"], correta:1,
+          dica:"Let's go (léts gôu) = vamos!, bora! Let's = let us = vamos nós." },
+        { pergunta:"Complete: \"I ___ two kids\" (eu tenho dois filhos)", falar:null,
+          opcoes:["am","have","need","go"], correta:1,
+          dica:"Have (rév) = ter. I have two kids. Mas cuidado: IDADE é com am (I am 30), nunca com have!" },
+        { pergunta:"Alguém grita \"HELP!\". Isso significa...", falar:"Help!",
+          opcoes:["Olá!","Socorro!","Saúde!","Parabéns!"], correta:1,
+          dica:"Help (rélp) sozinho e gritado = SOCORRO. Como verbo: I help = eu ajudo." },
+        { pergunta:"\"I work hard every day\" quer dizer...", falar:"I work hard every day",
+          opcoes:["Eu trabalho duro todo dia","Meu trabalho é difícil","Eu odeio trabalhar","Eu trabalho de dia"], correta:0,
+          dica:"Work hard (uôrk rárd) = trabalhar duro. Every day (évri dêi) = todo dia." },
+      ]
+    },
+    {
+      id:"n1m5", temas:["trabalho","entrevista","h2x"], titulo:"No trabalho", icone:"🏗️", corIco:"#FFF3D1",
+      intro:"O vocabulário que paga as contas: entrevista, chefe, horário, folga e hora extra. Se o seu sonho é trabalhar fora, este módulo é o seu uniforme.",
+      xp:80,
+      cards:[
+        { figura:"💼", pt:"Emprego / Vaga", en:"Job", som:"djób",
+          quando:"Lembra do módulo 2? Work = trabalhar (o ato). Job = o emprego, a vaga. \"I'm looking for a job\" = estou procurando emprego.",
+          exEn:"I'm looking for a job.", exSom:"áim lúkin fór a djób.", exPt:"Estou procurando emprego." },
+        { figura:"👔", pt:"Chefe", en:"Boss", som:"bós",
+          quando:"BÓS. Gerente = manager (mé-nedjer). Nos EUA se chama o chefe pelo primeiro nome — sem \"senhor\"!",
+          exEn:"My boss is nice.", exSom:"mái bós iz náis.", exPt:"Meu chefe é gente boa." },
+        { figura:"🧑‍🤝‍🧑", pt:"Colega de trabalho", en:"Coworker", som:"cô-uôrker",
+          quando:"Co (junto) + worker (trabalhador). Seus coworkers são sua primeira turma de amigos no exterior.",
+          exEn:"My coworkers are from Mexico.", exSom:"mái cô-uôrkers ar fróm mék-si-cou.", exPt:"Meus colegas são do México." },
+        { figura:"🗓️", pt:"Horário / Escala", en:"Schedule", som:"squé-djul",
+          quando:"SQUÉ-DJUL no inglês americano. \"What's my schedule?\" = qual é minha escala? Pergunta de todo início de semana.",
+          exEn:"What's my schedule this week?", exSom:"uóts mái squé-djul díss uík?", exPt:"Qual é minha escala esta semana?" },
+        { figura:"⏰", pt:"Cedo / Atrasado", en:"Early / Late", som:"ãr-li / lêit",
+          quando:"Early (ãr-li) = cedo/adiantado. Late (lêit) = tarde/atrasado. Nos EUA, pontualidade é levada MUITO a sério: chegar early é elogio.",
+          dica:"Ditado americano de trabalho: \"If you're early, you're on time. If you're on time, you're late.\" — chegou na hora exata, já é quase atraso!",
+          exEn:"Sorry, I'm late!", exSom:"sóri, áim lêit!", exPt:"Desculpa, estou atrasado!" },
+        { figura:"☕", pt:"Intervalo / Pausa", en:"Break", som:"brêik",
+          quando:"BRÊIK. \"Can I take a break?\" = posso fazer uma pausa? Almoço = lunch break (lãntch brêik).",
+          exEn:"Can I take a break?", exSom:"quén ái têik a brêik?", exPt:"Posso fazer uma pausa?" },
+        { figura:"💵", pt:"Salário / Pagamento", en:"Salary / Paycheck", som:"sé-la-ri / pêi-tchék",
+          quando:"Salary = o salário. Paycheck = o pagamento que cai (o \"contracheque\"). Payday (pêi-dêi) = dia de pagamento — o melhor dia do mês!",
+          exEn:"Friday is payday!", exSom:"frái-dêi iz pêi-dêi!", exPt:"Sexta é dia de pagamento!" },
+        { figura:"📈", pt:"Hora extra", en:"Overtime", som:"ôu-ver-táim",
+          quando:"Over (além) + time (tempo). Nos EUA a hora extra geralmente paga 1,5x — por isso todo mundo pergunta: \"Is there overtime?\"",
+          exEn:"I want overtime this week.", exSom:"ái uônt ôu-ver-táim díss uík.", exPt:"Quero hora extra esta semana." },
+        { figura:"🏖️", pt:"Folga", en:"Day off", som:"dêi óf",
+          quando:"Dia (day) + desligado (off) = folga. \"My day off is Sunday\" = minha folga é domingo.",
+          exEn:"Can I have a day off?", exSom:"quén ái rév a dêi óf?", exPt:"Posso ter uma folga?" },
+        { figura:"🎤", pt:"Entrevista", en:"Interview", som:"ín-ter-viú",
+          quando:"ÍN-TER-VIÚ. Entrevista de emprego = job interview. As duas frases que brilham nela estão nos próximos dois cards.",
+          exEn:"I have a job interview tomorrow.", exSom:"ái rév a djób ín-ter-viú tu-mó-rou.", exPt:"Tenho uma entrevista de emprego amanhã." },
+        { figura:"🏆", pt:"Eu tenho experiência", en:"I have experience", som:"ái rév eks-pí-riens",
+          quando:"A frase de ouro da entrevista. Complete com a área: \"I have experience in kitchens\" (...in quí-tchens) = tenho experiência em cozinhas.",
+          exEn:"I have experience in restaurants.", exSom:"ái rév eks-pí-riens in rés-to-rants.", exPt:"Tenho experiência em restaurantes." },
+        { figura:"🚀", pt:"Eu aprendo rápido", en:"I learn fast", som:"ái lãrn fést",
+          quando:"A segunda frase de ouro — perfeita pra quem ainda fala pouco inglês. Mostra atitude, e atitude contrata.",
+          dica:"Combo vencedor de entrevista: \"I speak a little English, but I learn fast and I work hard.\" Três frases que você JÁ sabe, juntas. Treine em voz alta!",
+          exEn:"I learn fast and I work hard.", exSom:"ái lãrn fést énd ái uôrk rárd.", exPt:"Eu aprendo rápido e trabalho duro." },
+      ],
+      dialogo:[
+      { quem:"eles", en:"Do you have experience?", som:"du iú rév eks-pí-riens?", pt:"Você tem experiência?" },
+      { quem:"voce", en:"Yes! I have experience in restaurants.", som:"iés! ái rév eks-pí-riens in rés-to-rants.", pt:"Sim! Tenho experiência em restaurantes." },
+      { quem:"eles", en:"How is your English?", som:"ráu iz iór ínglich?", pt:"Como está seu inglês?" },
+      { quem:"voce", en:"I speak a little English, but I learn fast and I work hard.", som:"ái spík a lírol ínglich, bât ái lãrn fést énd ái uôrk rárd.", pt:"Falo um pouco de inglês, mas aprendo rápido e trabalho duro." },
+      { quem:"eles", en:"Great! When can you start?", som:"grêit! uén quén iú stárt?", pt:"Ótimo! Quando você pode começar?" },
+      { quem:"voce", en:"Tomorrow!", som:"tu-mó-rou!", pt:"Amanhã!" },
+    ],
+    quiz:[
+        { pergunta:"Qual a diferença entre \"work\" e \"job\"?", falar:null,
+          opcoes:["São iguais","Work = trabalhar (o ato); job = o emprego, a vaga","Job é chefe","Work é salário"], correta:1,
+          dica:"I work (eu trabalho) ✕ I have a job (tenho um emprego). Revisão do Nível 0 — porque aqui nada se esquece!" },
+        { pergunta:"Você quer fazer uma pausa. Como pede?", falar:"Can I take a break?",
+          opcoes:["Can I take a broke?","Can I take a break?","I want stop now","Give me pause"], correta:1,
+          dica:"Break (brêik) = pausa/intervalo. Can I take a break? = posso fazer uma pausa?" },
+        { pergunta:"\"Payday\" é...", falar:"Payday",
+          opcoes:["Dia de folga","Dia de pagamento","Dia de entrevista","Hora extra"], correta:1,
+          dica:"Pay (pagar) + day (dia) = dia de pagamento. O melhor dia do mês!" },
+        { pergunta:"Qual é o combo vencedor de entrevista pra quem fala pouco inglês?", falar:null,
+          opcoes:["\"I don't speak English, sorry\"","\"I speak a little English, but I learn fast and I work hard\"","\"Money, please\"","\"I have 25 years\""], correta:1,
+          dica:"Honestidade + atitude: falo um pouco, aprendo rápido, trabalho duro. Isso contrata." },
+        { pergunta:"Nos EUA, sobre horário de trabalho...", falar:null,
+          opcoes:["Atrasar 10 min é normal","Pontualidade é levada muito a sério — chegar cedo é elogio","Ninguém liga pra horário","Só o chefe precisa chegar na hora"], correta:1,
+          dica:"\"If you're early, you're on time. If you're on time, you're late.\" Chegue early (ãr-li) e brilhe." },
+        { pergunta:"\"Day off\" significa...", falar:"Day off",
+          opcoes:["Dia ruim","Folga","Demissão","Feriado nacional"], correta:1,
+          dica:"Day (dia) + off (desligado) = folga. Can I have a day off? = posso ter uma folga?" },
+      ]
+    },
+  ]
+},
+{
+  id:"n2", nome:"Conversação", tag:"NÍVEL 2", cor:"#B05CB8",
+  descricao:"Tempos verbais, perguntas e respostas, conversas do trabalho e do dia a dia.",
+  modulos:[
+    { id:"n2m1", temas:["verbos","gramatica"], titulo:"Estou fazendo agora: o -ING", icone:"⏳", corIco:"#F5E4F7",
+      intro:"Bem-vindo ao Nível 2! Aqui começa a gramática de verdade — mas relaxa: o segredo do inglês falado AGORA cabe numa fórmula de 3 peças que você já tem duas.",
+      xp:90,
+      cards:[
+        { figura:"🧮", pt:"A fórmula do AGORA", en:"am / is / are + verbo-ING", som:"…ín no final",
+          quando:"Para dizer o que está acontecendo NESTE momento: pegue o to be que você já sabe (am/is/are) e cole -ING no verbo. I am working = estou trabalhando. É o nosso \"-ando/-endo/-indo\".",
+          dica:"Tradução mental direta: -ING = -NDO. work → working (trabalha-NDO), eat → eating (come-NDO). Uma regra, o presente inteiro.",
+          exEn:"I am working now.", exSom:"ái ém uôrkin náu.", exPt:"Eu estou trabalhando agora." },
+        { figura:"❓", pt:"O que você está fazendo?", en:"What are you doing?", som:"uót ar iú dúin?",
+          quando:"A pergunta mais comum do inglês falado. Doing (dúin) = fazendo, do verbo \"do\" (fazer).",
+          exEn:"Hey! What are you doing?", exSom:"rêi! uót ar iú dúin?", exPt:"Ei! O que você está fazendo?" },
+        { figura:"📚", pt:"Estou aprendendo inglês", en:"I am learning English", som:"ái ém lãr-nin ínglich",
+          quando:"Learn (aprender) + ing = learning (aprendendo). A frase que descreve você neste exato momento!",
+          exEn:"I am learning English with FalaFina.", exSom:"ái ém lãr-nin ínglich uíth fala fina.", exPt:"Estou aprendendo inglês com o FalaFina." },
+        { figura:"🍽️", pt:"Comendo / Bebendo", en:"Eating / Drinking", som:"írin / drín-kin",
+          quando:"Eat → eating, drink → drinking. Repare: \"eating\" na boca do americano vira ÍRIN — o T entre vogais virando R, sempre ele.",
+          exEn:"She is eating lunch.", exSom:"chí iz írin lãntch.", exPt:"Ela está almoçando." },
+        { figura:"🚶", pt:"Indo / Vindo", en:"Going / Coming", som:"gôuin / cãmin",
+          quando:"Go → going, come → coming. \"I'm going home\" = estou indo pra casa. \"I'm coming!\" = estou indo! (quando te chamam — em inglês você \"vem\" na direção de quem chamou).",
+          dica:"Pegadinha cultural: alguém te chama e você responde \"estou indo!\". Em inglês é \"I'm COMING!\", não \"I'm going\" — você vai NA DIREÇÃO da pessoa, então \"vem\".",
+          exEn:"Wait! I'm coming!", exSom:"uêit! áim cãmin!", exPt:"Espera! Estou indo!" },
+        { figura:"⏳", pt:"Esperando", en:"Waiting", som:"uêirin",
+          quando:"Wait → waiting. \"I'm waiting for the bus\" = estou esperando o ônibus. Repare no \"for\" depois de waiting — em inglês se espera POR algo.",
+          exEn:"I'm waiting for the bus.", exSom:"áim uêirin fór dâ bâs.", exPt:"Estou esperando o ônibus." },
+        { figura:"🗣️", pt:"Ele está falando / Ela está trabalhando", en:"He is talking / She is working", som:"rí iz tókin / chí iz uôrkin",
+          quando:"Com he/she, o to be é IS: He is talking (ele está falando), She is working (ela está trabalhando). A tabelinha am/are/is comandando de novo.",
+          exEn:"She is working today.", exSom:"chí iz uôrkin tchu-dêi.", exPt:"Ela está trabalhando hoje." },
+        { figura:"⚡", pt:"Agora / Neste momento", en:"Now / Right now", som:"náu / ráit náu",
+          quando:"As palavras que acompanham o -ING. \"Right now\" = agora mesmo, neste segundo. \"I'm eating right now\" = estou comendo agora mesmo.",
+          exEn:"I can't talk, I'm working right now.", exSom:"ái quént tók, áim uôrkin ráit náu.", exPt:"Não posso falar, estou trabalhando agora mesmo." },
+        { figura:"⚖️", pt:"Todo dia ✕ Agora", en:"I work ✕ I am working", som:"ái uôrk ✕ ái ém uôrkin",
+          quando:"A diferença que separa iniciante de intermediário: I work = eu trabalho (rotina, todo dia). I am working = estou trabalhando (agora). Sem -ING é hábito; com -ING é o momento.",
+          dica:"Teste mental: dá pra colocar \"todo dia\"? → sem ING (I work every day). Dá pra colocar \"agora\"? → com ING (I am working now).",
+          exEn:"I work every day. I am working now.", exSom:"ái uôrk évri dêi. ái ém uôrkin náu.", exPt:"Eu trabalho todo dia. Eu estou trabalhando agora." },
+        { figura:"🚫", pt:"NÃO estou (a negativa)", en:"I am not + -ING", som:"ái ém nót…",
+          quando:"Pra negar, é só encaixar o NOT depois do to be: I am not working (não estou trabalhando), She is not eating (ela não está comendo). Encurtado: isn't (ízent) / aren't (árent).",
+          exEn:"I am not working today. It's my day off!", exSom:"ái ém nót uôrkin tchu-dêi. its mái dêi óf!", exPt:"Não estou trabalhando hoje. É minha folga!" },
+      ],
+      quiz:[
+        { pergunta:"Qual é a fórmula do \"estou fazendo AGORA\"?", falar:null,
+          opcoes:["verbo + ED","am/is/are + verbo-ING","will + verbo","have + verbo"], correta:1,
+          dica:"am/is/are + ING. O -ING é o nosso -NDO: working = trabalhando." },
+        { pergunta:"Como se diz \"Estou aprendendo inglês\"?", falar:"I am learning English",
+          opcoes:["I learn English now","I am learning English","I learning English","Me learn English"], correta:1,
+          dica:"I am (estou) + learning (aprendendo). O to be nunca pode faltar antes do -ING!" },
+        { pergunta:"Te chamam: \"Andrio, vem!\". Você responde...", falar:"I'm coming!",
+          opcoes:["I'm going!","I'm coming!","I'm arriving you!","Wait me go!"], correta:1,
+          dica:"Em inglês você \"vem\" na direção de quem chamou: I'm coming! Responder \"I'm going\" soa como se você fosse EMBORA." },
+        { pergunta:"Qual frase fala de ROTINA (todo dia), não de agora?", falar:null,
+          opcoes:["I am working right now","I work every day","I am eating now","She is talking"], correta:1,
+          dica:"Sem -ING = hábito, rotina: I work every day. Com -ING = neste momento." },
+        { pergunta:"Como fica a NEGATIVA de \"She is eating\"?", falar:null,
+          opcoes:["She no is eating","She is not eating","She not eating","Is not she eating"], correta:1,
+          dica:"O NOT entra logo depois do to be: She is NOT eating. Encurtado: She isn't eating." },
+        { pergunta:"\"What are you doing?\" significa...", falar:"What are you doing?",
+          opcoes:["Onde você está?","O que você está fazendo?","Quem é você?","O que você faz da vida?"], correta:1,
+          dica:"What (o quê) + are you doing (você está fazendo). A pergunta mais falada do inglês do dia a dia." },
+      ]
+    },
+  ]
+},
+{
+  id:"n3", nome:"Fluência", tag:"NÍVEL 3", cor:"#E4572E",
+  descricao:"Phrasal verbs, gírias, expressões e o inglês real que os americanos falam.",
+  modulos:[
+    { id:"n3m1", titulo:"Phrasal verbs do dia a dia", icone:"🧩", corIco:"#FCE4DB", bloqueadoDev:true,
+      intro:"", xp:100, cards:[], quiz:[] },
+  ]
+}
+];
+
+/* ==================================================================
+   ESTADO + PROGRESSO
+   Progresso por aparelho (Store). Estrutura pronta para migrar
+   para conta de usuário no futuro: é um objeto único e serializável.
+   ================================================================== */
+const Progresso = {
+  dados: { xp:0, nivelEscolhido:null, modulosFeitos:{}, escalada:{ nivel:1, recorde:1 } },
+  carregar(){
+    const c = Contas.atual();
+    if(c && c.progresso){ this.dados = c.progresso; }
+    else { this.dados = Store.get("ff_progresso", { xp:0, nivelEscolhido:null, modulosFeitos:{} }); }
+    if(!this.dados.escalada) this.dados.escalada = { nivel:1, recorde:1 };
+    if(!this.dados.modulosFeitos) this.dados.modulosFeitos = {};
+  },
+  salvar(){
+    const c = Contas.atual();
+    if(c){ c.progresso = this.dados; Contas.salvarAtual(c); }
+    else { Store.set("ff_progresso", this.dados); }
+  },
+  moduloFeito(id){ return !!this.dados.modulosFeitos[id]; },
+  concluirModulo(id){
+    if(!this.dados.modulosFeitos[id]){
+      this.dados.modulosFeitos[id] = { data: new Date().toISOString() };
+    }
+    this.salvar();
+  }
+};
+
+let telaAtual = "tela-onboarding";
+let moduloAberto = null;
+let quizEstado = null;
+
+/* ---------- UTILIDADES ---------- */
+const $ = s => document.querySelector(s);
+function mostrarToast(msg){
+  const t = $("#toast");
+  t.textContent = msg;
+  t.classList.add("mostrar");
+  clearTimeout(t._tmr);
+  t._tmr = setTimeout(() => t.classList.remove("mostrar"), 2200);
+}
+function hojeStr(desloca){
+  const d = new Date(Date.now() + (desloca || 0));
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+}
+function atualizarXP(){
+  $("#xpValor").textContent = Progresso.dados.xp;
+  const p = Progresso.dados;
+  const ativo = (p.ultimoDiaAtivo === hojeStr() || p.ultimoDiaAtivo === hojeStr(-86400000)) ? (p.diasSeguidos || 0) : 0;
+  const sv = $("#streakValor");
+  if(sv) sv.textContent = ativo;
+  const c = Contas.atual();
+  const av = $("#btnAvatar");
+  if(av) av.innerHTML = (c && c.perfil && c.perfil.foto) ? `<img src="${c.perfil.foto}" alt="perfil">` : "👤";
+}
+/* Registrar atividade: soma XP, meta do dia e ofensiva (dias seguidos) */
+function registrarAtividade(xp){
+  const p = Progresso.dados;
+  const hoje = hojeStr();
+  if(p.dataXpHoje !== hoje){ p.dataXpHoje = hoje; p.xpHoje = 0; }
+  p.xpHoje += xp;
+  p.xp += xp;
+  if(p.ultimoDiaAtivo !== hoje){
+    p.diasSeguidos = (p.ultimoDiaAtivo === hojeStr(-86400000)) ? (p.diasSeguidos || 0) + 1 : 1;
+    p.ultimoDiaAtivo = hoje;
+  }
+  Progresso.salvar();
+  atualizarXP();
+}
+function tituloPorXP(xp){
+  if(xp >= 2000) return "🦅 Gringo Honorário";
+  if(xp >= 1000) return "🇺🇸 Quase Gringo";
+  if(xp >= 600) return "🏠 Morador";
+  if(xp >= 300) return "💼 Trabalhador";
+  if(xp >= 100) return "🏕️ Sobrevivente";
+  return "🎒 Turista";
+}
+/* SRS de verdade: cada palavra tem uma "caixa" e uma data de vencimento.
+   Acertou → sobe de caixa (revisão mais longe). Errou → volta pra caixa 0.
+   Intervalos: agora, 10min, 1 dia, 3 dias, 7 dias, 21 dias. */
+const SRS_INTERVALOS_MIN = [0, 10, 1440, 4320, 10080, 30240];
+function atualizarSRS(q, certo){
+  if(!q || !q.chave) return;
+  const p = Progresso.dados;
+  if(!p.srs) p.srs = {};
+  const item = p.srs[q.chave] || { caixa:0, proxima:0, erros:0 };
+  if(certo){
+    item.caixa = Math.min(item.caixa + 1, SRS_INTERVALOS_MIN.length - 1);
+  } else {
+    item.caixa = 0;
+    item.erros = (item.erros || 0) + 1;
+  }
+  item.proxima = Date.now() + SRS_INTERVALOS_MIN[item.caixa] * 60000;
+  p.srs[q.chave] = item;
+  Progresso.salvar();
+}
+function itensDevidos(){
+  const s = Progresso.dados.srs || {};
+  const agora = Date.now();
+  return Object.keys(s).filter(k => s[k].proxima <= agora);
+}
+function irPara(tela){
+  document.querySelectorAll(".tela").forEach(t => t.classList.remove("ativa"));
+  $("#" + tela).classList.add("ativa");
+  telaAtual = tela;
+  $("#btnVoltar").style.display = (tela === "tela-onboarding") ? "none" : "flex";
+  $("#rodapeLicao").classList.toggle("visivel", tela === "tela-licao");
+  window.scrollTo(0,0);
+}
+function esc(s){
+  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+function embaralhar(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){ const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+  return a;
+}
+
+/* ---------- MÓDULO DESBLOQUEADO?
+   Regra de rigor: o módulo N só abre se o N-1 do mesmo nível
+   estiver 100% concluído. O 1º módulo do nível está sempre aberto
+   (se o nível tiver conteúdo pronto). ---------- */
+function moduloDesbloqueado(nivel, idx){
+  const mod = nivel.modulos[idx];
+  if(mod.bloqueadoDev) return false;
+  if(idx > 0) return Progresso.moduloFeito(nivel.modulos[idx-1].id);
+  // 1º módulo do nível: aberto se a pessoa escolheu começar deste nível (ou acima),
+  // ou se concluiu o nível anterior inteiro. Cada um começa de onde quiser.
+  const nivelIdx = NIVEIS.indexOf(nivel);
+  const escolhido = Progresso.dados.nivelEscolhido == null ? 0 : Progresso.dados.nivelEscolhido;
+  if(nivelIdx <= escolhido) return true;
+  const anterior = NIVEIS[nivelIdx - 1];
+  if(!anterior) return true;
+  const comConteudo = anterior.modulos.filter(m => m.cards.length && !m.bloqueadoDev);
+  return comConteudo.length > 0 && comConteudo.every(m => Progresso.moduloFeito(m.id));
+}
+
+/* ---------- RENDER: TRILHA ---------- */
+function renderTrilha(){
+  atualizarXP();
+  // Estatística: total de palavras aprendidas (cards dos módulos concluídos)
+  let palavras = 0, totalPalavras = 0;
+  for(const nv of NIVEIS) for(const m of nv.modulos){
+    totalPalavras += m.cards.length;
+    if(Progresso.moduloFeito(m.id)) palavras += m.cards.length;
+  }
+  $("#trilhaSaudacao").innerHTML = `Sua trilha 🦜 <span style="font-size:.8rem;font-weight:800;color:var(--tinta-suave)">· ${palavras}/${totalPalavras} palavras aprendidas</span>`;
+  const cont = $("#trilhaConteudo");
+  let html = "";
+  const temFeito = NIVEIS.some(nv => nv.modulos.some(m => Progresso.moduloFeito(m.id) && m.cards.length));
+  const t = totalDeAprendizado();
+  const META = 30;
+  const xpHoje = Progresso.dados.dataXpHoje === hojeStr() ? (Progresso.dados.xpHoje || 0) : 0;
+  const pctMeta = Math.min(Math.round((xpHoje / META) * 100), 100);
+  html += `<div style="background:var(--branco);border:2.5px solid rgba(33,49,58,.12);border-radius:var(--raio);padding:12px 15px;margin:12px 0 2px;box-shadow:var(--sombra)">
+    <div style="display:flex;justify-content:space-between;align-items:center;font-weight:800;font-size:.92rem">
+      <span>${tituloPorXP(Progresso.dados.xp)}</span>
+      <span style="color:var(--tinta-suave)">🎯 Meta de hoje: ${Math.min(xpHoje, META)}/${META} XP ${xpHoje >= META ? "✅" : ""}</span>
+    </div>
+    <div class="barra-prog" style="max-width:none;height:10px;margin-top:8px"><i style="width:${pctMeta}%;background:${xpHoje >= META ? "var(--verde)" : "var(--sol)"}"></i></div>
+  </div>`;
+  const devidos = itensDevidos().length;
+  if(devidos > 0){
+    html += `<button class="btn-principal" id="btnRevisao" style="margin:10px 0 0;background:#B05CB8;box-shadow:0 4px 0 #8A3E91">🧠 Revisão do Dia · ${devidos} memória(s) vencendo</button>`;
+  }
+  html += `<button class="btn-principal" id="btnEscalada" style="margin:10px 0 0;background:var(--coral);box-shadow:0 4px 0 #B23A17">🗼 Escalada Infinita · você está no nível ${(Progresso.dados.escalada && Progresso.dados.escalada.nivel) || 1}</button>`;
+  html += `<button class="btn-principal" id="btnInfinito" style="margin:10px 0 0">♾️ Modo Infinito · nunca acaba</button>`;
+  html += `<button class="btn-principal" id="btnRanking" style="margin:10px 0 0;background:#B8860B;box-shadow:0 4px 0 #8A6508">🏆 Ranking dos perfis</button>`;
+  if(temFeito){
+    html += `<button class="btn-principal azul" id="btnTreino" style="margin:10px 0 0">🎯 Treino Livre · só o que você já aprendeu</button>`;
+  }
+  html += `<p style="text-align:center;font-size:.8rem;font-weight:700;color:var(--tinta-suave);margin:8px 0 4px">Banco atual: ${t.total.toLocaleString("pt-BR")} itens · recorde ♾️ 🔥 ${Progresso.dados.recordeStreak || 0}</p>`;
+  for(const nivel of NIVEIS){
+    const todoBloqueado = nivel.modulos.every(m => m.bloqueadoDev);
+    html += `<section class="nivel-bloco" id="bloco-${esc(nivel.id)}">
+      <div class="nivel-titulo">
+        <span class="tag" style="background:${nivel.cor}">${esc(nivel.tag)}</span>
+        <h3>${esc(nivel.nome)}</h3>
+        ${todoBloqueado ? '<span class="cadeado" title="Em construção">🔨</span>' : ""}
+      </div>
+      <div class="trilha">`;
+    nivel.modulos.forEach((mod, idx) => {
+      const feito = Progresso.moduloFeito(mod.id);
+      const aberto = moduloDesbloqueado(nivel, idx);
+      const emDev = !!mod.bloqueadoDev;
+      let cls = "modulo", status = "▶️", sub = mod.cards.length ? `${mod.cards.length} palavras · +${mod.xp} XP` : "";
+      if(feito){ cls += " feito"; status = "✅"; sub = "Concluído · refazer quando quiser"; }
+      else if(emDev){ cls += " bloqueado"; status = "🔨"; sub = "Em construção — em breve"; }
+      else if(!aberto){ cls += " bloqueado"; status = "🔒"; sub = "Termine o módulo anterior para abrir"; }
+      else { cls += " atual"; }
+      html += `<button class="${cls}" data-mod="${esc(mod.id)}" ${(!aberto || emDev) && !feito ? "disabled" : ""} ${feito ? "" : ""}>
+        <span class="ico" style="background:${mod.corIco}">${mod.icone}</span>
+        <span style="flex:1;min-width:0"><b>${esc(mod.titulo)}</b><span>${esc(sub)}</span></span>
+        <span class="status">${status}</span>
+      </button>`;
+    });
+    html += `</div></section>`;
+  }
+  cont.innerHTML = html;
+  cont.querySelectorAll(".modulo:not(.bloqueado)").forEach(btn => {
+    btn.addEventListener("click", () => abrirModulo(btn.dataset.mod));
+  });
+  const bt = $("#btnTreino");
+  if(bt) bt.addEventListener("click", iniciarTreino);
+  const bi = $("#btnInfinito");
+  if(bi) bi.addEventListener("click", iniciarInfinito);
+  const br = $("#btnRevisao");
+  if(br) br.addEventListener("click", iniciarRevisao);
+  const be = $("#btnEscalada");
+  if(be) be.addEventListener("click", () => { renderEscalada(); irPara("tela-escalada"); });
+  const brk = $("#btnRanking");
+  if(brk) brk.addEventListener("click", () => { renderRanking(); irPara("tela-ranking"); });
+}
+
+/* ---------- LOCALIZAR MÓDULO ---------- */
+function acharModulo(id){
+  for(const nivel of NIVEIS){
+    const idx = nivel.modulos.findIndex(m => m.id === id);
+    if(idx >= 0) return { nivel, mod: nivel.modulos[idx], idx };
+  }
+  return null;
+}
+function proximoModulo(id){
+  const atual = acharModulo(id);
+  if(!atual) return null;
+  const { nivel, idx } = atual;
+  if(idx + 1 < nivel.modulos.length && !nivel.modulos[idx+1].bloqueadoDev) return nivel.modulos[idx+1];
+  return null;
+}
+
+/* ---------- RENDER: LIÇÃO (cards bilíngues) ---------- */
+function abrirModulo(id){
+  const achado = acharModulo(id);
+  if(!achado) return;
+  moduloAberto = achado.mod;
+  const { nivel, mod } = achado;
+  let html = `<div class="cab-licao">
+    <span class="modtag" style="color:${nivel.cor}">${esc(nivel.tag)} · ${esc(nivel.nome)}</span>
+    <h2>${mod.icone} ${esc(mod.titulo)}</h2>
+    <p>${esc(mod.intro)}</p>
+  </div>
+  <div class="dica-audio">🗣️ <span>A <b>faixa amarela</b> mostra como cada palavra SOA, escrita do nosso jeito. <b>Leia ela em voz alta</b> e aperte o 🔊 para comparar com a voz nativa. É assim que a língua destrava!</span></div>`;
+
+  mod.cards.filter(c => !(c.adulto && usuarioMenor())).forEach(c => {
+    html += `<article class="card">
+      <div class="figura" aria-hidden="true">${c.figura}</div>
+      <div class="linha-idioma pt">
+        <span class="bandeira">🇧🇷 PT</span>
+        <span class="palavra">${esc(c.pt)}</span>
+      </div>
+      <div class="linha-idioma en">
+        <span class="bandeira">🇺🇸 EN</span>
+        <span class="palavra">${esc(c.en)}</span>
+        <button class="btn-som" data-falar="${esc(c.en)}" aria-label="Ouvir ${esc(c.en)}">🔊</button>
+      </div>
+      <div class="faixa-som">
+        <span class="rot">🗣️ COMO SOA · LEIA EM VOZ ALTA</span>
+        <span class="som">${esc(c.som)}</span>
+      </div>
+      <div class="bloco-info">
+        <div class="rot">📍 Quando usar</div>
+        <div class="txt">${esc(c.quando)}</div>
+      </div>
+      ${c.dica ? `<div class="bloco-info"><div class="rot">💡 Dica do professor</div><div class="txt">${esc(c.dica)}</div></div>` : ""}
+      <div class="exemplo">
+        <div class="rot">💬 Na vida real</div>
+        <div class="en-frase">${esc(c.exEn)} <button class="btn-som" data-falar="${esc(c.exEn)}" aria-label="Ouvir frase">🔊</button>${Fala.temMic ? `<button class="btn-som mic" data-ouvir="${esc(c.exEn)}" aria-label="Testar pronúncia">🎤</button>` : ""}</div>
+        <div class="som-frase">🗣️ ${esc(c.exSom)}</div>
+        <div class="pt-frase">${esc(c.exPt)}</div>
+      </div>
+    </article>`;
+  });
+  if(mod.dialogo && mod.dialogo.length){
+    html += `<div class="dialogo-bloco"><h3 class="dialogo-titulo">🎭 Conversa de verdade</h3>
+    <p class="dialogo-sub">As falas <b>verdes</b> são SUAS. Ouça a conversa, leia a pronúncia em voz alta${Fala.temMic ? " e aperte o 🎤 pra testar se um americano te entenderia" : ""}!</p>`;
+    mod.dialogo.forEach(f => {
+      const voce = f.quem === "voce";
+      html += `<div class="balao ${voce ? "voce" : "eles"}">
+        ${voce ? '<div class="vez">🫵 SUA VEZ — FALE EM VOZ ALTA</div>' : ''}
+        <div class="en">${esc(f.en)} <button class="btn-som" data-falar="${esc(f.en)}" aria-label="Ouvir">🔊</button>${voce && Fala.temMic ? ` <button class="btn-som mic" data-ouvir="${esc(f.en)}" aria-label="Testar pronúncia">🎤</button>` : ""}</div>
+        <div class="som">🗣️ ${esc(f.som)}</div>
+        <div class="pt">${esc(f.pt)}</div>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+  $("#licaoConteudo").innerHTML = html;
+  $("#licaoConteudo").querySelectorAll("[data-falar]").forEach(btn => {
+    btn.addEventListener("click", () => Fala.dizer(btn.dataset.falar, btn));
+  });
+  $("#licaoConteudo").querySelectorAll("[data-ouvir]").forEach(btn => {
+    btn.addEventListener("click", () => Fala.ouvir(btn.dataset.ouvir, btn));
+  });
+  irPara("tela-licao");
+}
+
+
+/* ==================================================================
+   GERADOR AUTOMÁTICO DE PERGUNTAS (v0.3)
+   Cada card de ensino vira até 5 perguntas diferentes:
+   PT→EN, EN→PT, som, prova de ouvido e frase. O banco cresce
+   sozinho a cada módulo novo — aprendizado que se multiplica.
+   ================================================================== */
+function amostrarDistratores(certo, lista, n){
+  const unicos = [...new Set(lista.filter(v => v && v !== certo))];
+  return embaralhar(unicos).slice(0, n);
+}
+function montarPergunta(pergunta, falar, certo, distratores, dica, chave, figura){
+  const opcoes = embaralhar([certo, ...distratores]);
+  return { pergunta, falar, opcoes, correta: opcoes.indexOf(certo), dica, gerada:true, chave, figura };
+}
+function gerarBanco(mod){
+  // Distratores do mesmo módulo (mesmo tema); se o módulo for pequeno, usa o site inteiro
+  const menor = usuarioMenor();
+  const todos = NIVEIS.flatMap(nv => nv.modulos).filter(m => m.cards.length).flatMap(m => m.cards)
+    .filter(c => !(c.adulto && menor));
+  const cardsMod = mod.cards.filter(c => !(c.adulto && menor));
+  const pool = cardsMod.length >= 5 ? cardsMod : todos;
+  const mapaSom = new Map(todos.map(x => [x.en, x.som]));
+  const comSom = v => mapaSom.has(v) ? `${v} · soa "${mapaSom.get(v)}"` : v;
+  const banco = [];
+  for(const c of cardsMod){
+    let d;
+    d = amostrarDistratores(c.en, pool.map(x=>x.en), 3);
+    if(d.length===3) banco.push(montarPergunta(`Como se diz "${c.pt}" em inglês?`, null, comSom(c.en), d.map(comSom), `${c.en} (${c.som}) = ${c.pt}.`, c.en, c.figura));
+    d = amostrarDistratores(c.pt, pool.map(x=>x.pt), 3);
+    if(d.length===3) banco.push(montarPergunta(`O que significa "${c.en}" (soa: ${c.som})?`, c.en, c.pt, d, `${c.en} (${c.som}) = ${c.pt}.`, c.en, c.figura));
+    d = amostrarDistratores(c.som, pool.map(x=>x.som), 3);
+    if(d.length===3) banco.push(montarPergunta(`Como SOA "${c.en}"?`, c.en, c.som, d, `${c.en} soa "${c.som}" — ${c.pt}.`, c.en, c.figura));
+    d = amostrarDistratores(c.en, todos.map(x=>x.en), 3);
+    if(d.length===3) banco.push(montarPergunta("🔊 Aperte o alto-falante e escolha o que você OUVIU:", c.en, c.en, d, `Você ouviu "${c.en}" (${c.som}) = ${c.pt}.`, c.en, null));
+    d = amostrarDistratores(c.exPt, pool.map(x=>x.exPt), 3);
+    if(d.length===3) banco.push(montarPergunta(`O que significa a frase: "${c.exEn}"?`, c.exEn, c.exPt, d, `${c.exEn} (${c.exSom}) = ${c.exPt}`, c.en, c.figura));
+    // Tipo 6 — COMPLETE A LACUNA (cloze): frases completas gravam melhor que palavras soltas
+    const limpar = s => s.replace(/[.,!?"]/g, "");
+    const palavrasFrase = limpar(c.exEn).split(" ").filter(w => w.length > 2);
+    if(palavrasFrase.length){
+      const alvoW = palavrasFrase[Math.floor(Math.random() * palavrasFrase.length)];
+      const fraseLacuna = c.exEn.replace(alvoW, "_____");
+      const poolPalavras = todos.flatMap(x => limpar(x.exEn).split(" ")).map(w => w.toLowerCase()).filter(w => w.length > 2);
+      const dl = amostrarDistratores(alvoW.toLowerCase(), poolPalavras, 3);
+      if(dl.length === 3 && fraseLacuna.includes("_____")){
+        banco.push(montarPergunta(`Complete: "${fraseLacuna}"  (${c.exPt})`, null, alvoW.toLowerCase(), dl, `${c.exEn} (${c.exSom}) = ${c.exPt}`, c.en, c.figura));
+      }
+    }
+    // Tipo 7 — MONTE A FRASE (produção ativa de memória, estilo Pimsleur)
+    const tokens = c.exEn.replace(/[.!?]/g, "").split(" ").filter(Boolean);
+    if(tokens.length >= 3 && tokens.length <= 8){
+      banco.push({ tipo:"montar", pergunta:`Monte a frase: "${c.exPt}"`, palavras:tokens, resposta:tokens.join(" "),
+        falarDepois:c.exEn, dica:`${c.exEn} — soa: ${c.exSom}`, chave:c.en, gerada:true, falar:null, opcoes:[], correta:0, figura:c.figura });
+    }
+  }
+  banco.forEach(q => q.temas = mod.temas || []);
+  return banco;
+}
+function totalDeAprendizado(){
+  let cards = 0, escritas = 0, geradas = 0;
+  for(const nv of NIVEIS) for(const m of nv.modulos){
+    cards += m.cards.length;
+    escritas += m.quiz.length;
+    geradas += gerarBanco(m).length;
+  }
+  return { cards, escritas, geradas, total: cards + escritas + geradas };
+}
+
+/* ---------- MODO INFINITO: o programa que nunca acaba.
+   Gera desafios do site inteiro, embaralhados, e reabastece a fila
+   sozinho quando está acabando. Acertos valem XP e sequência (🔥);
+   errou, a sequência zera — rigor até no infinito. ---------- */
+const FOCO_TEMAS = {
+  verbos:["verbos","gramatica"], entrevista:["entrevista","trabalho","apresentacao"],
+  h2x:["trabalho","entrevista"], diaadia:["diaadia","comida","cidade","saude"],
+  viagem:["cidade","comida","numeros","perguntas","viagem"], kids:["basico","cores","familia","numeros","comida"]
+};
+function bancoGlobal(){
+  let b = [];
+  for(const nv of NIVEIS) for(const m of nv.modulos) if(m.cards.length) b = b.concat(gerarBanco(m));
+  // Foco do perfil: o que a pessoa quer aprender aparece 2x mais
+  const p = perfilAtual();
+  if(p && p.focos && p.focos.length){
+    const alvo = new Set(p.focos.flatMap(f => FOCO_TEMAS[f] || []));
+    b = b.concat(b.filter(q => (q.temas || []).some(t => alvo.has(t))));
+  }
+  return b;
+}
+function iniciarInfinito(){
+  const banco = bancoGlobal();
+  moduloAberto = null;
+  quizEstado = {
+    perguntas: banco,
+    fila: embaralhar(banco.map((q,i) => i)),
+    total: banco.length,
+    acertosUnicos: new Set(),
+    erros: 0,
+    respondendo: false,
+    treino: false,
+    infinito: true,
+    streak: 0,
+    melhorDaSessao: 0,
+    respondidas: 0,
+    xpGanho: 0
+  };
+  renderQuizPergunta();
+  irPara("tela-quiz");
+}
+function encerrarInfinito(){
+  $("#concluTitulo").textContent = "♾️ Sessão infinita encerrada";
+  $("#concluTexto").textContent = `Você encarou ${quizEstado.respondidas} desafios. Melhor sequência de hoje: 🔥 ${quizEstado.melhorDaSessao}. Recorde geral: 🔥 ${Progresso.dados.recordeStreak || 0}. O banco continua te esperando — ele nunca acaba.`;
+  $("#concluXP").textContent = String(quizEstado.xpGanho);
+  $("#btnProximoModulo").style.display = "none";
+  irPara("tela-conclusao");
+}
+
+/* ---------- REVISÃO DO DIA: só o que está vencendo na curva do esquecimento ---------- */
+function iniciarRevisao(){
+  const devidos = new Set(itensDevidos());
+  if(!devidos.size){ mostrarToast("🧠 Memória em dia! Volte mais tarde."); return; }
+  const banco = bancoGlobal().filter(q => q.chave && devidos.has(q.chave));
+  if(!banco.length){ mostrarToast("🧠 Memória em dia!"); return; }
+  const perguntas = embaralhar(banco).slice(0, 12);
+  moduloAberto = null;
+  quizEstado = {
+    perguntas,
+    fila: embaralhar(perguntas.map((q,i) => i)),
+    total: perguntas.length,
+    acertosUnicos: new Set(),
+    erros: 0,
+    respondendo: false,
+    treino: true,
+    revisao: true,
+    infinito: false
+  };
+  renderQuizPergunta();
+  irPara("tela-quiz");
+}
+
+/* ---------- TREINO LIVRE: revisão infinita do que já foi aprendido ---------- */
+function iniciarTreino(){
+  const feitos = NIVEIS.flatMap(nv => nv.modulos).filter(m => Progresso.moduloFeito(m.id) && m.cards.length);
+  if(!feitos.length){ mostrarToast("Conclua um módulo primeiro 😉"); return; }
+  let banco = [];
+  for(const m of feitos) banco = banco.concat(gerarBanco(m));
+  const perguntas = embaralhar(banco).slice(0, 10);
+  moduloAberto = null;
+  quizEstado = {
+    perguntas,
+    fila: embaralhar(perguntas.map((q,i) => i)),
+    total: perguntas.length,
+    acertosUnicos: new Set(),
+    erros: 0,
+    respondendo: false,
+    treino: true
+  };
+  renderQuizPergunta();
+  irPara("tela-quiz");
+}
+
+/* ---------- QUIZ COM RIGOR
+   Regras: perguntas embaralhadas; errou → explica a regra e a
+   pergunta VOLTA para o fim da fila. Só conclui com 100%. ---------- */
+function iniciarQuiz(){
+  if(!moduloAberto || !moduloAberto.quiz.length) return;
+  const geradas = embaralhar(gerarBanco(moduloAberto)).slice(0, 4); // 4 surpresas novas a cada tentativa
+  const perguntas = moduloAberto.quiz.concat(geradas);
+  quizEstado = {
+    perguntas,
+    fila: embaralhar(perguntas.map((q,i) => i)),
+    total: perguntas.length,
+    acertosUnicos: new Set(),
+    erros: 0,
+    respondendo: false,
+    treino: false
+  };
+  renderQuizPergunta();
+  irPara("tela-quiz");
+}
+/* Resultado unificado: SRS + streak + XP + fila (múltipla escolha E montar frase) */
+function aplicarResultado(certo, q){
+  const idxPergunta = quizEstado.fila.shift();
+  atualizarSRS(q, certo);
+  if(certo){
+    if(quizEstado.infinito){
+      quizEstado.respondidas++;
+      quizEstado.streak++;
+      if(quizEstado.streak > quizEstado.melhorDaSessao) quizEstado.melhorDaSessao = quizEstado.streak;
+      if(quizEstado.streak > (Progresso.dados.recordeStreak || 0)) Progresso.dados.recordeStreak = quizEstado.streak;
+      quizEstado.xpGanho += 2;
+      registrarAtividade(2);
+    } else {
+      quizEstado.acertosUnicos.add(idxPergunta);
+    }
+  } else {
+    quizEstado.erros++;
+    if(quizEstado.escalada){
+      quizEstado.errosFeitos++; // na escalada o erro não volta pra fila: ele CONTA
+    } else {
+      quizEstado.fila.push(idxPergunta); // rigor: volta pra fila
+    }
+    if(quizEstado.infinito){
+      quizEstado.respondidas++;
+      quizEstado.streak = 0;
+    }
+  }
+}
+
+/* Tela do exercício MONTE A FRASE (produção ativa) */
+function renderMontar(q){
+  let html = (q.figura ? `<div class="quiz-figura">${q.figura}</div>` : "") + `<h2 class="quiz-pergunta">${esc(q.pergunta)}</h2>
+  <div class="quiz-sub">🧩 Toque nas palavras na ordem certa (toque de novo pra devolver)</div>
+  <div class="montar-resposta" id="mResp"><span class="mDica">toque nas palavras abaixo…</span></div>
+  <div class="montar-banco" id="mBanco"></div>
+  <button class="btn-principal" id="mConferir" style="margin-top:18px" disabled>Conferir ✔</button>
+  <div class="feedback" id="quizFeedback"></div>
+  <div class="aviso-rigor">🧠 <span>Montar a frase de memória é o exercício que mais gruda inglês na cabeça — ciência pura.</span></div>`;
+  if(quizEstado.infinito){
+    html += `<button class="btn-principal" id="btnPararInfinito" style="margin-top:12px">🏁 Encerrar e guardar meu XP</button>`;
+  }
+  $("#quizConteudo").innerHTML = html;
+  const bp = $("#btnPararInfinito");
+  if(bp) bp.addEventListener("click", encerrarInfinito);
+
+  const disponiveis = embaralhar(q.palavras.map((w, i) => ({ w, i })));
+  let resposta = [];
+  function desenhar(){
+    const resp = $("#mResp"), banco = $("#mBanco");
+    resp.innerHTML = resposta.length
+      ? resposta.map((o, k) => `<button class="chip usado" data-k="${k}">${esc(o.w)}</button>`).join("")
+      : `<span class="mDica">toque nas palavras abaixo…</span>`;
+    banco.innerHTML = disponiveis.map((o, k) =>
+      resposta.includes(o) ? "" : `<button class="chip" data-k="${k}">${esc(o.w)}</button>`).join("");
+    $("#mConferir").disabled = resposta.length !== q.palavras.length;
+    resp.querySelectorAll(".chip").forEach(b => b.addEventListener("click", () => {
+      resposta.splice(Number(b.dataset.k), 1);
+      desenhar();
+    }));
+    banco.querySelectorAll(".chip").forEach(b => b.addEventListener("click", () => {
+      resposta.push(disponiveis[Number(b.dataset.k)]);
+      desenhar();
+    }));
+  }
+  desenhar();
+  $("#mConferir").addEventListener("click", () => {
+    if(quizEstado.respondendo) return;
+    quizEstado.respondendo = true;
+    $("#mConferir").disabled = true;
+    const montado = resposta.map(o => o.w).join(" ");
+    const certo = montado === q.resposta;
+    aplicarResultado(certo, q);
+    const fb = $("#quizFeedback");
+    if(certo){
+      fb.className = "feedback certo";
+      fb.innerHTML = `<div class="titulo">✅ Frase perfeita!${quizEstado.infinito ? ` 🔥 ${quizEstado.streak} seguidas (+2 XP)` : ""}</div><div class="dica">${esc(q.dica)}</div>`;
+      Fala.dizer(q.falarDepois);
+      setTimeout(avancarQuiz, 2200);
+    } else {
+      fb.className = "feedback erro";
+      fb.innerHTML = `<div class="titulo">❌ ${quizEstado.infinito ? "Sequência zerada! " : ""}A ordem certa é: "${esc(q.resposta)}"</div><div class="dica">${esc(q.dica)}<br><b>Ela volta mais pra frente — monte de novo!</b></div>`;
+      setTimeout(avancarQuiz, 3600);
+    }
+  });
+}
+
+function renderQuizPergunta(){
+  const q = quizEstado.perguntas[quizEstado.fila[0]];
+  if(quizEstado.escalada){
+    const feitas = quizEstado.total - quizEstado.fila.length;
+    $("#quizBarra").style.width = Math.round((feitas / quizEstado.total) * 100) + "%";
+    const vidas = quizEstado.errosPermitidos - quizEstado.errosFeitos + 1;
+    $("#quizCont").textContent = `🗼 nv ${quizEstado.alvoNivel} · ${"❤️".repeat(Math.max(vidas, 0)) || "💀"}`;
+  } else if(quizEstado.infinito){
+    $("#quizBarra").style.width = Math.min(quizEstado.streak * 10, 100) + "%";
+    $("#quizCont").textContent = `🔥 ${quizEstado.streak} · recorde ${Progresso.dados.recordeStreak || 0}`;
+  } else {
+    const feitas = quizEstado.acertosUnicos.size;
+    $("#quizBarra").style.width = Math.round((feitas / quizEstado.total) * 100) + "%";
+    $("#quizCont").textContent = `${feitas}/${quizEstado.total}`;
+  }
+  if(q.tipo === "montar"){ renderMontar(q); return; }
+  const letras = ["A","B","C","D"];
+  let html = (q.figura ? `<div class="quiz-figura">${q.figura}</div>` : "") + `<h2 class="quiz-pergunta">${esc(q.pergunta)}</h2>`;
+  if(q.falar){
+    html += `<div class="quiz-sub"><button class="btn-som" data-falar="${esc(q.falar)}" aria-label="Ouvir">🔊</button> Ouça antes de responder</div>`;
+  }
+  html += `<div class="quiz-opcoes">`;
+  q.opcoes.forEach((op,i) => {
+    html += `<button class="quiz-op" data-i="${i}"><span class="letra">${letras[i]}</span><span>${esc(op)}</span></button>`;
+  });
+  html += `</div>
+  <div class="feedback" id="quizFeedback"></div>`;
+  if(quizEstado.escalada){
+    html += `<div class="aviso-rigor">🗼 <span>Escalada: aqui o erro NÃO volta pra fila — ele custa um coração. Perdeu todos, ${quizEstado.ehPulo ? "<b>volta pro nível 1</b>" : "falhou o nível"}. Capricha!</span></div>`;
+  } else if(quizEstado.infinito){
+    html += `<div class="aviso-rigor">♾️ <span>Modo Infinito: os desafios nunca acabam. Cada acerto vale <b>+2 XP</b>; errou, a sequência 🔥 zera. Vá até onde aguentar!</span></div>
+    <button class="btn-principal" id="btnPararInfinito" style="margin-top:16px">🏁 Encerrar e guardar meu XP</button>`;
+  } else {
+    html += `<div class="aviso-rigor">🎯 <span>Aqui não tem "mais ou menos": pergunta errada volta pra fila até você acertar. É assim que fixa.</span></div>`;
+  }
+  $("#quizConteudo").innerHTML = html;
+  const fb = $("#quizFeedback");
+  $("#quizConteudo").querySelectorAll("[data-falar]").forEach(btn => {
+    btn.addEventListener("click", () => Fala.dizer(btn.dataset.falar, btn));
+  });
+  const bp = $("#btnPararInfinito");
+  if(bp) bp.addEventListener("click", encerrarInfinito);
+  $("#quizConteudo").querySelectorAll(".quiz-op").forEach(btn => {
+    btn.addEventListener("click", () => {
+      if(quizEstado.respondendo) return;
+      quizEstado.respondendo = true;
+      const i = Number(btn.dataset.i);
+      const ops = $("#quizConteudo").querySelectorAll(".quiz-op");
+      ops.forEach(b => b.disabled = true);
+      const certo = (i === q.correta);
+      aplicarResultado(certo, q);
+      if(certo){
+        btn.classList.add("certa");
+        fb.className = "feedback certo";
+        fb.innerHTML = quizEstado.infinito
+          ? `<div class="titulo">✅ Isso aí! 🔥 ${quizEstado.streak} seguidas (+2 XP)</div><div class="dica">${esc(q.dica)}</div>`
+          : `<div class="titulo">✅ Isso aí!</div><div class="dica">${esc(q.dica)}</div>`;
+        setTimeout(avancarQuiz, quizEstado.infinito ? 1200 : 1500);
+      } else {
+        btn.classList.add("errada");
+        ops[q.correta].classList.add("certa");
+        fb.className = "feedback erro";
+        fb.innerHTML = quizEstado.infinito
+          ? `<div class="titulo">❌ Sequência zerada! A certa era "${esc(q.opcoes[q.correta])}"</div><div class="dica">${esc(q.dica)}<br><b>Ela volta mais pra frente — na próxima você acerta.</b></div>`
+          : `<div class="titulo">❌ Ainda não. A certa era "${esc(q.opcoes[q.correta])}"</div><div class="dica">${esc(q.dica)}<br><b>Essa pergunta vai voltar — se prepara!</b></div>`;
+        setTimeout(avancarQuiz, 3200);
+      }
+    });
+  });
+}
+function avancarQuiz(){
+  quizEstado.respondendo = false;
+  if(quizEstado.escalada){
+    if(quizEstado.errosFeitos > quizEstado.errosPermitidos){ falharEscalada(); return; }
+    if(quizEstado.fila.length === 0){ vencerEscalada(); return; }
+    renderQuizPergunta();
+    return;
+  }
+  if(quizEstado.infinito){
+    if(quizEstado.fila.length < 3){
+      quizEstado.fila = quizEstado.fila.concat(embaralhar(quizEstado.perguntas.map((q,i) => i)));
+    }
+    renderQuizPergunta();
+    return;
+  }
+  if(quizEstado.fila.length === 0){
+    concluirModuloAtual();
+  } else {
+    renderQuizPergunta();
+  }
+}
+function concluirModuloAtual(){
+  if(quizEstado.treino){
+    registrarAtividade(15);
+    $("#concluTitulo").textContent = quizEstado.revisao ? "🧠 Revisão concluída!" : "🎯 Treino concluído!";
+    $("#concluTexto").textContent = quizEstado.revisao
+      ? "Você revisou na hora exata em que o cérebro ia esquecer. É assim que se grava pra sempre."
+      : (quizEstado.erros === 0 ? "Revisão perfeita. Memória de aço!" : `Você corrigiu ${quizEstado.erros} escorregão(ões) e fechou com 100%.`);
+    $("#concluXP").textContent = "15";
+    $("#btnProximoModulo").style.display = "none";
+    irPara("tela-conclusao");
+    return;
+  }
+  const mod = moduloAberto;
+  const jaFeito = Progresso.moduloFeito(mod.id);
+  Progresso.concluirModulo(mod.id);
+  registrarAtividade(jaFeito ? 0 : mod.xp);
+  $("#concluTitulo").textContent = `${mod.icone} ${mod.titulo}: concluído!`;
+  $("#concluTexto").textContent = quizEstado.erros === 0
+    ? "Gabaritou de primeira. Impressionante!"
+    : `Você errou ${quizEstado.erros} vez(es), refez e acertou tudo. Errar e corrigir é como se aprende de verdade.`;
+  $("#concluXP").textContent = jaFeito ? "0 (revisão)" : mod.xp;
+  const prox = proximoModulo(mod.id);
+  $("#btnProximoModulo").style.display = prox ? "block" : "none";
+  if(prox) $("#btnProximoModulo").dataset.mod = prox.id;
+  irPara("tela-conclusao");
+}
+
+/* ==================================================================
+   ESCALADA INFINITA — níveis 1, 2, 3... sem fim.
+   Dificuldade sobe: mais perguntas, menos erros permitidos, conteúdo
+   mais avançado e mais "montar frase". Pular é permitido; falhar no
+   pulo manda de volta pro nível 1. Coragem tem preço.
+   ================================================================== */
+function regrasDoNivel(n){
+  return {
+    perguntas: Math.min(6 + Math.floor(n / 2), 14),
+    errosPermitidos: n < 5 ? 2 : (n < 15 ? 1 : 0),
+    xp: 10 + n,
+    tiers: n <= 10 ? [0] : (n <= 20 ? [0,1] : [0,1,2])
+  };
+}
+function gerarDesafioEscalada(n){
+  const r = regrasDoNivel(n);
+  let banco = [];
+  r.tiers.forEach(t => {
+    if(NIVEIS[t]) NIVEIS[t].modulos.forEach(m => { if(m.cards.length) banco = banco.concat(gerarBanco(m)); });
+  });
+  const p = perfilAtual();
+  if(p && p.focos && p.focos.length){
+    const alvo = new Set(p.focos.flatMap(f => FOCO_TEMAS[f] || []));
+    banco = banco.concat(banco.filter(q => (q.temas || []).some(t => alvo.has(t))));
+  }
+  const montar = embaralhar(banco.filter(q => q.tipo === "montar"));
+  const resto = embaralhar(banco.filter(q => q.tipo !== "montar"));
+  const qtdMontar = Math.min(Math.round(r.perguntas * Math.min(0.15 + n * 0.02, 0.5)), montar.length);
+  return { regras: r, perguntas: embaralhar(montar.slice(0, qtdMontar).concat(resto.slice(0, r.perguntas - qtdMontar))) };
+}
+function iniciarEscalada(alvo, ehPulo){
+  const d = gerarDesafioEscalada(alvo);
+  moduloAberto = null;
+  quizEstado = {
+    perguntas: d.perguntas,
+    fila: embaralhar(d.perguntas.map((q,i) => i)),
+    total: d.perguntas.length,
+    acertosUnicos: new Set(),
+    erros: 0, errosFeitos: 0,
+    respondendo: false, treino: false, infinito: false,
+    escalada: true, alvoNivel: alvo, ehPulo: !!ehPulo,
+    errosPermitidos: d.regras.errosPermitidos, xpNivel: d.regras.xp
+  };
+  renderQuizPergunta();
+  irPara("tela-quiz");
+}
+function renderEscalada(){
+  const e = Progresso.dados.escalada;
+  const r = regrasDoNivel(e.nivel);
+  let html = `<div class="esc-card">
+    <div style="font-weight:800;font-size:.85rem;color:var(--tinta-suave);letter-spacing:1px">VOCÊ ESTÁ NO NÍVEL</div>
+    <div class="esc-nivel">${e.nivel}</div>
+    <div style="font-weight:700;color:var(--tinta-suave);font-size:.9rem;margin-top:4px">Recorde: nível ${e.recorde} · Este nível: ${r.perguntas} desafios, ${r.errosPermitidos} erro(s) permitido(s)</div>
+    <button class="btn-principal" id="escJogar" style="margin-top:16px">⚔️ Enfrentar o nível ${e.nivel}</button>
+  </div>
+  <div class="esc-card" style="border-color:var(--coral)">
+    <div style="font-weight:800;font-size:1rem">😈 Acha que aguenta mais?</div>
+    <div style="font-weight:600;color:var(--tinta-suave);font-size:.9rem;margin:6px 0 12px">Pule direto pra um nível mais alto. Venceu: o nível é seu. <b>Falhou: volta pro nível 1.</b></div>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+      ${[5,10,30].filter(x => x > e.nivel).map(x => `<button class="btn-principal azul" style="width:auto;padding:12px 20px" data-pulo="${x}">🚀 Nível ${x}</button>`).join("") || '<span style="font-weight:700;color:var(--tinta-suave)">Você já passou dos pulos rápidos — siga um a um ou digite abaixo!</span>'}
+    </div>
+    <div style="display:flex;gap:10px;margin-top:12px;justify-content:center;align-items:center">
+      <input type="number" id="escPuloLivre" min="${e.nivel + 1}" placeholder="nível..." style="width:110px;font-family:inherit;font-weight:800;font-size:1rem;padding:11px;border:2.5px solid rgba(33,49,58,.2);border-radius:12px">
+      <button class="btn-principal" style="width:auto;padding:12px 18px;background:var(--coral);box-shadow:0 4px 0 #B23A17" id="escPuloIr">Tentar!</button>
+    </div>
+  </div>`;
+  $("#escaladaConteudo").innerHTML = html;
+  $("#escJogar").addEventListener("click", () => iniciarEscalada(Progresso.dados.escalada.nivel, false));
+  document.querySelectorAll("[data-pulo]").forEach(b => b.addEventListener("click", () => iniciarEscalada(Number(b.dataset.pulo), true)));
+  $("#escPuloIr").addEventListener("click", () => {
+    const v = Number($("#escPuloLivre").value);
+    if(!v || v <= Progresso.dados.escalada.nivel){ mostrarToast("Escolha um nível MAIOR que o seu 😉"); return; }
+    iniciarEscalada(v, true);
+  });
+}
+function vencerEscalada(){
+  const e = Progresso.dados.escalada;
+  e.nivel = quizEstado.alvoNivel + 1;
+  if(quizEstado.alvoNivel > e.recorde) e.recorde = quizEstado.alvoNivel;
+  registrarAtividade(quizEstado.xpNivel);
+  $("#concluTitulo").textContent = `🗼 Nível ${quizEstado.alvoNivel} conquistado!`;
+  $("#concluTexto").textContent = quizEstado.ehPulo
+    ? "PULO PERFEITO! Coragem premiada — você provou que aguentava."
+    : `Subindo! Próximo desafio: nível ${e.nivel}. A escalada não tem fim... até onde você vai?`;
+  $("#concluXP").textContent = String(quizEstado.xpNivel);
+  $("#btnProximoModulo").style.display = "none";
+  irPara("tela-conclusao");
+}
+function falharEscalada(){
+  const e = Progresso.dados.escalada;
+  if(quizEstado.ehPulo){
+    e.nivel = 1;
+    $("#concluTitulo").textContent = "💥 O pulo deu errado!";
+    $("#concluTexto").textContent = `Você tentou o nível ${quizEstado.alvoNivel} e a montanha te derrubou: de volta ao NÍVEL 1. Regra é regra — agora suba de novo, mais forte.`;
+  } else {
+    $("#concluTitulo").textContent = "😤 Ainda não foi dessa vez";
+    $("#concluTexto").textContent = `O nível ${quizEstado.alvoNivel} segurou você (erros além do permitido). Respira, revisa e tenta de novo — ele continua te esperando.`;
+  }
+  Progresso.salvar();
+  $("#concluXP").textContent = "0";
+  $("#btnProximoModulo").style.display = "none";
+  irPara("tela-conclusao");
+}
+
+/* ==================================================================
+   CONTAS: fluxos de cadastro, login, perfil, ranking
+   ================================================================== */
+function mostrarErro(id, msg){ const el = $(id); el.textContent = msg; el.classList.add("mostrar"); }
+function limparErro(id){ $(id).classList.remove("mostrar"); }
+let fotoTemp = null;
+async function fazerCadastro(){
+  limparErro("#cadErro");
+  const nome = $("#cadNome").value.trim();
+  const email = $("#cadEmail").value.trim().toLowerCase();
+  const s1 = $("#cadSenha").value, s2 = $("#cadSenha2").value;
+  if(nome.length < 2) return mostrarErro("#cadErro", "Escreve seu nome direitinho 😊");
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return mostrarErro("#cadErro", "Esse e-mail não parece certo. Confere?");
+  if(s1.length < 4) return mostrarErro("#cadErro", "A senha precisa de pelo menos 4 caracteres.");
+  if(s1 !== s2) return mostrarErro("#cadErro", "As senhas não bateram. Digita as duas iguais!");
+  const contas = Contas.todas();
+  if(contas[email]) return mostrarErro("#cadErro", "Já existe conta com esse e-mail neste aparelho. Use \"Entrar\".");
+  contas[email] = { nome, email, senhaHash: await hashSenha(s1), criadaEm: new Date().toISOString(), perfil: null, progresso: null };
+  Contas.salvarTodas(contas);
+  Contas.logar(email);
+  Progresso.carregar();
+  Progresso.salvar();
+  mostrarToast(`Bem-vindo(a), ${nome}! 🦜`);
+  abrirPerfil();
+}
+async function fazerLogin(){
+  limparErro("#logErro");
+  const email = $("#logEmail").value.trim().toLowerCase();
+  const senha = $("#logSenha").value;
+  const conta = Contas.todas()[email];
+  if(!conta) return mostrarErro("#logErro", "Não achei essa conta neste aparelho. Crie uma nova!");
+  if(conta.senhaHash !== await hashSenha(senha)) return mostrarErro("#logErro", "Senha errada. Tenta de novo!");
+  Contas.logar(email);
+  Progresso.carregar();
+  atualizarXP();
+  mostrarToast(`De volta, ${conta.nome}! 🦜`);
+  if(!conta.perfil) abrirPerfil();
+  else { renderTrilha(); irPara("tela-trilha"); }
+}
+function abrirPerfil(){
+  const c = Contas.atual();
+  const p = (c && c.perfil) || {};
+  fotoTemp = p.foto || null;
+  $("#fotoPreview").innerHTML = fotoTemp ? `<img src="${fotoTemp}" alt="foto">` : "👤";
+  $("#perfIdade").value = idadeUsuario() || "";
+  document.querySelectorAll("#perfNivel .fchip").forEach(b => b.classList.toggle("ativo", Number(b.dataset.v) === p.nivel));
+  document.querySelectorAll("#perfFocos .fchip").forEach(b => b.classList.toggle("ativo", (p.focos || []).includes(b.dataset.v)));
+  irPara("tela-perfil");
+}
+function salvarPerfil(){
+  limparErro("#perfErro");
+  const idade = Number($("#perfIdade").value);
+  if(!idade || idade < 4 || idade > 99) return mostrarErro("#perfErro", "A idade é obrigatória — é ela que adapta o conteúdo pra você!");
+  const nivelBtn = document.querySelector("#perfNivel .fchip.ativo");
+  if(!nivelBtn) return mostrarErro("#perfErro", "Escolha como está seu inglês hoje.");
+  const focos = Array.from(document.querySelectorAll("#perfFocos .fchip.ativo")).map(b => b.dataset.v);
+  const c = Contas.atual();
+  if(!c) return;
+  c.perfil = {
+    foto: fotoTemp,
+    anoNascimento: new Date().getFullYear() - idade,
+    nivel: Number(nivelBtn.dataset.v),
+    focos
+  };
+  Contas.salvarAtual(c);
+  Progresso.dados.nivelEscolhido = c.perfil.nivel;
+  Progresso.salvar();
+  mostrarToast(usuarioCrianca() ? "Perfil salvo! Modo diversão ativado 🧸" : "Perfil salvo! Aulas do seu jeito ✔");
+  renderTrilha();
+  irPara("tela-trilha");
+}
+function renderRanking(){
+  const contas = Object.values(Contas.todas()).filter(c => c.progresso);
+  contas.sort((a, b) => (b.progresso.xp || 0) - (a.progresso.xp || 0));
+  const eu = Contas.sessao();
+  const medalha = ["🥇","🥈","🥉"];
+  $("#rankingLista").innerHTML = contas.length ? contas.map((c, i) => `
+    <div class="rank-item ${c.email === eu ? "eu" : ""}">
+      <div class="rank-pos">${medalha[i] || (i + 1) + "º"}</div>
+      <div class="avatar-mini">${c.perfil && c.perfil.foto ? `<img src="${c.perfil.foto}" alt="">` : "👤"}</div>
+      <div><b>${esc(c.nome)}${c.email === eu ? " (você)" : ""}</b><small>${tituloPorXP(c.progresso.xp || 0)} · 🔥 ${c.progresso.diasSeguidos || 0} dias · 🗼 nv ${(c.progresso.escalada && c.progresso.escalada.recorde) || 1}</small></div>
+      <div class="rank-xp">⭐ ${c.progresso.xp || 0}</div>
+    </div>`).join("") : '<p style="font-weight:700;color:var(--tinta-suave)">Ainda não há perfis com progresso. Estude um pouquinho e volte!</p>';
+}
+
+/* ---------- BOTÃO FLUTUANTE: instalar o aplicativo (PWA) ---------- */
+let pwaPrompt = null;
+window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); pwaPrompt = e; });
+function iniciarPWA(){
+  if(Store.get("ff_pwa_fechado", false)) return;
+  if(window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) return; // já instalado
+  $("#pwaFlutuante").style.display = "flex";
+  $("#pwaFechar").addEventListener("click", () => {
+    $("#pwaFlutuante").style.display = "none";
+    Store.set("ff_pwa_fechado", true);
+  });
+  $("#pwaBaixar").addEventListener("click", async () => {
+    if(pwaPrompt){
+      pwaPrompt.prompt();
+      const r = await pwaPrompt.userChoice;
+      if(r.outcome === "accepted"){ $("#pwaFlutuante").style.display = "none"; mostrarToast("📲 Aplicativo instalado!"); }
+      pwaPrompt = null;
+    } else {
+      alert("📲 Para instalar o FalaFina:\n\nAndroid (Chrome): menu ⋮ → \"Adicionar à tela inicial\"\niPhone (Safari): botão compartilhar → \"Adicionar à Tela de Início\"\n\nVira um aplicativo de verdade, com ícone e tudo!");
+    }
+  });
+}
+if("serviceWorker" in navigator && location.protocol === "https:"){
+  navigator.serviceWorker.register("sw.js").catch(() => {});
+}
+
+/* ---------- EVENTOS GLOBAIS ---------- */
+document.querySelectorAll(".op-nivel").forEach(btn => {
+  btn.addEventListener("click", () => {
+    let n = Number(btn.dataset.nivel);
+    const temConteudo = i => NIVEIS[i] && NIVEIS[i].modulos.some(m => m.cards.length && !m.bloqueadoDev);
+    if(!temConteudo(n)){
+      while(n > 0 && !temConteudo(n)) n--;
+      mostrarToast("Esse nível chega em breve 🔨 Te coloquei no mais avançado disponível!");
+    }
+    Progresso.dados.nivelEscolhido = n;
+    Progresso.salvar();
+    renderTrilha();
+    irPara("tela-trilha");
+    const bloco = document.getElementById("bloco-" + NIVEIS[n].id);
+    if(bloco) setTimeout(() => bloco.scrollIntoView({ behavior:"smooth", block:"start" }), 150);
+  });
+});
+$("#btnVoltar").addEventListener("click", () => {
+  if(telaAtual === "tela-quiz"){
+    if(quizEstado && quizEstado.infinito){ encerrarInfinito(); return; }
+    if(quizEstado && quizEstado.escalada){
+      if(confirm(quizEstado.ehPulo ? "Desistir do PULO conta como falha: você volta pro nível 1. Sair mesmo?" : "Sair do nível? Você poderá tentar de novo.")){
+        if(quizEstado.ehPulo){ Progresso.dados.escalada.nivel = 1; Progresso.salvar(); }
+        renderEscalada(); irPara("tela-escalada");
+      }
+      return;
+    }
+    if(confirm("Sair do desafio? Seu progresso nele será perdido (rigor é rigor 😉).")){ renderTrilha(); irPara("tela-trilha"); }
+    return;
+  }
+  if(telaAtual === "tela-cadastro" || telaAtual === "tela-login"){ irPara("tela-inicio"); return; }
+  if(telaAtual === "tela-perfil"){
+    const c = Contas.atual();
+    if(c && c.perfil){ renderTrilha(); irPara("tela-trilha"); } else { mostrarToast("Complete o perfil primeiro 😊 (é rapidinho)"); }
+    return;
+  }
+  if(Contas.atual()){ renderTrilha(); irPara("tela-trilha"); } else { irPara("tela-inicio"); }
+});
+/* Navegação: início / cadastro / login / perfil */
+$("#btnIrCadastro").addEventListener("click", () => irPara("tela-cadastro"));
+$("#btnIrLogin").addEventListener("click", () => irPara("tela-login"));
+$("#linkParaLogin").addEventListener("click", () => irPara("tela-login"));
+$("#linkParaCadastro").addEventListener("click", () => irPara("tela-cadastro"));
+$("#btnCadastrar").addEventListener("click", fazerCadastro);
+$("#btnLogar").addEventListener("click", fazerLogin);
+$("#btnSalvarPerfil").addEventListener("click", salvarPerfil);
+$("#btnAvatar").addEventListener("click", () => { if(Contas.atual()) abrirPerfil(); else irPara("tela-inicio"); });
+$("#btnSair").addEventListener("click", () => {
+  if(confirm("Sair da conta? Seu progresso fica salvo aqui pra quando voltar.")){
+    Contas.sair();
+    irPara("tela-inicio");
+  }
+});
+document.querySelectorAll("#perfNivel .fchip").forEach(b => b.addEventListener("click", () => {
+  document.querySelectorAll("#perfNivel .fchip").forEach(x => x.classList.remove("ativo"));
+  b.classList.add("ativo");
+}));
+document.querySelectorAll("#perfFocos .fchip").forEach(b => b.addEventListener("click", () => b.classList.toggle("ativo")));
+$("#fotoInput").addEventListener("change", e => {
+  const arq = e.target.files && e.target.files[0];
+  if(!arq) return;
+  const img = new Image();
+  img.onload = () => {
+    const cv = document.createElement("canvas");
+    const lado = 128;
+    cv.width = lado; cv.height = lado;
+    const ctx = cv.getContext("2d");
+    const m = Math.min(img.width, img.height);
+    ctx.drawImage(img, (img.width - m) / 2, (img.height - m) / 2, m, m, 0, 0, lado, lado);
+    fotoTemp = cv.toDataURL("image/jpeg", 0.75);
+    $("#fotoPreview").innerHTML = `<img src="${fotoTemp}" alt="foto">`;
+  };
+  img.src = URL.createObjectURL(arq);
+});
+$("#btnIrQuiz").addEventListener("click", iniciarQuiz);
+$("#btnVoltarTrilha").addEventListener("click", () => { renderTrilha(); irPara("tela-trilha"); });
+$("#btnProximoModulo").addEventListener("click", (e) => {
+  const id = e.currentTarget.dataset.mod;
+  if(id) abrirModulo(id);
+});
+
+/* ---------- BOOT ---------- */
+Progresso.carregar();
+atualizarXP();
+iniciarPWA();
+const contaBoot = Contas.atual();
+if(contaBoot){
+  if(!contaBoot.perfil){ abrirPerfil(); }
+  else { renderTrilha(); irPara("tela-trilha"); }
+} else {
+  irPara("tela-inicio");
+}
+</script>
+</body>
+</html>
