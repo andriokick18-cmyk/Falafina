@@ -119,6 +119,8 @@ function mesclarProgresso(a, b) {
   r.xp = Math.max(a.xp || 0, b.xp || 0);
   r.recordeStreak = Math.max(a.recordeStreak || 0, b.recordeStreak || 0);
   r.melhorSeq = Math.max(a.melhorSeq || 0, b.melhorSeq || 0);
+  const _ti = [a.trialInicio, b.trialInicio].filter(Boolean).sort();
+  if (_ti.length) r.trialInicio = _ti[0];
   r.stats = Object.assign({}, b.stats || {}, a.stats || {});
   for(const k in (b.stats || {})){ const sa = (a.stats || {})[k], sb = b.stats[k]; if(sa && sb) r.stats[k] = ((sb.ex || 0) > (sa.ex || 0)) ? sb : sa; }
   r.favoritos = Object.assign({}, a.favoritos || {}, b.favoritos || {});
@@ -142,7 +144,7 @@ function mesclarProgresso(a, b) {
 }
 
 function contaPublica(c) {
-  return { nome: c.nome, email: c.email, criadaEm: c.criadaEm, perfil: c.perfil || null, progresso: c.progresso || null };
+  return { nome: c.nome, email: c.email, criadaEm: c.criadaEm, premiumAte: c.premiumAte || 0, perfil: c.perfil || null, progresso: c.progresso || null };
 }
 
 /* ---------- LEITURA DO CORPO (com limite) ---------- */
@@ -207,6 +209,8 @@ async function tratarApi(req, res, rota, ip) {
     return responder(res, 200, { ok: true, ranking: lista });
   }
 
+  // Rota admin do Premium é GET (pra abrir direto no navegador do celular)
+  if (rota.startsWith("/api/premium") && req.method === "GET") return ativarPremium(req, res);
   if (req.method !== "POST") return responder(res, 405, { erro: "Método não permitido" });
   const corpo = await lerCorpo(req);
   if (!corpo) return responder(res, 400, { erro: "Corpo inválido ou grande demais" });
@@ -319,3 +323,23 @@ function desligar() {
 }
 process.on("SIGTERM", desligar);
 process.on("SIGINT", desligar);
+
+  /* ---------- ADMIN: ativar Premium (só o Andrio) ----------
+     Configure ADMIN_CHAVE nas variáveis de ambiente do Render.
+     Depois é só abrir no navegador:
+     https://SEU-SITE.onrender.com/api/premium?chave=SUACHAVE&email=aluno@email.com&dias=30 */
+  function ativarPremium(req, res) {
+    const u = new URL(req.url, "http://x");
+    const ADMIN = process.env.ADMIN_CHAVE || "";
+    if (!ADMIN) return responder(res, 403, { erro: "Defina ADMIN_CHAVE nas variáveis do Render para usar esta rota." });
+    if ((u.searchParams.get("chave") || "") !== ADMIN) return responder(res, 403, { erro: "Chave errada." });
+    const email = (u.searchParams.get("email") || "").trim().toLowerCase();
+    const dias = Math.max(1, Math.min(3650, parseInt(u.searchParams.get("dias") || "30", 10) || 30));
+    const c = CONTAS[email];
+    if (!c) return responder(res, 404, { erro: "Conta não encontrada: " + email });
+    const base = (c.premiumAte && c.premiumAte > Date.now()) ? c.premiumAte : Date.now();
+    c.premiumAte = base + dias * 86400000;
+    persistir();
+    log("👑 Premium ativado: " + email + " +" + dias + " dias (até " + new Date(c.premiumAte).toLocaleDateString("pt-BR") + ")");
+    return responder(res, 200, { ok: true, email, dias, premiumAte: c.premiumAte, ate: new Date(c.premiumAte).toISOString() });
+  }

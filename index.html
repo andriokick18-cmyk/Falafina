@@ -534,19 +534,15 @@ body.sem-shell .topo .titulo-pagina{ visibility:hidden; }
   <nav class="sb-nav">
     <button class="sb-item" data-rota="home"><span class="ic">🏠</span>Início</button>
     <button class="sb-item" data-rota="aulas"><span class="ic">📚</span>Aulas</button>
-    <button class="sb-item" data-rota="aulas"><span class="ic">🧭</span>Trilha de Estudos</button>
     <button class="sb-item" data-rota="pratica"><span class="ic">🎯</span>Prática</button>
     <button class="sb-item" data-rota="desafios"><span class="ic">🏆</span>Desafios</button>
     <button class="sb-item" data-rota="revisao"><span class="ic">🔄</span>Revisão</button>
-    <button class="sb-item" data-rota="conquistas"><span class="ic">🏅</span>Conquistas</button>
-    <button class="sb-item" data-rota="ranking"><span class="ic">📊</span>Ranking</button>
     <button class="sb-item" data-rota="comunidade"><span class="ic">👥</span>Comunidade</button>
     <button class="sb-item" data-rota="meuperfil"><span class="ic">🪪</span>Meu Perfil</button>
-    <button class="sb-item" data-rota="config"><span class="ic">⚙️</span>Configurações</button>
   </nav>
   <div class="sb-premium">
     <b>👑 Seja Premium</b>
-    <p>Desbloqueie todos os recursos e aprenda sem limites!</p>
+    <p id="sbPremiumTexto">Desbloqueie todos os recursos e aprenda sem limites!</p>
     <button id="sbPremium">Quero ser Premium</button>
   </div>
   <img class="sb-mascote" src="mascote.png" alt="Mascote FalaFina">
@@ -558,6 +554,7 @@ body.sem-shell .topo .titulo-pagina{ visibility:hidden; }
   <div class="pill-grupo">
     <div class="xp-pill" style="background:#FCE4DB;border-color:var(--coral);color:#8C3212" title="Dias seguidos estudando">🔥 <span id="streakValor">0</span></div>
     <div class="xp-pill" title="Seus pontos de experiência">⭐ <span id="xpValor">0</span> XP</div>
+    <div class="xp-pill" id="trialPill" style="display:none;background:var(--sol-claro);border-color:var(--sol);color:#7A5A00" title="Sua semana grátis"></div>
     <div class="xp-pill" id="nuvemStatus" style="min-width:34px;text-align:center" title="Estado da nuvem">☁️</div>
   </div>
   <button class="avatar-mini" id="btnAvatar" aria-label="Meu perfil">👤</button>
@@ -807,6 +804,8 @@ body.sem-shell .topo .titulo-pagina{ visibility:hidden; }
 <main class="tela" id="tela-config"><div id="configConteudo"></div></main>
 <!-- ================= TELA: MEU PERFIL ================= -->
 <main class="tela" id="tela-meuperfil"><div id="meuPerfilConteudo"></div></main>
+<!-- ================= TELA: FIM DA SEMANA GRÁTIS ================= -->
+<main class="tela" id="tela-paywall"><div id="paywallConteudo"></div></main>
 </div><!-- /conteudo -->
 </div><!-- /principal -->
 </div><!-- /app -->
@@ -882,6 +881,8 @@ function mesclarProgresso(a, b){
   r.xp = Math.max(a.xp || 0, b.xp || 0);
   r.recordeStreak = Math.max(a.recordeStreak || 0, b.recordeStreak || 0);
   r.melhorSeq = Math.max(a.melhorSeq || 0, b.melhorSeq || 0);
+  const _ti = [a.trialInicio, b.trialInicio].filter(Boolean).sort();
+  if(_ti.length) r.trialInicio = _ti[0];
   r.stats = Object.assign({}, b.stats || {}, a.stats || {});
   for(const k in (b.stats || {})){ const sa = (a.stats || {})[k], sb = b.stats[k]; if(sa && sb) r.stats[k] = ((sb.ex || 0) > (sa.ex || 0)) ? sb : sa; }
   r.favoritos = Object.assign({}, a.favoritos || {}, b.favoritos || {});
@@ -962,6 +963,7 @@ const Nuvem = (() => {
         if(c && c.email === conta.email){
           c.progresso = mesclarProgresso(c.progresso, r.dados.conta.progresso);
           if(r.dados.conta.perfil && !c.perfil) c.perfil = r.dados.conta.perfil;
+          if(r.dados.conta.premiumAte) c.premiumAte = r.dados.conta.premiumAte;
           c.pendenteSync = false;
           Contas.salvarAtual(c);
           if(Progresso && c.progresso) Progresso.dados = c.progresso;
@@ -2564,6 +2566,7 @@ function itensDevidos(){
   return Object.keys(s).filter(k => s[k].proxima <= agora);
 }
 function irPara(tela){
+  if(typeof ffGate === "function") try{ tela = ffGate(tela); }catch(e){}
   document.querySelectorAll(".tela").forEach(t => t.classList.remove("ativa"));
   $("#" + tela).classList.add("ativa");
   telaAtual = tela;
@@ -4084,10 +4087,76 @@ $("#cvAnalisar").addEventListener("click", analisarCV);
    ================================================================== */
 /* >>>> EDITE AQUI, ANDRIO: seus contatos <<<< */
 const FF_CONTATO = {
-  whatsapp: "5500000000000",                 // seu número com DDI+DDD, só dígitos
-  grupo: "https://chat.whatsapp.com/SEU-LINK-DO-GRUPO"
+  whatsapp: "5553981453496",   // Andrio                 // seu número com DDI+DDD, só dígitos
+  grupo: "https://chat.whatsapp.com/DTZES3nXSe6DVZwsaAXVmW"   // Grupo FALAFINA
 };
 function abrirZap(msg){ window.open("https://wa.me/" + FF_CONTATO.whatsapp + "?text=" + encodeURIComponent(msg), "_blank"); }
+
+/* ---------- SEMANA GRÁTIS + PREMIUM ----------
+   Todo aluno ganha 7 dias grátis (contados a partir do 1º uso desta versão).
+   Depois, o acesso é liberado pelo Andrio: ele ativa o Premium na conta
+   direto no servidor e o app reconhece sozinho na próxima sincronização. */
+const FF_TRIAL_DIAS = 7;
+function garantirTrial(){
+  const p = Progresso.dados;
+  if(!p.trialInicio){ p.trialInicio = hojeStr(); Progresso.salvar(); }
+}
+function ehPremium(){
+  const c = Contas.atual();
+  return !!(c && c.premiumAte && c.premiumAte > Date.now());
+}
+function diasTrialRestantes(){
+  const p = Progresso.dados;
+  if(!p.trialInicio) return FF_TRIAL_DIAS;
+  const ini = new Date(p.trialInicio + "T00:00:00").getTime();
+  const passados = Math.floor((Date.now() - ini) / 86400000);
+  return Math.max(0, FF_TRIAL_DIAS - passados);
+}
+function acessoLiberado(){ return ehPremium() || diasTrialRestantes() > 0; }
+const FF_TELAS_LIVRES = ["tela-onboarding","tela-inicio","tela-cadastro","tela-login","tela-paywall","tela-config","tela-perfil"];
+function ffGate(tela){
+  if(!Contas.atual()) return tela;
+  garantirTrial();
+  if(acessoLiberado() || FF_TELAS_LIVRES.includes(tela)) return tela;
+  try{ renderPaywall(); }catch(e){}
+  return "tela-paywall";
+}
+function renderPaywall(){
+  $("#paywallConteudo").innerHTML = `
+  <div class="cardb" style="max-width:520px;margin:24px auto;text-align:center;padding:30px 22px">
+    <img src="mascote.png" style="width:96px" alt="">
+    <h2 style="font-family:var(--f-display);margin:12px 0 6px">Sua semana grátis terminou 💚</h2>
+    <p style="font-weight:700;color:var(--tinta-suave)">Que orgulho de ver você estudando! Seu progresso está <b>todo guardado na nuvem</b> — nada se perde. Pra continuar, ative o Premium falando com a gente:</p>
+    <button class="btn-principal" style="margin-top:16px;background:var(--sol);color:#5C4400;box-shadow:0 4px 0 #C89A20" id="pwZap">👑 Ativar meu Premium (WhatsApp)</button>
+    <button class="btn-principal azul" style="margin-top:10px" id="pwVerificar">🔄 Já paguei — verificar agora</button>
+    <button class="btn-link" id="pwSair" style="margin-top:8px">Sair da conta</button>
+  </div>`;
+  $("#pwZap").addEventListener("click", () => abrirZap("Olá Andrio! Minha semana grátis do FalaFina acabou e quero ativar o Premium 👑 Meu e-mail de cadastro: " + (Contas.sessao() || "")));
+  $("#pwVerificar").addEventListener("click", async () => {
+    mostrarToast("☁️ Verificando com o servidor…");
+    try{ await Nuvem.sincronizar(); }catch(e){}
+    if(ehPremium()){ mostrarToast("👑 Premium ativo! Bem-vindo de volta!"); renderHome(); irPara("tela-home"); }
+    else mostrarToast("Ainda não consta ativado. Fale com o Andrio no WhatsApp 😊");
+  });
+  $("#pwSair").addEventListener("click", () => { Contas.sair(); document.body.classList.add("sem-shell"); irPara("tela-inicio"); });
+}
+function atualizarSeloTrial(){
+  const pill = $("#trialPill"), txt = $("#sbPremiumTexto");
+  if(!Contas.atual()){ if(pill) pill.style.display = "none"; return; }
+  garantirTrial();
+  const dias = diasTrialRestantes();
+  if(ehPremium()){
+    if(pill){ pill.style.display = "flex"; pill.textContent = "👑 Premium"; }
+    if(txt) txt.textContent = "Premium ativo — aproveite tudo sem limites! 👑";
+  } else if(dias > 0){
+    if(pill){ pill.style.display = "flex"; pill.textContent = `🎁 ${dias} dia${dias === 1 ? "" : "s"}`; }
+    if(txt) txt.textContent = `Você tem ${dias} dia${dias === 1 ? "" : "s"} grátis. Garanta já o acesso sem limites!`;
+  } else {
+    if(pill){ pill.style.display = "flex"; pill.textContent = "🔒 grátis acabou"; }
+    if(txt) txt.textContent = "Sua semana grátis terminou — ative o Premium!";
+  }
+}
+
 
 /* ---------- ESTATÍSTICAS DIÁRIAS (alimentam desafios e gráficos) ---------- */
 function estatDia(){
@@ -4149,103 +4218,59 @@ function palavrasAprendidas(){
 function renderHome(){
   const p = Progresso.dados;
   const c = Contas.atual() || { nome:"Aluno" };
-  const total = todosModulos().filter(x => !x.m.bloqueadoDev).length;
-  const feitos = Object.keys(p.modulosFeitos || {}).length;
-  const pct = total ? Math.round(feitos / total * 100) : 0;
+  garantirTrial();
   const prox = proximoModulo();
   const devidos = itensDevidos().length;
+  const s = estatDia();
   const streak = (p.ultimoDiaAtivo === hojeStr() || p.ultimoDiaAtivo === hojeStr(-86400000)) ? (p.diasSeguidos || 0) : 0;
-  /* semana: domingo → sábado */
+  /* O FalaFina decide o próximo passo — o aluno nunca fica perdido */
+  const revisarPrimeiro = devidos >= 8;
   const letras = ["D","S","T","Q","Q","S","S"];
-  const hoje = new Date();
   let semana = "";
-  for(let i = 6; i >= 0; i--){
-    const d = new Date(Date.now() - i * 86400000);
-    const st = (p.stats || {})[hojeStr(-i * 86400000)];
-    semana += `<span class="${st && st.xp > 0 ? "feito" : ""} ${i === 0 ? "hoje" : ""}" title="${d.toLocaleDateString("pt-BR")}">${st && st.xp > 0 ? "✓" : letras[d.getDay()]}</span>`;
+  for(let i2 = 6; i2 >= 0; i2--){
+    const d = new Date(Date.now() - i2 * 86400000);
+    const st = (p.stats || {})[hojeStr(-i2 * 86400000)];
+    semana += `<span class="${st && st.xp > 0 ? "feito" : ""} ${i2 === 0 ? "hoje" : ""}">${st && st.xp > 0 ? "✓" : letras[d.getDay()]}</span>`;
   }
-  const contas = Object.values(Contas.todas()).filter(x => x.progresso).sort((a,b) => (b.progresso.xp||0) - (a.progresso.xp||0));
-  const eu = Contas.sessao();
-  const med = ["🥇","🥈","🥉"];
-  const rankHtml = contas.slice(0,5).map((x,i) => `
-    <div class="rank-item ${x.email === eu ? "eu" : ""}" style="margin-bottom:6px;padding:9px 12px">
-      <div class="rank-pos">${med[i] || (i+1)+"º"}</div>
-      <div style="min-width:0"><b style="font-size:.9rem">${esc(x.nome)}${x.email === eu ? " (você)" : ""}</b></div>
-      <div class="rank-xp" style="font-size:.85rem">${x.progresso.xp || 0} XP</div>
-    </div>`).join("") || `<p style="font-weight:700;color:var(--tinta-suave);font-size:.88rem">Estude um pouquinho pra aparecer aqui! 😄</p>`;
-  const trilhaStrip = todosModulos().filter(x => !x.m.bloqueadoDev).slice(Math.max(0, todosModulos().findIndex(x => x.m.id === prox.id) - 2)).slice(0,7).map(x => {
-    const ok = Progresso.moduloFeito(x.m.id);
-    const atual = x.m.id === prox.id;
-    return `<button class="acao" style="min-width:96px;${atual ? "border:2px solid var(--sol)" : ""}" data-mod="${x.m.id}">
-      <span class="ic">${ok ? "✅" : (atual ? x.m.icone : "🔒")}</span>${esc(x.m.titulo.split("—")[0].trim())}</button>`;
-  }).join("");
+  const dias = diasTrialRestantes();
+  const selo = ehPremium() ? "👑 Premium ativo" : (dias > 0 ? `🎁 ${dias} dia${dias === 1 ? "" : "s"} grátis` : "");
+  const linhaHoje = (ok, ic, txt, prog) => `
+    <button class="linha-cat" style="background:${ok ? "var(--verde-claro)" : "var(--branco)"};border:1.5px solid var(--borda);width:100%" data-hj="${ic}">
+      <span>${ok ? "✅" : "⬜"} ${txt}</span><b>${prog}</b>
+    </button>`;
   $("#homeConteudo").innerHTML = `
-  <div class="grid-2">
-    <div>
-      <div class="cardb" style="display:flex;gap:18px;align-items:center;flex-wrap:wrap">
-        <div class="anel" style="--p:${pct}"><div><b>${pct}%</b><small>GERAL</small></div></div>
-        <div style="flex:1;min-width:170px">
-          <p style="font-weight:800;color:var(--tinta-suave);font-size:.82rem">SEU PROGRESSO</p>
-          <p style="font-family:var(--f-display);font-size:1.5rem;font-weight:700">⭐ ${p.xp || 0} XP · Nível ${nivelNum()}</p>
-          <p style="font-weight:700;color:var(--tinta-suave);font-size:.9rem">${esc(tituloPorXP(p.xp || 0))} · faltam ${faltaNivel()} XP pro próximo nível</p>
-          <div class="mini-barra" style="max-width:100%;margin-top:8px"><i style="width:${Math.round(((p.xp||0)%350)/3.5)}%"></i></div>
-        </div>
-        <button class="btn-principal" style="width:auto;padding:13px 22px" id="homeContinuar">▶️ Continuar Aprendendo</button>
+  <div style="max-width:640px;margin:0 auto">
+    <div class="cardb" style="text-align:center;padding:26px 20px">
+      <p style="font-family:var(--f-display);font-size:1.35rem;font-weight:700">Olá, ${esc((c.nome || "Aluno").split(" ")[0])}! 👋</p>
+      <p style="font-weight:700;color:var(--tinta-suave);font-size:.9rem;margin:2px 0 14px">⭐ ${p.xp || 0} XP · Nível ${nivelNum()} · 🔥 ${streak} dia${streak === 1 ? "" : "s"}${selo ? " · " + selo : ""}</p>
+      <div style="background:var(--verde-claro);border-radius:18px;padding:16px">
+        <p style="font-weight:800;font-size:.78rem;color:var(--verde-escuro);letter-spacing:1px">SEU PRÓXIMO PASSO</p>
+        <p style="font-family:var(--f-display);font-size:1.15rem;font-weight:700;margin:4px 0 12px">${revisarPrimeiro ? `🔄 Revisar ${devidos} itens da memória` : `${prox.icone} ${esc(prox.titulo)}`}</p>
+        <button class="btn-principal" id="homePasso" style="max-width:320px;margin:0 auto">${revisarPrimeiro ? "Revisar agora" : "Começar a aula"} ▶</button>
       </div>
-      <div class="cardb" style="margin-top:16px">
-        <div class="secao-t">O que você quer fazer hoje?</div>
-        <div class="acoes-grid">
-          <button class="acao" data-ir="aulas"><span class="ic">📚</span>Aulas</button>
-          <button class="acao" data-ir="revisao"><span class="ic">🔄</span>Revisão</button>
-          <button class="acao" data-ir="desafios"><span class="ic">🏆</span>Desafios</button>
-          <button class="acao" data-ir="pratica"><span class="ic">🎯</span>Prática</button>
-          <button class="acao" data-ir="simulador"><span class="ic">🎙️</span>Entrevista</button>
-          <button class="acao" data-ir="comunidade"><span class="ic">👥</span>Comunidade</button>
-        </div>
-      </div>
-      <div class="cardb" style="margin-top:16px">
-        <div class="secao-t">Sua Trilha de Estudos <button class="btn-link" style="padding:0;font-size:.85rem" data-ir="aulas">Ver todas →</button></div>
-        <div style="display:flex;gap:10px;overflow-x:auto;padding-bottom:4px">${trilhaStrip}</div>
-      </div>
-      <div class="faixa-troveu faixa-trofeu">
-        <span>⭐ ${feitos} módulos</span><span>🔥 melhor sequência: ${p.melhorSeq || streak} dias</span>
-        <span>🏆 ${conquistasFeitas().length} conquistas</span><span>🔤 ${palavrasAprendidas()} palavras aprendidas</span>
+      <div class="semana" style="justify-content:center;margin-top:16px">${semana}</div>
+    </div>
+    <div class="cardb" style="margin-top:14px">
+      <div class="secao-t">Hoje no FalaFina <button class="btn-link" style="padding:0;font-size:.85rem" data-ir="desafios">Desafios completos →</button></div>
+      <div class="lista-limpa">
+        ${linhaHoje(s.aulas >= 1, "aula", "Concluir 1 aula", `${Math.min(s.aulas,1)}/1`)}
+        ${linhaHoje(s.ex >= 10, "ex", "Fazer 10 exercícios", `${Math.min(s.ex,10)}/10`)}
+        ${linhaHoje(s.pron >= 3, "pron", "Praticar pronúncia 3x", `${Math.min(s.pron,3)}/3`)}
       </div>
     </div>
-    <div class="lateral">
-      <div class="cardb">
-        <div class="secao-t">Sequência atual</div>
-        <p style="font-family:var(--f-display);font-size:1.6rem;font-weight:700">🔥 ${streak} dia${streak === 1 ? "" : "s"}</p>
-        <div class="semana" style="margin-top:10px">${semana}</div>
-        <p style="font-weight:700;color:var(--tinta-suave);font-size:.82rem;margin-top:8px">${streak > 0 ? "Continue assim! 🔥" : "Estude hoje pra acender o fogo!"}</p>
-      </div>
-      <div class="cardb">
-        <div class="secao-t">Revisão rápida</div>
-        <p style="font-weight:700;font-size:.92rem">${devidos ? `<b style="color:var(--azul)">${devidos} itens</b> esperando revisão — é assim que fixa!` : "Nada vencido agora. 👏"}</p>
-        <button class="btn-principal azul" style="margin-top:10px" data-ir="revisao">Começar revisão</button>
-      </div>
-      <div class="cardb">
-        <div class="secao-t">Ranking geral <button class="btn-link" style="padding:0;font-size:.85rem" data-ir="ranking">Ver todos</button></div>
-        <div id="homeRankMini">${rankHtml}</div>
-      </div>
-      <div class="dica-card"><img src="mascote.png" alt=""><p><b>Dica do FalaFina:</b> ${dicaDoDia()}</p></div>
-    </div>
+    <div class="dica-card" style="margin-top:14px"><img src="mascote.png" alt=""><p><b>Dica do FalaFina:</b> ${dicaDoDia()}</p></div>
   </div>`;
-  $("#homeContinuar").addEventListener("click", () => abrirModulo(prox.id));
+  $("#homePasso").addEventListener("click", () => {
+    if(revisarPrimeiro){ revTab = "inteligente"; navPara("revisao"); }
+    else abrirModulo(prox.id);
+  });
   ligarAcoes($("#homeConteudo"));
-  /* ranking mundial da nuvem (offline first: local já está na tela) */
-  if(typeof Nuvem !== "undefined" && Nuvem.ranking){
-    Nuvem.ranking().then(r => {
-      const alvo = $("#homeRankMini");
-      if(!alvo || !r.ok || !r.dados || !Array.isArray(r.dados.ranking)) return;
-      alvo.innerHTML = r.dados.ranking.slice(0,5).map((x,i) => `
-        <div class="rank-item ${x.voce ? "eu" : ""}" style="margin-bottom:6px;padding:9px 12px">
-          <div class="rank-pos">${med[i] || (i+1)+"º"}</div>
-          <div style="min-width:0"><b style="font-size:.9rem">${esc(x.nome)}${x.voce ? " (você)" : ""}</b></div>
-          <div class="rank-xp" style="font-size:.85rem">${x.xp || 0} XP</div>
-        </div>`).join("") || alvo.innerHTML;
-    }).catch(() => {});
-  }
+  $("#homeConteudo").querySelectorAll("[data-hj]").forEach(b => b.addEventListener("click", () => {
+    const t = b.dataset.hj;
+    if(t === "aula") abrirModulo(prox.id);
+    else if(t === "ex"){ revTab = "inteligente"; navPara("revisao"); }
+    else { revTab = "palavras"; navPara("revisao"); mostrarToast("Use o 🎤 nos cards pra praticar!"); }
+  }));
 }
 const DICAS_FF = [
   "estudar 10 minutos TODO dia vale mais que 2 horas uma vez por semana. 💚",
@@ -4672,14 +4697,15 @@ const FF_TITULOS = {
   "tela-ranking":"📊 Ranking", "tela-comunidade":"👥 Comunidade", "tela-meuperfil":"🪪 Meu Perfil",
   "tela-config":"⚙️ Configurações", "tela-simulador":"🎙️ Simulador de Entrevista",
   "tela-entrevista":"🎙️ Entrevista ao vivo", "tela-licao":"📖 Aula", "tela-quiz":"📝 Exercícios",
-  "tela-conclusao":"🎉 Parabéns!", "tela-escalada":"🗼 Escalada", "tela-perfil":"🪪 Perfil"
+  "tela-conclusao":"🎉 Parabéns!", "tela-escalada":"🗼 Escalada", "tela-perfil":"🪪 Perfil", "tela-paywall":"👑 FalaFina Premium"
 };
-const FF_SEM_SHELL = ["tela-onboarding","tela-inicio","tela-cadastro","tela-login"];
+const FF_SEM_SHELL = ["tela-onboarding","tela-inicio","tela-cadastro","tela-login","tela-paywall"];
 function ffAposIrPara(tela){
   const tt = $("#tituloPagina");
   if(tt) tt.textContent = FF_TITULOS[tela] || "FalaFina";
   document.body.classList.toggle("sem-shell", FF_SEM_SHELL.includes(tela) || !Contas.atual());
   document.body.classList.toggle("logado", !!Contas.atual());
+  try{ atualizarSeloTrial(); }catch(e){}
   const mapa = { "tela-home":"home", "tela-trilha":"aulas", "tela-pratica":"pratica", "tela-desafios":"desafios",
     "tela-revisao":"revisao", "tela-conquistas":"conquistas", "tela-ranking":"ranking", "tela-comunidade":"comunidade",
     "tela-meuperfil":"meuperfil", "tela-config":"config", "tela-simulador":"pratica", "tela-entrevista":"pratica",
