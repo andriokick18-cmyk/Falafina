@@ -407,6 +407,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--azul);outline-offse
   <div style="display:flex;gap:8px;align-items:center">
     <div class="xp-pill" style="background:#FCE4DB;border-color:var(--coral);color:#8C3212" title="Dias seguidos estudando">🔥 <span id="streakValor">0</span></div>
     <div class="xp-pill" title="Seus pontos de experiência">⭐ <span id="xpValor">0</span> XP</div>
+    <div class="xp-pill" id="nuvemStatus" style="min-width:34px;text-align:center" title="Estado da nuvem">☁️</div>
     <button class="avatar-mini" id="btnAvatar" aria-label="Meu perfil">👤</button>
   </div>
 </header>
@@ -427,6 +428,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--azul);outline-offse
     <div class="op-nivel" style="cursor:default"><span class="ico">🧠</span><span><b>Revisão na hora certa (ciência da memória)</b><span>O site sabe quando você vai esquecer e te chama pra revisar antes</span></span></div>
     <div class="op-nivel" style="cursor:default"><span class="ico">♾️</span><span><b>Escalada infinita de níveis</b><span>Nível 1, 2, 3... até onde você aguentar. Pode tentar pular — mas se falhar, volta pro início!</span></span></div>
     <div class="op-nivel" style="cursor:default"><span class="ico">🎙️</span><span><b>Simulador de Entrevista H-2B / H-2A</b><span>Treine em inglês, por voz, as entrevistas reais: agência, empregador, consulado e chegada nos EUA</span></span></div>
+    <div class="op-nivel" style="cursor:default"><span class="ico">☁️</span><span><b>Conta na nuvem — nunca perde nada</b><span>Seu XP e progresso ficam salvos no servidor. Trocou de celular? É só entrar.</span></span></div>
     <div class="op-nivel" style="cursor:default"><span class="ico">👨‍👩‍👧</span><span><b>Para todas as idades</b><span>O conteúdo se adapta à idade do perfil — do seu filho de 8 anos até o vovô</span></span></div>
     <div class="op-nivel" style="cursor:default"><span class="ico">🏆</span><span><b>Ranking entre os perfis</b><span>Cada pessoa cria sua conta e a família compete no XP</span></span></div>
   </div>
@@ -434,7 +436,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--azul);outline-offse
 
 <!-- ================= TELA: CADASTRO ================= -->
 <main class="tela" id="tela-cadastro">
-  <div class="hero"><span class="mascote">✨</span><h1>Criar conta</h1><p>Rapidinho: e-mail e senha. Fica salvo pra sempre neste aparelho.</p></div>
+  <div class="hero"><span class="mascote">✨</span><h1>Criar conta</h1><p>Rapidinho: e-mail e senha. Sua conta fica salva <b>pra sempre na nuvem ☁️</b> — dá pra entrar de qualquer celular.</p></div>
   <div class="form">
     <label class="campo"><span>Seu nome</span><input type="text" id="cadNome" maxlength="30" autocomplete="name" placeholder="Como quer ser chamado(a)?"></label>
     <label class="campo"><span>E-mail</span><input type="email" id="cadEmail" autocomplete="email" placeholder="voce@email.com"></label>
@@ -495,7 +497,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--azul);outline-offse
 
 <!-- ================= TELA: RANKING ================= -->
 <main class="tela" id="tela-ranking">
-  <div class="cabecalho-trilha"><h2>🏆 Ranking</h2><p>Quem estuda mais, sobe. Ranking dos perfis deste aparelho — perfeito pra família competir!</p></div>
+  <div class="cabecalho-trilha"><h2>🏆 Ranking</h2><p>Quem estuda mais, sobe. Ranking <b>mundial</b> do FalaFina 🌎 — todos os alunos, de todos os aparelhos. (Sem internet, mostra só os perfis deste aparelho.)</p></div>
   <div id="rankingLista"></div>
 </main>
 
@@ -535,6 +537,10 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--azul);outline-offse
     <button class="op-nivel" data-nivel="3">
       <span class="ico">🚀</span>
       <span><b>Quero aperfeiçoar</b><span>Já converso, quero corrigir erros e soar natural</span></span>
+    </button>
+    <button class="op-nivel" id="btnNivelamento" style="border-color:var(--verde)">
+      <span class="ico">🧭</span>
+      <span><b>Não sei — me testa!</b><span>Teste rápido de 2 minutos: o FalaFina descobre em que nível você deve começar</span></span>
     </button>
   </div>
   <p class="aviso-construcao">♾️ Comece de onde quiser — dá pra mudar depois. E pode tentar chegar no fim: o FalaFina <b>gera desafios novos pra sempre</b>.</p>
@@ -638,7 +644,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--azul);outline-offse
 <script>
 "use strict";
 /* ==================================================================
-   FALAFINA v0.6 — MOTOR + NÍVEL 0
+   FALAFINA v0.7 — MOTOR + NUVEM (contas salvas pra sempre no servidor Render) + TESTE DE NIVELAMENTO
    Arquitetura: CONTEÚDO É DADO, MOTOR É UM SÓ.
    Para escalar às "mil páginas": só se adiciona objetos em NIVEIS.
    O motor renderiza qualquer módulo novo automaticamente.
@@ -688,6 +694,126 @@ const Contas = {
   atual(){ const s = this.sessao(); const c = this.todas(); return (s && c[s]) ? c[s] : null; },
   salvarAtual(conta){ const s = this.sessao(); if(!s) return; const c = this.todas(); c[s] = conta; this.salvarTodas(c); }
 };
+
+/* ---------- MESCLA DE PROGRESSO: nunca perde nada.
+   Mesma regra do servidor: XP = maior, módulos = união, recordes = maiores. ---------- */
+function mesclarProgresso(a, b){
+  if(!a) return b || null;
+  if(!b) return a;
+  const r = Object.assign({}, a, b);
+  r.xp = Math.max(a.xp || 0, b.xp || 0);
+  r.recordeStreak = Math.max(a.recordeStreak || 0, b.recordeStreak || 0);
+  r.diasSeguidos = Math.max(a.diasSeguidos || 0, b.diasSeguidos || 0);
+  r.ultimoDiaAtivo = [a.ultimoDiaAtivo, b.ultimoDiaAtivo].filter(Boolean).sort().pop() || undefined;
+  if((a.dataXpHoje || "") > (b.dataXpHoje || "")){ r.dataXpHoje = a.dataXpHoje; r.xpHoje = a.xpHoje || 0; }
+  else if((a.dataXpHoje || "") < (b.dataXpHoje || "")){ r.dataXpHoje = b.dataXpHoje; r.xpHoje = b.xpHoje || 0; }
+  else { r.xpHoje = Math.max(a.xpHoje || 0, b.xpHoje || 0); }
+  r.modulosFeitos = Object.assign({}, a.modulosFeitos || {}, b.modulosFeitos || {});
+  const ea = a.escalada || { nivel:1, recorde:1 }, eb = b.escalada || { nivel:1, recorde:1 };
+  r.escalada = { nivel: Math.max(ea.nivel || 1, eb.nivel || 1), recorde: Math.max(ea.recorde || 1, eb.recorde || 1) };
+  r.srs = Object.assign({}, a.srs || {});
+  for(const k in (b.srs || {})){
+    const ia = r.srs[k], ib = b.srs[k];
+    if(!ia || (ib.proxima || 0) > (ia.proxima || 0)) r.srs[k] = ib;
+  }
+  if(r.nivelEscolhido == null) r.nivelEscolhido = (a.nivelEscolhido != null ? a.nivelEscolhido : b.nivelEscolhido);
+  return r;
+}
+
+/* ---------- NUVEM: sincronização com o servidor no Render.
+   Filosofia OFFLINE FIRST: tudo funciona sem internet; quando a conexão
+   volta, os dados sobem sozinhos. O servidor NUNCA apaga progresso —
+   ele só mescla (regra: mesclarProgresso). ---------- */
+const Nuvem = (() => {
+  const BASE = ""; // mesmo domínio: o server.js serve o site e a API juntos
+  let timerSync = null;
+  let sincronizando = false;
+
+  async function chamar(metodo, rota, corpo){
+    if(typeof fetch !== "function") return { ok:false, status:0, dados:{} };
+    const ctl = (typeof AbortController !== "undefined") ? new AbortController() : null;
+    const tmr = ctl ? setTimeout(() => ctl.abort(), 12000) : null;
+    try{
+      const r = await fetch(BASE + rota, {
+        method: metodo,
+        headers: { "Content-Type": "application/json" },
+        body: metodo === "GET" ? undefined : JSON.stringify(corpo || {}),
+        signal: ctl ? ctl.signal : undefined
+      });
+      if(tmr) clearTimeout(tmr);
+      const dados = await r.json().catch(() => ({}));
+      return { ok: r.ok, status: r.status, dados };
+    }catch(e){
+      if(tmr) clearTimeout(tmr);
+      return { ok:false, status:0, dados:{} }; // status 0 = sem internet / servidor fora
+    }
+  }
+
+  async function registrar(conta){
+    return chamar("POST", "/api/registrar", {
+      nome: conta.nome, email: conta.email, senhaHash: conta.senhaHash,
+      perfil: conta.perfil, progresso: conta.progresso
+    });
+  }
+  async function entrar(email, senhaHash){
+    return chamar("POST", "/api/entrar", { email, senhaHash });
+  }
+  async function ranking(){
+    const eu = Contas.sessao();
+    return chamar("GET", "/api/ranking" + (eu ? ("?eu=" + encodeURIComponent(eu)) : ""));
+  }
+
+  /* Sobe a conta atual pro servidor e adota o resultado mesclado */
+  async function sincronizar(){
+    const conta = Contas.atual();
+    if(!conta || sincronizando) return;
+    sincronizando = true;
+    try{
+      const r = await chamar("POST", "/api/sincronizar", {
+        nome: conta.nome, email: conta.email, senhaHash: conta.senhaHash,
+        perfil: conta.perfil, progresso: conta.progresso
+      });
+      if(r.ok && r.dados && r.dados.conta){
+        const c = Contas.atual();
+        if(c && c.email === conta.email){
+          c.progresso = mesclarProgresso(c.progresso, r.dados.conta.progresso);
+          if(r.dados.conta.perfil && !c.perfil) c.perfil = r.dados.conta.perfil;
+          c.pendenteSync = false;
+          Contas.salvarAtual(c);
+          if(Progresso && c.progresso) Progresso.dados = c.progresso;
+        }
+        marcarNuvem(true);
+      } else if(r.status === 404 && conta.senhaHash){
+        // Conta ainda não existe na nuvem (foi criada offline): registra agora
+        const rr = await registrar(conta);
+        if(rr.ok){ const c = Contas.atual(); if(c){ c.pendenteSync = false; Contas.salvarAtual(c); } marcarNuvem(true); }
+      } else if(r.status === 0){
+        marcarNuvem(false);
+      }
+    } finally {
+      sincronizando = false;
+    }
+  }
+
+  /* Debounce: agrupa vários salvamentos em UMA chamada (economia + performance) */
+  function agendar(){
+    clearTimeout(timerSync);
+    timerSync = setTimeout(sincronizar, 4000);
+  }
+
+  function marcarNuvem(online){
+    const el = document.getElementById("nuvemStatus");
+    if(el){ el.textContent = online ? "☁️" : "📴"; el.title = online ? "Progresso salvo na nuvem" : "Sem internet — salvando no aparelho; sobe pra nuvem quando conectar"; }
+  }
+
+  function iniciar(){
+    window.addEventListener("online", () => setTimeout(sincronizar, 1500));
+    setTimeout(sincronizar, 2500); // primeira sincronização após abrir o app
+    setInterval(sincronizar, 5 * 60 * 1000); // garantia: a cada 5 min se houver conta
+  }
+
+  return { registrar, entrar, ranking, sincronizar, agendar, iniciar };
+})();
 function perfilAtual(){ const c = Contas.atual(); return c ? (c.perfil || null) : null; }
 function idadeUsuario(){
   const p = perfilAtual();
@@ -1735,7 +1861,7 @@ const Progresso = {
   },
   salvar(){
     const c = Contas.atual();
-    if(c){ c.progresso = this.dados; Contas.salvarAtual(c); }
+    if(c){ c.progresso = this.dados; Contas.salvarAtual(c); if(typeof Nuvem !== "undefined") Nuvem.agendar(); }
     else { Store.set("ff_progresso", this.dados); }
   },
   moduloFeito(id){ return !!this.dados.modulosFeitos[id]; },
@@ -1880,6 +2006,9 @@ function renderTrilha(){
     </div>
     <div class="barra-prog" style="max-width:none;height:10px;margin-top:8px"><i style="width:${pctMeta}%;background:${xpHoje >= META ? "var(--verde)" : "var(--sol)"}"></i></div>
   </div>`;
+  if((Progresso.dados.nivelEscolhido || 0) >= 2 && !usuarioCrianca()){
+    html += `<button class="btn-principal" id="btnSimuladorTopo" style="margin:12px 0 0;background:var(--azul);box-shadow:0 4px 0 var(--azul-escuro)">🎙️ Já se vira no inglês? Vá direto pro Simulador de Entrevista →</button>`;
+  }
   const devidos = itensDevidos().length;
   if(devidos > 0){
     html += `<button class="btn-principal" id="btnRevisao" style="margin:10px 0 0;background:#B05CB8;box-shadow:0 4px 0 #8A3E91">🧠 Revisão do Dia · ${devidos} memória(s) vencendo</button>`;
@@ -1889,7 +2018,7 @@ function renderTrilha(){
   if(!usuarioCrianca()){
     html += `<button class="btn-principal" id="btnSimulador" style="margin:10px 0 0;background:var(--azul);box-shadow:0 4px 0 var(--azul-escuro)">🎙️ Simulador de Entrevista · H-2B/H-2A</button>`;
   }
-  html += `<button class="btn-principal" id="btnRanking" style="margin:10px 0 0;background:#B8860B;box-shadow:0 4px 0 #8A6508">🏆 Ranking dos perfis</button>`;
+  html += `<button class="btn-principal" id="btnRanking" style="margin:10px 0 0;background:#B8860B;box-shadow:0 4px 0 #8A6508">🏆 Ranking Mundial 🌎</button>`;
   if(temFeito){
     html += `<button class="btn-principal azul" id="btnTreino" style="margin:10px 0 0">🎯 Treino Livre · só o que você já aprendeu</button>`;
   }
@@ -1934,6 +2063,8 @@ function renderTrilha(){
   if(be) be.addEventListener("click", () => { renderEscalada(); irPara("tela-escalada"); });
   const bsim = $("#btnSimulador");
   if(bsim) bsim.addEventListener("click", () => { renderSimConfig(); irPara("tela-simulador"); });
+  const bsimT = $("#btnSimuladorTopo");
+  if(bsimT) bsimT.addEventListener("click", () => { renderSimConfig(); irPara("tela-simulador"); });
   const brk = $("#btnRanking");
   if(brk) brk.addEventListener("click", () => { renderRanking(); irPara("tela-ranking"); });
 }
@@ -2200,8 +2331,63 @@ function iniciarQuiz(){
   renderQuizPergunta();
   irPara("tela-quiz");
 }
+/* ==================================================================
+   TESTE DE NIVELAMENTO — 2 perguntas de cada nível disponível.
+   Erro não repete a pergunta: o teste mede, não ensina.
+   ================================================================== */
+function iniciarNivelamento(){
+  const perguntas = [];
+  NIVEIS.forEach((nv, t) => {
+    const mod = nv.modulos.find(m => m.cards.length && !m.bloqueadoDev);
+    if(!mod) return;
+    const banco = embaralhar(gerarBanco(mod).filter(q => !q.tipo)).slice(0, 2);
+    banco.forEach(q => { q._nvTeste = t; perguntas.push(q); });
+  });
+  if(!perguntas.length){ mostrarToast("Teste indisponível — escolha um nível 😊"); return; }
+  quizEstado = {
+    perguntas,
+    fila: perguntas.map((q, i) => i), // em ordem: do fácil pro difícil
+    total: perguntas.length,
+    acertosUnicos: new Set(),
+    erros: 0,
+    respondendo: false,
+    nivelamento: true,
+    resultado: {}
+  };
+  renderQuizPergunta();
+  irPara("tela-quiz");
+}
+function concluirNivelamento(){
+  const res = quizEstado.resultado || {};
+  let rec = 0;
+  for(let t = 0; t < NIVEIS.length; t++){
+    const r = res[t];
+    if(r && r.t > 0 && (r.c / r.t) >= 0.5) rec = Math.min(t + 1, NIVEIS.length - 1);
+    else break;
+  }
+  const temConteudo = i => NIVEIS[i] && NIVEIS[i].modulos.some(m => m.cards.length && !m.bloqueadoDev);
+  while(rec > 0 && !temConteudo(rec)) rec--;
+  Progresso.dados.nivelEscolhido = rec;
+  registrarAtividade(5);
+  const nomes = ["🌱 do zero, com calma", "🚶 já sabendo o básico", "🏃 no intermediário", "🚀 no avançado"];
+  $("#concluTitulo").textContent = `🧭 Seu ponto de partida: ${NIVEIS[rec].nome}`;
+  $("#concluTexto").innerHTML = `Pelo teste, o ideal é você começar ${nomes[Math.min(rec, 3)]}. Sua trilha já está aberta nesse nível — e você pode mudar quando quiser no perfil.` +
+    (rec >= 2 && !usuarioCrianca() ? `<br><br><b>🎙️ Dica:</b> no seu nível, o <b>Simulador de Entrevista H-2B/H-2A</b> é onde você mais evolui — ele fica no topo da sua trilha.` : "");
+  $("#concluXP").textContent = "5";
+  $("#btnProximoModulo").style.display = "none";
+  irPara("tela-conclusao");
+}
+
 /* Resultado unificado: SRS + streak + XP + fila (múltipla escolha E montar frase) */
 function aplicarResultado(certo, q){
+  if(quizEstado.nivelamento){
+    quizEstado.fila.shift();
+    const nv = q._nvTeste || 0;
+    quizEstado.resultado[nv] = quizEstado.resultado[nv] || { c:0, t:0 };
+    quizEstado.resultado[nv].t++;
+    if(certo) quizEstado.resultado[nv].c++; else quizEstado.erros++;
+    return;
+  }
   const idxPergunta = quizEstado.fila.shift();
   atualizarSRS(q, certo);
   if(certo){
@@ -2288,7 +2474,11 @@ function renderMontar(q){
 
 function renderQuizPergunta(){
   const q = quizEstado.perguntas[quizEstado.fila[0]];
-  if(quizEstado.escalada){
+  if(quizEstado.nivelamento){
+    const feitas = quizEstado.total - quizEstado.fila.length;
+    $("#quizBarra").style.width = Math.round((feitas / quizEstado.total) * 100) + "%";
+    $("#quizCont").textContent = `🧭 ${feitas + 1}/${quizEstado.total}`;
+  } else if(quizEstado.escalada){
     const feitas = quizEstado.total - quizEstado.fila.length;
     $("#quizBarra").style.width = Math.round((feitas / quizEstado.total) * 100) + "%";
     const vidas = quizEstado.errosPermitidos - quizEstado.errosFeitos + 1;
@@ -2364,6 +2554,11 @@ function renderQuizPergunta(){
 }
 function avancarQuiz(){
   quizEstado.respondendo = false;
+  if(quizEstado.nivelamento){
+    if(quizEstado.fila.length === 0){ concluirNivelamento(); return; }
+    renderQuizPergunta();
+    return;
+  }
   if(quizEstado.escalada){
     if(quizEstado.errosFeitos > quizEstado.errosPermitidos){ falharEscalada(); return; }
     if(quizEstado.fila.length === 0){ vencerEscalada(); return; }
@@ -2531,24 +2726,61 @@ async function fazerCadastro(){
   if(s1 !== s2) return mostrarErro("#cadErro", "As senhas não bateram. Digita as duas iguais!");
   const contas = Contas.todas();
   if(contas[email]) return mostrarErro("#cadErro", "Já existe conta com esse e-mail neste aparelho. Use \"Entrar\".");
-  contas[email] = { nome, email, senhaHash: await hashSenha(s1), criadaEm: new Date().toISOString(), perfil: null, progresso: null };
+  const btn = $("#btnCadastrar");
+  btn.disabled = true; btn.textContent = "Criando sua conta…";
+  const conta = { nome, email, senhaHash: await hashSenha(s1), criadaEm: new Date().toISOString(), perfil: null, progresso: null, pendenteSync: true };
+  const r = await Nuvem.registrar(conta);
+  btn.disabled = false; btn.textContent = "Criar conta ✔";
+  if(r.status === 409) return mostrarErro("#cadErro", "Esse e-mail já tem conta na nuvem ☁️ Use \"Entrar\" com a sua senha.");
+  if(r.ok) conta.pendenteSync = false;
+  contas[email] = conta;
   Contas.salvarTodas(contas);
   Contas.logar(email);
   Progresso.carregar();
   Progresso.salvar();
-  mostrarToast(`Bem-vindo(a), ${nome}! 🦜`);
+  mostrarToast(r.ok
+    ? `Bem-vindo(a), ${nome}! 🦜 Conta salva na nuvem ☁️`
+    : `Bem-vindo(a), ${nome}! 🦜 Sem internet agora — sua conta sobe pra nuvem assim que conectar.`);
   abrirPerfil();
 }
 async function fazerLogin(){
   limparErro("#logErro");
   const email = $("#logEmail").value.trim().toLowerCase();
   const senha = $("#logSenha").value;
-  const conta = Contas.todas()[email];
-  if(!conta) return mostrarErro("#logErro", "Não achei essa conta neste aparelho. Crie uma nova!");
-  if(conta.senhaHash !== await hashSenha(senha)) return mostrarErro("#logErro", "Senha errada. Tenta de novo!");
+  const senhaHash = await hashSenha(senha);
+  const btn = $("#btnLogar");
+  btn.disabled = true; btn.textContent = "Entrando…";
+  const r = await Nuvem.entrar(email, senhaHash);
+  btn.disabled = false; btn.textContent = "Entrar ✔";
+  const contas = Contas.todas();
+  let conta = contas[email] || null;
+  if(r.ok && r.dados && r.dados.conta){
+    // Conta veio da nuvem ☁️ — funciona em qualquer aparelho.
+    // Mescla com o que já existe aqui: NUNCA perde XP nem módulos.
+    const daNuvem = r.dados.conta;
+    if(conta){
+      daNuvem.progresso = mesclarProgresso(conta.progresso, daNuvem.progresso);
+      if(!daNuvem.perfil && conta.perfil) daNuvem.perfil = conta.perfil;
+    }
+    daNuvem.senhaHash = senhaHash;
+    daNuvem.pendenteSync = false;
+    conta = daNuvem;
+    contas[email] = conta;
+    Contas.salvarTodas(contas);
+  } else if(r.status === 401){
+    return mostrarErro("#logErro", "Senha errada. Tenta de novo!");
+  } else if(r.status === 404 && !conta){
+    return mostrarErro("#logErro", "Não achei essa conta. Crie uma nova!");
+  } else if(!conta){
+    return mostrarErro("#logErro", "Sem internet — e essa conta ainda não está neste aparelho. Conecte pra entrar!");
+  } else if(conta.senhaHash !== senhaHash){
+    return mostrarErro("#logErro", "Senha errada. Tenta de novo!");
+  }
   Contas.logar(email);
   Progresso.carregar();
+  Progresso.salvar();
   atualizarXP();
+  Nuvem.agendar();
   mostrarToast(`De volta, ${conta.nome}! 🦜`);
   if(!conta.perfil) abrirPerfil();
   else { renderTrilha(); irPara("tela-trilha"); }
@@ -2586,17 +2818,37 @@ function salvarPerfil(){
   irPara("tela-trilha");
 }
 function renderRanking(){
-  const contas = Object.values(Contas.todas()).filter(c => c.progresso);
-  contas.sort((a, b) => (b.progresso.xp || 0) - (a.progresso.xp || 0));
-  const eu = Contas.sessao();
   const medalha = ["🥇","🥈","🥉"];
-  $("#rankingLista").innerHTML = contas.length ? contas.map((c, i) => `
-    <div class="rank-item ${c.email === eu ? "eu" : ""}">
+  const alvo = $("#rankingLista");
+  const desenhar = (lista, mundial) => {
+    const selo = mundial
+      ? '<p style="font-weight:800;color:var(--verde);font-size:.85rem;margin:0 0 8px">🌎 Ranking mundial — atualizado agora</p>'
+      : '<p style="font-weight:800;color:var(--tinta-suave);font-size:.85rem;margin:0 0 8px">📴 Sem internet — mostrando só os perfis deste aparelho</p>';
+    alvo.innerHTML = selo + (lista.length ? lista.map((c, i) => `
+    <div class="rank-item ${c.voce ? "eu" : ""}">
       <div class="rank-pos">${medalha[i] || (i + 1) + "º"}</div>
-      <div class="avatar-mini">${c.perfil && c.perfil.foto ? `<img src="${c.perfil.foto}" alt="">` : "👤"}</div>
-      <div><b>${esc(c.nome)}${c.email === eu ? " (você)" : ""}</b><small>${tituloPorXP(c.progresso.xp || 0)} · 🔥 ${c.progresso.diasSeguidos || 0} dias · 🗼 nv ${(c.progresso.escalada && c.progresso.escalada.recorde) || 1}</small></div>
-      <div class="rank-xp">⭐ ${c.progresso.xp || 0}</div>
-    </div>`).join("") : '<p style="font-weight:700;color:var(--tinta-suave)">Ainda não há perfis com progresso. Estude um pouquinho e volte!</p>';
+      <div class="avatar-mini">${c.foto ? `<img src="${c.foto}" alt="">` : "👤"}</div>
+      <div><b>${esc(c.nome)}${c.voce ? " (você)" : ""}</b><small>${tituloPorXP(c.xp || 0)} · 🔥 ${c.diasSeguidos || 0} dias · 🗼 nv ${c.recorde || 1}</small></div>
+      <div class="rank-xp">⭐ ${c.xp || 0}</div>
+    </div>`).join("") : '<p style="font-weight:700;color:var(--tinta-suave)">Ainda não há alunos no ranking. Estude um pouquinho e volte!</p>');
+  };
+  // 1) OFFLINE FIRST: mostra na hora os perfis deste aparelho
+  const eu = Contas.sessao();
+  const locais = Object.values(Contas.todas()).filter(c => c.progresso).map(c => ({
+    nome: c.nome, voce: c.email === eu,
+    foto: (c.perfil && c.perfil.foto) || null,
+    xp: c.progresso.xp || 0,
+    diasSeguidos: c.progresso.diasSeguidos || 0,
+    recorde: (c.progresso.escalada && c.progresso.escalada.recorde) || 1
+  }));
+  locais.sort((a, b) => b.xp - a.xp);
+  desenhar(locais, false);
+  // 2) Busca o ranking mundial e troca quando chegar
+  Nuvem.ranking().then(r => {
+    if(r.ok && r.dados && Array.isArray(r.dados.ranking) && telaAtual === "tela-ranking"){
+      desenhar(r.dados.ranking, true);
+    }
+  });
 }
 
 /* ---------- BOTÃO FLUTUANTE: instalar o aplicativo (PWA) ---------- */
@@ -2624,9 +2876,11 @@ function iniciarPWA(){
 if("serviceWorker" in navigator && location.protocol === "https:"){
   navigator.serviceWorker.register("sw.js").catch(() => {});
 }
+/* Nuvem: sobe dados pendentes ao abrir e quando a internet voltar */
+Nuvem.iniciar();
 
 /* ---------- EVENTOS GLOBAIS ---------- */
-document.querySelectorAll(".op-nivel").forEach(btn => {
+document.querySelectorAll(".op-nivel[data-nivel]").forEach(btn => {
   btn.addEventListener("click", () => {
     let n = Number(btn.dataset.nivel);
     const temConteudo = i => NIVEIS[i] && NIVEIS[i].modulos.some(m => m.cards.length && !m.bloqueadoDev);
@@ -2642,6 +2896,7 @@ document.querySelectorAll(".op-nivel").forEach(btn => {
     if(bloco) setTimeout(() => bloco.scrollIntoView({ behavior:"smooth", block:"start" }), 150);
   });
 });
+$("#btnNivelamento").addEventListener("click", iniciarNivelamento);
 $("#btnVoltar").addEventListener("click", () => {
   if(telaAtual === "tela-entrevista"){
     if(confirm("Sair da entrevista? Seu XP ganho fica guardado.")){ encerrarSim(); }
@@ -2649,6 +2904,10 @@ $("#btnVoltar").addEventListener("click", () => {
   }
   if(telaAtual === "tela-simulador"){ renderTrilha(); irPara("tela-trilha"); return; }
   if(telaAtual === "tela-quiz"){
+    if(quizEstado && quizEstado.nivelamento){
+      if(confirm("Sair do teste de nivelamento? Você pode refazer quando quiser.")){ irPara("tela-onboarding"); }
+      return;
+    }
     if(quizEstado && quizEstado.infinito){ encerrarInfinito(); return; }
     if(quizEstado && quizEstado.escalada){
       if(confirm(quizEstado.ehPulo ? "Desistir do PULO conta como falha: você volta pro nível 1. Sair mesmo?" : "Sair do nível? Você poderá tentar de novo.")){

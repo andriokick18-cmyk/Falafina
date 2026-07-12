@@ -1,0 +1,10 @@
+{
+  "name": "falafina",
+  "version": "0.7.0",
+  "description": "FalaFina — inglês para brasileiros, com contas salvas na nuvem",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": { "node": ">=18" }
+}
