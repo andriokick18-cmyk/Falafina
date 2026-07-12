@@ -417,6 +417,10 @@ body{ background:var(--fundo); }
 .sb-item .ic{ width:22px; text-align:center; }
 .sb-item:hover{ background:rgba(255,255,255,.10); }
 .sb-item.ativo{ background:var(--verde); box-shadow:inset 0 0 0 2px rgba(255,255,255,.25); }
+.sb-extras{ display:flex; flex-direction:column; gap:6px; padding:10px 8px; border-top:1.5px solid rgba(255,255,255,.14); border-bottom:1.5px solid rgba(255,255,255,.14); margin:4px 0; }
+.sb-wpp{ background:#1EBE57; color:#fff !important; animation:sbWppPulsa 2.4s ease-in-out infinite; }
+.sb-wpp:hover{ background:#17A34A; }
+@keyframes sbWppPulsa{ 0%,100%{ box-shadow:0 0 0 rgba(30,190,87,0) } 50%{ box-shadow:0 0 12px rgba(30,190,87,.65) } }
 .sb-premium{ margin-top:auto; background:rgba(255,255,255,.08); border:1.5px solid rgba(255,255,255,.18); border-radius:18px; padding:14px; text-align:center; }
 .sb-premium b{ display:flex; align-items:center; justify-content:center; gap:6px; font-family:var(--f-display); }
 .sb-premium p{ font-size:.8rem; font-weight:700; opacity:.9; margin:6px 0 10px; }
@@ -507,6 +511,8 @@ body.sem-shell .topo .titulo-pagina{ visibility:hidden; }
 .avatar-g img{ width:100%; height:100%; object-fit:cover; }
 .grafico-wrap{ height:120px; }
 .rank-item{ display:flex; align-items:center; gap:12px; background:var(--branco); border:1.5px solid var(--borda); border-radius:16px; padding:12px 14px; margin-bottom:8px; }
+.rank-item.clicavel{ cursor:pointer; transition:transform .12s,box-shadow .12s; }
+.rank-item.clicavel:hover{ transform:translateY(-1px); box-shadow:0 4px 10px rgba(33,49,58,.10); }
 .rank-item.eu{ border:2px solid var(--verde); background:var(--verde-claro); }
 .rank-pos{ font-family:var(--f-display); font-weight:700; min-width:36px; text-align:center; font-size:1.05rem; }
 .rank-item small{ display:block; color:var(--tinta-suave); font-weight:700; font-size:.76rem; }
@@ -673,6 +679,10 @@ body.sem-shell .topo .titulo-pagina{ visibility:hidden; }
     <button class="sb-item" data-rota="comunidade"><span class="ic">👥</span>Comunidade</button>
     <button class="sb-item" data-rota="meuperfil"><span class="ic">🪪</span>Meu Perfil</button>
   </nav>
+  <div class="sb-extras">
+    <button class="sb-item" data-rota="loja"><span class="ic">🛍️</span>Loja</button>
+    <button class="sb-item sb-wpp" id="sbGrupoWpp"><span class="ic">💬</span>Grupo do WhatsApp</button>
+  </div>
   <div class="sb-premium">
     <b>👑 Seja Premium</b>
     <p id="sbPremiumTexto">Desbloqueie todos os recursos e aprenda sem limites!</p>
@@ -917,6 +927,26 @@ body.sem-shell .topo .titulo-pagina{ visibility:hidden; }
     <div class="sim-botoes">
       <button class="btn-principal azul" id="simEnsina" style="font-size:.88rem">🙋 Não sei — me ensina</button>
       <button class="btn-principal" id="simEncerrar" style="background:var(--tinta-suave);box-shadow:0 4px 0 #3d4a52;font-size:.88rem">🏁 Encerrar</button>
+    </div>
+  </div>
+</main>
+
+<!-- ================= TELA: MODO CARREIRA (infinito, dificuldade crescente) ================= -->
+<main class="tela" id="tela-carreira">
+  <div class="quiz-topo">
+    <div class="barra-prog"><i id="carrBarraNivel" style="width:0%"></i></div>
+    <span class="cont" id="carrCont"></span>
+  </div>
+  <div class="sim-chat" id="carrChat"></div>
+  <div class="sim-entrada" id="carrEntrada">
+    <textarea id="carrResposta" placeholder="Responda em INGLÊS aqui... (ou aperte 🎤 e fale)"></textarea>
+    <div class="sim-botoes">
+      <button class="btn-principal btn-mic-grande" id="carrMic">🎤 Falar</button>
+      <button class="btn-principal" id="carrEnviar">Responder ✔</button>
+    </div>
+    <div class="sim-botoes">
+      <button class="btn-principal azul" id="carrEnsina" style="font-size:.88rem">🙋 Não sei — me ensina</button>
+      <button class="btn-principal" id="carrEncerrar" style="background:var(--tinta-suave);box-shadow:0 4px 0 #3d4a52;font-size:.88rem">🏁 Encerrar</button>
     </div>
   </div>
 </main>
@@ -3710,6 +3740,7 @@ const Progresso = {
     if(!this.dados.escalada) this.dados.escalada = { nivel:1, recorde:1 };
     if(!this.dados.modulosFeitos) this.dados.modulosFeitos = {};
     if(!this.dados.cosmeticos) this.dados.cosmeticos = { tem:{}, usando:{}, ganhas:0, gastas:0 };
+    if(!this.dados.carreira) this.dados.carreira = { nivel:1, acertos:0, respondidas:0 };
     if(!this.dados.medalhasPagas) this.dados.medalhasPagas = {};
     if(!this.dados.resgates) this.dados.resgates = {};
   },
@@ -4666,6 +4697,33 @@ const BAU = {
 function fecharBauModal(){ $("#bauOverlay").classList.remove("aberto"); }
 $("#bauOverlay") && $("#bauOverlay").addEventListener("click", e => { if(e.target.id === "bauOverlay") fecharBauModal(); });
 
+/* ---------- PERFIL PÚBLICO (clique no nome no ranking) ---------- */
+function abrirPerfilPublico(c){
+  if(!c) return;
+  const resumo = c.resumo || null;
+  const todas = listaConquistas(resumo);
+  const medalhas = todas.filter(m => m.ok);
+  const alvo = $("#bauCaixaConteudo");
+  alvo.innerHTML = `
+    <p class="bau-titulo">🪪 Perfil de ${esc(c.nome)}</p>
+    <div style="display:flex;justify-content:center;margin:10px 0">${bordaWrap(`<div class="avatar-g">${c.foto ? `<img src="${c.foto}" alt="">` : "👤"}</div>`, c.borda)}</div>
+    <p style="text-align:center;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px">${tituloPorXP(c.xp || 0)} ${petHTML(c.pet, 26)}</p>
+    <div class="stat-grid" style="margin-top:10px">
+      <div class="stat-mini"><b>⭐ ${(c.xp || 0).toLocaleString("pt-BR")}</b><small>XP total</small></div>
+      <div class="stat-mini"><b>🔥 ${c.diasSeguidos || 0}</b><small>dias seguidos</small></div>
+      <div class="stat-mini"><b>🗼 ${c.recorde || 1}</b><small>recorde Escalada</small></div>
+      <div class="stat-mini"><b>🧗 ${(resumo && resumo.carreiraNivel) || 1}</b><small>nível Carreira</small></div>
+      <div class="stat-mini"><b>🎯 ${c.desafios || 0}</b><small>desafios</small></div>
+      <div class="stat-mini"><b>🏅 ${medalhas.length}/${todas.length}</b><small>conquistas</small></div>
+    </div>
+    ${c.efeito ? `<div class="rank-item fx-${c.efeito}" style="margin-top:12px;font-weight:800;justify-content:center">✨ efeito de ranking equipado</div>` : ""}
+    <div class="secao-t" style="margin-top:14px">🏅 Medalhas conquistadas</div>
+    <div class="conq-grid">${medalhas.length ? medalhas.slice(0, 12).map(m => `<div class="conq medal-${m.metal}"><span class="ic">${m.ic}</span><b style="font-size:.78rem">${esc(m.nome)}</b></div>`).join("") : '<p style="font-weight:700;color:var(--tinta-suave)">Ainda sem medalhas — começando agora!</p>'}</div>
+    ${medalhas.length > 12 ? `<p style="text-align:center;font-weight:700;color:var(--tinta-suave);font-size:.82rem;margin-top:8px">+ ${medalhas.length - 12} medalha(s) a mais</p>` : ""}
+    <button class="bau-fechar" id="fecharPerfilPub">Fechar</button>`;
+  $("#bauOverlay").classList.add("aberto");
+  $("#fecharPerfilPub").addEventListener("click", fecharBauModal);
+}
 function abrirBauGratisModal(){
   const r = BAU.podeAbrirGratis();
   if(!r) return;
@@ -5249,7 +5307,7 @@ function renderRanking(){
     alvo.innerHTML = `<div class="loja-abas" style="margin-top:0">${ABAS.map(a => `<button class="loja-aba ${a.id === rankAba ? "ativa" : ""}" data-raba="${a.id}">${a.nome}</button>`).join("")}
       <button class="loja-aba" id="rkLoja" style="margin-left:auto;border-color:#E8B84C;background:#FFF3D6">🛍️ Loja</button></div>`
       + selo + (ordenada.length ? ordenada.map((c, i) => `
-    <div class="rank-item ${c.voce ? "eu" : ""} ${c.efeito ? "fx-" + c.efeito : ""}">
+    <div class="rank-item clicavel ${c.voce ? "eu" : ""} ${c.efeito ? "fx-" + c.efeito : ""}" data-perfil="${i}">
       <div class="rank-pos">${medalha[i] || (i + 1) + "º"}</div>
       ${bordaWrap(`<div class="avatar-mini">${c.foto ? `<img src="${c.foto}" alt="">` : "👤"}</div>`, c.borda)}
       <div style="min-width:0"><b style="display:flex;align-items:center;gap:6px">${esc(c.nome)}${c.voce ? " (você)" : ""} ${petHTML(c.pet, 22)}</b><small>${tituloPorXP(c.xp || 0)} · 🔥 ${c.diasSeguidos || 0} dias · 🗼 nv ${c.recorde || 1}</small></div>
@@ -5257,21 +5315,37 @@ function renderRanking(){
     </div>`).join("") : '<p style="font-weight:700;color:var(--tinta-suave)">Ninguém neste placar ainda — seja o primeiro! 😏</p>');
     alvo.querySelectorAll("[data-raba]").forEach(b => b.addEventListener("click", () => { rankAba = b.dataset.raba; renderRanking(); }));
     const rl = alvo.querySelector("#rkLoja"); if(rl) rl.addEventListener("click", () => navPara("loja"));
+    alvo.querySelectorAll("[data-perfil]").forEach(el => el.addEventListener("click", () => abrirPerfilPublico(ordenada[Number(el.dataset.perfil)])));
   };
   const meusCosm = slot => { const u = COSM.usando(slot); return u ? u.id : null; };
   const eu = Contas.sessao();
   const locais = Object.values(Contas.todas()).filter(c => c.progresso).map(c => {
     const co = (c.progresso.cosmeticos || {}), us = co.usando || {}, tem = co.tem || {};
     const uso = s => (us[s] && tem[s + ":" + us[s]]) ? us[s] : null;
+    const escP = c.progresso.escalada || {};
     return {
       nome: c.nome, voce: c.email === eu,
       foto: (c.perfil && c.perfil.foto) || null,
       xp: c.progresso.xp || 0,
       diasSeguidos: c.progresso.diasSeguidos || 0,
-      recorde: (c.progresso.escalada && c.progresso.escalada.recorde) || 1,
+      recorde: escP.recorde || 1,
       desafios: Object.keys(c.progresso.resgates || {}).length,
-      ritmo: (c.progresso.escalada && c.progresso.escalada.melhorRitmo) || null,
-      borda: uso("borda"), pet: uso("pet"), efeito: uso("efeito")
+      ritmo: escP.melhorRitmo || null,
+      borda: uso("borda"), pet: uso("pet"), efeito: uso("efeito"),
+      resumo: {
+        modulosFeitos: Object.keys(c.progresso.modulosFeitos || {}).length,
+        dominadas: Object.keys((c.progresso.sim || {}).dominadas || {}).length,
+        recorde: escP.recorde || 1,
+        baus: Object.keys(escP.baus || {}).length,
+        desafios: Object.keys(c.progresso.resgates || {}).length,
+        itens: Object.keys(tem).length,
+        xp: c.progresso.xp || 0,
+        melhorSeq: c.progresso.melhorSeq || 0,
+        palavras: Object.keys(c.progresso.srs || {}).filter(k => (c.progresso.srs[k].caixa || 0) >= 1).length,
+        pronOk: somaStats ? 0 : 0,
+        carreiraNivel: (c.progresso.carreira && c.progresso.carreira.nivel) || 1,
+        diasSeguidos: c.progresso.diasSeguidos || 0
+      }
     };
   });
   desenhar(locais, false);
@@ -5605,6 +5679,238 @@ const BANCO_SIM = [
 {t:["empregador"],pr:["h2a"],v:["irrigacao"],en:"Irrigation shifts can be very early or very late. Is your schedule flexible?",som:"iri-guêi-shion shífts quén bi véri ôrli ór véri lêit. iz iór squé-djul flék-sibol?",pt:"Turnos de irrigação podem ser bem cedo ou bem tarde. Seu horário é flexível?",ps:[{pt:"confirmar flexibilidade",w:["yes","flexible","any time","night","early","no problem"]}],mo:{en:"Yes, my schedule is completely flexible — early morning or night, no problem.",som:"iés, mái squé-djul iz complít-li flék-sibol — ôrli mór-nin ór náit, nôu pró-blem.",pt:"Sim, meu horário é totalmente flexível — de madrugada ou à noite, sem problema."},dk:"A água corre no horário que a lavoura precisa. Flexible schedule = a resposta que garante a vaga."},
 {t:["empregador"],pr:["h2a"],v:["irrigacao"],en:"You find a broken pipe flooding part of the field. What do you do?",som:"iú fáind a brôu-ken páip flâ-ding párt óv dhi fíld. uót du iú du?",pt:"Você encontra um cano quebrado alagando parte do campo. O que faz?",ps:[{pt:"fechar a água e reportar",w:["close","shut","valve","turn off","water","report","supervisor","fix"]}],mo:{en:"I shut off the valve to stop the water, then I report it and help fix the pipe.",som:"ái shât óf dhi vélv tu stóp dhi uórer, dhén ái ripórt it énd rélp fíks dhi páip.",pt:"Fecho o registro pra parar a água, depois reporto e ajudo a consertar o cano."},dk:"\"Shut off\" = fechar/desligar. Primeiro estancar o prejuízo, depois comunicar — ordem que vale pra tudo na fazenda."}
 ];
+/* ==================================================================
+   🧗 MODO CARREIRA — motor combinatório de perguntas infinitas.
+   NÃO usa IA externa (sem custo, funciona 100% offline): centenas de
+   pedaços (vocabulário por vaga, aberturas de cenário, perguntas-base,
+   perguntas-bônus) se combinam de milhares de jeitos diferentes, e a
+   dificuldade sobe de verdade conforme o nível avança. É uma progressão
+   BASE — nunca reseta, só avança (diferente da Escalada, que tem o
+   modo "pulo" com risco de queda).
+   ================================================================== */
+const CARR_VOCAB = {
+  geral:        [["the work tools","as ferramentas de trabalho","dhi uôrk túls"],["the daily tasks","as tarefas diárias","dhi dêili tésks"],["the safety equipment","o equipamento de segurança","dhi séifti ikuípment"],["the basic equipment","o equipamento básico","dhi bêisic ikuípment"]],
+  landscaping:  [["a lawn mower","um cortador de grama","a lón môuer"],["hedge trimmers","tesoura de cerca-viva","rédj trímers"],["a leaf blower","um soprador de folhas","a líf blôuer"],["a rake","um rastelo","a rêik"]],
+  housekeeping: [["clean linens","roupas de cama limpas","clín línens"],["a vacuum cleaner","um aspirador","a vékium clíner"],["the housekeeping cart","o carrinho de limpeza","dhi ráus-quípin cárt"],["fresh towels","toalhas limpas","fréch táuels"]],
+  cook:         [["a kitchen knife","uma faca de cozinha","a kítchen náif"],["the grill","a chapa","dhi gríl"],["food safety rules","regras de segurança alimentar","fúd séifti rúls"],["the prep station","a estação de preparo","dhi prép stêichon"]],
+  dishwasher:   [["the dish station","a estação de louça","dhi dích stêichon"],["hot water","água quente","rót uóter"],["clean dishes","pratos limpos","clín díchis"]],
+  server:       [["the menu","o cardápio","dhi méniu"],["a heavy tray","uma bandeja pesada","a révi trêi"],["the tables","as mesas","dhi têibols"]],
+  frontdesk:    [["the front desk","a recepção","dhi frânt désk"],["guest check-in","check-in de hóspede","guést tchékin"],["the reservation system","o sistema de reservas","dhi rezervêichon sístem"]],
+  construction: [["a hammer","um martelo","a rémer"],["safety boots","botas de segurança","séifti búts"],["a hard hat","um capacete","a rárd rét"],["power tools","ferramentas elétricas","páuer túls"]],
+  maintenance:  [["a toolbox","uma caixa de ferramentas","a túlbóks"],["a broken pipe","um cano quebrado","a brôuken páip"],["basic electrical work","serviço elétrico básico","bêisic ilék-trical uôrk"]],
+  forestry:     [["young trees","árvores jovens","iâng trís"],["a shovel","uma pá","a chóvel"],["steep terrain","terreno íngreme","stíp terêin"]],
+  processing:   [["a sharp knife","uma faca afiada","a chárp náif"],["the cutting line","a linha de corte","dhi câtin láin"],["cold storage","câmara fria","côuld stórej"]],
+  amusement:    [["the ride controls","os controles do brinquedo","dhi ráid contróuls"],["safety belts","cintos de segurança","séifti bélts"],["long lines","filas longas","lóng láins"]],
+  golf:         [["the golf carts","os carrinhos de golfe","dhi gólf cárts"],["the course","o campo","dhi córs"],["early mornings","manhãs cedo","érli mórnins"]],
+  lifeguard:    [["the pool area","a área da piscina","dhi púl éria"],["a rescue tube","uma boia de resgate","a réskiu tiúb"],["swimmers","nadadores","suímers"]],
+  skiresort:    [["the ski lift","o teleférico","dhi skí líft"],["freezing mornings","manhãs congelantes","frízin mórnins"],["heavy snow","neve pesada","révi snôu"]],
+  colheita:     [["the harvest","a colheita","dhi rárvest"],["heavy baskets","cestos pesados","révi báskets"],["long rows","fileiras longas","lóng rôus"]],
+  estufa:       [["young seedlings","mudas jovens","iâng sídlings"],["the greenhouse","a estufa","dhi grín-ráus"],["careful watering","rega cuidadosa","quérfol uóterin"]],
+  maquinas:     [["the tractor","o trator","dhi trékter"],["heavy machinery","máquinas pesadas","révi machíneri"],["a safety check","uma checagem de segurança","a séifti tchék"]],
+  pecuaria:     [["the cattle","o gado","dhi cátel"],["early milking","ordenha cedo","érli mílkin"],["the barn","o celeiro","dhi bárn"]],
+  pomar:        [["tall ladders","escadas altas","tól léders"],["ripe fruit","fruta madura","ráip frút"],["full bins","caixas cheias","fúl bins"]],
+  packing:      [["the packing line","a linha de embalagem","dhi péquin láin"],["quality control","controle de qualidade","quóliti contróul"],["a fast pace","um ritmo rápido","a fést pêis"]],
+  irrigacao:    [["the irrigation pumps","as bombas de irrigação","dhi irigêichon pâmps"],["water pressure","pressão da água","uóter préchur"],["early shifts","turnos cedo","érli chifts"]]
+};
+const CARR_EMPRESAS = ["Green Valley Resort","Mountain View Hotel","Sunrise Farms","Blue Lake Lodge","Coastal Landscaping Co.","Golden State Orchards","Pine Ridge Resort","Harbor Bay Restaurant"];
+const CARR_CIDADES = [["Colorado","cólorádo"],["Texas","téksas"],["Florida","flórida"],["Vermont","vermónt"],["Michigan","míchigan"],["Oregon","óregon"],["Maine","mêin"]];
+/* Aberturas de cenário — dão contexto variado à mesma pergunta-base */
+const CARR_ABERTURAS = {
+  recrutador: ["📞 Ligação da agência de recrutamento:","💻 Videochamada rápida com o recrutador:","📋 Na feira de empregos, o recrutador pergunta:"],
+  empregador: ["🤝 Entrevista por vídeo com o gerente:","🏢 No escritório da empresa, o empregador pergunta:","📞 Ligação de confirmação antes da temporada:"],
+  consulado:  ["🏛️ No guichê do consulado, o oficial pergunta:","🛂 Entrevista de visto, direto ao ponto:"],
+  chegada:    ["🛬 No balcão de imigração (CBP), o oficial pergunta:","🧳 Na alfândega, depois do voo:"],
+  trabalho:   ["👷 No meio do turno, seu supervisor pergunta:","☎️ Seu colega de trabalho te pergunta:","📋 Reunião rápida antes do turno:"]
+};
+/* Perguntas-base por etapa e nível de dificuldade (tier 1=iniciante, 2=intermediário, 3=avançado).
+   Cada função recebe (voc, emp, cidade) e devolve {en,som,pt,ps,mo,dk}. */
+const CARR_TEMPLATES = {
+  recrutador: {
+    1: [
+      (voc,emp,cid) => ({
+        en:`Do you have experience with ${voc[0]}?`, som:`du iú rév ekspíriens uíth ${voc[2]}?`,
+        pt:`Você tem experiência com ${voc[1]}?`,
+        ps:[{pt:"confirmar com sim",w:["yes","experience","years"]}],
+        mo:{en:`Yes, I have experience with ${voc[0]}.`, som:`iés, ái rév ekspíriens uíth ${voc[2]}.`, pt:`Sim, tenho experiência com ${voc[1]}.`},
+        dk:"Resposta curta e confiante conta mais do que uma explicação longa nessa etapa."}),
+      (voc,emp,cid) => ({
+        en:"Are you available for the full season?", som:"ar iú avêilebol fór dhi fúl sízon?",
+        pt:"Você está disponível pra temporada inteira?",
+        ps:[{pt:"confirmar disponibilidade total",w:["yes","full","available","whole","entire"]}],
+        mo:{en:"Yes, I'm available for the entire season, start to finish.", som:"iés, áim avêilebol fór dhi entáier sízon, stárt tu fínich.", pt:"Sim, estou disponível pra temporada inteira, do início ao fim."},
+        dk:"Disponibilidade total é o que o recrutador mais quer ouvir — deixe isso claro."})
+    ],
+    2: [
+      (voc,emp,cid) => ({
+        en:`If the company asked you to work with ${voc[0]} on your first week, would that be a problem?`, som:`if dhi câmpani éskt iú tu uôrk uíth ${voc[2]} ón iór férst uík, úud dhét bí a próblem?`,
+        pt:`Se a empresa pedisse pra você trabalhar com ${voc[1]} na primeira semana, isso seria um problema?`,
+        ps:[{pt:"dizer que não é problema",w:["no","not a problem","fine","ready","no problem"]}],
+        mo:{en:`No, that wouldn't be a problem at all. I'm ready to start with ${voc[0]} right away.`, som:`nôu, dhét úudent bí a próblem ét ól. áim rédi tu stárt uíth ${voc[2]} ráit auêi.`, pt:`Não, isso não seria problema nenhum. Estou pronto pra começar com ${voc[1]} logo de cara.`},
+        dk:"Pergunta com IF é comum na etapa de recrutamento — mostre flexibilidade sem hesitar."})
+    ],
+    3: [
+      (voc,emp,cid) => ({
+        en:`Some workers quit early when they realize how demanding the job with ${voc[0]} really is. What makes you different?`, som:`sâm uôrkers quít érli uén dhêi ríalaiz ráu dimándin dhi djób uíth ${voc[2]} ríali iz. uót mêiks iú díferent?`,
+        pt:`Alguns trabalhadores desistem cedo quando percebem o quanto o trabalho com ${voc[1]} é exigente. O que te diferencia?`,
+        ps:[{pt:"mostrar compromisso e motivo pessoal",w:["commitment","family","finish","never quit","determined","responsible"]}],
+        mo:{en:"I'm working for my family's future, so I don't quit when things get hard. I finish what I start.", som:"áim uôrkin fór mái fémilis fiútchur, sôu ái dôunt quít uén thíngs guét rárd. ái fínich uót ái stárt.", pt:"Estou trabalhando pelo futuro da minha família, então não desisto quando fica difícil. Termino o que começo."},
+        dk:"Pergunta de nível avançado: uma frase condicional/comparativa embutida. Responda com convicção pessoal, não genérica."})
+    ]
+  },
+  empregador: {
+    1: [
+      (voc,emp,cid) => ({
+        en:`Tell me about your experience with ${voc[0]}.`, som:`tél mi abáut iór ekspíriens uíth ${voc[2]}.`,
+        pt:`Me fale sobre sua experiência com ${voc[1]}.`,
+        ps:[{pt:"anos de experiência",w:["years","experience","worked"]},{pt:"tarefa concreta",w:["clean","use","operate","handle","work"]}],
+        mo:{en:`I have solid experience with ${voc[0]}. I worked with it every day in my last job.`, som:`ái rév sólid ekspíriens uíth ${voc[2]}. ái uôrkt uíth it évri dêi in mái lést djób.`, pt:`Tenho bastante experiência com ${voc[1]}. Trabalhei com isso todo dia no meu último emprego.`},
+        dk:"Fórmula de ouro: anos/tempo de experiência + tarefa concreta. Concreto convence, genérico não."}),
+      (voc,emp,cid) => ({
+        en:"Can you work weekends and holidays?", som:"quén iú uôrk uíquénds énd rólidêis?",
+        pt:"Você pode trabalhar fins de semana e feriados?",
+        ps:[{pt:"confirmar disponibilidade",w:["yes","no problem","available","sure"]}],
+        mo:{en:"Yes, no problem at all. I know weekends are usually the busiest days.", som:"iés, nôu próblem ét ól. ái nôu uíquénds ar iújuali dhi bíziest dêis.", pt:"Sim, sem problema nenhum. Sei que fim de semana costuma ser o período mais movimentado."},
+        dk:"Turismo e hotelaria não param no domingo — disponibilidade total é o que fecha a vaga."})
+    ],
+    2: [
+      (voc,emp,cid) => ({
+        en:`Imagine you're using ${voc[0]} and it suddenly breaks in the middle of a busy shift. What do you do?`, som:`imédjin iúr iúzin ${voc[2]} énd it sâdenli brêiks in dhi mídol óv a bízi chift. uót du iú du?`,
+        pt:`Imagine que você está usando ${voc[1]} e de repente quebra no meio de um turno cheio. O que você faz?`,
+        ps:[{pt:"avisar o supervisor",w:["tell","supervisor","report","stop","safety"]},{pt:"não arriscar/continuar sem segurança",w:["safe","careful","not risk","danger"]}],
+        mo:{en:`I would stop immediately, tell my supervisor, and wait for instructions instead of risking an accident with ${voc[0]}.`, som:`ái úud stóp imídietli, tél mái súpervaizor, énd uêit fór instrâkchons instéd óv rísquin en éksident uíth ${voc[2]}.`, pt:`Eu pararia imediatamente, avisaria meu supervisor e esperaria instruções em vez de arriscar um acidente com ${voc[1]}.`},
+        dk:"Pergunta de cenário (\"imagine...\") é clássica em nível intermediário — mostre que segurança vem antes de pressa."})
+    ],
+    3: [
+      (voc,emp,cid) => ({
+        en:`If you had already worked here before and knew everything about ${voc[0]}, would you expect a higher starting pay this season?`, som:`if iú red olrédi uôrkt rír bifór énd niú évrithing abáut ${voc[2]}, úud iú ekspékt a ráier stártin pêi dhis sízon?`,
+        pt:`Se você já tivesse trabalhado aqui antes e soubesse tudo sobre ${voc[1]}, você esperaria um salário inicial maior nesta temporada?`,
+        ps:[{pt:"resposta equilibrada, respeitosa",w:["fair","discuss","understand","appreciate","open"]}],
+        mo:{en:"I'd be open to discussing it fairly, but I understand pay depends on the company's policy, not just my past experience.", som:"áid bi ôupen tu diskâsin it férli, bât ái ândersténd pêi dipénds ón dhi câmpanis pólisi, nót djâst mái pést ekspíriens.", pt:"Estaria aberto a discutir isso com justiça, mas entendo que o salário depende da política da empresa, não só da minha experiência passada."},
+        dk:"Terceiro condicional + pergunta delicada sobre salário: mostre maturidade e abertura ao diálogo, sem exigir nada."})
+    ]
+  },
+  consulado: {
+    1: [
+      (voc,emp,cid) => ({
+        en:`Who is your employer in the United States?`, som:`rú iz iór emplóier in dhi iunáited stêits?`,
+        pt:"Quem é seu empregador nos Estados Unidos?",
+        ps:[{pt:"dizer o nome da empresa",w:["company","employer","name","my employer is"]},{pt:"dizer o estado",w:[cid[0].toLowerCase()]}],
+        mo:{en:`My employer is ${emp}, in ${cid[0]}.`, som:`mái emplóier iz ${emp}, in ${cid[1]}.`, pt:`Meu empregador é o ${emp}, em ${cid[0]}.`},
+        dk:"Decore o nome exato da empresa e o estado. Não saber isso pode custar o visto na hora."})
+    ],
+    2: [
+      (voc,emp,cid) => ({
+        en:"How can you prove that you will return to Brazil after the season?", som:"ráu quén iú prúv dhét iú uíl ritôrn tu brazíl áfter dhi sízon?",
+        pt:"Como você pode provar que vai voltar pro Brasil depois da temporada?",
+        ps:[{pt:"citar vínculos (família/casa/trabalho)",w:["family","house","home","job","ties","brazil","return"]}],
+        mo:{en:"I have strong ties to Brazil — my family, my home, and a job waiting for me when I return.", som:"ái rév stróng táis tu brazíl — mái fémili, mái rôum, énd a djób uêitin fór mi uén ái ritôrn.", pt:"Tenho fortes vínculos com o Brasil — minha família, minha casa e um trabalho me esperando quando eu voltar."},
+        dk:"\"Ties\" (vínculos) é a palavra-chave que o oficial do consulado quer ouvir."})
+    ],
+    3: [
+      (voc,emp,cid) => ({
+        en:"If your contract were extended unexpectedly, would you stay longer than planned?", som:"if iór cóntract uér eksténded ânekspéktedli, úud iú stêi lónguer dhén plénd?",
+        pt:"Se seu contrato fosse estendido inesperadamente, você ficaria mais tempo do que o planejado?",
+        ps:[{pt:"resposta cautelosa, respeitando o visto",w:["no","only","as long as visa","legal","allowed"]}],
+        mo:{en:"No, I would only stay as long as my visa legally allows, never longer than that.", som:"nôu, ái úud ôunli stêi éz lóng éz mái víza lígali aláus, néver lónguer dhén dhét.", pt:"Não, eu só ficaria pelo tempo que meu visto permite legalmente, nunca mais que isso."},
+        dk:"Pergunta armadilha clássica em nível avançado — a resposta certa é SEMPRE respeitar o limite legal do visto."})
+    ]
+  },
+  chegada: {
+    1: [
+      (voc,emp,cid) => ({
+        en:"What is the purpose of your trip?", som:"uót iz dhi pérpos óv iór tríp?",
+        pt:"Qual é o propósito da sua viagem?",
+        ps:[{pt:"dizer que é trabalho temporário",w:["work","job","temporary","seasonal"]}],
+        mo:{en:"I'm here for seasonal work. I have a temporary work visa.", som:"áim rír fór sízonal uôrk. ái rév a témporári uôrk víza.", pt:"Estou aqui pra trabalho sazonal. Tenho um visto de trabalho temporário."},
+        dk:"Resposta curta e direta — o oficial da imigração não quer uma história longa."})
+    ],
+    2: [
+      (voc,emp,cid) => ({
+        en:`How long do you plan to stay, and where exactly will you be working in ${cid[0]}?`, som:`ráu lóng du iú plén tu stêi, énd uér egzáktli uíl iú bi uôrquin in ${cid[1]}?`,
+        pt:`Quanto tempo você planeja ficar, e onde exatamente você vai trabalhar em ${cid[0]}?`,
+        ps:[{pt:"duração + local específico",w:["months","weeks","company","employer","address"]}],
+        mo:{en:`I'll be here for about eight months, working at ${emp}, in ${cid[0]}.`, som:`áil bi rír fór abáut êit mãnths, uôrquin ét ${emp}, in ${cid[1]}.`, pt:`Vou ficar uns oito meses, trabalhando no ${emp}, em ${cid[0]}.`},
+        dk:"Pergunta composta (duas partes numa só) — responda as duas partes, na ordem que foram perguntadas."})
+    ],
+    3: [
+      (voc,emp,cid) => ({
+        en:"Has anyone else packed your bags, or given you anything to carry that you haven't checked yourself?", som:"réz éni-uân éls pékt iór bégs, ór guíven iú éni-thing tu quéri dhét iú révent tchékt iórsélf?",
+        pt:"Alguém mais fez sua mala, ou te deu algo pra carregar que você mesmo não conferiu?",
+        ps:[{pt:"negar claramente",w:["no","myself","packed my own","nothing"]}],
+        mo:{en:"No, I packed everything myself and I know exactly what's in my bags.", som:"nôu, ái pékt évrithing máisélf énd ái nôu egzáktli uóts in mái bégs.", pt:"Não, eu mesmo fiz minha mala e sei exatamente o que tem nela."},
+        dk:"Pergunta de segurança padrão da imigração americana — a resposta certa é sempre NÃO, com firmeza."})
+    ]
+  },
+  trabalho: {
+    1: [
+      (voc,emp,cid) => ({
+        en:`Can you show me how you use ${voc[0]}?`, som:`quén iú chôu mi ráu iú iúz ${voc[2]}?`,
+        pt:`Você pode me mostrar como usa ${voc[1]}?`,
+        ps:[{pt:"confirmar e demonstrar disposição",w:["yes","sure","show","of course"]}],
+        mo:{en:`Sure, I'll show you right now how I use ${voc[0]}.`, som:`chúr, áil chôu iú ráit náu ráu ái iúz ${voc[2]}.`, pt:`Claro, vou te mostrar agora mesmo como uso ${voc[1]}.`},
+        dk:"No trabalho, disposição em mostrar/aprender na hora vale mais que explicar teoricamente."})
+    ],
+    2: [
+      (voc,emp,cid) => ({
+        en:`You notice a coworker is struggling with ${voc[0]} and falling behind. What do you do?`, som:`iú nôutis a côuuôrker iz strâglin uíth ${voc[2]} énd fólin bihaind. uót du iú du?`,
+        pt:`Você percebe que um colega está com dificuldade em ${voc[1]} e ficando pra trás. O que você faz?`,
+        ps:[{pt:"oferecer ajuda ao colega",w:["help","offer","team","assist"]}],
+        mo:{en:`I'd offer to help them with ${voc[0]} — we're a team, and everyone's success matters.`, som:`áid ófer tu rélp dhém uíth ${voc[2]} — uír a tím, énd évriuâns sâksés méters.`, pt:`Eu me ofereceria pra ajudar com ${voc[1]} — somos uma equipe, e o sucesso de todos importa.`},
+        dk:"Trabalho em equipe é um dos valores mais testados em perguntas do dia a dia no trabalho."})
+    ],
+    3: [
+      (voc,emp,cid) => ({
+        en:`Looking back, what would you have done differently in your first week working with ${voc[0]}, knowing what you know now?`, som:`lúquin bék, uót úud iú rev dân díferentli in iór férst uík uôrquin uíth ${voc[2]}, nôuin uót iú nôu náu?`,
+        pt:`Olhando pra trás, o que você teria feito diferente na sua primeira semana trabalhando com ${voc[1]}, sabendo o que sabe agora?`,
+        ps:[{pt:"reflexão madura, aprendizado",w:["ask questions","earlier","learn","careful","mistake"]}],
+        mo:{en:`I would have asked more questions earlier instead of guessing how to handle ${voc[0]} on my own.`, som:`ái úud rev éskt mór quéschons érlier instéd óv guésin ráu tu réndol ${voc[2]} ón mái ôun.`, pt:`Eu teria feito mais perguntas mais cedo em vez de tentar adivinhar como lidar com ${voc[1]} sozinho.`},
+        dk:"Terceiro condicional puro — pergunta de reflexão/maturidade, típica de avaliação de desempenho avançada."})
+    ]
+  }
+};
+const CARR_FOLLOWUPS = [
+  {en:"And why does that matter to you personally?", som:"énd uái dâz dhét méter tu iú pérsonali?", pt:"E por que isso importa pra você pessoalmente?"},
+  {en:"Can you give me a specific example?", som:"quén iú guív mi a spesífic egzémpol?", pt:"Você pode me dar um exemplo específico?"},
+  {en:"How would you handle it differently next time?", som:"ráu úud iú réndol it díferentli nékst táim?", pt:"Como você lidaria com isso diferente da próxima vez?"}
+];
+/* Etapas liberadas conforme o nível (quanto mais alto, mais etapas entram no sorteio) */
+function carrEtapasPorNivel(nivel){
+  if(nivel < 6) return ["recrutador","empregador"];
+  if(nivel < 15) return ["recrutador","empregador","trabalho"];
+  if(nivel < 25) return ["recrutador","empregador","trabalho","consulado"];
+  return ["recrutador","empregador","trabalho","consulado","chegada"];
+}
+function carrTierPorNivel(nivel){
+  if(nivel < 10) return 1;
+  if(nivel < 30) return 2;
+  return 3;
+}
+function carrVagaDoPerfil(){
+  const p = perfilAtual();
+  if(p && p.h2bProfile && CARR_VOCAB[p.h2bProfile]) return p.h2bProfile;
+  const cv = Progresso.dados.cvVaga;
+  if(cv && CARR_VOCAB[cv]) return cv;
+  const chaves = Object.keys(CARR_VOCAB).filter(k => k !== "geral");
+  return Math.random() < 0.35 ? "geral" : chaves[Math.floor(Math.random() * chaves.length)];
+}
+/* Gera 1 pergunta 100% combinada — nunca a mesma sequência duas vezes */
+function gerarPerguntaCarreira(nivel){
+  const etapas = carrEtapasPorNivel(nivel);
+  const etapa = etapas[Math.floor(Math.random() * etapas.length)];
+  const tier = carrTierPorNivel(nivel);
+  const vagaId = carrVagaDoPerfil();
+  const voc = (CARR_VOCAB[vagaId] || CARR_VOCAB.geral)[Math.floor(Math.random() * (CARR_VOCAB[vagaId] || CARR_VOCAB.geral).length)];
+  const emp = CARR_EMPRESAS[Math.floor(Math.random() * CARR_EMPRESAS.length)];
+  const cid = CARR_CIDADES[Math.floor(Math.random() * CARR_CIDADES.length)];
+  const poolTier = CARR_TEMPLATES[etapa][tier] || CARR_TEMPLATES[etapa][1];
+  const tpl = poolTier[Math.floor(Math.random() * poolTier.length)];
+  const q = tpl(voc, emp, cid);
+  q.etapa = etapa;
+  q.abertura = CARR_ABERTURAS[etapa][Math.floor(Math.random() * CARR_ABERTURAS[etapa].length)];
+  q.followup = (tier >= 2 && Math.random() < 0.4) ? CARR_FOLLOWUPS[Math.floor(Math.random() * CARR_FOLLOWUPS.length)] : null;
+  return q;
+}
+
 /* ---------- ANALISADOR DE CURRÍCULO (offline) ---------- */
 const CV_MAPA = [
   { re:/jardin|grama|paisag|roçad|rocad|poda|landscap|capina/i, prog:"h2b", vaga:"landscaping", nome:"🌿 Paisagismo" },
@@ -5843,6 +6149,174 @@ function simGravar(){
   r.onerror = () => { soltar(); mostrarToast("🎤 Não consegui ouvir — tente de novo mais perto"); };
   try{ r.start(); }catch(err){ soltar(); }
 }
+/* ==================================================================
+   🧗 MODO CARREIRA — motor de UI (progressão infinita, dificuldade
+   crescente, XP mais alto de todo o app). Diferente da Escalada:
+   aqui NÃO existe "voltar nível" — é a jornada base do FalaFina,
+   sempre avançando. Usa CARR_* (motor combinatório, veja acima).
+   ================================================================== */
+function carrDados(){
+  const p = Progresso.dados;
+  if(!p.carreira) p.carreira = { nivel:1, acertos:0, respondidas:0 };
+  if(!p.carreira.nivel) p.carreira.nivel = 1;
+  return p.carreira;
+}
+function carrXpDoNivel(nivel){ return Math.min(500, Math.round(12 + nivel * 1.2)); }
+function carrTituloTier(tier){ return tier === 1 ? "🌱 Iniciante" : (tier === 2 ? "🔥 Intermediário" : "👑 Avançado"); }
+let carreiraEstado = null;
+function iniciarCarreira(){
+  const c = carrDados();
+  carreiraEstado = { atual:null, respondidas:0, xpGanho:0, girassoisGanho:0 };
+  $("#carrChat").innerHTML = "";
+  const nome = (Contas.atual() || { nome:"amigo" }).nome;
+  carrBolha(`<div class="quem">🦜 FALAFINA</div><div class="en" style="color:var(--tinta)">Bem-vindo ao <b>Modo Carreira</b>, ${esc(nome)}! Você está no nível <b>${c.nivel}</b>. Cada resposta certa te leva pro próximo nível — pra sempre. Quanto mais alto, mais difícil. Vamos! 🚀</div>`, "oficial");
+  irPara("tela-carreira");
+  carrProxima();
+}
+function carrBolha(html, classe){
+  const div = document.createElement("div");
+  div.className = "sim-balao " + classe;
+  div.innerHTML = html;
+  $("#carrChat").appendChild(div);
+  requestAnimationFrame(() => div.scrollIntoView({ behavior:"smooth", block:"end" }));
+  return div;
+}
+function carrAtualizarTopo(){
+  const c = carrDados();
+  const tier = carrTierPorNivel(c.nivel);
+  const pctTier = tier === 1 ? (c.nivel / 10) * 100 : (tier === 2 ? ((c.nivel - 10) / 20) * 100 : 100);
+  $("#carrBarraNivel").style.width = Math.max(4, Math.min(100, pctTier)) + "%";
+  $("#carrCont").textContent = `Nível ${c.nivel} · ${carrTituloTier(tier)} · ⭐ ${carreiraEstado ? carreiraEstado.xpGanho : 0} XP nesta sessão`;
+}
+function carrProxima(){
+  const c = carrDados();
+  carrAtualizarTopo();
+  const q = gerarPerguntaCarreira(c.nivel);
+  carreiraEstado.atual = q;
+  const esconder = carrTierPorNivel(c.nivel) >= 3;
+  carrBolha(`<div class="quem">${q.abertura}</div>
+    <div class="en">${esc(q.en)} <button class="btn-som" data-falar="${esc(q.en)}" aria-label="Ouvir pergunta">🔊</button></div>
+    ${esconder ? `<button class="btn-link carrAjuda" style="padding:4px 0;font-size:.85rem">👁️ Não entendi — mostrar ajuda</button><div class="carrOculto" style="display:none">` : ""}
+    <div class="som">🗣️ ${esc(q.som)}</div>
+    <div class="pt">🇧🇷 ${esc(q.pt)}</div>
+    ${esconder ? "</div>" : ""}`, "oficial");
+  const ultima = $("#carrChat").lastElementChild;
+  ultima.querySelectorAll("[data-falar]").forEach(b => b.addEventListener("click", () => Fala.dizer(b.dataset.falar, b)));
+  const aj = ultima.querySelector(".carrAjuda");
+  if(aj) aj.addEventListener("click", () => { ultima.querySelector(".carrOculto").style.display = "block"; aj.style.display = "none"; });
+  Fala.dizer(q.en);
+  $("#carrResposta").value = "";
+  $("#carrResposta").focus({ preventScroll:true });
+}
+function carrAvaliar(){
+  const e = carreiraEstado, q = e && e.atual;
+  if(!q) return;
+  const bruto = $("#carrResposta").value.trim();
+  if(!bruto){ mostrarToast("Escreva ou fale sua resposta primeiro 😉"); return; }
+  const norm = simNormalizar(bruto);
+  carrBolha(esc(bruto), "voce");
+  const ok = [], falta = [];
+  for(const p of q.ps){
+    if(p.w.some(w => norm.includes(" " + w + " "))) ok.push(p); else falta.push(p);
+  }
+  e.respondidas++;
+  const c = carrDados();
+  let classe, titulo, subiu = false;
+  if(ok.length && !falta.length){
+    classe = "otima"; titulo = "🌟 Resposta forte! Você SUBIU de nível.";
+    c.nivel++; c.acertos = (c.acertos || 0) + 1; subiu = true;
+    const xp = carrXpDoNivel(c.nivel - 1);
+    const sem = Math.round(xp / 3);
+    e.xpGanho += xp; e.girassoisGanho += sem;
+    registrarAtividade(xp);
+    COSM.ganhar(sem, null);
+  } else if(ok.length){
+    classe = "parcial"; titulo = "👍 Boa — mas ainda não é o suficiente pra subir de nível. Tente a próxima!";
+    const xp = Math.round(carrXpDoNivel(c.nivel) / 4);
+    e.xpGanho += xp; registrarAtividade(xp);
+  } else {
+    classe = "aprender"; titulo = "📚 Ainda não — vamos aprender essa juntos (o nível continua o mesmo, sem punição):";
+  }
+  c.respondidas = (c.respondidas || 0) + 1;
+  Progresso.salvar();
+  e.atual = null;
+  carrFeedback(classe, titulo, ok, falta, q, subiu);
+  carrAtualizarTopo();
+}
+function carrEnsinar(){
+  const e = carreiraEstado, q = e && e.atual;
+  if(!q) return;
+  e.respondidas++;
+  e.atual = null;
+  Progresso.salvar();
+  carrFeedback("aprender", "📚 Sem problema — aprender é o que importa:", [], q.ps, q, false);
+  carrAtualizarTopo();
+}
+function carrFeedback(classe, titulo, ok, falta, q, subiu){
+  let html = `<div class="titulo">${titulo}</div>`;
+  if(ok.length) html += `<div style="font-weight:700;font-size:.9rem">✅ Você já disse: ${ok.map(p => esc(p.pt)).join(" · ")}</div>`;
+  if(falta.length) html += `<div style="font-weight:700;font-size:.9rem;color:#8C3212">🧩 Faltou: </div><ul>${falta.map(p => `<li>${esc(p.pt)}</li>`).join("")}</ul>`;
+  if(q.followup && subiu) html += `<div style="margin-top:6px;font-weight:700;font-size:.85rem;color:var(--verde-escuro)">🔥 Bônus da próxima pergunta: pode vir um follow-up de verdade, tipo entrevista real.</div>`;
+  html += `<div class="sim-modelo">
+    <div class="rot">💬 RESPOSTA MODELO</div>
+    <div class="en">${esc(q.mo.en)} <button class="btn-som" data-falar="${esc(q.mo.en)}">🔊</button></div>
+    <div class="som" style="margin-top:6px">🗣️ ${esc(q.mo.som)}</div>
+    <div class="pt">🇧🇷 ${esc(q.mo.pt)}</div>
+  </div>
+  <div style="margin-top:8px;font-weight:600;font-size:.9rem">💡 ${esc(q.dk)}</div>
+  <div class="sim-acoes-fb"><button class="carrContinuar">➡️ Próxima pergunta</button></div>`;
+  const div = carrBolha(html, "fb " + classe);
+  div.querySelectorAll("[data-falar]").forEach(b => b.addEventListener("click", () => Fala.dizer(b.dataset.falar, b)));
+  div.querySelector(".carrContinuar").addEventListener("click", () => {
+    if(q.followup && subiu){
+      carrBolha(`<div class="quem">🧑‍💼 ENTREVISTADOR (follow-up)</div><div class="en">${esc(q.followup.en)} <button class="btn-som" data-falar="${esc(q.followup.en)}">🔊</button></div><div class="som">🗣️ ${esc(q.followup.som)}</div><div class="pt">🇧🇷 ${esc(q.followup.pt)}</div>`, "oficial");
+      const ult = $("#carrChat").lastElementChild;
+      ult.querySelectorAll("[data-falar]").forEach(b => b.addEventListener("click", () => Fala.dizer(b.dataset.falar, b)));
+      Fala.dizer(q.followup.en);
+      $("#carrResposta").value = "";
+      $("#carrResposta").focus({ preventScroll:true });
+      carreiraEstado.atual = { ps:[{ pt:"resposta livre", w:["i","the","and","because","work"] }], mo:{en:"Great — follow-up questions like this show up in real interviews. Keep answering naturally.", som:"grêit — fólou-âp quéschons láik dhis chôu âp in ríal íntervius. quíp éns-uerin nétchurali.", pt:"Ótimo — perguntas de follow-up como essa aparecem em entrevistas de verdade. Continue respondendo naturalmente."}, dk:"Follow-up é bônus — qualquer resposta coerente em inglês já vale a experiência.", followup:null };
+    } else {
+      carrProxima();
+    }
+  });
+}
+function carrEncerrar(){
+  const e = carreiraEstado;
+  if(!e) return;
+  const c = carrDados();
+  $("#concluTitulo").textContent = "🧗 Sessão de Carreira encerrada!";
+  $("#concluTexto").textContent = e.respondidas
+    ? `Você respondeu ${e.respondidas} pergunta(s) e está agora no NÍVEL ${c.nivel} da sua carreira — esse progresso nunca é perdido, só cresce. Ganhou ⭐ ${e.xpGanho} XP e 🌻 ${e.girassoisGanho} girassóis nesta sessão.`
+    : "Sessão rápida! Seu nível continua exatamente onde você parou — volte quando quiser.";
+  $("#concluXP").textContent = String(e.xpGanho);
+  $("#btnProximoModulo").style.display = "none";
+  carreiraEstado = null;
+  irPara("tela-conclusao");
+}
+function carrGravar(){
+  const Rec = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!Rec){ mostrarToast("🎤 Seu navegador não tem reconhecimento de voz — digite a resposta"); return; }
+  let r;
+  try{ r = new Rec(); }catch(err){ mostrarToast("🎤 Microfone indisponível"); return; }
+  r.lang = "en-US"; r.interimResults = false; r.maxAlternatives = 1;
+  const btn = $("#carrMic");
+  btn.classList.add("gravando"); btn.textContent = "👂 Ouvindo...";
+  const soltar = () => { btn.classList.remove("gravando"); btn.textContent = "🎤 Falar"; };
+  r.onresult = ev => {
+    const dito = ev.results[0][0].transcript;
+    const area = $("#carrResposta");
+    area.value = (area.value ? area.value + " " : "") + dito;
+  };
+  r.onend = soltar;
+  r.onerror = () => { soltar(); mostrarToast("🎤 Não consegui ouvir — tente de novo mais perto"); };
+  try{ r.start(); }catch(err){ soltar(); }
+}
+$("#carrEnviar") && $("#carrEnviar").addEventListener("click", carrAvaliar);
+$("#carrMic") && $("#carrMic").addEventListener("click", carrGravar);
+$("#carrEnsina") && $("#carrEnsina").addEventListener("click", carrEnsinar);
+$("#carrEncerrar") && $("#carrEncerrar").addEventListener("click", carrEncerrar);
+
 function analisarCV(){
   const txt = $("#cvTexto").value.trim();
   if(txt.length < 15){ mostrarToast("Cole um texto maior do seu currículo 😊"); return; }
@@ -6080,6 +6554,26 @@ function renderHome(){
         ${linhaHoje(s.pron >= 3, "pron", "Praticar pronúncia 3x", `${Math.min(s.pron,3)}/3`)}
       </div>
     </div>
+    <div class="cardb" style="margin-top:14px;border:2.5px solid var(--sol);background:linear-gradient(135deg,#FFF8E7,#FFF3D1)">
+      <div class="secao-t" style="margin-bottom:6px">🧗 Modo Carreira <span style="font-size:.68rem;background:var(--sol);color:#5C4400;padding:2px 8px;border-radius:99px;font-weight:800">★ PRINCIPAL</span></div>
+      <p style="font-weight:700;color:var(--tinta-suave);font-size:.86rem;margin-bottom:10px">Sua jornada infinita de entrevistas H-2B/H-2A — nunca reseta, sempre fica mais difícil. Você está no <b>nível ${carrDados().nivel}</b>.</p>
+      <button class="btn-principal" id="homeCarreira" style="max-width:340px">🚀 Continuar carreira ▶</button>
+    </div>
+    <div class="cardb" style="margin-top:14px">
+      <div class="secao-t">🎯 Tudo que você pode praticar</div>
+      <div class="acoes-grid">
+        <button class="acao" data-ir2="pratica-sim"><span class="ic">🎙️</span>Simulador de Entrevista</button>
+        <button class="acao" data-ir2="pratica-inf"><span class="ic">♾️</span>Treino Infinito</button>
+        <button class="acao" data-ir2="pratica-esc"><span class="ic">🗼</span>Escalada</button>
+        <button class="acao" data-ir2="pratica-pron"><span class="ic">🎤</span>Pronúncia</button>
+        <button class="acao" data-ir2="pratica-err"><span class="ic">❌</span>Caça aos Erros</button>
+        <button class="acao" data-ir="aulas"><span class="ic">📚</span>Aulas / Trilha</button>
+        <button class="acao" data-ir="desafios"><span class="ic">🏆</span>Desafios</button>
+        <button class="acao" data-ir="revisao"><span class="ic">🔄</span>Revisão (SRS)</button>
+        <button class="acao" data-ir="conquistas"><span class="ic">🏅</span>Conquistas</button>
+        <button class="acao" data-ir="loja"><span class="ic">🛍️</span>Loja</button>
+      </div>
+    </div>
     <div class="cardb" style="margin-top:14px">
       <div class="secao-t">📊 Ranking <button class="btn-link" style="padding:0;font-size:.85rem" data-ir="ranking">Ver completo →</button></div>
       <div id="homeRankMini">${rankMiniHtml}</div>
@@ -6095,6 +6589,16 @@ function renderHome(){
     if(revisarPrimeiro){ revTab = "inteligente"; navPara("revisao"); }
     else abrirModulo(prox.id);
   });
+  const homeCarreiraBtn = $("#homeCarreira");
+  if(homeCarreiraBtn) homeCarreiraBtn.addEventListener("click", () => navPara("carreira"));
+  $("#homeConteudo").querySelectorAll("[data-ir2]").forEach(b => b.addEventListener("click", () => {
+    const alvo = b.dataset.ir2;
+    if(alvo === "pratica-sim"){ renderSimConfig(); irPara("tela-simulador"); }
+    else if(alvo === "pratica-inf") iniciarInfinito();
+    else if(alvo === "pratica-esc"){ renderEscalada(); irPara("tela-escalada"); }
+    else if(alvo === "pratica-pron"){ revTab = "palavras"; navPara("revisao"); mostrarToast("Dica: use o 🎤 nos cards e no feedback!"); }
+    else if(alvo === "pratica-err"){ revTab = "erros"; navPara("revisao"); }
+  }));
   const homeBauFaixa = $("#homeBauFaixa");
   if(homeBauFaixa) homeBauFaixa.addEventListener("click", () => {
     if(typeof BAU !== "undefined" && BAU.podeAbrirGratis()) abrirBauGratisModal();
@@ -6387,14 +6891,19 @@ function renderDesafios(){
   }));
 }
 /* ---------- CONQUISTAS ---------- */
-function listaConquistas(){
-  const p = Progresso.dados;
-  const feitos = Object.keys(p.modulosFeitos || {}).length;
-  const dom = Object.keys((p.sim || {}).dominadas || {}).length;
-  const rec = (p.escalada || {}).recorde || 1;
-  const baus = Object.keys((p.escalada || {}).baus || {}).length;
-  const desf = Object.keys(p.resgates || {}).length;
-  const itens = (typeof COSM !== "undefined") ? COSM.qtdItens() : 0;
+function listaConquistas(resumo){
+  const propria = !resumo;
+  const p = propria ? Progresso.dados : null;
+  const feitos = propria ? Object.keys(p.modulosFeitos || {}).length : (resumo.modulosFeitos || 0);
+  const dom = propria ? Object.keys((p.sim || {}).dominadas || {}).length : (resumo.dominadas || 0);
+  const rec = propria ? ((p.escalada || {}).recorde || 1) : (resumo.recorde || 1);
+  const baus = propria ? Object.keys((p.escalada || {}).baus || {}).length : (resumo.baus || 0);
+  const desf = propria ? Object.keys(p.resgates || {}).length : (resumo.desafios || 0);
+  const itens = propria ? (typeof COSM !== "undefined" ? COSM.qtdItens() : 0) : (resumo.itens || 0);
+  const xpV = propria ? (p.xp || 0) : (resumo.xp || 0);
+  const melhorSeqV = propria ? (p.melhorSeq || 0) : (resumo.melhorSeq || 0);
+  const palavrasV = propria ? palavrasAprendidas() : (resumo.palavras || 0);
+  const pronOkV = propria ? somaStats("pronOk") : (resumo.pronOk || 0);
   const M = (ic, nome, desc, ok, metal) => ({ ic, nome, desc, ok, metal });
   return [
     /* 🗼 Escalada (7) */
@@ -6406,26 +6915,26 @@ function listaConquistas(){
     M("🐉","Reino das Lendas","Recorde nível 500", rec>=500, "diamante"),
     M("👑","IMORTAL","Vença o nível 1000", rec>=1000, "diamante"),
     /* ⭐ XP (9) */
-    M("⭐","Primeiras Estrelas","Chegue a 100 XP", (p.xp||0)>=100, "bronze"),
-    M("🌟","Brilhante","Chegue a 500 XP", (p.xp||0)>=500, "bronze"),
-    M("💫","Constelação","Chegue a 1.500 XP", (p.xp||0)>=1500, "bronze"),
-    M("🌠","Cometa","Chegue a 5.000 XP", (p.xp||0)>=5000, "prata"),
-    M("🪐","Planetário","Chegue a 15.000 XP", (p.xp||0)>=15000, "prata"),
-    M("☀️","Sol Nascente","Chegue a 50.000 XP", (p.xp||0)>=50000, "ouro"),
-    M("🌌","Via Láctea","Chegue a 150.000 XP", (p.xp||0)>=150000, "ouro"),
-    M("🚀","Astronauta","Chegue a 500.000 XP", (p.xp||0)>=500000, "diamante"),
-    M("🛸","Fora da Órbita","Chegue a 2.000.000 XP", (p.xp||0)>=2000000, "diamante"),
+    M("⭐","Primeiras Estrelas","Chegue a 100 XP", xpV>=100, "bronze"),
+    M("🌟","Brilhante","Chegue a 500 XP", xpV>=500, "bronze"),
+    M("💫","Constelação","Chegue a 1.500 XP", xpV>=1500, "bronze"),
+    M("🌠","Cometa","Chegue a 5.000 XP", xpV>=5000, "prata"),
+    M("🪐","Planetário","Chegue a 15.000 XP", xpV>=15000, "prata"),
+    M("☀️","Sol Nascente","Chegue a 50.000 XP", xpV>=50000, "ouro"),
+    M("🌌","Via Láctea","Chegue a 150.000 XP", xpV>=150000, "ouro"),
+    M("🚀","Astronauta","Chegue a 500.000 XP", xpV>=500000, "diamante"),
+    M("🛸","Fora da Órbita","Chegue a 2.000.000 XP", xpV>=2000000, "diamante"),
     /* 🔥 Ofensiva (6) */
-    M("🔥","Pegou Fogo","3 dias seguidos", (p.melhorSeq||0)>=3, "bronze"),
-    M("🚒","Incêndio","7 dias seguidos", (p.melhorSeq||0)>=7, "bronze"),
-    M("🌋","Vulcão","14 dias seguidos", (p.melhorSeq||0)>=14, "prata"),
-    M("☄️","Meteoro","30 dias seguidos", (p.melhorSeq||0)>=30, "prata"),
-    M("🐲","Chama Eterna","100 dias seguidos", (p.melhorSeq||0)>=100, "ouro"),
-    M("🎆","Ano em Chamas","365 dias seguidos", (p.melhorSeq||0)>=365, "diamante"),
+    M("🔥","Pegou Fogo","3 dias seguidos", melhorSeqV>=3, "bronze"),
+    M("🚒","Incêndio","7 dias seguidos", melhorSeqV>=7, "bronze"),
+    M("🌋","Vulcão","14 dias seguidos", melhorSeqV>=14, "prata"),
+    M("☄️","Meteoro","30 dias seguidos", melhorSeqV>=30, "prata"),
+    M("🐲","Chama Eterna","100 dias seguidos", melhorSeqV>=100, "ouro"),
+    M("🎆","Ano em Chamas","365 dias seguidos", melhorSeqV>=365, "diamante"),
     /* 🔤 Palavras (3) */
-    M("🔤","Colecionador de Palavras","Aprenda 50 palavras", palavrasAprendidas()>=50, "bronze"),
-    M("📖","Dicionário Vivo","Aprenda 150 palavras", palavrasAprendidas()>=150, "prata"),
-    M("🧠","Biblioteca Humana","Aprenda 400 palavras", palavrasAprendidas()>=400, "ouro"),
+    M("🔤","Colecionador de Palavras","Aprenda 50 palavras", palavrasV>=50, "bronze"),
+    M("📖","Dicionário Vivo","Aprenda 150 palavras", palavrasV>=150, "prata"),
+    M("🧠","Biblioteca Humana","Aprenda 400 palavras", palavrasV>=400, "ouro"),
     /* 📚 Aulas (4) */
     M("🐣","Primeiro Passo","Conclua sua 1ª aula", feitos>=1, "bronze"),
     M("📚","Estudante","Conclua 5 aulas", feitos>=5, "bronze"),
@@ -6434,7 +6943,7 @@ function listaConquistas(){
     /* 🎙️ Entrevista e voz (3) */
     M("🎙️","Entrevistado","Domine 10 respostas no Simulador", dom>=10, "prata"),
     M("🤝","Contratado!","Domine 30 respostas no Simulador", dom>=30, "ouro"),
-    M("🎤","Voz Ativa","20 pronúncias reconhecidas", somaStats("pronOk")>=20, "prata"),
+    M("🎤","Voz Ativa","20 pronúncias reconhecidas", pronOkV>=20, "prata"),
     /* 🎯 Desafios (3) */
     M("🎯","Caçador de Desafios","Resgate 5 desafios", desf>=5, "bronze"),
     M("🏹","Atirador de Elite","Resgate 25 desafios", desf>=25, "prata"),
@@ -6464,15 +6973,21 @@ function renderConquistas(){
 /* ---------- PRÁTICA ---------- */
 function renderPratica(){
   const crianca = usuarioCrianca();
+  const c = carrDados();
   $("#praticaConteudo").innerHTML = `
+  <div class="des-card" style="border:2.5px solid var(--sol);background:linear-gradient(135deg,#FFF8E7,#FFF3D1);margin-bottom:16px">
+    <div class="top"><span class="ic">🧗</span><div><b style="font-size:1.05rem">Modo Carreira <span style="font-size:.7rem;background:var(--sol);color:#5C4400;padding:2px 8px;border-radius:99px;font-weight:800">★ PRINCIPAL</span></b><p>Sua jornada H-2B/H-2A <b>infinita</b> — perguntas, cenários e estilos sempre diferentes. Nunca reseta, só avança. Quanto mais alto o nível, maior o XP e mais difícil o desafio. Você está no <b>nível ${c.nivel}</b>.</p></div></div>
+    <button class="btn-principal" id="prCarreira" style="margin-top:6px">🚀 Continuar carreira (nível ${c.nivel}) ▶</button>
+  </div>
   <div class="des-grid" style="grid-template-columns:repeat(auto-fill,minmax(250px,1fr))">
     ${crianca ? "" : `<div class="des-card"><div class="top"><span class="ic">🎙️</span><div><b>Simulador de Entrevista</b><p>Treine em inglês as entrevistas reais do H-2B/H-2A: agência, empregador, consulado e chegada.</p></div></div><button class="btn-resg" id="prSim">Entrar na sala ▶</button></div>`}
     <div class="des-card"><div class="top"><span class="ic">♾️</span><div><b>Treino Infinito</b><p>Perguntas sem fim de tudo que você já aprendeu. Repetição espaçada de verdade.</p></div></div><button class="btn-resg" id="prInf">Treinar ▶</button></div>
-    <div class="des-card"><div class="top"><span class="ic">🗼</span><div><b>Escalada</b><p>Suba de nível respondendo sem errar. Errou, desce. Até onde você aguenta?</p></div></div><button class="btn-resg" id="prEsc">Escalar ▶</button></div>
+    <div class="des-card"><div class="top"><span class="ic">🗼</span><div><b>Escalada</b><p>Suba de nível respondendo sem errar. Até onde você aguenta?</p></div></div><button class="btn-resg" id="prEsc">Escalar ▶</button></div>
     <div class="des-card"><div class="top"><span class="ic">🎤</span><div><b>Treino de Pronúncia</b><p>Revise suas palavras falando no microfone — o app confere se saiu certo.</p></div></div><button class="btn-resg" id="prPron">Falar ▶</button></div>
     <div class="des-card"><div class="top"><span class="ic">❌</span><div><b>Caça aos Erros</b><p>Só o que você já errou. Vire o jogo.</p></div></div><button class="btn-resg" id="prErr">Encarar ▶</button></div>
   </div>`;
   const liga = (id, fn) => { const el = $("#praticaConteudo").querySelector(id); if(el) el.addEventListener("click", fn); };
+  liga("#prCarreira", () => navPara("carreira"));
   liga("#prSim", () => { renderSimConfig(); irPara("tela-simulador"); });
   liga("#prInf", () => iniciarInfinito());
   liga("#prEsc", () => { renderEscalada(); irPara("tela-escalada"); });
@@ -6655,7 +7170,8 @@ const FF_ROTAS = {
   meuperfil: { tela:"tela-meuperfil", titulo:"🪪 Meu Perfil", render: renderMeuPerfil },
   config:    { tela:"tela-config", titulo:"⚙️ Configurações", render: renderConfig },
   loja:      { tela:"tela-loja", titulo:"🛍️ Loja", render: renderLoja },
-  simulador: { tela:"tela-simulador", titulo:"🎙️ Simulador de Entrevista", render: () => renderSimConfig() }
+  simulador: { tela:"tela-simulador", titulo:"🎙️ Simulador de Entrevista", render: () => renderSimConfig() },
+  carreira:  { tela:"tela-carreira", titulo:"🧗 Modo Carreira", render: iniciarCarreira }
 };
 function navPara(rota){
   const r = FF_ROTAS[rota]; if(!r) return;
@@ -6669,7 +7185,8 @@ const FF_TITULOS = {
   "tela-ranking":"📊 Ranking", "tela-comunidade":"👥 Comunidade", "tela-meuperfil":"🪪 Meu Perfil",
   "tela-config":"⚙️ Configurações", "tela-simulador":"🎙️ Simulador de Entrevista",
   "tela-entrevista":"🎙️ Entrevista ao vivo", "tela-licao":"📖 Aula", "tela-quiz":"📝 Exercícios",
-  "tela-conclusao":"🎉 Parabéns!", "tela-escalada":"🗼 Escalada", "tela-perfil":"🪪 Perfil", "tela-paywall":"👑 FalaFina Premium", "tela-loja":"🛍️ Loja"
+  "tela-conclusao":"🎉 Parabéns!", "tela-escalada":"🗼 Escalada", "tela-perfil":"🪪 Perfil", "tela-paywall":"👑 FalaFina Premium", "tela-loja":"🛍️ Loja",
+  "tela-carreira":"🧗 Modo Carreira"
 };
 const FF_SEM_SHELL = ["tela-onboarding","tela-inicio","tela-cadastro","tela-login","tela-paywall"];
 function ffAposIrPara(tela){
@@ -6681,12 +7198,14 @@ function ffAposIrPara(tela){
   const mapa = { "tela-home":"home", "tela-trilha":"aulas", "tela-pratica":"pratica", "tela-desafios":"desafios",
     "tela-revisao":"revisao", "tela-conquistas":"conquistas", "tela-ranking":"ranking", "tela-comunidade":"comunidade",
     "tela-meuperfil":"meuperfil", "tela-config":"config", "tela-simulador":"pratica", "tela-entrevista":"pratica",
-    "tela-licao":"aulas", "tela-quiz":"aulas", "tela-escalada":"pratica", "tela-conclusao":"aulas" };
+    "tela-licao":"aulas", "tela-quiz":"aulas", "tela-escalada":"pratica", "tela-conclusao":"aulas", "tela-carreira":"pratica", "tela-loja":"loja" };
   const ativa = mapa[tela] || "";
   document.querySelectorAll(".sb-item").forEach(b => b.classList.toggle("ativo", b.dataset.rota === ativa));
   document.querySelectorAll(".tb-item").forEach(b => b.classList.toggle("ativo", b.dataset.rota === ativa));
 }
 document.querySelectorAll(".sb-item, .tb-item").forEach(b => b.addEventListener("click", () => navPara(b.dataset.rota)));
+const sbGrupoWppBtn = $("#sbGrupoWpp");
+if(sbGrupoWppBtn) sbGrupoWppBtn.addEventListener("click", () => window.open(FF_CONTATO.grupo, "_blank"));
 const sbPrem = $("#sbPremium");
 if(sbPrem) sbPrem.addEventListener("click", () => abrirZap("Olá! Quero ser Premium do FalaFina 👑"));
 

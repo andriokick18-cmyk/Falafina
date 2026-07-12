@@ -161,6 +161,13 @@ function mesclarProgresso(a, b) {
     }
   };
   r.medalhasPagas = Object.assign({}, a.medalhasPagas || {}, b.medalhasPagas || {});
+  /* Modo Carreira: progressão BASE que nunca reseta — o nível é sempre o maior dos dois lados */
+  const carA = a.carreira || {}, carB = b.carreira || {};
+  r.carreira = {
+    nivel: Math.max(carA.nivel || 1, carB.nivel || 1),
+    acertos: Math.max(carA.acertos || 0, carB.acertos || 0),
+    respondidas: Math.max(carA.respondidas || 0, carB.respondidas || 0)
+  };
   r.srs = Object.assign({}, a.srs || {});
   for (const k in (b.srs || {})) {
     const ia = r.srs[k], ib = b.srs[k];
@@ -228,16 +235,32 @@ async function tratarApi(req, res, rota, ip) {
       .map(c => {
         const co = c.progresso.cosmeticos || {}, us = co.usando || {}, tem = co.tem || {};
         const uso = s => (us[s] && tem[s + ":" + us[s]]) ? String(us[s]).slice(0, 20) : null;
+        const esc = c.progresso.escalada || {};
         return {
           nome: String(c.nome || "Aluno").slice(0, 30),
           foto: (c.perfil && c.perfil.foto) || null,
           xp: c.progresso.xp || 0,
           diasSeguidos: c.progresso.diasSeguidos || 0,
-          recorde: (c.progresso.escalada && c.progresso.escalada.recorde) || 1,
+          recorde: esc.recorde || 1,
           desafios: Object.keys(c.progresso.resgates || {}).length,
-          ritmo: (c.progresso.escalada && c.progresso.escalada.melhorRitmo) || null,
+          ritmo: esc.melhorRitmo || null,
           borda: uso("borda"), pet: uso("pet"), efeito: uso("efeito"),
-          voce: !!eu && c.email === eu
+          voce: !!eu && c.email === eu,
+          /* Resumo público pro modal de perfil (clique no nome do ranking) */
+          resumo: {
+            modulosFeitos: Object.keys(c.progresso.modulosFeitos || {}).length,
+            dominadas: Object.keys((c.progresso.sim || {}).dominadas || {}).length,
+            recorde: esc.recorde || 1,
+            baus: Object.keys(esc.baus || {}).length,
+            desafios: Object.keys(c.progresso.resgates || {}).length,
+            itens: Object.keys(tem).length,
+            xp: c.progresso.xp || 0,
+            melhorSeq: c.progresso.melhorSeq || 0,
+            palavras: Object.keys(c.progresso.srs || {}).filter(k => (c.progresso.srs[k].caixa || 0) >= 1).length,
+            pronOk: 0,
+            carreiraNivel: (c.progresso.carreira && c.progresso.carreira.nivel) || 1,
+            diasSeguidos: c.progresso.diasSeguidos || 0
+          }
         };
       });
     return responder(res, 200, { ok: true, ranking: lista });
