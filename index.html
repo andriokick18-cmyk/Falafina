@@ -361,6 +361,42 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--azul);outline-offse
   transition:opacity .25s,transform .25s;z-index:99;white-space:nowrap;
 }
 .toast.mostrar{opacity:1;transform:translateX(-50%) translateY(0)}
+/* ---------- SIMULADOR DE ENTREVISTA ---------- */
+.sim-secao{margin:16px 0 6px;font-family:var(--f-display);font-weight:600;font-size:1.05rem}
+.sim-chips{display:flex;flex-wrap:wrap;gap:8px}
+.sim-chips .fchip{font-size:.9rem}
+.sim-nota{font-size:.82rem;font-weight:700;color:var(--tinta-suave);margin-top:6px}
+.sim-opcao{display:flex;align-items:center;gap:10px;background:var(--branco);border:2.5px solid rgba(33,49,58,.12);border-radius:var(--raio);padding:12px 14px;margin-top:10px;font-weight:700;cursor:pointer}
+.sim-opcao input{width:22px;height:22px;accent-color:var(--verde)}
+.sim-chat{display:flex;flex-direction:column;gap:14px;margin-top:14px}
+.sim-balao{max-width:92%;border-radius:var(--raio);padding:13px 15px;box-shadow:var(--sombra);animation:entrar .25s ease}
+.sim-balao.oficial{align-self:flex-start;background:var(--azul-claro);border:2.5px solid var(--azul)}
+.sim-balao.oficial .quem{font-weight:800;font-size:.72rem;letter-spacing:1px;color:var(--azul-escuro);margin-bottom:4px}
+.sim-balao.oficial .en{font-weight:800;font-size:1.08rem;color:var(--azul-escuro)}
+.sim-balao .som{background:var(--sol-claro);border-left:5px solid var(--sol);border-radius:8px;padding:5px 9px;margin-top:7px;font-weight:800;color:#7A5A00;font-size:.92rem}
+.sim-balao .pt{margin-top:6px;font-weight:600;color:var(--tinta-suave);font-size:.92rem}
+.sim-balao.voce{align-self:flex-end;background:var(--verde-claro);border:2.5px solid var(--verde);font-weight:700}
+.sim-balao.fb{align-self:stretch;max-width:100%;background:var(--branco);border:2.5px solid rgba(33,49,58,.14)}
+.sim-balao.fb.otima{border-color:var(--verde)}
+.sim-balao.fb.parcial{border-color:var(--sol)}
+.sim-balao.fb.aprender{border-color:var(--coral)}
+.sim-balao.fb .titulo{font-weight:800;margin-bottom:6px}
+.sim-balao.fb ul{margin:6px 0 0 18px;font-weight:600;font-size:.92rem}
+.sim-balao.fase{align-self:center;background:var(--tinta);color:#fff;font-weight:800;font-size:.9rem;border-radius:999px;padding:8px 18px;box-shadow:none}
+.sim-modelo{margin-top:10px;background:var(--azul-claro);border-radius:12px;padding:10px 12px}
+.sim-modelo .rot{font-weight:800;font-size:.72rem;letter-spacing:1px;color:var(--azul-escuro)}
+.sim-modelo .en{font-weight:800;color:var(--azul-escuro);margin-top:2px}
+.sim-entrada{position:sticky;bottom:0;background:var(--papel);padding:10px 0 14px;border-top:2px solid rgba(33,49,58,.08);margin-top:16px}
+.sim-entrada textarea{width:100%;min-height:74px;font-family:inherit;font-weight:700;font-size:1rem;padding:12px;border:2.5px solid rgba(33,49,58,.2);border-radius:14px;resize:vertical;background:var(--branco)}
+.sim-botoes{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.sim-botoes .btn-principal{width:auto;flex:1;min-width:120px;padding:12px 10px;font-size:.95rem}
+.btn-mic-grande{background:var(--coral);box-shadow:0 4px 0 #B23A17}
+.btn-mic-grande.gravando{animation:pulsar 1s infinite}
+@keyframes pulsar{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+.sim-acoes-fb{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.sim-acoes-fb button{font-weight:800;font-size:.85rem;padding:9px 12px;border-radius:12px;background:rgba(33,49,58,.07)}
+.cv-area{width:100%;min-height:150px;font-family:inherit;font-weight:600;font-size:.95rem;padding:12px;border:2.5px solid rgba(33,49,58,.2);border-radius:14px;background:var(--branco);margin-top:8px}
+.cv-tag{display:inline-flex;align-items:center;gap:6px;background:var(--verde-claro);border:2px solid var(--verde);color:var(--verde-escuro);font-weight:800;font-size:.88rem;border-radius:999px;padding:6px 13px;margin:4px 4px 0 0}
 </style>
 </head>
 <body>
@@ -390,6 +426,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--azul);outline-offse
     <div class="op-nivel" style="cursor:default"><span class="ico">🗣️</span><span><b>Pronúncia escrita + voz nativa + microfone</b><span>Você lê como soa, ouve a voz americana e testa sua fala no 🎤</span></span></div>
     <div class="op-nivel" style="cursor:default"><span class="ico">🧠</span><span><b>Revisão na hora certa (ciência da memória)</b><span>O site sabe quando você vai esquecer e te chama pra revisar antes</span></span></div>
     <div class="op-nivel" style="cursor:default"><span class="ico">♾️</span><span><b>Escalada infinita de níveis</b><span>Nível 1, 2, 3... até onde você aguentar. Pode tentar pular — mas se falhar, volta pro início!</span></span></div>
+    <div class="op-nivel" style="cursor:default"><span class="ico">🎙️</span><span><b>Simulador de Entrevista H-2B / H-2A</b><span>Treine em inglês, por voz, as entrevistas reais: agência, empregador, consulado e chegada nos EUA</span></span></div>
     <div class="op-nivel" style="cursor:default"><span class="ico">👨‍👩‍👧</span><span><b>Para todas as idades</b><span>O conteúdo se adapta à idade do perfil — do seu filho de 8 anos até o vovô</span></span></div>
     <div class="op-nivel" style="cursor:default"><span class="ico">🏆</span><span><b>Ranking entre os perfis</b><span>Cada pessoa cria sua conta e a família compete no XP</span></span></div>
   </div>
@@ -539,6 +576,59 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--azul);outline-offse
     <div class="acoes">
       <button class="btn-principal" id="btnProximoModulo">Próximo módulo →</button>
       <button class="btn-principal azul" id="btnVoltarTrilha">Ver minha trilha</button>
+    </div>
+  </div>
+</main>
+
+<!-- ================= TELA: SIMULADOR (CONFIG) ================= -->
+<main class="tela" id="tela-simulador">
+  <div class="cabecalho-trilha"><h2>🎙️ Simulador de Entrevista</h2><p>Treine <b>de verdade</b>, em inglês, as entrevistas do caminho H-2B/H-2A: agência → empregador → consulado → chegada nos EUA. O site pergunta, você responde falando ou digitando — e ele te corrige na hora.</p></div>
+  <div class="sim-secao">1️⃣ Qual programa?</div>
+  <div class="sim-chips" id="simProg">
+    <button class="fchip ativo" data-v="h2b">🏨 H-2B (hotéis, paisagismo, cozinha...)</button>
+    <button class="fchip" data-v="h2a">🌾 H-2A (agricultura, fazendas)</button>
+  </div>
+  <div class="sim-secao">2️⃣ Qual etapa você quer treinar?</div>
+  <div class="sim-chips" id="simTipo">
+    <button class="fchip" data-v="recrutador">📋 Recrutador / agência</button>
+    <button class="fchip ativo" data-v="empregador">🤝 Empregador (a vaga)</button>
+    <button class="fchip" data-v="consulado">🏛️ Consulado (visto)</button>
+    <button class="fchip" data-v="chegada">🛬 Chegada nos EUA (imigração)</button>
+    <button class="fchip" data-v="completa">🎬 Jornada completa (as 4 etapas)</button>
+  </div>
+  <p class="sim-nota" id="simTipoNota"></p>
+  <div id="simVagaBloco">
+    <div class="sim-secao">3️⃣ Qual tipo de vaga?</div>
+    <div class="sim-chips" id="simVaga"></div>
+  </div>
+  <div class="sim-secao">⚙️ Como você quer treinar?</div>
+  <label class="sim-opcao"><input type="checkbox" id="simVoz" checked> 🔊 Entrevistador fala as perguntas em voz alta</label>
+  <label class="sim-opcao"><input type="checkbox" id="simRealista"> 😰 Modo realista — esconder tradução e pronúncia (como na vida real)</label>
+  <button class="btn-principal" id="simIniciar" style="margin-top:18px">🎬 Começar a entrevista</button>
+  <p class="sim-nota" id="simContagem" style="text-align:center"></p>
+  <div class="sim-secao" style="margin-top:26px">📄 Ou treine a partir do SEU currículo</div>
+  <p class="sim-nota">Cole abaixo o texto do seu currículo (ou uma lista das suas experiências). O FalaFina identifica suas áreas e monta uma entrevista personalizada, com as perguntas e <b>ferramentas</b> daquele trabalho.</p>
+  <textarea class="cv-area" id="cvTexto" placeholder="Ex.: Trabalhei 3 anos com jardinagem e roçada, sei operar cortador de grama e roçadeira. Também fui ajudante de pedreiro e pintor..."></textarea>
+  <button class="btn-principal azul" id="cvAnalisar" style="margin-top:10px">🔎 Analisar meu currículo</button>
+  <div id="cvResultado"></div>
+</main>
+
+<!-- ================= TELA: ENTREVISTA (CHAT) ================= -->
+<main class="tela" id="tela-entrevista">
+  <div class="quiz-topo">
+    <div class="barra-prog"><i id="simBarra" style="width:0%"></i></div>
+    <span class="cont" id="simCont"></span>
+  </div>
+  <div class="sim-chat" id="simChat"></div>
+  <div class="sim-entrada" id="simEntrada">
+    <textarea id="simResposta" placeholder="Responda em INGLÊS aqui... (ou aperte 🎤 e fale)"></textarea>
+    <div class="sim-botoes">
+      <button class="btn-principal btn-mic-grande" id="simMic">🎤 Falar</button>
+      <button class="btn-principal" id="simEnviar">Responder ✔</button>
+    </div>
+    <div class="sim-botoes">
+      <button class="btn-principal azul" id="simEnsina" style="font-size:.88rem">🙋 Não sei — me ensina</button>
+      <button class="btn-principal" id="simEncerrar" style="background:var(--tinta-suave);box-shadow:0 4px 0 #3d4a52;font-size:.88rem">🏁 Encerrar</button>
     </div>
   </div>
 </main>
@@ -1796,6 +1886,9 @@ function renderTrilha(){
   }
   html += `<button class="btn-principal" id="btnEscalada" style="margin:10px 0 0;background:var(--coral);box-shadow:0 4px 0 #B23A17">🗼 Escalada Infinita · você está no nível ${(Progresso.dados.escalada && Progresso.dados.escalada.nivel) || 1}</button>`;
   html += `<button class="btn-principal" id="btnInfinito" style="margin:10px 0 0">♾️ Modo Infinito · nunca acaba</button>`;
+  if(!usuarioCrianca()){
+    html += `<button class="btn-principal" id="btnSimulador" style="margin:10px 0 0;background:var(--azul);box-shadow:0 4px 0 var(--azul-escuro)">🎙️ Simulador de Entrevista · H-2B/H-2A</button>`;
+  }
   html += `<button class="btn-principal" id="btnRanking" style="margin:10px 0 0;background:#B8860B;box-shadow:0 4px 0 #8A6508">🏆 Ranking dos perfis</button>`;
   if(temFeito){
     html += `<button class="btn-principal azul" id="btnTreino" style="margin:10px 0 0">🎯 Treino Livre · só o que você já aprendeu</button>`;
@@ -1839,6 +1932,8 @@ function renderTrilha(){
   if(br) br.addEventListener("click", iniciarRevisao);
   const be = $("#btnEscalada");
   if(be) be.addEventListener("click", () => { renderEscalada(); irPara("tela-escalada"); });
+  const bsim = $("#btnSimulador");
+  if(bsim) bsim.addEventListener("click", () => { renderSimConfig(); irPara("tela-simulador"); });
   const brk = $("#btnRanking");
   if(brk) brk.addEventListener("click", () => { renderRanking(); irPara("tela-ranking"); });
 }
@@ -2207,13 +2302,19 @@ function renderQuizPergunta(){
     $("#quizCont").textContent = `${feitas}/${quizEstado.total}`;
   }
   if(q.tipo === "montar"){ renderMontar(q); return; }
+  /* CORREÇÃO: embaralha as opções a CADA exibição e recalcula a certa.
+     Antes, quizzes escritos à mão tinham a resposta quase sempre na
+     letra B — dava pra passar de fase sem aprender nada. */
+  const textoCerto = q.opcoes[q.correta];
+  const opcoesVista = embaralhar(q.opcoes.slice());
+  const idxCerto = opcoesVista.indexOf(textoCerto);
   const letras = ["A","B","C","D"];
   let html = (q.figura ? `<div class="quiz-figura">${q.figura}</div>` : "") + `<h2 class="quiz-pergunta">${esc(q.pergunta)}</h2>`;
   if(q.falar){
     html += `<div class="quiz-sub"><button class="btn-som" data-falar="${esc(q.falar)}" aria-label="Ouvir">🔊</button> Ouça antes de responder</div>`;
   }
   html += `<div class="quiz-opcoes">`;
-  q.opcoes.forEach((op,i) => {
+  opcoesVista.forEach((op,i) => {
     html += `<button class="quiz-op" data-i="${i}"><span class="letra">${letras[i]}</span><span>${esc(op)}</span></button>`;
   });
   html += `</div>
@@ -2240,7 +2341,7 @@ function renderQuizPergunta(){
       const i = Number(btn.dataset.i);
       const ops = $("#quizConteudo").querySelectorAll(".quiz-op");
       ops.forEach(b => b.disabled = true);
-      const certo = (i === q.correta);
+      const certo = (i === idxCerto);
       aplicarResultado(certo, q);
       if(certo){
         btn.classList.add("certa");
@@ -2251,11 +2352,11 @@ function renderQuizPergunta(){
         setTimeout(avancarQuiz, quizEstado.infinito ? 1200 : 1500);
       } else {
         btn.classList.add("errada");
-        ops[q.correta].classList.add("certa");
+        ops[idxCerto].classList.add("certa");
         fb.className = "feedback erro";
         fb.innerHTML = quizEstado.infinito
-          ? `<div class="titulo">❌ Sequência zerada! A certa era "${esc(q.opcoes[q.correta])}"</div><div class="dica">${esc(q.dica)}<br><b>Ela volta mais pra frente — na próxima você acerta.</b></div>`
-          : `<div class="titulo">❌ Ainda não. A certa era "${esc(q.opcoes[q.correta])}"</div><div class="dica">${esc(q.dica)}<br><b>Essa pergunta vai voltar — se prepara!</b></div>`;
+          ? `<div class="titulo">❌ Sequência zerada! A certa era "${esc(textoCerto)}"</div><div class="dica">${esc(q.dica)}<br><b>Ela volta mais pra frente — na próxima você acerta.</b></div>`
+          : `<div class="titulo">❌ Ainda não. A certa era "${esc(textoCerto)}"</div><div class="dica">${esc(q.dica)}<br><b>Essa pergunta vai voltar — se prepara!</b></div>`;
         setTimeout(avancarQuiz, 3200);
       }
     });
@@ -2542,6 +2643,11 @@ document.querySelectorAll(".op-nivel").forEach(btn => {
   });
 });
 $("#btnVoltar").addEventListener("click", () => {
+  if(telaAtual === "tela-entrevista"){
+    if(confirm("Sair da entrevista? Seu XP ganho fica guardado.")){ encerrarSim(); }
+    return;
+  }
+  if(telaAtual === "tela-simulador"){ renderTrilha(); irPara("tela-trilha"); return; }
   if(telaAtual === "tela-quiz"){
     if(quizEstado && quizEstado.infinito){ encerrarInfinito(); return; }
     if(quizEstado && quizEstado.escalada){
@@ -2596,7 +2702,11 @@ $("#fotoInput").addEventListener("change", e => {
     fotoTemp = cv.toDataURL("image/jpeg", 0.75);
     $("#fotoPreview").innerHTML = `<img src="${fotoTemp}" alt="foto">`;
   };
-  img.src = URL.createObjectURL(arq);
+  const urlTmp = URL.createObjectURL(arq);
+  const soltarUrl = () => URL.revokeObjectURL(urlTmp);
+  img.addEventListener("load", soltarUrl, { once:true });
+  img.addEventListener("error", soltarUrl, { once:true });
+  img.src = urlTmp;
 });
 $("#btnIrQuiz").addEventListener("click", iniciarQuiz);
 $("#btnVoltarTrilha").addEventListener("click", () => { renderTrilha(); irPara("tela-trilha"); });
@@ -2604,6 +2714,491 @@ $("#btnProximoModulo").addEventListener("click", (e) => {
   const id = e.currentTarget.dataset.mod;
   if(id) abrirModulo(id);
 });
+
+/* ==================================================================
+   SIMULADOR DE ENTREVISTA H-2B / H-2A (100% offline)
+   Etapas reais do caminho do trabalhador: recrutador → empregador →
+   consulado → chegada (CBP). Banco original FalaFina construído a
+   partir de fontes oficiais (USCIS, DOL, consulados) — jul/2026.
+   Regras do motor: fila embaralhada SEM repetição; o que a pessoa
+   erra volta numa rodada de reforço; terminou tudo → recomeça.
+   ================================================================== */
+const SIM_VAGAS = {
+  h2b: [
+    { id:"geral", nome:"🎯 Geral (qualquer vaga)" },
+    { id:"landscaping", nome:"🌿 Paisagismo / Jardinagem" },
+    { id:"housekeeping", nome:"🛏️ Camareira / Limpeza (hotel)" },
+    { id:"cook", nome:"👨‍🍳 Cozinha (cook)" },
+    { id:"dishwasher", nome:"🍽️ Lavador de pratos (steward)" },
+    { id:"server", nome:"🤵 Garçom / Garçonete" },
+    { id:"frontdesk", nome:"🛎️ Recepção de hotel" },
+    { id:"construction", nome:"🧱 Construção" },
+    { id:"maintenance", nome:"🔧 Manutenção" },
+    { id:"forestry", nome:"🌲 Florestal (tree planting)" },
+    { id:"processing", nome:"🐟 Frigorífico / Peixe e carne" },
+    { id:"amusement", nome:"🎡 Parque de diversões" },
+    { id:"golf", nome:"⛳ Campo de golfe" },
+    { id:"lifeguard", nome:"🏊 Salva-vidas" },
+    { id:"skiresort", nome:"🎿 Resort de esqui / inverno" }
+  ],
+  h2a: [
+    { id:"geral", nome:"🎯 Geral (qualquer vaga)" },
+    { id:"colheita", nome:"🥬 Colheita / Lavoura" },
+    { id:"estufa", nome:"🌱 Estufa / Viveiro (greenhouse)" },
+    { id:"maquinas", nome:"🚜 Operador de máquinas" },
+    { id:"pecuaria", nome:"🐄 Pecuária / Gado / Leite" },
+    { id:"pomar", nome:"🍎 Pomar (frutas em árvore)" },
+    { id:"packing", nome:"📦 Packing house (embalagem)" },
+    { id:"irrigacao", nome:"💧 Irrigação" }
+  ]
+};
+const SIM_TIPOS_NOTA = {
+  recrutador: "A agência quer saber se você é confiável e está pronto pra temporada. Dica de ouro: recrutador sério NUNCA cobra do trabalhador.",
+  empregador: "O empregador americano quer gente que trabalha duro, chega no horário e volta na próxima temporada. Perguntas abertas e cenários reais.",
+  consulado: "O oficial decide seu visto em ~3 minutos. Ele quer 2 coisas: você entende o trabalho E vai voltar pro Brasil no fim. Respostas curtas e diretas.",
+  chegada: "O oficial da imigração (CBP) no aeroporto confirma quem você é, pra onde vai e por quanto tempo. Tenha os documentos na mão e responda com calma.",
+  completa: "As 4 etapas em sequência, como na vida real: agência → empregador → consulado → aeroporto. A maratona completa!"
+};
+/* Cada pergunta: t=etapas, pr=programas, v=vagas(null=geral),
+   en/som/pt = a pergunta | ps = pontos que a resposta deve ter
+   (rótulo em PT + palavras-chave em inglês) | mo = resposta modelo |
+   dk = dica de professor */
+const BANCO_SIM = [
+/* ---------- CONSULADO (visto) — vale para H-2B e H-2A ---------- */
+{t:["consulado"],pr:["h2b","h2a"],v:null,en:"What will you do in the United States?",som:"uót uíl iú du in dhi iunáited stêits?",pt:"O que você vai fazer nos Estados Unidos?",ps:[{pt:"dizer o trabalho (work)",w:["work","job","worker"]},{pt:"dizer que é temporário/sazonal",w:["temporary","seasonal","season","months"]}],mo:{en:"I will work as a seasonal worker. It is a temporary job.",som:"ái uíl uôrk az a sí-zonal uôr-ker. it iz a tém-porári djób.",pt:"Vou trabalhar como trabalhador sazonal. É um trabalho temporário."},dk:"A palavra mágica do consulado é TEMPORARY. Diga a função e deixe claro que é por uma temporada."},
+{t:["consulado"],pr:["h2b","h2a"],v:null,en:"Who is your employer in the United States?",som:"rú iz iór em-plói-er in dhi iunáited stêits?",pt:"Quem é seu empregador nos Estados Unidos?",ps:[{pt:"dizer o nome da empresa",w:["company","employer","my employer is","the name"]},{pt:"dizer onde ela fica (cidade/estado)",w:["in","state","city","florida","texas","colorado","carolina"]}],mo:{en:"My employer is Green Valley Resort, in Colorado.",som:"mái em-plói-er iz grín véli rizórt, in colorádo.",pt:"Meu empregador é o Green Valley Resort, no Colorado."},dk:"Decore nome da empresa, cidade e estado. Não saber quem é seu patrão = visto negado na hora."},
+{t:["consulado"],pr:["h2b","h2a"],v:null,en:"How long will you stay in the United States?",som:"ráu lóng uíl iú stêi in dhi iunáited stêits?",pt:"Quanto tempo você vai ficar nos Estados Unidos?",ps:[{pt:"dizer a duração (meses)",w:["months","month","until"]},{pt:"dizer que volta no fim do contrato",w:["contract","go back","return","come back","brazil","home"]}],mo:{en:"About eight months, until the end of my contract. Then I return to Brazil.",som:"abáut êit mãnths, antíl dhi énd óv mái cón-tract. dhén ái ritôrn tu brazíl.",pt:"Uns oito meses, até o fim do contrato. Depois eu volto pro Brasil."},dk:"Sempre amarre a duração ao contrato e ao retorno. Nunca diga \"não sei\" nem \"o máximo possível\"."},
+{t:["consulado"],pr:["h2b","h2a"],v:null,en:"What kind of work will you do there?",som:"uót káind óv uôrk uíl iú du dhér?",pt:"Que tipo de trabalho você vai fazer lá?",ps:[{pt:"nomear a função",w:["landscaping","housekeeping","cook","farm","harvest","construction","dishwasher","server","maintenance","worker","cleaning","kitchen"]},{pt:"citar uma tarefa do dia a dia",w:["clean","cut","plant","cook","wash","build","pick","mow","serve","fix"]}],mo:{en:"I will work in landscaping: I will mow lawns, plant flowers and clean gardens.",som:"ái uíl uôrk in lénds-kêiping: ái uíl môu lóns, plént fláuers énd clín gár-dens.",pt:"Vou trabalhar com paisagismo: cortar grama, plantar flores e limpar jardins."},dk:"Mostre que você LEU a oferta de trabalho. Cite 2 ou 3 tarefas reais da vaga."},
+{t:["consulado"],pr:["h2b","h2a"],v:null,en:"How much will you be paid?",som:"ráu mãtch uíl iú bi pêid?",pt:"Quanto você vai receber?",ps:[{pt:"dizer o valor por hora",w:["dollars","per hour","an hour","hour"]}],mo:{en:"Sixteen dollars per hour, following my contract.",som:"siks-tín dólars per áuer, fólouin mái cón-tract.",pt:"Dezesseis dólares por hora, conforme meu contrato."},dk:"Decore o valor por hora que está no seu contrato. Titubear aqui levanta suspeita de oferta falsa."},
+{t:["consulado"],pr:["h2b","h2a"],v:null,en:"Have you ever been to the United States before?",som:"rév iú éver bín tu dhi iunáited stêits bifór?",pt:"Você já esteve nos Estados Unidos antes?",ps:[{pt:"responder sim ou não com sinceridade",w:["yes","no","never","first time"]}],mo:{en:"No, this is my first time. / Yes, I worked two seasons and always returned to Brazil.",som:"nôu, dhis iz mái fôrst táim. / iés, ái uôrkt tchú sí-zons énd ól-uêis ritôrnd tu brazíl.",pt:"Não, é minha primeira vez. / Sim, trabalhei duas temporadas e sempre voltei ao Brasil."},dk:"Se já foi, diga que SEMPRE voltou no prazo — isso é ponto a favor. Nunca minta: eles têm todo o histórico."},
+{t:["consulado"],pr:["h2b","h2a"],v:null,en:"Do you have family or friends in the United States?",som:"du iú rév fé-mili ór frénds in dhi iunáited stêits?",pt:"Você tem família ou amigos nos Estados Unidos?",ps:[{pt:"responder com sinceridade",w:["yes","no"]}],mo:{en:"No, I don't. All my family lives in Brazil.",som:"nôu, ái dôunt. ól mái fé-mili lívz in brazíl.",pt:"Não. Toda a minha família mora no Brasil."},dk:"Responda a verdade — esconder parente e o oficial descobrir é pior que ter parente. Se tiver, diga a relação e o status."},
+{t:["consulado"],pr:["h2b","h2a"],v:null,en:"Are you married? Do you have children?",som:"ar iú mé-rid? du iú rév tchíl-dren?",pt:"Você é casado? Tem filhos?",ps:[{pt:"responder sobre família",w:["married","single","children","kids","wife","husband","daughter","son","no"]}],mo:{en:"Yes, I'm married and I have two children. They will stay in Brazil with my wife.",som:"iés, áim mé-rid énd ái rév tchú tchíl-dren. dhêi uíl stêi in brazíl uíth mái uáif.",pt:"Sim, sou casado e tenho dois filhos. Eles vão ficar no Brasil com minha esposa."},dk:"Família no Brasil é seu MELHOR argumento de retorno. Sempre complete: \"eles ficam no Brasil\"."},
+{t:["consulado"],pr:["h2b","h2a"],v:null,en:"Who will take care of your children while you are away?",som:"rú uíl têik quér óv iór tchíl-dren uáil iú ar auêi?",pt:"Quem vai cuidar dos seus filhos enquanto você estiver fora?",ps:[{pt:"dizer quem cuida (esposa, mãe...)",w:["wife","husband","mother","grandmother","family","my"]}],mo:{en:"My wife will take care of them, with help from my mother.",som:"mái uáif uíl têik quér óv dhém, uíth rélp fróm mái mã-dher.",pt:"Minha esposa vai cuidar deles, com ajuda da minha mãe."},dk:"Ter um plano de cuidado mostra responsabilidade E raiz no Brasil — dois pontos de uma vez."},
+{t:["consulado"],pr:["h2b","h2a"],v:null,en:"What do you do in Brazil?",som:"uót du iú du in brazíl?",pt:"O que você faz no Brasil?",ps:[{pt:"dizer seu trabalho atual",w:["work","worker","i am a","farmer","driver","painter","gardener","cleaner","cook","builder"]}],mo:{en:"I work as a gardener in my city. I have five years of experience.",som:"ái uôrk az a gár-dener in mái cíti. ái rév fáiv iérs óv eks-pí-riens.",pt:"Trabalho como jardineiro na minha cidade. Tenho cinco anos de experiência."},dk:"Conecte seu trabalho no Brasil com a vaga nos EUA: experiência parecida = candidato que faz sentido."},
+{t:["consulado"],pr:["h2b","h2a"],v:null,en:"Why do you want to work in the United States?",som:"uái du iú uónt tu uôrk in dhi iunáited stêits?",pt:"Por que você quer trabalhar nos Estados Unidos?",ps:[{pt:"dar um motivo honesto (dinheiro/família/experiência)",w:["money","family","save","experience","house","better","help"]},{pt:"mostrar plano no Brasil",w:["brazil","home","my country","return","back"]}],mo:{en:"I want to save money to build my house in Brazil and help my family.",som:"ái uónt tu sêiv mâni tu bíld mái ráus in brazíl énd rélp mái fé-mili.",pt:"Quero juntar dinheiro pra construir minha casa no Brasil e ajudar minha família."},dk:"Motivo com destino NO BRASIL (casa, negócio, família) mostra que o dinheiro volta com você."},
+{t:["consulado"],pr:["h2b","h2a"],v:null,en:"Will you come back to your country? Why?",som:"uíl iú cãm béc tu iór cân-tri? uái?",pt:"Você vai voltar pro seu país? Por quê?",ps:[{pt:"dizer que sim",w:["yes","of course","sure"]},{pt:"dar os vínculos (família/casa/trabalho)",w:["family","house","children","wife","job","farm","business","my"]}],mo:{en:"Yes, of course. My family, my house and my life are in Brazil.",som:"iés, óv córs. mái fé-mili, mái ráus énd mái láif ar in brazíl.",pt:"Sim, claro. Minha família, minha casa e minha vida estão no Brasil."},dk:"ESSA é a pergunta do visto. Liste seus vínculos: família, casa, trabalho, estudo. Curto e firme."},
+{t:["consulado"],pr:["h2b","h2a"],v:null,en:"How did you find this job?",som:"ráu did iú fáind dhis djób?",pt:"Como você encontrou esse trabalho?",ps:[{pt:"dizer o caminho (agência/amigo/site)",w:["agency","recruiter","friend","internet","website","online","referred"]}],mo:{en:"Through a recruiting agency. A friend who worked there recommended it.",som:"thru a ricrútin êi-djen-si. a frénd rú uôrkt dhér récomêndid it.",pt:"Através de uma agência de recrutamento. Um amigo que trabalhou lá indicou."},dk:"Resposta simples e verdadeira. Se foi agência, saiba o nome dela."},
+{t:["consulado"],pr:["h2b","h2a"],v:null,en:"Did you pay anyone to get this job?",som:"did iú pêi éni-uan tu guét dhis djób?",pt:"Você pagou alguém para conseguir esse trabalho?",ps:[{pt:"dizer que NÃO pagou pela vaga",w:["no","did not pay","didn't pay","free"]}],mo:{en:"No. The recruiter never charged me for the job.",som:"nôu. dhi ricrúter néver tchárdjd mi fór dhi djób.",pt:"Não. O recrutador nunca me cobrou pela vaga."},dk:"⚠️ IMPORTANTÍSSIMO: cobrar do trabalhador pela vaga é ILEGAL no programa H-2. Se cobraram de você, é sinal de golpe — denuncie."},
+{t:["consulado"],pr:["h2b","h2a"],v:null,en:"What will you do when your contract ends?",som:"uót uíl iú du uén iór cón-tract énds?",pt:"O que você vai fazer quando o contrato acabar?",ps:[{pt:"dizer que volta ao Brasil",w:["return","go back","come back","brazil","home"]}],mo:{en:"I will return to Brazil immediately to be with my family.",som:"ái uíl ritôrn tu brazíl imí-dietli tu bi uíth mái fé-mili.",pt:"Vou voltar pro Brasil imediatamente pra ficar com minha família."},dk:"Sem \"talvez\", sem \"depende\". Contrato acabou → avião → Brasil. É isso que o oficial precisa ouvir."},
+{t:["consulado"],pr:["h2b","h2a"],v:null,en:"Where will you live in the United States?",som:"uér uíl iú lív in dhi iunáited stêits?",pt:"Onde você vai morar nos Estados Unidos?",ps:[{pt:"dizer o tipo de moradia",w:["housing","employer","company","apartment","house","provides","near"]}],mo:{en:"My employer provides housing near the work site.",som:"mái em-plói-er prováids ráuzing nír dhi uôrk sáit.",pt:"Meu empregador fornece moradia perto do local de trabalho."},dk:"No H-2A a moradia é sempre paga pelo patrão; no H-2B depende do contrato. Saiba como é no SEU caso."},
+{t:["consulado"],pr:["h2b","h2a"],v:null,en:"Do you know the dates of your contract?",som:"du iú nôu dhi dêits óv iór cón-tract?",pt:"Você sabe as datas do seu contrato?",ps:[{pt:"dizer início e fim",w:["from","to","until","april","may","june","october","november","december","march","starts","ends"]}],mo:{en:"Yes. It starts in April and ends in November.",som:"iés. it stárts in êi-pril énd énds in novêm-ber.",pt:"Sim. Começa em abril e termina em novembro."},dk:"Decore mês de início e de fim. Está tudo no seu contrato e no I-797 — leia antes da entrevista."},
+{t:["consulado"],pr:["h2b","h2a"],v:null,en:"Do you speak English?",som:"du iú spík ín-glish?",pt:"Você fala inglês?",ps:[{pt:"responder com honestidade e atitude",w:["little","learning","yes","study","understand","basic"]}],mo:{en:"I speak a little English, but I understand instructions and I learn fast.",som:"ái spík a lírol ín-glish, bât ái ãnder-sténd instrâk-shions énd ái lôrn fést.",pt:"Falo um pouco de inglês, mas entendo instruções e aprendo rápido."},dk:"O combo vencedor: \"a little English + I learn fast + I work hard\". Honesto e confiante."},
+{t:["consulado"],pr:["h2b","h2a"],v:null,en:"Have you ever been denied a visa?",som:"rév iú éver bín dináid a víza?",pt:"Você já teve um visto negado?",ps:[{pt:"responder com sinceridade",w:["no","yes","never"]}],mo:{en:"No, never. This is my first application. / Yes, in 2023, but my situation changed: now I have a job contract.",som:"nôu, néver. dhis iz mái fôrst épli-quêi-shion.",pt:"Não, nunca. Este é meu primeiro pedido. / Sim, em 2023, mas minha situação mudou: agora tenho contrato."},dk:"Eles VEEM o histórico na tela. Mentir aqui é a única resposta 100% errada."},
+{t:["consulado"],pr:["h2b","h2a"],v:null,en:"Do you intend to live permanently in the United States?",som:"du iú inténd tu lív pôr-manent-li in dhi iunáited stêits?",pt:"Você pretende morar permanentemente nos Estados Unidos?",ps:[{pt:"negar com firmeza",w:["no"]},{pt:"reforçar o retorno",w:["return","back","brazil","temporary","home","family"]}],mo:{en:"No. My plan is temporary work only. My life is in Brazil.",som:"nôu. mái plén iz tém-porári uôrk ôunli. mái láif iz in brazíl.",pt:"Não. Meu plano é só trabalho temporário. Minha vida é no Brasil."},dk:"Resposta seca e segura: NO + temporary + my life is in Brazil. Não enrole."},
+{t:["consulado"],pr:["h2b","h2a"],v:null,en:"How much money will you take with you?",som:"ráu mãtch mâni uíl iú têik uíth iú?",pt:"Quanto dinheiro você vai levar com você?",ps:[{pt:"dizer um valor razoável",w:["dollars","hundred","thousand","reais"]}],mo:{en:"About five hundred dollars, for the first weeks before my first paycheck.",som:"abáut fáiv rân-dred dólars, fór dhi fôrst uíks bifór mái fôrst pêi-tchék.",pt:"Uns quinhentos dólares, pras primeiras semanas antes do primeiro pagamento."},dk:"Mostre que você planejou o começo: um valor pro período até o primeiro salário."},
+{t:["consulado"],pr:["h2b","h2a"],v:null,en:"Who paid for your visa and travel expenses?",som:"rú pêid fór iór víza énd trével eks-pén-siz?",pt:"Quem pagou seu visto e as despesas de viagem?",ps:[{pt:"explicar quem pagou",w:["employer","company","i paid","reimburse","myself"]}],mo:{en:"I paid the visa fee and my employer will reimburse me, as the contract says.",som:"ái pêid dhi víza fí énd mái em-plói-er uíl ri-imbôrs mi, az dhi cón-tract séz.",pt:"Eu paguei a taxa do visto e o empregador vai me reembolsar, como diz o contrato."},dk:"Saiba o combinado do SEU contrato. Reembolso de taxas é direito comum no programa H-2."},
+{t:["consulado"],pr:["h2a"],v:null,en:"Have you worked in agriculture before?",som:"rév iú uôrkt in égri-cãl-tcher bifór?",pt:"Você já trabalhou na agricultura antes?",ps:[{pt:"contar a experiência rural",w:["yes","farm","harvest","years","crops","worked","family farm"]}],mo:{en:"Yes, I worked five years on farms in Brazil, harvesting coffee and vegetables.",som:"iés, ái uôrkt fáiv iérs ón fárms in brazíl, rár-vesting cófi énd védj-tabols.",pt:"Sim, trabalhei cinco anos em fazendas no Brasil, colhendo café e verduras."},dk:"H-2A é agricultura: mostre chão de roça. Cite culturas que você já colheu ou plantou."},
+{t:["consulado"],pr:["h2b"],v:null,en:"Is this job related to your work in Brazil?",som:"iz dhis djób riléited tu iór uôrk in brazíl?",pt:"Esse trabalho tem relação com o que você faz no Brasil?",ps:[{pt:"conectar as experiências",w:["yes","same","similar","experience","also"]}],mo:{en:"Yes, it's similar. In Brazil I also work with cleaning and maintenance.",som:"iés, its sí-milar. in brazíl ái ólsou uôrk uíth clínin énd mêin-tenans.",pt:"Sim, é parecido. No Brasil eu também trabalho com limpeza e manutenção."},dk:"Encaixe faz sentido = visto sai. Sempre ache a ponte entre o que você faz e a vaga."},
+/* ---------- CHEGADA NOS EUA (CBP / aeroporto) ---------- */
+{t:["chegada"],pr:["h2b","h2a"],v:null,en:"What is the purpose of your trip?",som:"uót iz dhi pôr-pos óv iór tríp?",pt:"Qual é o propósito da sua viagem?",ps:[{pt:"dizer que é trabalho temporário com visto",w:["work","temporary","seasonal","visa","h2b","h2a","h-2b","h-2a"]}],mo:{en:"Temporary seasonal work. I have an H-2B visa.",som:"tém-porári sí-zonal uôrk. ái rév an êitch-tchú-bí víza.",pt:"Trabalho sazonal temporário. Tenho um visto H-2B."},dk:"Frase pronta pro oficial do aeroporto: \"Temporary seasonal work, H-2B visa\". Curta e completa."},
+{t:["chegada"],pr:["h2b","h2a"],v:null,en:"Where will you be working?",som:"uér uíl iú bi uôr-king?",pt:"Onde você vai trabalhar?",ps:[{pt:"empresa",w:["company","for","resort","farm","hotel"]},{pt:"cidade/estado",w:["in","city","state","florida","texas","colorado","virginia","carolina"]}],mo:{en:"For Sunrise Farms, in North Carolina.",som:"fór sân-ráiz fárms, in nórth quéro-láina.",pt:"Para a Sunrise Farms, na Carolina do Norte."},dk:"Tenha o endereço do trabalho anotado no papel, junto com os documentos."},
+{t:["chegada"],pr:["h2b","h2a"],v:null,en:"How long will you stay?",som:"ráu lóng uíl iú stêi?",pt:"Quanto tempo você vai ficar?",ps:[{pt:"duração do contrato",w:["months","until","contract","november","october","december"]}],mo:{en:"Until November, when my contract ends.",som:"antíl novêm-ber, uén mái cón-tract énds.",pt:"Até novembro, quando meu contrato termina."},dk:"Mesma resposta do consulado: duração amarrada ao contrato."},
+{t:["chegada"],pr:["h2b","h2a"],v:null,en:"May I see your documents, please?",som:"mêi ái sí iór dó-kiuments, plíz?",pt:"Posso ver seus documentos, por favor?",ps:[{pt:"entregar e nomear os documentos",w:["here","passport","visa","petition","i-797","papers","contract"]}],mo:{en:"Yes, here you are: my passport with the visa and my petition papers.",som:"iés, rír iú ar: mái pés-port uíth dhi víza énd mái petí-shion pêi-pers.",pt:"Sim, aqui está: meu passaporte com o visto e os papéis da petição."},dk:"\"Here you are\" é o jeito educado de entregar algo. Leve passaporte, cópia do I-797 e contrato NA MÃO, não na mala despachada."},
+{t:["chegada"],pr:["h2b","h2a"],v:null,en:"Is this your first time in the United States?",som:"iz dhis iór fôrst táim in dhi iunáited stêits?",pt:"É sua primeira vez nos Estados Unidos?",ps:[{pt:"responder com sinceridade",w:["yes","no","first","second","worked"]}],mo:{en:"Yes, it's my first time.",som:"iés, its mái fôrst táim.",pt:"Sim, é minha primeira vez."},dk:"Responda só o que foi perguntado. No aeroporto, resposta curta é resposta boa."},
+{t:["chegada"],pr:["h2b","h2a"],v:null,en:"How much money are you carrying?",som:"ráu mãtch mâni ar iú qué-riing?",pt:"Quanto dinheiro você está trazendo?",ps:[{pt:"dizer o valor",w:["dollars","hundred","thousand"]}],mo:{en:"About four hundred dollars in cash.",som:"abáut fór rân-dred dólars in quésh.",pt:"Uns quatrocentos dólares em dinheiro."},dk:"Acima de 10 mil dólares é obrigatório declarar. Abaixo disso, só responda o valor com calma."},
+{t:["chegada"],pr:["h2b","h2a"],v:null,en:"Are you bringing any food, plants or animal products?",som:"ar iú brín-guing éni fúd, plénts ór éni-mal pró-dâcts?",pt:"Você está trazendo comida, plantas ou produtos de origem animal?",ps:[{pt:"responder a verdade",w:["no","yes","nothing","cookies","candy","food"]}],mo:{en:"No, I'm not bringing any food or plants.",som:"nôu, áim nót brín-guing éni fúd ór plénts.",pt:"Não, não estou trazendo comida nem plantas."},dk:"Carne, frutas, sementes e queijo = problema na alfândega. Se trouxe qualquer comida, DECLARE — mentir dá multa."},
+{t:["chegada"],pr:["h2b","h2a"],v:null,en:"How will you get to your job site?",som:"ráu uíl iú guét tu iór djób sáit?",pt:"Como você vai chegar ao local de trabalho?",ps:[{pt:"explicar o transporte",w:["bus","van","employer","pick","flight","drive","transport"]}],mo:{en:"My employer arranged a van to pick us up at the airport.",som:"mái em-plói-er arêindjd a vén tu pík âs âp ét dhi ér-port.",pt:"Meu empregador organizou uma van pra nos buscar no aeroporto."},dk:"Saiba o plano de chegada antes de embarcar. \"Pick up\" = buscar alguém."},
+{t:["chegada"],pr:["h2b","h2a"],v:null,en:"When does your work contract end?",som:"uén dâz iór uôrk cón-tract énd?",pt:"Quando termina seu contrato de trabalho?",ps:[{pt:"dizer o mês do fim",w:["november","october","december","september","march","ends","in"]}],mo:{en:"It ends in October. Then I fly back to Brazil.",som:"it énds in octôu-ber. dhén ái flái béc tu brazíl.",pt:"Termina em outubro. Depois eu volto de avião pro Brasil."},dk:"O oficial carimba sua entrada com base no contrato. Saber a data mostra que está tudo certo."},
+{t:["chegada"],pr:["h2b","h2a"],v:null,en:"Do you have a return ticket?",som:"du iú rév a ritôrn tí-quet?",pt:"Você tem passagem de volta?",ps:[{pt:"explicar a situação da volta",w:["yes","employer","buy","later","ticket","end of the season"]}],mo:{en:"My employer will arrange the return trip at the end of the season.",som:"mái em-plói-er uíl arêindj dhi ritôrn tríp ét dhi énd óv dhi sí-zon.",pt:"Meu empregador vai organizar a viagem de volta no fim da temporada."},dk:"No H-2A e em muitos H-2B, o transporte de volta é responsabilidade do patrão ao completar o contrato."},
+/* ---------- RECRUTADOR / AGÊNCIA ---------- */
+{t:["recrutador","empregador"],pr:["h2b","h2a"],v:null,en:"Tell me about yourself.",som:"tél mi abáut iór-sélf.",pt:"Fale sobre você.",ps:[{pt:"nome e cidade",w:["my name","i am","i'm","from"]},{pt:"experiência de trabalho",w:["experience","work","worked","years"]},{pt:"uma qualidade",w:["hard","fast","responsible","strong","team"]}],mo:{en:"My name is Andrio, I'm from Brazil. I have five years of experience in maintenance and I'm a hard worker.",som:"mái nêim iz ãn-drio, áim fróm brazíl. ái rév fáiv iérs óv eks-pí-riens in mêin-tenans énd áim a rárd uôr-ker.",pt:"Meu nome é Andrio, sou do Brasil. Tenho cinco anos de experiência em manutenção e sou muito trabalhador."},dk:"A pergunta mais famosa do mundo. Fórmula: nome + de onde é + experiência + uma qualidade. 20 segundos, decorada."},
+{t:["recrutador"],pr:["h2b","h2a"],v:null,en:"Have you worked abroad or in a seasonal program before?",som:"rév iú uôrkt abród ór in a sí-zonal prôu-grem bifór?",pt:"Você já trabalhou fora ou em um programa sazonal antes?",ps:[{pt:"responder com sinceridade",w:["yes","no","first","season","worked"]}],mo:{en:"No, this would be my first season, but I'm ready and motivated.",som:"nôu, dhis uúd bi mái fôrst sí-zon, bât áim rédi énd môuti-vêited.",pt:"Não, essa seria minha primeira temporada, mas estou pronto e motivado."},dk:"Primeira vez não é defeito — mostre preparo. Se já foi, cite o empregador e que completou o contrato."},
+{t:["recrutador"],pr:["h2b","h2a"],v:null,en:"Do you have a valid passport?",som:"du iú rév a vé-lid pés-port?",pt:"Você tem passaporte válido?",ps:[{pt:"confirmar e dizer a validade",w:["yes","valid","until","expires"]}],mo:{en:"Yes, my passport is valid until 2030.",som:"iés, mái pés-port iz vé-lid antíl tuénti-thôrti.",pt:"Sim, meu passaporte é válido até 2030."},dk:"Passaporte precisa valer pelo menos 6 meses além da viagem. Confira a data HOJE."},
+{t:["recrutador"],pr:["h2b","h2a"],v:null,en:"Are you available for the full season?",som:"ar iú avêi-labol fór dhi fúl sí-zon?",pt:"Você está disponível pra temporada inteira?",ps:[{pt:"confirmar disponibilidade total",w:["yes","full","available","whole","complete","entire"]}],mo:{en:"Yes, I'm available for the whole season, from start to finish.",som:"iés, áim avêi-labol fór dhi rôul sí-zon, fróm stárt tu fí-nish.",pt:"Sim, estou disponível pra temporada inteira, do começo ao fim."},dk:"Abandonar contrato no meio queima o trabalhador E a agência. Só diga sim se for verdade."},
+{t:["recrutador"],pr:["h2b","h2a"],v:null,en:"Do you have any health problems that could affect physical work?",som:"du iú rév éni rélth pró-blems dhét cúd aféct fí-zical uôrk?",pt:"Você tem algum problema de saúde que afete trabalho físico?",ps:[{pt:"responder com sinceridade",w:["no","healthy","good health","yes"]}],mo:{en:"No, I'm in good health and I'm used to physical work.",som:"nôu, áim in gúd rélth énd áim iúzd tu fí-zical uôrk.",pt:"Não, tenho boa saúde e estou acostumado com trabalho físico."},dk:"\"I'm used to...\" = estou acostumado a... Expressão de ouro pra entrevistas de trabalho braçal."},
+{t:["recrutador"],pr:["h2b","h2a"],v:null,en:"Do you have a driver's license?",som:"du iú rév a drái-vers lái-sens?",pt:"Você tem carteira de motorista?",ps:[{pt:"responder e detalhar",w:["yes","no","license","drive","truck","car"]}],mo:{en:"Yes, I have a driver's license and I drive trucks in Brazil.",som:"iés, ái rév a drái-vers lái-sens énd ái dráiv trâks in brazíl.",pt:"Sim, tenho carteira de motorista e dirijo caminhões no Brasil."},dk:"⚠️ Desde 2026, vaga que exige dirigir veículo comercial nos EUA exige comprovar inglês. Se sua vaga tem caminhão/trator na estrada, capriche no inglês em dobro."},
+{t:["recrutador"],pr:["h2b","h2a"],v:null,en:"Why should we choose you for this position?",som:"uái shúd uí tchúz iú fór dhis pozí-shion?",pt:"Por que devemos escolher você pra essa vaga?",ps:[{pt:"citar experiência",w:["experience","years","worked"]},{pt:"citar atitude",w:["hard","never miss","on time","fast","responsible","learn"]}],mo:{en:"Because I have real experience, I never miss work and I learn fast.",som:"bicóz ái rév ríol eks-pí-riens, ái néver mís uôrk énd ái lôrn fést.",pt:"Porque tenho experiência de verdade, nunca falto e aprendo rápido."},dk:"Três balas na agulha: experience + never miss work + learn fast. Empregador americano AMA assiduidade."},
+{t:["recrutador"],pr:["h2b","h2a"],v:null,en:"When can you start?",som:"uén quén iú stárt?",pt:"Quando você pode começar?",ps:[{pt:"mostrar disponibilidade",w:["immediately","any time","ready","as soon as","now","start"]}],mo:{en:"I can start as soon as the visa process is complete.",som:"ái quén stárt az sún az dhi víza pró-ses iz com-plít.",pt:"Posso começar assim que o processo do visto estiver completo."},dk:"\"As soon as...\" = assim que... Mostra prontidão sem prometer o impossível."},
+{t:["recrutador"],pr:["h2b","h2a"],v:null,en:"Do you have any questions for me?",som:"du iú rév éni qués-tchions fór mi?",pt:"Você tem alguma pergunta pra mim?",ps:[{pt:"fazer uma pergunta inteligente",w:["housing","hours","overtime","salary","schedule","when","how","what","where"]}],mo:{en:"Yes: how is the housing, and how many hours per week will I work?",som:"iés: ráu iz dhi ráuzing, énd ráu méni áuers per uík uíl ái uôrk?",pt:"Sim: como é a moradia, e quantas horas por semana vou trabalhar?",},dk:"NUNCA responda \"no\". Pergunte sobre moradia, horas semanais ou hora extra — mostra seriedade e evita surpresa."},
+{t:["recrutador"],pr:["h2b","h2a"],v:null,en:"The recruiter asks you to pay a fee to guarantee the job. What do you say?",som:"dhi ricrúter ésks iú tu pêi a fí tu gué-rantí dhi djób. uót du iú sêi?",pt:"O recrutador pede uma taxa pra garantir a vaga. O que você diz?",ps:[{pt:"recusar",w:["no","not pay","won't pay","illegal","refuse"]}],mo:{en:"No. Charging workers for an H-2 job is illegal. I won't pay.",som:"nôu. tchár-djing uôr-kers fór an êitch-tchú djób iz ilí-gol. ái uôunt pêi.",pt:"Não. Cobrar do trabalhador por vaga H-2 é ilegal. Não vou pagar."},dk:"🚨 Lição que salva dinheiro e visto: recrutador que cobra taxa da vaga = GOLPE. Denuncie e saia fora."},
+/* ---------- EMPREGADOR — GERAL (H-2B e H-2A) ---------- */
+{t:["empregador"],pr:["h2b","h2a"],v:null,en:"Tell me about your work experience.",som:"tél mi abáut iór uôrk eks-pí-riens.",pt:"Me fale sobre sua experiência de trabalho.",ps:[{pt:"anos de experiência",w:["years","year","experience"]},{pt:"tarefas que fazia",w:["worked","clean","build","plant","cook","cut","fix","drive","harvest","paint"]}],mo:{en:"I have six years of experience. I worked with cleaning, painting and general maintenance.",som:"ái rév síks iérs óv eks-pí-riens. ái uôrkt uíth clínin, pêin-ting énd djé-neral mêin-tenans.",pt:"Tenho seis anos de experiência. Trabalhei com limpeza, pintura e manutenção geral."},dk:"Número de anos + 2 ou 3 tarefas concretas. Concreto convence; genérico não."},
+{t:["empregador"],pr:["h2b","h2a"],v:null,en:"Why do you want this job?",som:"uái du iú uónt dhis djób?",pt:"Por que você quer esse trabalho?",ps:[{pt:"motivo ligado ao trabalho",w:["experience","like","good","opportunity","work"]},{pt:"compromisso",w:["hard","season","best","complete"]}],mo:{en:"I like this kind of work and I want to do a great season for your company.",som:"ái láik dhis káind óv uôrk énd ái uónt tu du a grêit sí-zon fór iór cãm-pani.",pt:"Gosto desse tipo de trabalho e quero fazer uma ótima temporada pra sua empresa."},dk:"Fale do trabalho, não só do dinheiro. Empregador quer alguém que se importa com o serviço."},
+{t:["empregador"],pr:["h2b","h2a"],v:null,en:"Can you work weekends and holidays?",som:"quén iú uôrk uík-énds énd róli-dêis?",pt:"Você pode trabalhar fins de semana e feriados?",ps:[{pt:"confirmar",w:["yes","no problem","available","sure"]}],mo:{en:"Yes, no problem. I know weekends are the busiest days.",som:"iés, nôu pró-blem. ái nôu uík-énds ar dhi bí-ziest dêis.",pt:"Sim, sem problema. Sei que fim de semana é o período mais movimentado."},dk:"Turismo, hotel e fazenda não param no domingo. Disponibilidade total é o que fecha a vaga."},
+{t:["empregador"],pr:["h2b","h2a"],v:null,en:"Are you willing to work overtime?",som:"ar iú uí-ling tu uôrk ôuver-táim?",pt:"Você está disposto a fazer hora extra?",ps:[{pt:"aceitar",w:["yes","overtime","extra","more hours"]}],mo:{en:"Yes, I'm happy to work overtime when you need me.",som:"iés, áim répi tu uôrk ôuver-táim uén iú níd mi.",pt:"Sim, fico feliz em fazer hora extra quando precisarem."},dk:"\"Overtime\" = hora extra. Nos EUA geralmente paga 1,5x — muitos trabalhadores VÃO atrás dela."},
+{t:["empregador"],pr:["h2b","h2a"],v:null,en:"Can you lift fifty pounds?",som:"quén iú líft fífti páunds?",pt:"Você consegue levantar 50 libras (23 kg)?",ps:[{pt:"confirmar com exemplo",w:["yes","lift","heavy","strong","used to"]}],mo:{en:"Yes, I'm used to lifting heavy things every day.",som:"iés, áim iúzd tu líf-ting révi thíngs évri dêi.",pt:"Sim, estou acostumado a levantar coisas pesadas todo dia."},dk:"50 pounds ≈ 23 kg: pergunta padrão de trabalho físico. \"I'm used to it\" fecha a questão."},
+{t:["empregador"],pr:["h2b","h2a"],v:null,en:"Can you work outside in hot or cold weather?",som:"quén iú uôrk áut-sáid in rót ór côuld ué-dher?",pt:"Você consegue trabalhar do lado de fora no calor ou no frio?",ps:[{pt:"confirmar com experiência",w:["yes","sun","heat","cold","outside","used to","weather"]}],mo:{en:"Yes. In Brazil I always work outside, under strong sun.",som:"iés. in brazíl ái ól-uêis uôrk áut-sáid, ãnder stróng sân.",pt:"Sim. No Brasil eu sempre trabalho do lado de fora, sob sol forte."},dk:"Clima é motivo real de desistência — por isso perguntam. Prove com sua rotina no Brasil."},
+{t:["empregador"],pr:["h2b","h2a"],v:null,en:"What would you do if you don't understand an instruction?",som:"uót uúd iú du if iú dôunt ãnder-sténd an instrâk-shion?",pt:"O que você faria se não entendesse uma instrução?",ps:[{pt:"pedir pra repetir/mostrar",w:["ask","repeat","show me","again","explain","supervisor"]}],mo:{en:"I ask: \"Can you show me, please?\" It's better to ask than to do it wrong.",som:"ái ésk: quén iú shôu mi, plíz? its bérer tu ésk dhén tu du it róng.",pt:"Eu pergunto: \"Pode me mostrar, por favor?\". Melhor perguntar do que fazer errado."},dk:"Frase salva-vidas: \"Can you show me, please?\". Fingir que entendeu causa acidente e demissão."},
+{t:["empregador"],pr:["h2b","h2a"],v:null,en:"Do you work well in a team?",som:"du iú uôrk uél in a tím?",pt:"Você trabalha bem em equipe?",ps:[{pt:"confirmar com exemplo",w:["yes","team","together","help","coworkers"]}],mo:{en:"Yes. I like helping my coworkers so we finish the job together.",som:"iés. ái láik rélping mái cou-uôr-kers sôu uí fí-nish dhi djób tugué-dher.",pt:"Sim. Gosto de ajudar meus colegas pra terminarmos o serviço juntos."},dk:"\"Coworker\" = colega de trabalho. Times sazonais moram e trabalham juntos — convivência importa muito."},
+{t:["empregador"],pr:["h2b","h2a"],v:null,en:"Tell me about a problem you had at work and how you solved it.",som:"tél mi abáut a pró-blem iú réd ét uôrk énd ráu iú sólvd it.",pt:"Conte um problema que você teve no trabalho e como resolveu.",ps:[{pt:"descrever o problema",w:["problem","broke","late","missing","difficult","rain"]},{pt:"contar a solução",w:["fixed","solved","talked","helped","found","asked"]}],mo:{en:"One day our machine broke. I told my supervisor fast and we fixed it together, so we didn't lose the day.",som:"uãn dêi áuer machín brôuk. ái tôuld mái súper-váizor fést énd uí fíkst it tugué-dher, sôu uí dídnt lúz dhi dêi.",pt:"Um dia nossa máquina quebrou. Avisei meu supervisor rápido e consertamos juntos, e não perdemos o dia."},dk:"Fórmula PROBLEMA → AÇÃO → RESULTADO. Tenha UMA história dessas decorada — serve pra qualquer entrevista."},
+{t:["empregador"],pr:["h2b","h2a"],v:null,en:"What are your strengths?",som:"uót ar iór stréngths?",pt:"Quais são seus pontos fortes?",ps:[{pt:"citar 2-3 qualidades",w:["hard","fast","responsible","punctual","honest","strong","organized","learn"]}],mo:{en:"I'm punctual, honest and I learn fast.",som:"áim pânk-tchual, ó-nest énd ái lôrn fést.",pt:"Sou pontual, honesto e aprendo rápido."},dk:"Punctual (pontual), honest (honesto), reliable (confiável), hardworking (trabalhador). Escolha 3 e prove com fatos se pedirem."},
+{t:["empregador"],pr:["h2b","h2a"],v:null,en:"Have you ever missed work? Tell me about your attendance.",som:"rév iú éver míst uôrk? tél mi abáut iór atén-dans.",pt:"Você já faltou ao trabalho? Fale sobre sua assiduidade.",ps:[{pt:"mostrar assiduidade",w:["never","always on time","don't miss","rarely","attendance"]}],mo:{en:"I almost never miss work. In my last job I had perfect attendance for two years.",som:"ái ól-moust néver mís uôrk. in mái lést djób ái réd pôr-fect atén-dans fór tchú iérs.",pt:"Quase nunca falto. No meu último emprego tive assiduidade perfeita por dois anos."},dk:"\"Attendance\" = assiduidade. É O critério nº 1 do empregador sazonal: sem você, o hotel/fazenda para."},
+{t:["empregador"],pr:["h2b","h2a"],v:null,en:"Are you willing to return next season?",som:"ar iú uí-ling tu ritôrn nékst sí-zon?",pt:"Você toparia voltar na próxima temporada?",ps:[{pt:"demonstrar interesse em voltar",w:["yes","love to","return","next season","again"]}],mo:{en:"Yes, I would love to return next season if you invite me.",som:"iés, ái uúd lâv tu ritôrn nékst sí-zon if iú inváit mi.",pt:"Sim, adoraria voltar na próxima temporada se vocês me convidarem."},dk:"Trabalhador que volta vale ouro (menos treinamento, menos risco). Sinalize que você quer construir essa relação."},
+{t:["empregador"],pr:["h2b","h2a"],v:null,en:"Do you have any questions about the job?",som:"du iú rév éni qués-tchions abáut dhi djób?",pt:"Você tem alguma pergunta sobre o trabalho?",ps:[{pt:"perguntar algo útil",w:["schedule","hours","housing","start","uniform","tools","training","what time"]}],mo:{en:"Yes: what time does the shift start, and do you provide the tools?",som:"iés: uót táim dâz dhi shíft stárt, énd du iú prováid dhi túls?",pt:"Sim: que horas começa o turno, e vocês fornecem as ferramentas?"},dk:"\"Shift\" = turno. Perguntar sobre horário e ferramentas mostra que você já se vê trabalhando lá."},
+/* ---------- H-2B: PAISAGISMO (com ferramentas) ---------- */
+{t:["empregador","recrutador"],pr:["h2b"],v:["landscaping"],en:"Do you know how to use a lawn mower and a push mower?",som:"du iú nôu ráu tu iúz a lón môuer énd a púsh môuer?",pt:"Você sabe usar cortador de grama (motorizado) e o de empurrar?",ps:[{pt:"confirmar experiência",w:["yes","mower","use","operate","years"]}],mo:{en:"Yes, I operate riding mowers and push mowers. I also do the maintenance.",som:"iés, ái ópe-rêit ráiding môuers énd púsh môuers. ái ólsou du dhi mêin-tenans.",pt:"Sim, opero cortadores com assento e os de empurrar. Também faço a manutenção."},dk:"Vocabulário: lawn mower (cortador), riding mower (com assento), push mower (de empurrar). Saber os nomes já é meio caminho."},
+{t:["empregador","recrutador"],pr:["h2b"],v:["landscaping"],en:"What landscaping tools have you worked with?",som:"uót lénds-kêiping túls rév iú uôrkt uíth?",pt:"Com quais ferramentas de paisagismo você já trabalhou?",ps:[{pt:"listar 3+ ferramentas",w:["shovel","rake","hoe","clippers","pruning","trimmer","weed eater","blower","wheelbarrow","chainsaw","edger","hedge"]}],mo:{en:"Shovel, rake, hoe, wheelbarrow, weed eater, leaf blower and pruning shears.",som:"shâ-vol, rêik, rôu, uíl-bérou, uíd írer, líf blôuer énd prúning shírs.",pt:"Pá, rastelo, enxada, carrinho de mão, roçadeira, soprador e tesoura de poda."},dk:"Decore o kit: shovel (pá), rake (rastelo), hoe (enxada), wheelbarrow (carrinho), weed eater/trimmer (roçadeira), leaf blower (soprador), clippers/pruning shears (tesouras de poda), edger (aparador de borda), hedge trimmer (aparador de cerca-viva)."},
+{t:["empregador"],pr:["h2b"],v:["landscaping"],en:"What is the difference between clippers and a hedge trimmer?",som:"uót iz dhi dí-ferens bituín clí-pers énd a rédj trí-mer?",pt:"Qual a diferença entre clippers e hedge trimmer?",ps:[{pt:"explicar a diferença",w:["hand","small","machine","electric","hedge","branches","manual"]}],mo:{en:"Clippers are hand tools for small branches. A hedge trimmer is a machine for cutting hedges.",som:"clí-pers ar rénd túls fór smól brén-tchiz. a rédj trí-mer iz a machín fór câ-ting ré-djiz.",pt:"Clippers são manuais, pra galhos pequenos. Hedge trimmer é a máquina de aparar cerca-viva."},dk:"Hedge = cerca-viva. Perguntas de ferramenta testam se sua experiência é real — responda mostrando que já pegou nelas."},
+{t:["empregador"],pr:["h2b"],v:["landscaping"],en:"The mower stops working in the middle of the job. What do you do?",som:"dhi môuer stóps uôr-king in dhi mí-dol óv dhi djób. uót du iú du?",pt:"O cortador para de funcionar no meio do serviço. O que você faz?",ps:[{pt:"checar o básico com segurança",w:["check","gas","fuel","turn off","safety","blade"]},{pt:"avisar o supervisor",w:["supervisor","tell","report","boss","call"]}],mo:{en:"I turn it off, check the gas and the blade safely, and if I can't fix it, I tell my supervisor.",som:"ái tôrn it óf, tchék dhi gués énd dhi blêid sêif-li, énd if ái quént fíks it, ái tél mái súper-váizor.",pt:"Desligo, checo a gasolina e a lâmina com segurança, e se não resolver, aviso meu supervisor."},dk:"Cenário-teste: eles querem ouvir SEGURANÇA primeiro (desligar antes de mexer) e comunicação depois."},
+{t:["empregador"],pr:["h2b"],v:["landscaping"],en:"Have you planted trees, flowers or laid sod before?",som:"rév iú plén-tid tríz, fláuers ór lêid sód bifór?",pt:"Você já plantou árvores, flores ou instalou grama em placas?",ps:[{pt:"confirmar com detalhe",w:["yes","plant","planted","sod","trees","flowers","garden"]}],mo:{en:"Yes, I've planted trees and flowers, and I've laid sod in gardens.",som:"iés, áiv plén-tid tríz énd fláuers, énd áiv lêid sód in gár-dens.",pt:"Sim, já plantei árvores e flores, e já instalei grama em placas em jardins."},dk:"Sod = grama em placas/tapete. Verbo plant no passado = planted."},
+/* ---------- H-2B: CAMAREIRA / HOUSEKEEPING ---------- */
+{t:["empregador","recrutador"],pr:["h2b"],v:["housekeeping"],en:"How many rooms can you clean per day?",som:"ráu méni rúms quén iú clín per dêi?",pt:"Quantos quartos você consegue limpar por dia?",ps:[{pt:"dar um número realista",w:["rooms","twelve","fourteen","fifteen","sixteen","ten","per day"]}],mo:{en:"In my last hotel I cleaned about fourteen rooms per day, with quality.",som:"in mái lést routél ái clínd abáut fór-tín rúms per dêi, uíth quó-liti.",pt:"No meu último hotel eu limpava uns catorze quartos por dia, com qualidade."},dk:"Padrão americano: 12–16 quartos por turno. Um número realista + \"with quality\" é a resposta perfeita."},
+{t:["empregador"],pr:["h2b"],v:["housekeeping"],en:"What do you do first when you enter a dirty room?",som:"uót du iú du fôrst uén iú énter a dôrti rúm?",pt:"O que você faz primeiro ao entrar num quarto sujo?",ps:[{pt:"descrever uma ordem lógica",w:["knock","open","trash","strip","bed","sheets","towels","windows","air"]}],mo:{en:"I knock first, then I collect the trash, strip the bed and take out the dirty sheets and towels.",som:"ái nók fôrst, dhén ái coléct dhi trésh, stríp dhi béd énd têik áut dhi dôrti shíts énd táuols.",pt:"Bato na porta, depois recolho o lixo, desfaço a cama e tiro lençóis e toalhas sujas."},dk:"Vocabulário do quarto: sheets (lençóis), towels (toalhas), pillow (travesseiro), trash (lixo), strip the bed (desfazer a cama), knock (bater na porta)."},
+{t:["empregador"],pr:["h2b"],v:["housekeeping"],en:"You find a wallet with money in a guest's room. What do you do?",som:"iú fáind a uó-let uíth mâni in a guésts rúm. uót du iú du?",pt:"Você encontra uma carteira com dinheiro no quarto de um hóspede. O que faz?",ps:[{pt:"entregar (lost and found / supervisor)",w:["supervisor","lost and found","report","turn in","give","front desk"]},{pt:"não tocar/não pegar",w:["don't take","never","honest","touch"]}],mo:{en:"I never take anything. I report it to my supervisor and turn it in to Lost and Found.",som:"ái néver têik éni-thing. ái ripórt it tu mái súper-váizor énd tôrn it in tu lóst énd fáund.",pt:"Nunca pego nada. Aviso meu supervisor e entrego no Achados e Perdidos."},dk:"Pergunta de HONESTIDADE — a mais importante da entrevista de hotel. \"Lost and Found\" = achados e perdidos."},
+{t:["empregador"],pr:["h2b"],v:["housekeeping"],en:"A guest asks you for extra towels but you don't understand well. What do you do?",som:"a guést ésks iú fór éks-tra táuols bât iú dôunt ãnder-sténd uél. uót du iú du?",pt:"Um hóspede pede toalhas extras mas você não entende bem. O que faz?",ps:[{pt:"pedir pra repetir com educação",w:["repeat","please","sorry","again","slowly","say"]}],mo:{en:"I smile and say: \"Sorry, can you repeat that slowly, please?\" Then I bring what they need.",som:"ái smáil énd sêi: sóri, quén iú ripít dhét slôu-li, plíz? dhén ái bríng uót dhêi níd.",pt:"Sorrio e digo: \"Desculpe, pode repetir devagar, por favor?\". Depois levo o que precisam."},dk:"Frase de sobrevivência com hóspede: \"Can you repeat that slowly, please?\" — educada e resolve tudo."},
+{t:["empregador"],pr:["h2b"],v:["housekeeping"],en:"What cleaning products and equipment have you used?",som:"uót clínin pró-dâcts énd equíp-ment rév iú iúzd?",pt:"Que produtos e equipamentos de limpeza você já usou?",ps:[{pt:"listar itens",w:["vacuum","mop","broom","gloves","cart","spray","disinfectant","bleach"]}],mo:{en:"Vacuum cleaner, mop, broom, cleaning cart, sprays and disinfectant. I always use gloves.",som:"vé-quium clíner, móp, brúm, clínin cárt, sprêis énd disin-féc-tant. ái ól-uêis iúz glâvs.",pt:"Aspirador, esfregão, vassoura, carrinho de limpeza, sprays e desinfetante. Sempre uso luvas."},dk:"Kit da camareira: vacuum (aspirador), mop (esfregão), broom (vassoura), cart (carrinho), gloves (luvas), bleach (água sanitária)."},
+/* ---------- H-2B: COZINHA ---------- */
+{t:["empregador","recrutador"],pr:["h2b"],v:["cook"],en:"What kitchen experience do you have?",som:"uót quí-tchen eks-pí-riens du iú rév?",pt:"Que experiência de cozinha você tem?",ps:[{pt:"tempo e tipo de cozinha",w:["years","restaurant","kitchen","cook","line","prep"]}],mo:{en:"I worked three years as a line cook in a busy restaurant in Brazil.",som:"ái uôrkt thrí iérs az a láin cúk in a bízi rés-tôrant in brazíl.",pt:"Trabalhei três anos como cozinheiro de linha num restaurante movimentado no Brasil."},dk:"Cargos: line cook (cozinheiro de linha), prep cook (pré-preparo), dishwasher (lavador). Diga o seu."},
+{t:["empregador"],pr:["h2b"],v:["cook"],en:"What do you know about food safety?",som:"uót du iú nôu abáut fúd sêif-ti?",pt:"O que você sabe sobre segurança alimentar?",ps:[{pt:"citar práticas (temperatura/lavar mãos/contaminação)",w:["wash","hands","temperature","raw","cooked","separate","clean","gloves","cross"]}],mo:{en:"I always wash my hands, keep raw meat separate and check cooking temperatures.",som:"ái ól-uêis uósh mái rénds, quíp ró mít sé-parêit énd tchék cúking tém-pera-tchurs.",pt:"Sempre lavo as mãos, separo carne crua e confiro as temperaturas de cozimento."},dk:"Trio sagrado do food safety: wash hands, separate raw and cooked, right temperature. Isso reprova ou aprova cozinheiro."},
+{t:["empregador"],pr:["h2b"],v:["cook"],en:"It's Saturday night and the kitchen is very busy. How do you handle the pressure?",som:"its sé-turdêi náit énd dhi quí-tchen iz véri bízi. ráu du iú rén-dol dhi pré-shior?",pt:"É sábado à noite e a cozinha está lotada. Como você lida com a pressão?",ps:[{pt:"manter calma e organização",w:["calm","organized","focus","fast","priority","team","communicate"]}],mo:{en:"I stay calm, keep my station organized and communicate with the team: \"behind!\", \"hot pan!\".",som:"ái stêi cálm, quíp mái stêi-shion ór-ganáizd énd comiú-niquêit uíth dhi tím: biráind!, rót pén!",pt:"Fico calmo, mantenho minha praça organizada e me comunico com o time: \"atrás!\", \"panela quente!\"."},dk:"Gírias reais de cozinha americana: \"behind!\" (passando atrás), \"hot pan!\" (panela quente), \"86\" (acabou o item)."},
+{t:["empregador"],pr:["h2b"],v:["cook"],en:"Can you read order tickets in English?",som:"quén iú ríd ór-der tí-quets in ín-glish?",pt:"Você consegue ler as comandas em inglês?",ps:[{pt:"confirmar e mostrar vocabulário",w:["yes","read","tickets","menu","learn","words"]}],mo:{en:"Yes, I can read tickets. I know the kitchen words: grilled, fried, rare, well done, no onions.",som:"iés, ái quén ríd tí-quets. ái nôu dhi quí-tchen uôrds: gríld, fráid, rér, uél dân, nôu â-nions.",pt:"Sim, leio comandas. Sei as palavras da cozinha: grelhado, frito, malpassado, bem passado, sem cebola."},dk:"Vocabulário de comanda: grilled (grelhado), fried (frito), baked (assado), rare/medium/well done (ponto da carne), \"no...\" (sem...)."},
+{t:["empregador"],pr:["h2b"],v:["cook"],en:"What kitchen equipment can you operate?",som:"uót quí-tchen equíp-ment quén iú ópe-rêit?",pt:"Que equipamentos de cozinha você sabe operar?",ps:[{pt:"listar equipamentos",w:["grill","fryer","oven","stove","slicer","mixer","knife"]}],mo:{en:"Grill, deep fryer, oven, stove and slicer. And I have good knife skills.",som:"gríl, díp fráier, âvon, stôuv énd sláicer. énd ái rév gúd náif squíls.",pt:"Grelha, fritadeira, forno, fogão e fatiador. E tenho boa habilidade com faca."},dk:"Grill (chapa/grelha), fryer (fritadeira), oven (forno), stove (fogão), slicer (fatiador), knife skills (corte)."},
+/* ---------- H-2B: LAVADOR DE PRATOS ---------- */
+{t:["empregador","recrutador"],pr:["h2b"],v:["dishwasher"],en:"Dishwashing is fast and repetitive. Are you ready for that?",som:"dísh-uóshing iz fést énd ripé-titiv. ar iú rédi fór dhét?",pt:"Lavar pratos é rápido e repetitivo. Você está pronto pra isso?",ps:[{pt:"aceitar o ritmo com atitude",w:["yes","fast","ready","hard","don't mind","used to"]}],mo:{en:"Yes. I'm fast, I don't mind repetitive work and I keep the dish pit organized.",som:"iés. áim fést, ái dôunt máind ripé-titiv uôrk énd ái quíp dhi dísh pít ór-ganáizd.",pt:"Sim. Sou rápido, não me importo com trabalho repetitivo e mantenho a área de lavagem organizada."},dk:"\"Dish pit\" = a área da lavagem. \"I don't mind...\" = não me importo com... — expressão poderosa."},
+{t:["empregador"],pr:["h2b"],v:["dishwasher"],en:"Can you stand for eight hours or more?",som:"quén iú sténd fór êit áuers ór mór?",pt:"Você aguenta ficar em pé por oito horas ou mais?",ps:[{pt:"confirmar com costume",w:["yes","stand","hours","used to","no problem"]}],mo:{en:"Yes, I'm used to standing all day in my current job.",som:"iés, áim iúzd tu sténding ól dêi in mái cârrent djób.",pt:"Sim, estou acostumado a ficar em pé o dia todo no meu trabalho atual."},dk:"De novo ela: \"I'm used to...\" — a expressão que responde metade das perguntas de trabalho físico."},
+{t:["empregador"],pr:["h2b"],v:["dishwasher"],en:"Besides dishes, can you help with kitchen cleaning and trash?",som:"bisáids díshiz, quén iú rélp uíth quí-tchen clínin énd trésh?",pt:"Além dos pratos, você pode ajudar na limpeza da cozinha e no lixo?",ps:[{pt:"aceitar tarefas extras",w:["yes","help","clean","trash","floor","mop","anything"]}],mo:{en:"Of course. I can mop the floors, take out the trash and clean the equipment.",som:"óv córs. ái quén móp dhi flórs, têik áut dhi trésh énd clín dhi equíp-ment.",pt:"Claro. Posso passar pano no chão, tirar o lixo e limpar os equipamentos."},dk:"\"Take out the trash\" = tirar o lixo. Flexibilidade é o superpoder do steward."},
+{t:["empregador"],pr:["h2b"],v:["dishwasher"],en:"The dish machine breaks during dinner rush. What do you do?",som:"dhi dísh machín brêiks diúring dí-ner râsh. uót du iú du?",pt:"A máquina de lavar quebra no meio do movimento do jantar. O que você faz?",ps:[{pt:"avisar e lavar na mão",w:["tell","supervisor","hand","wash by hand","sink","keep working"]}],mo:{en:"I tell the manager right away and keep washing by hand in the sink so the kitchen never stops.",som:"ái tél dhi mé-nadjer ráit auêi énd quíp uóshing bái rénd in dhi sínk sôu dhi quí-tchen néver stóps.",pt:"Aviso o gerente na hora e continuo lavando na mão na pia pra cozinha nunca parar."},dk:"\"Right away\" = imediatamente. Resposta que mostra: comunica + não para o serviço."},
+/* ---------- H-2B: GARÇOM ---------- */
+{t:["empregador","recrutador"],pr:["h2b"],v:["server"],en:"Do you have experience serving customers?",som:"du iú rév eks-pí-riens sôr-ving cãs-tomers?",pt:"Você tem experiência atendendo clientes?",ps:[{pt:"tempo e local",w:["years","restaurant","served","customers","waiter","tables"]}],mo:{en:"Yes, I was a waiter for two years. I served tables and took orders every day.",som:"iés, ái uóz a uêi-ter fór tchú iérs. ái sôrvd têi-bols énd túk ór-ders évri dêi.",pt:"Sim, fui garçom por dois anos. Atendia mesas e anotava pedidos todos os dias."},dk:"\"Take orders\" = anotar pedidos. Waiter/waitress ou o moderno \"server\"."},
+{t:["empregador"],pr:["h2b"],v:["server"],en:"A customer is angry because the food is late. What do you say?",som:"a cãs-tomer iz én-gri bicóz dhi fúd iz lêit. uót du iú sêi?",pt:"Um cliente está bravo porque a comida atrasou. O que você diz?",ps:[{pt:"pedir desculpa",w:["sorry","apologize"]},{pt:"resolver (checar/avisar)",w:["check","kitchen","right away","manager","minutes","bring"]}],mo:{en:"\"I'm so sorry for the wait. Let me check with the kitchen right away.\" Then I keep the customer informed.",som:"áim sôu sóri fór dhi uêit. lét mi tchék uíth dhi quí-tchen ráit auêi. dhén ái quíp dhi cãs-tomer infórmd.",pt:"\"Desculpe pela demora. Vou verificar com a cozinha agora mesmo.\" E mantenho o cliente informado."},dk:"Nos EUA o garçom vive de gorjeta (tips): cliente bem tratado = mais dinheiro no SEU bolso."},
+{t:["empregador"],pr:["h2b"],v:["server"],en:"Can you memorize the menu in English?",som:"quén iú mémo-ráiz dhi mé-niu in ín-glish?",pt:"Você consegue decorar o cardápio em inglês?",ps:[{pt:"confirmar com método",w:["yes","study","memorize","learn","practice","menu"]}],mo:{en:"Yes. I study the menu at home and practice saying the dishes out loud.",som:"iés. ái stâdi dhi mé-niu ét rôum énd préc-tis sêiing dhi díshiz áut láud.",pt:"Sim. Estudo o cardápio em casa e treino falar os pratos em voz alta."},dk:"\"Out loud\" = em voz alta. Aliás: é exatamente o método do FalaFina. 😉"},
+{t:["empregador"],pr:["h2b"],v:["server"],en:"Have you used a POS system to enter orders?",som:"rév iú iúzd a pi-ôu-és sís-tem tu énter ór-ders?",pt:"Você já usou sistema POS pra lançar pedidos?",ps:[{pt:"responder e mostrar disposição",w:["yes","no","learn","system","computer","fast"]}],mo:{en:"Yes, I used a similar system in Brazil. If yours is different, I learn systems fast.",som:"iés, ái iúzd a sí-milar sís-tem in brazíl. if iórs iz dí-ferent, ái lôrn sís-tems fést.",pt:"Sim, usei um sistema parecido no Brasil. Se o de vocês for diferente, aprendo rápido."},dk:"POS = o computador/maquininha onde o garçom lança o pedido. Não conhecer não elimina — \"I learn fast\" resolve."},
+/* ---------- H-2B: RECEPÇÃO ---------- */
+{t:["empregador","recrutador"],pr:["h2b"],v:["frontdesk"],en:"How would you greet a guest checking in?",som:"ráu uúd iú grít a guést tché-quing in?",pt:"Como você recepcionaria um hóspede fazendo check-in?",ps:[{pt:"saudação + oferta de ajuda",w:["welcome","good","hello","how can i help","name","reservation"]}],mo:{en:"\"Good afternoon, welcome to our hotel! May I have your name and reservation, please?\"",som:"gúd áfter-nún, uél-cãm tu áuer routél! mêi ái rév iór nêim énd rezer-vêi-shion, plíz?",pt:"\"Boa tarde, bem-vindo ao nosso hotel! Pode me dizer seu nome e a reserva, por favor?\""},dk:"Script de check-in: saudação + welcome + \"May I have...?\". Decore como música."},
+{t:["empregador"],pr:["h2b"],v:["frontdesk"],en:"A guest complains that the air conditioning is broken. What do you do?",som:"a guést com-plêins dhét dhi ér condí-shioning iz brôu-ken. uót du iú du?",pt:"Um hóspede reclama que o ar-condicionado quebrou. O que você faz?",ps:[{pt:"desculpa + solução",w:["sorry","apologize","maintenance","send","fix","another room","right away"]}],mo:{en:"\"I'm sorry about that. I'll send maintenance right away, or I can move you to another room.\"",som:"áim sóri abáut dhét. áil sénd mêin-tenans ráit auêi, ór ái quén múv iú tu anâ-dher rúm.",pt:"\"Sinto muito por isso. Vou mandar a manutenção agora mesmo, ou posso te passar pra outro quarto.\""},dk:"Fórmula de reclamação: apologize → resolver → oferecer alternativa. Serve pra qualquer problema de hotel."},
+{t:["empregador"],pr:["h2b"],v:["frontdesk"],en:"Are you comfortable answering the phone in English?",som:"ar iú cãm-fortabol én-sôring dhi fôun in ín-glish?",pt:"Você se sente confortável atendendo telefone em inglês?",ps:[{pt:"confirmar com script",w:["yes","phone","answer","practice","thank you for calling"]}],mo:{en:"Yes. \"Thank you for calling Ocean Hotel, this is Andrio. How can I help you?\"",som:"iés. thênk iú fór có-ling ôu-shan routél, dhis iz ãn-drio. ráu quén ái rélp iú?",pt:"Sim. \"Obrigado por ligar pro Ocean Hotel, aqui é o Andrio. Como posso ajudar?\""},dk:"Telefone é o chefão final do inglês (sem gestos!). Tenha o script de atendimento decorado."},
+{t:["empregador"],pr:["h2b"],v:["frontdesk"],en:"Can you work with computers and reservation systems?",som:"quén iú uôrk uíth compiú-ters énd rezer-vêi-shion sís-tems?",pt:"Você sabe trabalhar com computadores e sistemas de reserva?",ps:[{pt:"confirmar habilidade",w:["yes","computer","system","learn","fast","excel","software"]}],mo:{en:"Yes, I'm comfortable with computers and I learn new systems fast.",som:"iés, áim cãm-fortabol uíth compiú-ters énd ái lôrn niú sís-tems fést.",pt:"Sim, me viro bem com computadores e aprendo sistemas novos rápido."},dk:"\"I'm comfortable with...\" = me sinto à vontade com... Ótima estrutura pra falar de habilidades."},
+/* ---------- H-2B: CONSTRUÇÃO ---------- */
+{t:["empregador","recrutador"],pr:["h2b"],v:["construction"],en:"What construction tools and equipment can you use?",som:"uót cons-trâk-shion túls énd equíp-ment quén iú iúz?",pt:"Que ferramentas e equipamentos de construção você sabe usar?",ps:[{pt:"listar ferramentas",w:["hammer","drill","saw","level","trowel","mixer","nail gun","measuring","shovel","grinder"]}],mo:{en:"Hammer, drill, circular saw, level, trowel, grinder and concrete mixer.",som:"ré-mer, dríl, sôr-quiular só, lé-vol, tráuol, gráin-der énd cón-crit mík-ser.",pt:"Martelo, furadeira, serra circular, nível, colher de pedreiro, esmerilhadeira e betoneira."},dk:"Kit da obra: hammer (martelo), drill (furadeira), saw (serra), level (nível), trowel (colher de pedreiro), mixer (betoneira), nail gun (pinador)."},
+{t:["empregador"],pr:["h2b"],v:["construction"],en:"What safety equipment do you use on a job site?",som:"uót sêif-ti equíp-ment du iú iúz ón a djób sáit?",pt:"Que equipamentos de segurança você usa na obra?",ps:[{pt:"listar EPIs",w:["helmet","hard hat","gloves","boots","glasses","vest","harness","ear"]}],mo:{en:"Hard hat, safety glasses, gloves, steel-toe boots and a vest. On heights, a harness.",som:"rárd rét, sêif-ti glé-siz, glâvs, stíl-tôu búts énd a vést. ón ráits, a rár-ness.",pt:"Capacete, óculos de proteção, luvas, botas com bico de aço e colete. Em altura, cinto de segurança."},dk:"EPI em inglês = PPE. Hard hat (capacete), harness (cinto de altura), steel-toe boots (bota de bico de aço)."},
+{t:["empregador"],pr:["h2b"],v:["construction"],en:"Can you read a tape measure in feet and inches?",som:"quén iú ríd a têip mé-jor in fít énd ín-tchiz?",pt:"Você sabe ler trena em pés e polegadas?",ps:[{pt:"responder e mostrar disposição",w:["yes","feet","inches","learn","metric","measure"]}],mo:{en:"I use the metric system in Brazil, but I'm already practicing feet and inches.",som:"ái iúz dhi mé-tric sís-tem in brazíl, bât áim ólrédi préc-tising fít énd ín-tchiz.",pt:"No Brasil uso o sistema métrico, mas já estou treinando pés e polegadas."},dk:"EUA usam feet (pés, ~30cm) e inches (polegadas, 2,54cm). 1 foot = 12 inches. Aprenda isso ANTES de ir."},
+{t:["empregador"],pr:["h2b"],v:["construction"],en:"Are you comfortable working on ladders and scaffolding?",som:"ar iú cãm-fortabol uôr-king ón lé-ders énd squé-folding?",pt:"Você trabalha tranquilo em escadas e andaimes?",ps:[{pt:"confirmar com segurança",w:["yes","heights","ladder","scaffold","safety","harness","careful"]}],mo:{en:"Yes, I've worked on scaffolding before, always with a harness and following safety rules.",som:"iés, áiv uôrkt ón squé-folding bifór, ól-uêis uíth a rár-ness énd fólouing sêif-ti rúls.",pt:"Sim, já trabalhei em andaime, sempre com cinto e seguindo as regras de segurança."},dk:"Ladder (escada de mão), scaffolding (andaime). Sempre amarre a resposta na SEGURANÇA — é o que eles querem ouvir."},
+/* ---------- H-2B: MANUTENÇÃO ---------- */
+{t:["empregador","recrutador"],pr:["h2b"],v:["maintenance"],en:"What types of repairs can you do?",som:"uót táips óv ripérs quén iú du?",pt:"Que tipos de reparo você sabe fazer?",ps:[{pt:"listar áreas",w:["painting","plumbing","electrical","carpentry","fix","repair","doors","walls"]}],mo:{en:"Painting, basic plumbing, small electrical repairs, doors, walls and general fixes.",som:"pêin-ting, bêi-sic plâm-bing, smól eléc-trical ripérs, dórs, uóls énd djé-neral fík-siz.",pt:"Pintura, encanamento básico, pequenos reparos elétricos, portas, paredes e consertos gerais."},dk:"Plumbing (encanamento), electrical (elétrica), carpentry (marcenaria), painting (pintura). \"Handyman\" = faz-tudo."},
+{t:["empregador"],pr:["h2b"],v:["maintenance"],en:"How do you organize your work when you receive several work orders?",som:"ráu du iú ór-ganáiz iór uôrk uén iú risív sé-verol uôrk ór-ders?",pt:"Como você se organiza quando recebe várias ordens de serviço?",ps:[{pt:"priorizar (urgente primeiro)",w:["priority","urgent","first","list","emergency","organize"]}],mo:{en:"I check the list, do the urgent ones first — like water leaks — and update my supervisor.",som:"ái tchék dhi líst, du dhi ôr-djents fôrst — láik uórer líks — énd âp-dêit mái súper-váizor.",pt:"Confiro a lista, faço as urgentes primeiro — tipo vazamentos — e mantenho meu supervisor informado."},dk:"Work order = ordem de serviço. Leak = vazamento. Priorizar urgência é a resposta que todo chefe quer."},
+{t:["empregador"],pr:["h2b"],v:["maintenance"],en:"A guest reports a leaking faucet. Walk me through what you would do.",som:"a guést ripórts a líquing fó-set. uók mi thru uót iú uúd du.",pt:"Um hóspede relata uma torneira vazando. Me explique passo a passo o que você faria.",ps:[{pt:"fechar registro / diagnosticar",w:["turn off","water","check","valve","washer","tools"]},{pt:"consertar ou reportar",w:["fix","replace","repair","report","supervisor"]}],mo:{en:"I turn off the water valve, check the faucet, replace the washer or the part, test it and report the job done.",som:"ái tôrn óf dhi uórer vélv, tchék dhi fó-set, riplêis dhi uósher ór dhi párt, tést it énd ripórt dhi djób dân.",pt:"Fecho o registro, verifico a torneira, troco o reparo ou a peça, testo e reporto o serviço feito."},dk:"\"Walk me through...\" = me explique passo a passo. Faucet (torneira), valve (registro), washer (reparo/vedação)."},
+/* ---------- H-2B: FLORESTAL ---------- */
+{t:["empregador","recrutador"],pr:["h2b"],v:["forestry"],en:"Tree planting means walking on rough land all day. Are you prepared?",som:"trí plén-ting míns uó-king ón râf lénd ól dêi. ar iú pripérd?",pt:"Plantio de árvores é andar em terreno difícil o dia todo. Você está preparado?",ps:[{pt:"confirmar resistência",w:["yes","strong","walk","used to","physical","ready"]}],mo:{en:"Yes. I'm used to hard physical work and walking long distances in the countryside.",som:"iés. áim iúzd tu rárd fí-zical uôrk énd uó-king lóng dís-tansiz in dhi cân-tri-sáid.",pt:"Sim. Estou acostumado com trabalho físico pesado e longas caminhadas na roça."},dk:"Forestry paga bem por produção. Rough land = terreno acidentado; countryside = zona rural."},
+{t:["empregador"],pr:["h2b"],v:["forestry"],en:"Some forestry jobs require camping near the work site. Is that okay for you?",som:"sâm fó-restri djóbs riquáir quém-ping nír dhi uôrk sáit. iz dhét ôu-quêi fór iú?",pt:"Alguns trabalhos florestais exigem acampar perto do local. Tudo bem pra você?",ps:[{pt:"aceitar a condição",w:["yes","camping","fine","okay","no problem","tent"]}],mo:{en:"Yes, that's fine. I've camped before and I adapt easily.",som:"iés, dhéts fáin. áiv quémpt bifór énd ái adépt í-zili.",pt:"Sim, tudo bem. Já acampei antes e me adapto fácil."},dk:"Trabalho itinerante (florestal/parques) muda de lugar — por lei o patrão banca a moradia nessas vagas."},
+{t:["empregador"],pr:["h2b"],v:["forestry"],en:"Have you used a chainsaw or a brush cutter?",som:"rév iú iúzd a tchêin-só ór a brâsh câ-ter?",pt:"Você já usou motosserra ou roçadeira?",ps:[{pt:"responder com segurança",w:["yes","chainsaw","brush cutter","safety","careful","no","learn"]}],mo:{en:"Yes, I've used both, always with safety equipment: helmet, gloves and leg protection.",som:"iés, áiv iúzd bôuth, ól-uêis uíth sêif-ti equíp-ment: rél-met, glâvs énd lég protéc-shion.",pt:"Sim, já usei os dois, sempre com equipamento de segurança: capacete, luvas e proteção de perna."},dk:"Chainsaw (motosserra), brush cutter (roçadeira pesada). Ferramenta perigosa → resposta SEMPRE com safety junto."},
+/* ---------- H-2B: FRIGORÍFICO ---------- */
+{t:["empregador","recrutador"],pr:["h2b"],v:["processing"],en:"This job is in a cold room, around 4 degrees Celsius. Can you handle it?",som:"dhis djób iz in a côuld rúm, aráund fór digríz sél-sius. quén iú rén-dol it?",pt:"Esse trabalho é em câmara fria, uns 4 graus. Você aguenta?",ps:[{pt:"aceitar o frio",w:["yes","cold","jacket","fine","used to","no problem"]}],mo:{en:"Yes, no problem. With the right jacket and gloves, I work well in the cold.",som:"iés, nôu pró-blem. uíth dhi ráit djé-quet énd glâvs, ái uôrk uél in dhi côuld.",pt:"Sim, sem problema. Com a jaqueta e as luvas certas, trabalho bem no frio."},dk:"Processamento de carne/peixe = ambiente frio o turno inteiro. Melhor saber disso AGORA do que lá."},
+{t:["empregador"],pr:["h2b"],v:["processing"],en:"Do you have experience with knives or cutting on a production line?",som:"du iú rév eks-pí-riens uíth náivs ór câ-ting ón a prodâk-shion láin?",pt:"Você tem experiência com facas ou corte em linha de produção?",ps:[{pt:"contar experiência com corte",w:["yes","knife","cut","butcher","fish","meat","line","fast"]}],mo:{en:"Yes, I worked in a butcher shop. I'm fast and careful with knives.",som:"iés, ái uôrkt in a bú-tcher shóp. áim fést énd quér-ful uíth náivs.",pt:"Sim, trabalhei em açougue. Sou rápido e cuidadoso com facas."},dk:"Butcher (açougueiro), production line (linha de produção), trim (aparar). Rápido E cuidadoso — os dois juntos."},
+{t:["empregador"],pr:["h2b"],v:["processing"],en:"Hygiene is critical here. What hygiene rules do you follow?",som:"rái-djin iz crí-tical rír. uót rái-djin rúls du iú fólou?",pt:"Higiene é crítica aqui. Que regras de higiene você segue?",ps:[{pt:"citar práticas",w:["wash","hands","gloves","hairnet","uniform","clean","sanitize"]}],mo:{en:"I wash my hands, wear gloves, hairnet and clean uniform, and I sanitize my station.",som:"ái uósh mái rénds, uér glâvs, rér-nét énd clín iúni-form, énd ái sé-nitáiz mái stêi-shion.",pt:"Lavo as mãos, uso luvas, touca e uniforme limpo, e higienizo minha estação."},dk:"Hairnet = touca de rede. Sanitize = higienizar. USDA fiscaliza pesado — higiene é emprego garantido ou perdido."},
+/* ---------- H-2B: PARQUE / GOLFE / SALVA-VIDAS / SKI ---------- */
+{t:["empregador","recrutador"],pr:["h2b"],v:["amusement"],en:"Safety comes first on the rides. What would you check before starting a ride?",som:"sêif-ti cãms fôrst ón dhi ráids. uót uúd iú tchék bifór stár-ting a ráid?",pt:"Segurança em primeiro lugar nos brinquedos. O que você checaria antes de ligar um?",ps:[{pt:"checar travas/cintos/altura",w:["seat belt","bar","lock","height","check","secure","restraint"]}],mo:{en:"I check that every seat belt and safety bar is locked, and that kids meet the height rule.",som:"ái tchék dhét évri sít bélt énd sêif-ti bár iz lókt, énd dhét quíds mít dhi ráit rúl.",pt:"Confiro se todo cinto e trava de segurança estão fechados, e se as crianças têm a altura mínima."},dk:"Ride = brinquedo/atração. Safety bar = trava. Height requirement = altura mínima. Decore o trio."},
+{t:["empregador"],pr:["h2b"],v:["amusement"],en:"You will talk to hundreds of guests per day. How is your customer service?",som:"iú uíl tók tu rân-dreds óv guésts per dêi. ráu iz iór cãs-tomer sôr-vis?",pt:"Você vai falar com centenas de visitantes por dia. Como é seu atendimento?",ps:[{pt:"mostrar simpatia e paciência",w:["smile","friendly","patient","happy","help","polite"]}],mo:{en:"I'm friendly and patient. I always smile and help guests have a great day.",som:"áim frénd-li énd pêi-shient. ái ól-uêis smáil énd rélp guésts rév a grêit dêi.",pt:"Sou simpático e paciente. Sempre sorrio e ajudo os visitantes a terem um ótimo dia."},dk:"Friendly + patient + smile: a santíssima trindade do atendimento americano."},
+{t:["empregador","recrutador"],pr:["h2b"],v:["golf"],en:"Golf course work starts before sunrise. Are you okay with very early shifts?",som:"gólf córs uôrk stárts bifór sân-ráiz. ar iú ôu-quêi uíth véri ôrli shífts?",pt:"O trabalho no campo de golfe começa antes do amanhecer. Tudo bem com turnos bem cedo?",ps:[{pt:"aceitar horário cedo",w:["yes","early","morning","wake","no problem","5","four","five"]}],mo:{en:"Yes, waking up early is normal for me. I can start at five in the morning.",som:"iés, uêi-king âp ôrli iz nór-mal fór mi. ái quén stárt ét fáiv in dhi mór-nin.",pt:"Sim, acordar cedo é normal pra mim. Posso começar às cinco da manhã."},dk:"Greens são cortados antes dos jogadores chegarem. Sunrise = nascer do sol; shift = turno."},
+{t:["empregador"],pr:["h2b"],v:["golf"],en:"Do you know what a greens mower is? Have you operated one?",som:"du iú nôu uót a gríns môuer iz? rév iú ópe-rêited uãn?",pt:"Você sabe o que é um greens mower? Já operou um?",ps:[{pt:"mostrar conhecimento ou vontade",w:["yes","mower","green","grass","precise","learn","no"]}],mo:{en:"It's the precision mower for the greens. I've used regular mowers and I can learn it fast.",som:"its dhi presí-jion môuer fór dhi gríns. áiv iúzd ré-guiular môuers énd ái quén lôrn it fést.",pt:"É o cortador de precisão dos greens. Já usei cortadores comuns e aprendo esse rápido."},dk:"Green = a área da bandeira, grama milimétrica. Honestidade + \"I can learn it fast\" vale mais que inventar."},
+{t:["empregador","recrutador"],pr:["h2b"],v:["lifeguard"],en:"Do you have a lifeguard certification and strong swimming skills?",som:"du iú rév a láif-gard sôrtifi-quêi-shion énd stróng suí-ming squíls?",pt:"Você tem certificação de salva-vidas e nada bem?",ps:[{pt:"responder sobre certificação e natação",w:["yes","certified","certification","swim","strong","training"]}],mo:{en:"Yes, I'm a strong swimmer and I have lifeguard training. I can show my certificate.",som:"iés, áim a stróng suí-mer énd ái rév láif-gard trêi-ning. ái quén shôu mái sôrti-fiquêit.",pt:"Sim, nado muito bem e tenho treinamento de salva-vidas. Posso mostrar meu certificado."},dk:"Sem certificação reconhecida (tipo Cruz Vermelha) não dá pra ser lifeguard nos EUA — muitos patrões ajudam a tirar lá."},
+{t:["empregador"],pr:["h2b"],v:["lifeguard"],en:"What do you do if you see a swimmer in trouble?",som:"uót du iú du if iú sí a suí-mer in trâ-bol?",pt:"O que você faz se vir um nadador em apuros?",ps:[{pt:"alertar e resgatar com equipamento",w:["whistle","rescue","tube","jump","help","call","cpr"]}],mo:{en:"I blow the whistle, enter with the rescue tube, bring the person out and start CPR if needed.",som:"ái blôu dhi uí-sol, énter uíth dhi rés-quiu tchúb, bríng dhi pôr-son áut énd stárt si-pi-ár if níded.",pt:"Apito, entro com o flutuador de resgate, tiro a pessoa e começo RCP se precisar."},dk:"Whistle (apito), rescue tube (flutuador), CPR (RCP/massagem cardíaca). Sequência de manual."},
+{t:["empregador","recrutador"],pr:["h2b"],v:["skiresort"],en:"Have you ever worked in snow or very cold weather?",som:"rév iú éver uôrkt in snôu ór véri côuld ué-dher?",pt:"Você já trabalhou na neve ou em frio intenso?",ps:[{pt:"responder com adaptação",w:["no","yes","cold","snow","adapt","clothes","jacket","ready"]}],mo:{en:"Not in snow, but I adapt fast and I will have the right winter clothes.",som:"nót in snôu, bât ái adépt fést énd ái uíl rév dhi ráit uín-ter clôudhs.",pt:"Na neve não, mas me adapto rápido e vou ter as roupas de inverno certas."},dk:"Ski resorts (temporada out–mar) adoram brasileiro. Winter clothes: jacket, boots, gloves, beanie (touca)."},
+{t:["empregador"],pr:["h2b"],v:["skiresort"],en:"Which positions interest you: lift operator, rental shop or food service?",som:"uítch pozí-shions ín-terest iú: líft ópe-rêitor, rén-tol shóp ór fúd sôr-vis?",pt:"Quais funções te interessam: operador de teleférico, loja de aluguel ou alimentação?",ps:[{pt:"escolher e justificar",w:["lift","rental","food","because","like","people","prefer"]}],mo:{en:"Lift operator interests me most, because I like working outside and helping people.",som:"líft ópe-rêitor ín-terests mi môust, bicóz ái láik uôr-king áut-sáid énd rélping pí-pol.",pt:"Operador de teleférico me interessa mais, porque gosto de trabalhar fora e ajudar pessoas."},dk:"Lift = teleférico. Rental shop = aluguel de equipamentos. Sempre justifique a escolha com um \"because\"."},
+/* ---------- H-2A: COLHEITA / LAVOURA ---------- */
+{t:["empregador","recrutador"],pr:["h2a"],v:["colheita"],en:"Which crops have you worked with before?",som:"uítch cróps rév iú uôrkt uíth bifór?",pt:"Com quais culturas você já trabalhou?",ps:[{pt:"citar culturas",w:["coffee","corn","beans","tomatoes","vegetables","fruits","sugar","soy","lettuce","strawberries"]}],mo:{en:"I've worked with coffee, corn and vegetables — planting, weeding and harvesting.",som:"áiv uôrkt uíth cófi, córn énd védj-tabols — plén-ting, uí-ding énd rár-vesting.",pt:"Já trabalhei com café, milho e verduras — plantando, capinando e colhendo."},dk:"Crops = culturas/lavouras. Verbos do campo: plant (plantar), weed (capinar), harvest (colher), pick (apanhar)."},
+{t:["empregador"],pr:["h2a"],v:["colheita"],en:"Harvest work means bending and kneeling all day. Can you keep the pace?",som:"rár-vest uôrk míns bén-ding énd ní-ling ól dêi. quén iú quíp dhi pêis?",pt:"Colheita é se abaixar e ajoelhar o dia todo. Você aguenta o ritmo?",ps:[{pt:"confirmar resistência com prova",w:["yes","used to","years","farm","fast","strong","pace"]}],mo:{en:"Yes. I've harvested for years in Brazil — I keep a fast pace all day.",som:"iés. áiv rár-vested fór iérs in brazíl — ái quíp a fést pêis ól dêi.",pt:"Sim. Colho há anos no Brasil — mantenho ritmo rápido o dia todo."},dk:"Pace = ritmo. Bend (abaixar), kneel (ajoelhar). Muitas colheitas pagam por produção (piece rate) — ritmo é dinheiro."},
+{t:["empregador"],pr:["h2a"],v:["colheita"],en:"Some fields pay piece rate. Do you know what that means?",som:"sâm fílds pêi pís rêit. du iú nôu uót dhét míns?",pt:"Algumas lavouras pagam por produção. Você sabe o que isso significa?",ps:[{pt:"explicar pagamento por produção",w:["per box","per bucket","production","more i pick","quantity","paid by"]}],mo:{en:"Yes: I'm paid per box or bucket I fill. The more I pick, the more I earn.",som:"iés: áim pêid per bóks ór bâ-quet ái fíl. dhi mór ái pík, dhi mór ái ôrn.",pt:"Sim: recebo por caixa ou balde que encho. Quanto mais colho, mais ganho."},dk:"Piece rate = por produção. Mesmo assim a lei garante o salário mínimo H-2A da região (AEWR) se a produção não alcançar."},
+{t:["empregador"],pr:["h2a"],v:["colheita"],en:"How do you handle working under the sun for ten hours?",som:"ráu du iú rén-dol uôr-king ãnder dhi sân fór tén áuers?",pt:"Como você lida com dez horas de trabalho debaixo de sol?",ps:[{pt:"hidratação e proteção",w:["water","drink","hat","break","sunscreen","used to"]}],mo:{en:"I'm used to it. I drink water all day, wear a hat and take the scheduled breaks.",som:"áim iúzd tu it. ái drínk uórer ól dêi, uér a rét énd têik dhi squé-djuld brêiks.",pt:"Estou acostumado. Bebo água o dia todo, uso chapéu e faço as pausas programadas."},dk:"Heat safety é lei na fazenda: water, shade (sombra), breaks. Responder isso mostra experiência real."},
+{t:["empregador"],pr:["h2a"],v:["colheita"],en:"How do you pick fruit without damaging it?",som:"ráu du iú pík frút uidháut dé-madjing it?",pt:"Como você colhe fruta sem machucá-la?",ps:[{pt:"técnica de cuidado",w:["gently","careful","twist","stem","don't squeeze","soft","place"]}],mo:{en:"I pick gently, twist at the stem, never squeeze, and place it in the bucket — not throw.",som:"ái pík djént-li, tuíst ét dhi stém, néver squíz, énd plêis it in dhi bâ-quet — nót thrôu.",pt:"Colho com delicadeza, giro no cabinho, nunca aperto, e coloco no balde — não jogo."},dk:"Fruta machucada = fruta perdida = patrão bravo. Gently (delicadamente), stem (cabinho), squeeze (apertar)."},
+/* ---------- H-2A: ESTUFA ---------- */
+{t:["empregador","recrutador"],pr:["h2a"],v:["estufa"],en:"What greenhouse tasks have you done?",som:"uót grín-ráus tésks rév iú dân?",pt:"Que tarefas de estufa você já fez?",ps:[{pt:"citar tarefas",w:["transplant","seed","water","prune","pots","trays","seedlings"]}],mo:{en:"Seeding trays, transplanting seedlings, watering, pruning and moving pots.",som:"sí-ding trêis, tréns-plén-ting síd-lings, uóre-ring, prúning énd múving póts.",pt:"Semear bandejas, transplantar mudas, regar, podar e mover vasos."},dk:"Greenhouse = estufa. Seedling (muda), tray (bandeja), pot (vaso), transplant (transplantar)."},
+{t:["empregador"],pr:["h2a"],v:["estufa"],en:"Greenhouses get very hot and humid. Is that a problem for you?",som:"grín-ráuziz guét véri rót énd riú-mid. iz dhét a pró-blem fór iú?",pt:"Estufas ficam muito quentes e úmidas. Isso é problema pra você?",ps:[{pt:"aceitar com estratégia",w:["no","fine","water","used to","heat","breaks"]}],mo:{en:"No problem. I stay hydrated and I'm used to hot environments.",som:"nôu pró-blem. ái stêi rái-drêited énd áim iúzd tu rót invái-ronments.",pt:"Sem problema. Me mantenho hidratado e estou acostumado com ambientes quentes."},dk:"Humid = úmido. \"I stay hydrated\" = me mantenho hidratado. Simples e profissional."},
+{t:["empregador"],pr:["h2a"],v:["estufa"],en:"How would you notice if a plant has pests or disease?",som:"ráu uúd iú nôu-tis if a plént réz pésts ór dizíz?",pt:"Como você percebe se uma planta tem praga ou doença?",ps:[{pt:"sinais visíveis",w:["leaves","spots","holes","insects","yellow","color","check"]}],mo:{en:"I check the leaves: spots, holes, yellow color or insects. Then I report it to the supervisor.",som:"ái tchék dhi lívs: spóts, rôuls, iélou cólor ór ín-sects. dhén ái ripórt it tu dhi súper-váizor.",pt:"Confiro as folhas: manchas, furos, cor amarelada ou insetos. Depois reporto ao supervisor."},dk:"Pest (praga), leaf/leaves (folha/folhas), spot (mancha). Observar + reportar = funcionário de estufa nota 10."},
+/* ---------- H-2A: MÁQUINAS ---------- */
+{t:["empregador","recrutador"],pr:["h2a"],v:["maquinas"],en:"What farm machinery can you operate?",som:"uót fárm machí-neri quén iú ópe-rêit?",pt:"Que máquinas agrícolas você sabe operar?",ps:[{pt:"listar máquinas",w:["tractor","harvester","forklift","planter","sprayer","loader","truck"]}],mo:{en:"Tractors, forklift and sprayer. I also drive farm trucks.",som:"tréc-tors, fórk-lift énd sprêier. ái ólsou dráiv fárm trâks.",pt:"Tratores, empilhadeira e pulverizador. Também dirijo caminhões da fazenda."},dk:"Tractor (trator), forklift (empilhadeira), sprayer (pulverizador), harvester (colheitadeira), loader (carregadeira)."},
+{t:["empregador"],pr:["h2a"],v:["maquinas"],en:"What do you check on a tractor before starting work?",som:"uót du iú tchék ón a tréc-tor bifór stár-ting uôrk?",pt:"O que você confere no trator antes de começar o trabalho?",ps:[{pt:"checagem diária",w:["oil","fuel","tires","brakes","lights","water","hydraulic"]}],mo:{en:"Oil, fuel, tires, brakes, lights and the hydraulic system. Safety check every morning.",som:"óil, fiúol, táiers, brêiks, láits énd dhi rai-dró-lic sís-tem. sêif-ti tchék évri mór-nin.",pt:"Óleo, combustível, pneus, freios, luzes e o sistema hidráulico. Checagem de segurança toda manhã."},dk:"Pre-operation check: oil (óleo), fuel (combustível), tires (pneus), brakes (freios). Isso separa operador de aventureiro."},
+{t:["empregador"],pr:["h2a"],v:["maquinas"],en:"This position may require driving on public roads. How is your English for that?",som:"dhis pozí-shion mêi riquáir dráiving ón pâ-blic rôuds. ráu iz iór ín-glish fór dhét?",pt:"Essa vaga pode exigir dirigir em vias públicas. Como está seu inglês pra isso?",ps:[{pt:"mostrar inglês funcional e estudo",w:["study","understand","signs","improving","english","practice","learn"]}],mo:{en:"I study English every day. I understand road signs and basic instructions, and I keep improving.",som:"ái stâdi ín-glish évri dêi. ái ãnder-sténd rôud sáins énd bêi-sic instrâk-shions, énd ái quíp imprúving.",pt:"Estudo inglês todo dia. Entendo placas e instruções básicas, e sigo melhorando."},dk:"⚠️ Regra de 2026: dirigir veículo comercial nos EUA agora exige comprovar proficiência em inglês no visto. Se sua vaga envolve estrada, o inglês virou parte do trabalho."},
+{t:["empregador"],pr:["h2a"],v:["maquinas"],en:"The tractor makes a strange noise during work. What do you do?",som:"dhi tréc-tor mêiks a strêindj nóiz diúring uôrk. uót du iú du?",pt:"O trator faz um barulho estranho durante o trabalho. O que você faz?",ps:[{pt:"parar com segurança e reportar",w:["stop","turn off","check","tell","supervisor","report","safe"]}],mo:{en:"I stop in a safe place, turn it off, check quickly and report to my supervisor before continuing.",som:"ái stóp in a sêif plêis, tôrn it óf, tchék quík-li énd ripórt tu mái súper-váizor bifór contí-niuing.",pt:"Paro num lugar seguro, desligo, dou uma olhada rápida e reporto ao supervisor antes de continuar."},dk:"Máquina quebrada de vez custa milhares de dólares. Parar cedo + reportar = operador que o patrão confia."},
+/* ---------- H-2A: PECUÁRIA ---------- */
+{t:["empregador","recrutador"],pr:["h2a"],v:["pecuaria"],en:"Have you worked with cattle or other livestock?",som:"rév iú uôrkt uíth qué-rol ór â-dher láiv-stók?",pt:"Você já trabalhou com gado ou outros animais de criação?",ps:[{pt:"contar a experiência",w:["cattle","cows","pigs","chickens","horses","milk","feed","years"]}],mo:{en:"Yes, I worked with dairy cows for four years: feeding, milking and cleaning the barns.",som:"iés, ái uôrkt uíth déri cáus fór fór iérs: fí-ding, míl-king énd clínin dhi bárns.",pt:"Sim, trabalhei com vacas leiteiras por quatro anos: alimentando, ordenhando e limpando os estábulos."},dk:"Livestock (criação), cattle (gado), dairy (leiteiro), barn (estábulo/galpão), feed (alimentar), milk (ordenhar)."},
+{t:["empregador"],pr:["h2a"],v:["pecuaria"],en:"Dairy work starts at 4 a.m. every day, including Sundays. Are you ready for that?",som:"déri uôrk stárts ét fór êi-ém évri dêi, inclúding sân-dêis. ar iú rédi fór dhét?",pt:"O trabalho no leite começa às 4h todo dia, inclusive domingo. Você está pronto?",ps:[{pt:"aceitar a rotina",w:["yes","early","every day","used to","cows","animals","ready"]}],mo:{en:"Yes. Animals don't take days off, and I'm used to waking up before sunrise.",som:"iés. éni-mals dôunt têik dêis óf, énd áim iúzd tu uêi-king âp bifór sân-ráiz.",pt:"Sim. Animal não tira folga, e eu estou acostumado a acordar antes do sol."},dk:"\"Animals don't take days off\" — frase que faz o fazendeiro sorrir. Days off = folgas."},
+{t:["empregador"],pr:["h2a"],v:["pecuaria"],en:"How do you stay safe when handling large animals?",som:"ráu du iú stêi sêif uén rén-dling lárdj éni-mals?",pt:"Como você se mantém seguro lidando com animais grandes?",ps:[{pt:"técnicas de segurança",w:["calm","behind","never","slow","talk","escape","kick","careful"]}],mo:{en:"I stay calm, move slowly, never stand right behind them and always keep an escape route.",som:"ái stêi cálm, múv slôu-li, néver sténd ráit biráind dhém énd ól-uêis quíp an es-quêip rút.",pt:"Fico calmo, me movo devagar, nunca fico bem atrás deles e sempre deixo uma rota de fuga."},dk:"Kick zone = área do coice. Quem já apanhou de vaca sabe: nunca atrás, sempre com saída."},
+/* ---------- H-2A: POMAR ---------- */
+{t:["empregador","recrutador"],pr:["h2a"],v:["pomar"],en:"Are you comfortable picking fruit from tall ladders?",som:"ar iú cãm-fortabol pí-quing frút fróm tól lé-ders?",pt:"Você se sente confortável colhendo fruta em escadas altas?",ps:[{pt:"confirmar com segurança",w:["yes","ladder","careful","balance","secure","heights"]}],mo:{en:"Yes. I position the ladder on firm ground, keep three points of contact and work carefully.",som:"iés. ái pozí-shion dhi lé-der ón fôrm gráund, quíp thrí póints óv cón-tact énd uôrk quér-fuli.",pt:"Sim. Posiciono a escada em chão firme, mantenho três pontos de apoio e trabalho com cuidado."},dk:"\"Three points of contact\" (duas mãos + um pé, ou dois pés + uma mão) é a regra de ouro da escada nos EUA."},
+{t:["empregador"],pr:["h2a"],v:["pomar"],en:"Do you know how to prune fruit trees?",som:"du iú nôu ráu tu prún frút tríz?",pt:"Você sabe podar árvores frutíferas?",ps:[{pt:"responder com técnica ou vontade",w:["yes","prune","cut","branches","dead","shears","learn"]}],mo:{en:"Yes, I prune dead and crossing branches with shears and loppers, following the crew leader.",som:"iés, ái prún déd énd cró-sing brén-tchiz uíth shírs énd ló-pers, fólouing dhi cru líder.",pt:"Sim, podo galhos mortos e cruzados com tesoura e podão, seguindo o líder da equipe."},dk:"Prune (podar), branch (galho), shears (tesoura de poda), loppers (podão), crew leader (líder de turma)."},
+{t:["empregador"],pr:["h2a"],v:["pomar"],en:"You fill your picking bag. What do you do next?",som:"iú fíl iór pí-quing bég. uót du iú du nékst?",pt:"Você encheu a sacola de colheita. O que faz em seguida?",ps:[{pt:"esvaziar com cuidado no bin",w:["bin","empty","gently","careful","box","fill","continue"]}],mo:{en:"I walk to the bin and empty the bag gently, so the fruit doesn't bruise. Then I keep picking.",som:"ái uók tu dhi bín énd émpti dhi bég djént-li, sôu dhi frút dâzent brúz. dhén ái quíp pí-quing.",pt:"Vou até o bin e esvazio a sacola com cuidado, pra fruta não machucar. Depois continuo colhendo."},dk:"Bin = caixote grande do pomar. Bruise = machucado da fruta. Picking bag = sacola de colheita."},
+/* ---------- H-2A: PACKING ---------- */
+{t:["empregador","recrutador"],pr:["h2a"],v:["packing"],en:"In the packing house you sort produce by quality. How do you decide what to remove?",som:"in dhi pé-quing ráus iú sórt pró-dius bái quó-liti. ráu du iú disáid uót tu rimúv?",pt:"No packing house você separa os produtos por qualidade. Como decide o que tirar?",ps:[{pt:"critérios de descarte",w:["damaged","rotten","small","color","bruised","size","remove","bad"]}],mo:{en:"I remove damaged, bruised or rotten produce, and anything with wrong size or color.",som:"ái rimúv dé-madjd, brúzd ór ró-ten pró-dius, énd éni-thing uíth róng sáiz ór cólor.",pt:"Removo produtos danificados, machucados ou podres, e o que tiver tamanho ou cor errados."},dk:"Sort (separar/classificar), grade (classificar por qualidade), produce (hortifrúti), rotten (podre)."},
+{t:["empregador"],pr:["h2a"],v:["packing"],en:"The line moves fast. What do you do if you can't keep up?",som:"dhi láin múvs fést. uót du iú du if iú quént quíp âp?",pt:"A linha anda rápido. O que você faz se não conseguir acompanhar?",ps:[{pt:"comunicar em vez de deixar passar",w:["tell","supervisor","help","raise","hand","ask","signal"]}],mo:{en:"I signal the supervisor instead of letting bad produce pass. Quality first.",som:"ái síg-nal dhi súper-váizor instéd óv lé-ting béd pró-dius pés. quó-liti fôrst.",pt:"Sinalizo o supervisor em vez de deixar produto ruim passar. Qualidade em primeiro lugar."},dk:"\"Keep up\" = acompanhar o ritmo. Avisar > esconder: linha de packing tem controle de qualidade em tudo."},
+/* ---------- H-2A: IRRIGAÇÃO ---------- */
+{t:["empregador","recrutador"],pr:["h2a"],v:["irrigacao"],en:"Have you worked with irrigation pipes and pumps?",som:"rév iú uôrkt uíth iri-guêi-shion páips énd pâmps?",pt:"Você já trabalhou com canos e bombas de irrigação?",ps:[{pt:"contar experiência",w:["pipes","pump","move","sprinkler","water","lines","yes"]}],mo:{en:"Yes. I moved pipes and sprinkler lines and operated the water pumps on a farm.",som:"iés. ái múvd páips énd sprín-cler láins énd ópe-rêited dhi uórer pâmps ón a fárm.",pt:"Sim. Movia canos e linhas de aspersores e operava as bombas d'água numa fazenda."},dk:"Pipe (cano), pump (bomba), sprinkler (aspersor), hose (mangueira), valve (registro)."},
+{t:["empregador"],pr:["h2a"],v:["irrigacao"],en:"Irrigation shifts can be very early or very late. Is your schedule flexible?",som:"iri-guêi-shion shífts quén bi véri ôrli ór véri lêit. iz iór squé-djul flék-sibol?",pt:"Turnos de irrigação podem ser bem cedo ou bem tarde. Seu horário é flexível?",ps:[{pt:"confirmar flexibilidade",w:["yes","flexible","any time","night","early","no problem"]}],mo:{en:"Yes, my schedule is completely flexible — early morning or night, no problem.",som:"iés, mái squé-djul iz complít-li flék-sibol — ôrli mór-nin ór náit, nôu pró-blem.",pt:"Sim, meu horário é totalmente flexível — de madrugada ou à noite, sem problema."},dk:"A água corre no horário que a lavoura precisa. Flexible schedule = a resposta que garante a vaga."},
+{t:["empregador"],pr:["h2a"],v:["irrigacao"],en:"You find a broken pipe flooding part of the field. What do you do?",som:"iú fáind a brôu-ken páip flâ-ding párt óv dhi fíld. uót du iú du?",pt:"Você encontra um cano quebrado alagando parte do campo. O que faz?",ps:[{pt:"fechar a água e reportar",w:["close","shut","valve","turn off","water","report","supervisor","fix"]}],mo:{en:"I shut off the valve to stop the water, then I report it and help fix the pipe.",som:"ái shât óf dhi vélv tu stóp dhi uórer, dhén ái ripórt it énd rélp fíks dhi páip.",pt:"Fecho o registro pra parar a água, depois reporto e ajudo a consertar o cano."},dk:"\"Shut off\" = fechar/desligar. Primeiro estancar o prejuízo, depois comunicar — ordem que vale pra tudo na fazenda."}
+];
+/* ---------- ANALISADOR DE CURRÍCULO (offline) ---------- */
+const CV_MAPA = [
+  { re:/jardin|grama|paisag|roçad|rocad|poda|landscap|capina/i, prog:"h2b", vaga:"landscaping", nome:"🌿 Paisagismo" },
+  { re:/camareir|governan|faxin|limpeza|housekeep|diarista|hotel/i, prog:"h2b", vaga:"housekeeping", nome:"🛏️ Camareira/Limpeza" },
+  { re:/cozinh|chef|chapeiro|confeit|padeiro|restauran|cook/i, prog:"h2b", vaga:"cook", nome:"👨‍🍳 Cozinha" },
+  { re:/lavador de prat|copeir|steward/i, prog:"h2b", vaga:"dishwasher", nome:"🍽️ Lavador de pratos" },
+  { re:/garç|garcon|waiter|atenden|balcon/i, prog:"h2b", vaga:"server", nome:"🤵 Garçom" },
+  { re:/recep|check.?in|hostess/i, prog:"h2b", vaga:"frontdesk", nome:"🛎️ Recepção" },
+  { re:/pedreir|constru|obra|carpint|servente|azulej|gesso|solda|encanador civil/i, prog:"h2b", vaga:"construction", nome:"🧱 Construção" },
+  { re:/manuten|eletric|elétric|encanad|pintor|pintura|reparo|handyman|mecânic|mecanic/i, prog:"h2b", vaga:"maintenance", nome:"🔧 Manutenção" },
+  { re:/florest|reflorest|motosserr|lenhador|tree/i, prog:"h2b", vaga:"forestry", nome:"🌲 Florestal" },
+  { re:/frigor[ií]f|açougue|acougue|abatedou|pescado|filetad|desoss/i, prog:"h2b", vaga:"processing", nome:"🐟 Frigorífico" },
+  { re:/salva.?vidas|piscin|natação|natacao|lifeguard/i, prog:"h2b", vaga:"lifeguard", nome:"🏊 Salva-vidas" },
+  { re:/colheit|lavour|roça|roca |rural|safra|plantio|agricultur|café|cafe |cana|horta/i, prog:"h2a", vaga:"colheita", nome:"🥬 Colheita/Lavoura" },
+  { re:/estufa|viveiro|muda|greenhouse|floricultur/i, prog:"h2a", vaga:"estufa", nome:"🌱 Estufa/Viveiro" },
+  { re:/trator|colheitadeira|empilhadeira|operador de máquin|operador de maquin|motorista|caminh/i, prog:"h2a", vaga:"maquinas", nome:"🚜 Máquinas" },
+  { re:/gado|pecuár|pecuar|leite|orden|vaqueir|granja|suíno|suino|avicul/i, prog:"h2a", vaga:"pecuaria", nome:"🐄 Pecuária" },
+  { re:/pomar|fruticultur|maçã|maca |laranja|uva|citros/i, prog:"h2a", vaga:"pomar", nome:"🍎 Pomar" },
+  { re:/packing|embalag|classificaç|classificac|beneficiamento/i, prog:"h2a", vaga:"packing", nome:"📦 Packing" },
+  { re:/irriga|pivô|pivo |gotejamento|bomba d/i, prog:"h2a", vaga:"irrigacao", nome:"💧 Irrigação" }
+];
+/* ---------- MOTOR DO SIMULADOR ---------- */
+let simCfg = { prog:"h2b", tipo:"empregador", vaga:"geral", voz:true, realista:false };
+let simEstado = null;
+function simDados(){
+  const p = Progresso.dados;
+  if(!p.sim) p.sim = { dominadas:{}, erros:{} };
+  return p.sim;
+}
+function simIndexDe(q){ return BANCO_SIM.indexOf(q); }
+function simBancoFiltrado(tipo, prog, vaga){
+  return BANCO_SIM.filter(q =>
+    q.t.includes(tipo) &&
+    q.pr.includes(prog) &&
+    (q.v === null || (vaga && vaga !== "geral" && q.v.includes(vaga)))
+  );
+}
+function simMontarFila(){
+  const { prog, vaga } = simCfg;
+  const fases = simCfg.tipo === "completa"
+    ? ["recrutador","empregador","consulado","chegada"]
+    : [simCfg.tipo];
+  const fila = [];
+  const nomesFase = { recrutador:"📋 ETAPA: RECRUTADOR", empregador:"🤝 ETAPA: EMPREGADOR", consulado:"🏛️ ETAPA: CONSULADO", chegada:"🛬 ETAPA: CHEGADA NOS EUA" };
+  for(const f of fases){
+    const qs = embaralhar(simBancoFiltrado(f, prog, vaga));
+    if(!qs.length) continue;
+    if(fases.length > 1) fila.push({ fase: nomesFase[f] });
+    qs.forEach(q => fila.push({ q }));
+  }
+  return fila;
+}
+function renderSimConfig(){
+  const lista = SIM_VAGAS[simCfg.prog];
+  if(!lista.some(v => v.id === simCfg.vaga)) simCfg.vaga = "geral";
+  $("#simVaga").innerHTML = lista.map(v =>
+    `<button class="fchip ${v.id === simCfg.vaga ? "ativo" : ""}" data-v="${v.id}">${v.nome}</button>`).join("");
+  $("#simVaga").querySelectorAll(".fchip").forEach(b => b.addEventListener("click", () => {
+    simCfg.vaga = b.dataset.v; renderSimConfig();
+  }));
+  const soVisto = simCfg.tipo === "consulado" || simCfg.tipo === "chegada";
+  $("#simVagaBloco").style.display = soVisto ? "none" : "block";
+  $("#simTipoNota").textContent = SIM_TIPOS_NOTA[simCfg.tipo] || "";
+  const n = simCfg.tipo === "completa"
+    ? ["recrutador","empregador","consulado","chegada"].reduce((s,f) => s + simBancoFiltrado(f, simCfg.prog, simCfg.vaga).length, 0)
+    : simBancoFiltrado(simCfg.tipo, simCfg.prog, simCfg.vaga).length;
+  const dom = simDados().dominadas;
+  const nDom = simCfg.tipo === "completa"
+    ? ["recrutador","empregador","consulado","chegada"].reduce((s,f) => s + simBancoFiltrado(f, simCfg.prog, simCfg.vaga).filter(q => dom[simIndexDe(q)]).length, 0)
+    : simBancoFiltrado(simCfg.tipo, simCfg.prog, simCfg.vaga).filter(q => dom[simIndexDe(q)]).length;
+  $("#simContagem").textContent = `${n} perguntas neste filtro · ${nDom} já dominadas por você`;
+}
+function iniciarSim(){
+  const fila = simMontarFila();
+  if(!fila.some(i => i.q)){ mostrarToast("Nenhuma pergunta neste filtro ainda 😕"); return; }
+  simEstado = {
+    fila, pos: 0, atual: null,
+    respondidas: 0, otimas: 0, parciais: 0, aprender: 0,
+    erradas: [], rodadaReforco: false, xpGanho: 0
+  };
+  $("#simChat").innerHTML = "";
+  simBolha(`<div class="quem">🦜 FALAFINA</div><div class="en" style="color:var(--tinta)">Boa entrevista, ${esc((Contas.atual() || {nome:"amigo"}).nome)}! Responda <b>em inglês</b>, falando 🎤 ou digitando. Errar aqui é de graça — errar lá custa caro. Vamos!</div>`, "oficial");
+  irPara("tela-entrevista");
+  simProxima();
+}
+function simBolha(html, classe){
+  const div = document.createElement("div");
+  div.className = "sim-balao " + classe;
+  div.innerHTML = html;
+  $("#simChat").appendChild(div);
+  requestAnimationFrame(() => div.scrollIntoView({ behavior:"smooth", block:"end" }));
+  return div;
+}
+function simAtualizarTopo(){
+  const e = simEstado;
+  const totalQ = e.fila.filter(i => i.q).length;
+  $("#simBarra").style.width = Math.min(Math.round((e.respondidas / Math.max(totalQ,1)) * 100), 100) + "%";
+  $("#simCont").textContent = `${e.respondidas}/${totalQ}${e.rodadaReforco ? " · 🔁 reforço" : ""} · ⭐ ${e.xpGanho}`;
+}
+function simProxima(){
+  const e = simEstado;
+  simAtualizarTopo();
+  if(e.pos >= e.fila.length){
+    if(e.erradas.length){
+      e.fila = embaralhar(e.erradas.map(q => ({ q })));
+      e.erradas = [];
+      e.pos = 0;
+      e.rodadaReforco = true;
+      simBolha("🔁 RODADA DE REFORÇO — só o que você errou", "fase");
+    } else {
+      simBolha("🏆 Você respondeu TODAS as perguntas deste filtro! Recomeçando embaralhado — repetição espaçada é assim que fixa.", "fase");
+      e.fila = simMontarFila();
+      e.pos = 0;
+      e.rodadaReforco = false;
+    }
+  }
+  const item = e.fila[e.pos++];
+  if(!item){ return; }
+  if(item.fase){ simBolha(item.fase, "fase"); simProxima(); return; }
+  const q = item.q;
+  e.atual = q;
+  const esconder = simCfg.realista;
+  simBolha(`<div class="quem">🧑‍💼 ENTREVISTADOR</div>
+    <div class="en">${esc(q.en)} <button class="btn-som" data-falar="${esc(q.en)}" aria-label="Ouvir pergunta">🔊</button></div>
+    ${esconder ? `<button class="btn-link simAjuda" style="padding:4px 0;font-size:.85rem">👁️ Não entendi — mostrar ajuda</button><div class="simOculto" style="display:none">` : ""}
+    <div class="som">🗣️ ${esc(q.som)}</div>
+    <div class="pt">🇧🇷 ${esc(q.pt)}</div>
+    ${esconder ? "</div>" : ""}`, "oficial");
+  const ultima = $("#simChat").lastElementChild;
+  ultima.querySelectorAll("[data-falar]").forEach(b => b.addEventListener("click", () => Fala.dizer(b.dataset.falar, b)));
+  const aj = ultima.querySelector(".simAjuda");
+  if(aj) aj.addEventListener("click", () => { ultima.querySelector(".simOculto").style.display = "block"; aj.style.display = "none"; });
+  if(simCfg.voz) Fala.dizer(q.en);
+  $("#simResposta").value = "";
+  $("#simResposta").focus({ preventScroll: true });
+}
+function simNormalizar(s){
+  return (" " + s.toLowerCase()
+    .replace(/[’']/g, " ")
+    .replace(/[^a-z0-9à-ú ]/gi, " ")
+    .replace(/\s+/g, " ")
+    .trim() + " ");
+}
+const SIM_PT_SINAIS = [" que "," não "," nao "," para "," você "," voce "," trabalho "," sim "," meu "," minha "," anos "," porque "];
+function simAvaliar(){
+  const e = simEstado, q = e.atual;
+  if(!q || !e.fila) return;
+  const bruto = $("#simResposta").value.trim();
+  if(!bruto){ mostrarToast("Escreva ou fale sua resposta primeiro 😉"); return; }
+  const norm = simNormalizar(bruto);
+  simBolha(esc(bruto), "voce");
+  const ok = [], falta = [];
+  for(const p of q.ps){
+    if(p.w.some(w => norm.includes(" " + w + " "))) ok.push(p); else falta.push(p);
+  }
+  const pareceuPT = !ok.length && SIM_PT_SINAIS.some(s => norm.includes(s));
+  e.respondidas++;
+  let classe, titulo, xp = 0;
+  if(ok.length && !falta.length){
+    classe = "otima"; titulo = "🌟 Resposta forte! Cobriu tudo que o entrevistador queria ouvir."; xp = 4; e.otimas++;
+    simDados().dominadas[simIndexDe(q)] = true;
+  } else if(ok.length){
+    classe = "parcial"; titulo = "👍 Boa — mas dá pra deixar completa."; xp = 2; e.parciais++;
+    e.erradas.push(q);
+  } else {
+    classe = "aprender";
+    titulo = pareceuPT ? "🇧🇷 Você respondeu em português! Na entrevista real é inglês — vamos treinar:" : "📚 Ainda não — vamos aprender essa juntos:";
+    e.aprender++;
+    e.erradas.push(q);
+    const s = simDados(); s.erros[simIndexDe(q)] = (s.erros[simIndexDe(q)] || 0) + 1;
+  }
+  if(xp){ e.xpGanho += xp; registrarAtividade(xp); }
+  e.atual = null; // trava: responder de novo antes da próxima não faz nada
+  Progresso.salvar();
+  simFeedback(classe, titulo, ok, falta, q);
+  simAtualizarTopo();
+}
+function simEnsinar(){
+  const e = simEstado, q = e.atual;
+  if(!q) return;
+  e.respondidas++; e.aprender++;
+  e.erradas.push(q);
+  const s = simDados(); s.erros[simIndexDe(q)] = (s.erros[simIndexDe(q)] || 0) + 1;
+  e.atual = null;
+  Progresso.salvar();
+  simFeedback("aprender", "📚 Sem problema — aprender é exatamente o que você veio fazer:", [], q.ps, q);
+  simAtualizarTopo();
+}
+function simFeedback(classe, titulo, ok, falta, q){
+  let html = `<div class="titulo">${titulo}</div>`;
+  if(ok.length) html += `<div style="font-weight:700;font-size:.9rem">✅ Você já disse: ${ok.map(p => esc(p.pt)).join(" · ")}</div>`;
+  if(falta.length) html += `<div style="font-weight:700;font-size:.9rem;color:#8C3212">🧩 Faltou: </div><ul>${falta.map(p => `<li>${esc(p.pt)}</li>`).join("")}</ul>`;
+  html += `<div class="sim-modelo">
+    <div class="rot">💬 RESPOSTA MODELO</div>
+    <div class="en">${esc(q.mo.en)} <button class="btn-som" data-falar="${esc(q.mo.en)}">🔊</button>${Fala.temMic ? `<button class="btn-som mic" data-ouvir="${esc(q.mo.en)}">🎤</button>` : ""}</div>
+    <div class="som" style="margin-top:6px">🗣️ ${esc(q.mo.som)}</div>
+    <div class="pt">🇧🇷 ${esc(q.mo.pt)}</div>
+  </div>
+  <div style="margin-top:8px;font-weight:600;font-size:.9rem">💡 ${esc(q.dk)}</div>
+  <div class="sim-acoes-fb"><button class="simContinuar">➡️ Próxima pergunta</button></div>`;
+  const div = simBolha(html, "fb " + classe);
+  div.querySelectorAll("[data-falar]").forEach(b => b.addEventListener("click", () => Fala.dizer(b.dataset.falar, b)));
+  div.querySelectorAll("[data-ouvir]").forEach(b => b.addEventListener("click", () => Fala.ouvir(b.dataset.ouvir, b)));
+  div.querySelector(".simContinuar").addEventListener("click", simProxima);
+}
+function encerrarSim(){
+  const e = simEstado;
+  if(!e) return;
+  registrarAtividade(0);
+  $("#concluTitulo").textContent = "🎙️ Entrevista encerrada!";
+  $("#concluTexto").textContent = e.respondidas
+    ? `Você encarou ${e.respondidas} pergunta(s): 🌟 ${e.otimas} fortes, 👍 ${e.parciais} boas e 📚 ${e.aprender} pra estudar. ${e.aprender ? "As que você errou voltam no reforço da próxima sessão — o simulador não esquece." : "Nenhuma pra revisar. Tá pronto pra entrevista de verdade!"}`
+    : "Sessão rápida! Volte quando quiser — o entrevistador está sempre de plantão.";
+  $("#concluXP").textContent = String(e.xpGanho);
+  $("#btnProximoModulo").style.display = "none";
+  simEstado = null;
+  irPara("tela-conclusao");
+}
+function simGravar(){
+  const Rec = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!Rec){ mostrarToast("🎤 Seu navegador não tem reconhecimento de voz — digite a resposta"); return; }
+  let r;
+  try{ r = new Rec(); }catch(err){ mostrarToast("🎤 Microfone indisponível"); return; }
+  r.lang = "en-US";
+  r.interimResults = false;
+  r.maxAlternatives = 1;
+  const btn = $("#simMic");
+  btn.classList.add("gravando"); btn.textContent = "👂 Ouvindo...";
+  const soltar = () => { btn.classList.remove("gravando"); btn.textContent = "🎤 Falar"; };
+  r.onresult = ev => {
+    const dito = ev.results[0][0].transcript;
+    const area = $("#simResposta");
+    area.value = (area.value ? area.value + " " : "") + dito;
+  };
+  r.onend = soltar;
+  r.onerror = () => { soltar(); mostrarToast("🎤 Não consegui ouvir — tente de novo mais perto"); };
+  try{ r.start(); }catch(err){ soltar(); }
+}
+function analisarCV(){
+  const txt = $("#cvTexto").value.trim();
+  if(txt.length < 15){ mostrarToast("Cole um texto maior do seu currículo 😊"); return; }
+  const achados = [];
+  for(const m of CV_MAPA){
+    if(m.re.test(txt) && !achados.some(a => a.vaga === m.vaga)) achados.push(m);
+  }
+  const alvo = $("#cvResultado");
+  if(!achados.length){
+    alvo.innerHTML = `<p class="sim-nota" style="margin-top:12px">🤔 Não identifiquei uma área específica. Tente descrever suas experiências com mais detalhes (ex.: "trabalhei com jardinagem", "fui camareira") — ou escolha a vaga manualmente ali em cima.</p>`;
+    return;
+  }
+  alvo.innerHTML = `<p class="sim-nota" style="margin-top:12px">✨ Encontrei estas áreas no seu currículo — toque numa pra treinar a entrevista dela:</p>
+    <div>${achados.map((a,i) => `<button class="cv-tag" data-i="${i}">${a.nome} → treinar</button>`).join("")}</div>`;
+  alvo.querySelectorAll(".cv-tag").forEach(b => b.addEventListener("click", () => {
+    const a = achados[Number(b.dataset.i)];
+    simCfg.prog = a.prog;
+    simCfg.vaga = a.vaga;
+    if(simCfg.tipo === "consulado" || simCfg.tipo === "chegada") simCfg.tipo = "empregador";
+    document.querySelectorAll("#simProg .fchip").forEach(x => x.classList.toggle("ativo", x.dataset.v === a.prog));
+    document.querySelectorAll("#simTipo .fchip").forEach(x => x.classList.toggle("ativo", x.dataset.v === simCfg.tipo));
+    renderSimConfig();
+    iniciarSim();
+  }));
+}
+/* eventos do simulador */
+document.querySelectorAll("#simProg .fchip").forEach(b => b.addEventListener("click", () => {
+  document.querySelectorAll("#simProg .fchip").forEach(x => x.classList.remove("ativo"));
+  b.classList.add("ativo");
+  simCfg.prog = b.dataset.v;
+  renderSimConfig();
+}));
+document.querySelectorAll("#simTipo .fchip").forEach(b => b.addEventListener("click", () => {
+  document.querySelectorAll("#simTipo .fchip").forEach(x => x.classList.remove("ativo"));
+  b.classList.add("ativo");
+  simCfg.tipo = b.dataset.v;
+  renderSimConfig();
+}));
+$("#simVoz").addEventListener("change", e => simCfg.voz = e.target.checked);
+$("#simRealista").addEventListener("change", e => simCfg.realista = e.target.checked);
+$("#simIniciar").addEventListener("click", iniciarSim);
+$("#simMic").addEventListener("click", simGravar);
+$("#simEnviar").addEventListener("click", simAvaliar);
+$("#simEnsina").addEventListener("click", simEnsinar);
+$("#simEncerrar").addEventListener("click", () => { if(confirm("Encerrar a entrevista? Seu XP fica guardado.")) encerrarSim(); });
+$("#cvAnalisar").addEventListener("click", analisarCV);
 
 /* ---------- BOOT ---------- */
 Progresso.carregar();

@@ -1,5 +1,5 @@
 // FalaFina Service Worker — app instalável e funcionando offline
-const CACHE = "falafina-v06";
+const CACHE = "falafina-v7";
 const ARQUIVOS = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png"];
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ARQUIVOS)).then(() => self.skipWaiting()));
