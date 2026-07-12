@@ -1,0 +1,25 @@
+{
+  "name": "FalaFina — Inglês para Brasileiros",
+  "short_name": "FalaFina",
+  "description": "Aprenda inglês com português, pronúncia escrita do nosso jeito e desafios infinitos.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#FFF8EE",
+  "theme_color": "#00885F",
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
