@@ -134,6 +134,25 @@ function mesclarProgresso(a, b) {
   r.modulosFeitos = Object.assign({}, a.modulosFeitos || {}, b.modulosFeitos || {});
   const ea = a.escalada || { nivel: 1, recorde: 1 }, eb = b.escalada || { nivel: 1, recorde: 1 };
   r.escalada = { nivel: Math.max(ea.nivel || 1, eb.nivel || 1), recorde: Math.max(ea.recorde || 1, eb.recorde || 1) };
+  /* RPG: baús = união (nunca reabre) · tempos = MENOR por nível · ritmo = MENOR */
+  r.escalada.baus = Object.assign({}, ea.baus || {}, eb.baus || {});
+  r.escalada.tempos = {};
+  new Set(Object.keys(ea.tempos || {}).concat(Object.keys(eb.tempos || {}))).forEach(k => {
+    const va = (ea.tempos || {})[k], vb = (eb.tempos || {})[k];
+    r.escalada.tempos[k] = (va && vb) ? Math.min(va, vb) : (va || vb);
+  });
+  const ra = ea.melhorRitmo || 0, rb = eb.melhorRitmo || 0;
+  r.escalada.melhorRitmo = (ra && rb) ? Math.min(ra, rb) : (ra || rb || null);
+  /* Carteira 🌱 monotônica: ganhas/gastas só crescem → máximo nunca perde nem duplica.
+     Itens comprados = união. Equipado = o cliente (b) manda, é o estado mais fresco. */
+  const ca = a.cosmeticos || {}, cb = b.cosmeticos || {};
+  r.cosmeticos = {
+    tem: Object.assign({}, ca.tem || {}, cb.tem || {}),
+    usando: Object.assign({}, ca.usando || {}, cb.usando || {}),
+    ganhas: Math.max(ca.ganhas || 0, cb.ganhas || 0),
+    gastas: Math.max(ca.gastas || 0, cb.gastas || 0)
+  };
+  r.medalhasPagas = Object.assign({}, a.medalhasPagas || {}, b.medalhasPagas || {});
   r.srs = Object.assign({}, a.srs || {});
   for (const k in (b.srs || {})) {
     const ia = r.srs[k], ib = b.srs[k];
@@ -198,14 +217,21 @@ async function tratarApi(req, res, rota, ip) {
       .filter(c => c.progresso && (c.progresso.xp || 0) > 0)
       .sort((a, b) => (b.progresso.xp || 0) - (a.progresso.xp || 0))
       .slice(0, 50)
-      .map(c => ({
-        nome: String(c.nome || "Aluno").slice(0, 30),
-        foto: (c.perfil && c.perfil.foto) || null,
-        xp: c.progresso.xp || 0,
-        diasSeguidos: c.progresso.diasSeguidos || 0,
-        recorde: (c.progresso.escalada && c.progresso.escalada.recorde) || 1,
-        voce: !!eu && c.email === eu
-      }));
+      .map(c => {
+        const co = c.progresso.cosmeticos || {}, us = co.usando || {}, tem = co.tem || {};
+        const uso = s => (us[s] && tem[s + ":" + us[s]]) ? String(us[s]).slice(0, 20) : null;
+        return {
+          nome: String(c.nome || "Aluno").slice(0, 30),
+          foto: (c.perfil && c.perfil.foto) || null,
+          xp: c.progresso.xp || 0,
+          diasSeguidos: c.progresso.diasSeguidos || 0,
+          recorde: (c.progresso.escalada && c.progresso.escalada.recorde) || 1,
+          desafios: Object.keys(c.progresso.resgates || {}).length,
+          ritmo: (c.progresso.escalada && c.progresso.escalada.melhorRitmo) || null,
+          borda: uso("borda"), pet: uso("pet"), efeito: uso("efeito"),
+          voce: !!eu && c.email === eu
+        };
+      });
     return responder(res, 200, { ok: true, ranking: lista });
   }
 

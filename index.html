@@ -525,6 +525,70 @@ body.sem-shell .topo .titulo-pagina{ visibility:hidden; }
 @media (max-width:979px){ #tela-home,#tela-trilha,#tela-revisao,#tela-desafios,#tela-pratica,#tela-conquistas,#tela-comunidade,#tela-config,#tela-meuperfil,#tela-ranking{ padding:4px 0 30px; } }
 
 </style>
+
+<style id="css-rpg">
+/* ---------- BORDAS DE AVATAR (anel animado ao redor da foto) ---------- */
+.avb{display:inline-flex;padding:3px;border-radius:50%;background:transparent;flex:none;position:relative}
+.avb-madeira{background:linear-gradient(135deg,#8B5A2B,#5C3A1A,#A0703C)}
+.avb-bronze{background:linear-gradient(135deg,#CD7F32,#8C5A20,#E8A85C)}
+.avb-prata{background:linear-gradient(135deg,#C0C0C0,#8E9BA6,#F2F5F7)}
+.avb-ouro{background:linear-gradient(135deg,#FFD700,#B8860B,#FFF3B0);box-shadow:0 0 8px rgba(255,215,0,.55)}
+.avb-selva{background:conic-gradient(#00885F,#7BC950,#0B5D3B,#7BC950,#00885F);animation:avbGira 4s linear infinite}
+.avb-fogo{background:conic-gradient(#FF4E00,#FFB800,#FF4E00,#B22200,#FF4E00);animation:avbGira 2.2s linear infinite;box-shadow:0 0 10px rgba(255,90,0,.7)}
+.avb-eletrica{background:conic-gradient(#00C2FF,#0051FF,#9BE9FF,#00C2FF);animation:avbGira 1.6s linear infinite;box-shadow:0 0 10px rgba(0,170,255,.75)}
+.avb-aurora{background:conic-gradient(#00FFA3,#00C2FF,#B266FF,#00FFA3);animation:avbGira 3s linear infinite;box-shadow:0 0 12px rgba(0,255,170,.5)}
+.avb-galaxia{background:conic-gradient(#3B0A70,#7B2FF7,#0B1D51,#B84DFF,#3B0A70);animation:avbGira 5s linear infinite;box-shadow:0 0 12px rgba(140,60,255,.7)}
+.avb-imortal{background:conic-gradient(#FFD700,#FF8C00,#FFF3B0,#FFD700);animation:avbGira 1.8s linear infinite,avbPulsa 1.2s ease-in-out infinite alternate}
+@keyframes avbGira{to{filter:hue-rotate(0)}0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+.avb[class*="avb-"]{animation-name:none}
+.avb-selva,.avb-fogo,.avb-eletrica,.avb-aurora,.avb-galaxia,.avb-imortal{animation:avbHue 3s linear infinite}
+@keyframes avbHue{0%{filter:hue-rotate(0deg) brightness(1)}50%{filter:hue-rotate(25deg) brightness(1.25)}100%{filter:hue-rotate(0deg) brightness(1)}}
+@keyframes avbPulsa{from{box-shadow:0 0 6px rgba(255,200,0,.6)}to{box-shadow:0 0 18px rgba(255,215,0,1)}}
+.avb>*{margin:0 !important}
+/* ---------- PETS (mascotes animados) ---------- */
+.pet{display:inline-block;line-height:1;flex:none;filter:drop-shadow(0 2px 3px rgba(0,0,0,.25))}
+.anim-flutuar{animation:petFlutua 2.6s ease-in-out infinite}
+.anim-pular{animation:petPula 1.1s ease-in-out infinite}
+.anim-balancar{animation:petBalanca 2s ease-in-out infinite}
+.anim-brilhar{animation:petFlutua 2.6s ease-in-out infinite,petBrilha 1.6s ease-in-out infinite alternate}
+@keyframes petFlutua{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes petPula{0%,100%{transform:translateY(0) scaleY(1)}30%{transform:translateY(-8px) scaleY(1.05)}60%{transform:translateY(0) scaleY(.92)}}
+@keyframes petBalanca{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg)}}
+@keyframes petBrilha{from{filter:drop-shadow(0 0 2px gold)}to{filter:drop-shadow(0 0 9px gold)}}
+/* ---------- EFEITOS DE RANKING (a linha da pessoa brilha pros outros) ---------- */
+.rank-item{position:relative;overflow:hidden}
+.fx-brilho-verde{border-color:#00885F !important;box-shadow:0 0 10px rgba(0,136,95,.5) !important}
+.fx-ouro-listrado{border-color:#FFD700 !important;background-image:repeating-linear-gradient(45deg,rgba(255,215,0,.10) 0 10px,transparent 10px 20px) !important}
+.fx-neon-azul{border-color:#00C2FF !important;box-shadow:0 0 12px rgba(0,194,255,.65),inset 0 0 8px rgba(0,194,255,.15) !important}
+.fx-estrelas::after{content:"✦ ✧ ✦";position:absolute;right:8px;top:2px;font-size:.7rem;color:#FFD700;animation:fxPisca 1.4s ease-in-out infinite}
+.fx-estrelas{border-color:#FFD700 !important}
+.fx-fogo{border-color:#FF4E00 !important;box-shadow:0 0 12px rgba(255,78,0,.6) !important}
+.fx-fogo::after{content:"🔥";position:absolute;right:6px;top:-2px;animation:petPula 1s ease-in-out infinite}
+.fx-raios{border-color:#00C2FF !important}
+.fx-raios::after{content:"⚡";position:absolute;right:6px;top:-2px;animation:fxPisca .7s steps(2) infinite}
+.fx-aurora{border:2.5px solid transparent !important;background:linear-gradient(var(--branco,#fff),var(--branco,#fff)) padding-box,linear-gradient(90deg,#00FFA3,#00C2FF,#B266FF,#00FFA3) border-box !important;animation:avbHue 3s linear infinite}
+.fx-nevoa{border-color:#7B2FF7 !important;box-shadow:0 0 14px rgba(123,47,247,.55) !important}
+.fx-nevoa::after{content:"🌌";position:absolute;right:6px;top:0;animation:petFlutua 3s ease-in-out infinite}
+.fx-arcoiris{border:3px solid transparent !important;background:linear-gradient(var(--branco,#fff),var(--branco,#fff)) padding-box,linear-gradient(90deg,red,orange,gold,green,#00C2FF,violet) border-box !important;animation:avbHue 2s linear infinite}
+.fx-trono{border-color:#FFD700 !important;box-shadow:0 0 16px rgba(255,215,0,.8) !important;background-image:linear-gradient(90deg,rgba(255,215,0,.14),transparent 60%) !important}
+.fx-trono::after{content:"👑";position:absolute;right:6px;top:-2px;animation:avbPulsa 1.2s ease-in-out infinite alternate}
+@keyframes fxPisca{0%,100%{opacity:.25}50%{opacity:1}}
+/* ---------- LOJA ---------- */
+.loja-abas{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.loja-aba{font-family:inherit;font-weight:800;font-size:.85rem;padding:9px 14px;border-radius:99px;border:2.5px solid rgba(33,49,58,.15);background:var(--branco,#fff);cursor:pointer}
+.loja-aba.ativa{background:var(--verde,#00885F);color:#fff;border-color:var(--verde,#00885F)}
+.loja-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.loja-item{background:var(--branco,#fff);border:2.5px solid rgba(33,49,58,.12);border-radius:16px;padding:14px 10px;text-align:center;display:flex;flex-direction:column;gap:8px;align-items:center}
+.loja-item.tem{border-color:var(--verde,#00885F)}
+.loja-item b{font-size:.9rem}
+.loja-item .preco{font-weight:800;color:#8C5A20;font-size:.85rem}
+.loja-item button{font-family:inherit;font-weight:800;font-size:.82rem;width:100%;padding:9px 6px;border-radius:12px;border:0;cursor:pointer;background:var(--verde,#00885F);color:#fff}
+.loja-item button.usar{background:#0077C2}
+.loja-item button.emuso{background:#3d4a52}
+.loja-item button:disabled{background:#b9c2c8;cursor:not-allowed}
+.chip-semente{display:inline-flex;align-items:center;gap:6px;background:#FFF3D6;border:2px solid #E8B84C;border-radius:99px;padding:6px 14px;font-weight:800}
+.medal-bronze{border-color:#CD7F32 !important}.medal-prata{border-color:#9AA7B0 !important}.medal-ouro{border-color:#FFD700 !important}.medal-diamante{border-color:#00C2FF !important;box-shadow:0 0 8px rgba(0,194,255,.35)}
+</style>
 </head>
 <body>
 
@@ -808,6 +872,7 @@ body.sem-shell .topo .titulo-pagina{ visibility:hidden; }
 <main class="tela" id="tela-meuperfil"><div id="meuPerfilConteudo"></div></main>
 <!-- ================= TELA: FIM DA SEMANA GRÁTIS ================= -->
 <main class="tela" id="tela-paywall"><div id="paywallConteudo"></div></main>
+<main class="tela" id="tela-loja"><div id="lojaConteudo"></div></main>
 </div><!-- /conteudo -->
 </div><!-- /principal -->
 </div><!-- /app -->
@@ -2476,6 +2541,9 @@ const Progresso = {
     else { this.dados = Store.get("ff_progresso", { xp:0, nivelEscolhido:null, modulosFeitos:{} }); }
     if(!this.dados.escalada) this.dados.escalada = { nivel:1, recorde:1 };
     if(!this.dados.modulosFeitos) this.dados.modulosFeitos = {};
+    if(!this.dados.cosmeticos) this.dados.cosmeticos = { tem:{}, usando:{}, ganhas:0, gastas:0 };
+    if(!this.dados.medalhasPagas) this.dados.medalhasPagas = {};
+    if(!this.dados.resgates) this.dados.resgates = {};
   },
   salvar(){
     const c = Contas.atual();
@@ -2532,10 +2600,22 @@ function registrarAtividade(xp){
     p.ultimoDiaAtivo = hoje;
   }
   p.melhorSeq = Math.max(p.melhorSeq || 0, p.diasSeguidos || 0);
+  if(p.ultimoDiaSemente !== hoje && typeof COSM !== "undefined"){
+    p.ultimoDiaSemente = hoje;
+    COSM.ganhar(10, "primeiro estudo do dia");
+  }
   Progresso.salvar();
   atualizarXP();
+  if(typeof creditarMedalhas === "function") creditarMedalhas();
 }
 function tituloPorXP(xp){
+  if(xp >= 7700000) return "⛰️ Imortal da Montanha";
+  if(xp >= 2000000) return "🏆 Lenda do FalaFina";
+  if(xp >= 500000) return "🌎 Embaixador";
+  if(xp >= 150000) return "🕴️ Gerente Gringo";
+  if(xp >= 50000) return "👷 Chefe de Equipe";
+  if(xp >= 15000) return "🏭 Fluente da Firma";
+  if(xp >= 5000) return "🗣️ Bilíngue em Construção";
   if(xp >= 2000) return "🦅 Gringo Honorário";
   if(xp >= 1000) return "🇺🇸 Quase Gringo";
   if(xp >= 600) return "🏠 Morador";
@@ -3230,17 +3310,152 @@ function concluirModuloAtual(){
 }
 
 /* ==================================================================
-   ESCALADA INFINITA — níveis 1, 2, 3... sem fim.
-   Dificuldade sobe: mais perguntas, menos erros permitidos, conteúdo
-   mais avançado e mais "montar frase". Pular é permitido; falhar no
-   pulo manda de volta pro nível 1. Coragem tem preço.
+   COSMÉTICOS RPG — moeda 🌱 Sementes, loja, bordas, pets, efeitos.
+   Carteira à prova de sync: guardamos GANHAS e GASTAS na vida toda
+   (só crescem → o servidor mescla pelo maior e nada se perde nem
+   duplica). Saldo = ganhas − gastas.
    ================================================================== */
+const COSM = {
+  BORDAS: [
+    { id:"madeira",  slot:"borda", nome:"Moldura de Madeira",  preco:300,   desc:"O começo de todo lenhador" },
+    { id:"bronze",   slot:"borda", nome:"Anel de Bronze",      preco:600,   desc:"Primeiro metal do guerreiro" },
+    { id:"prata",    slot:"borda", nome:"Anel de Prata",       preco:1200,  desc:"Brilho de quem treina todo dia" },
+    { id:"ouro",     slot:"borda", nome:"Anel de Ouro",        preco:2500,  desc:"Reluz até no escuro" },
+    { id:"selva",    slot:"borda", nome:"Folhas da Selva",     preco:4000,  desc:"A energia verde do FalaFina" },
+    { id:"fogo",     slot:"borda", nome:"Chama Viva",          preco:6000,  desc:"Fogo girando ao seu redor" },
+    { id:"eletrica", slot:"borda", nome:"Tempestade Elétrica", preco:9000,  desc:"Raios azuis em alta voltagem" },
+    { id:"aurora",   slot:"borda", nome:"Aurora Boreal",       preco:14000, desc:"As cores do céu do norte" },
+    { id:"galaxia",  slot:"borda", nome:"Galáxia",             preco:20000, desc:"Um universo em volta de você" },
+    { id:"imortal",  slot:"borda", nome:"Coroa Imortal",       preco:30000, req:100, desc:"Só pra quem venceu o nível 100" }
+  ],
+  PETS: [
+    { id:"fininho", slot:"pet", nome:"Fininho",        img:"mascote.png", anim:"flutuar",  preco:500,   desc:"O papagaio oficial, sempre com você" },
+    { id:"pipoca",  slot:"pet", nome:"Pipoca",         emo:"🐥", anim:"pular",    preco:800,   desc:"Pintinho saltitante" },
+    { id:"tata",    slot:"pet", nome:"Tatá",           emo:"🐢", anim:"balancar", preco:1200,  desc:"Devagar e sempre — igual o inglês" },
+    { id:"foxy",    slot:"pet", nome:"Foxy",           emo:"🦊", anim:"pular",    preco:2000,  desc:"Esperta como você" },
+    { id:"zeca",    slot:"pet", nome:"Zeca",           emo:"🐒", anim:"balancar", preco:3000,  desc:"Macaco arteiro" },
+    { id:"sabio",   slot:"pet", nome:"Sábio",          emo:"🦉", anim:"flutuar",  preco:5000,  desc:"A coruja que sabe todas" },
+    { id:"pintada", slot:"pet", nome:"Onça Pintada",   emo:"🐆", anim:"pular",    preco:8000,  desc:"Velocidade brasileira" },
+    { id:"real",    slot:"pet", nome:"Águia Real",     emo:"🦅", anim:"flutuar",  preco:12000, desc:"Visão de águia nos estudos" },
+    { id:"uni",     slot:"pet", nome:"Unicórnio",      emo:"🦄", anim:"brilhar",  preco:18000, desc:"Raro como quem estuda todo dia" },
+    { id:"dragao",  slot:"pet", nome:"Dragão FalaFina",emo:"🐉", anim:"brilhar",  preco:30000, req:250, desc:"Lendário — exige nível 250" }
+  ],
+  EFEITOS: [
+    { id:"brilho-verde",  slot:"efeito", nome:"Brilho Verde",      preco:400,   desc:"Sua linha do ranking brilha" },
+    { id:"ouro-listrado", slot:"efeito", nome:"Listras de Ouro",   preco:900,   desc:"Fundo dourado listrado" },
+    { id:"neon-azul",     slot:"efeito", nome:"Neon Azul",         preco:1500,  desc:"Vibração neon" },
+    { id:"estrelas",      slot:"efeito", nome:"Chuva de Estrelas", preco:2500,  desc:"✦ piscando pra todo mundo ver" },
+    { id:"fogo",          slot:"efeito", nome:"Fogo na Borda",     preco:4000,  desc:"🔥 saltando na sua linha" },
+    { id:"raios",         slot:"efeito", nome:"Raios",             preco:6500,  desc:"⚡ estalando sem parar" },
+    { id:"aurora",        slot:"efeito", nome:"Aurora",            preco:10000, desc:"Borda com as cores do céu" },
+    { id:"nevoa",         slot:"efeito", nome:"Névoa Cósmica",     preco:15000, desc:"🌌 roxo misterioso" },
+    { id:"arcoiris",      slot:"efeito", nome:"Arco-Íris",         preco:22000, desc:"Todas as cores girando" },
+    { id:"trono",         slot:"efeito", nome:"Trono Imortal",     preco:35000, req:500, desc:"👑 dourado — exige nível 500" }
+  ],
+  PACOTES: [
+    { rs:"4,90",  s:600 }, { rs:"14,90", s:2200 }, { rs:"29,90", s:5000 }, { rs:"59,90", s:12000 }
+  ],
+  est(){
+    const p = Progresso.dados;
+    if(!p.cosmeticos) p.cosmeticos = { tem:{}, usando:{}, ganhas:0, gastas:0 };
+    const c = p.cosmeticos;
+    c.tem = c.tem || {}; c.usando = c.usando || {}; c.ganhas = c.ganhas || 0; c.gastas = c.gastas || 0;
+    return c;
+  },
+  saldo(){ const c = this.est(); return Math.max(0, Math.round((c.ganhas || 0) - (c.gastas || 0))); },
+  ganhar(n, motivo){
+    if(!(n > 0)) return;
+    const c = this.est(); c.ganhas += Math.round(n); Progresso.salvar();
+    if(motivo && typeof mostrarToast === "function") mostrarToast(`🌱 +${Math.round(n)} — ${motivo}`);
+  },
+  todos(){ return this.BORDAS.concat(this.PETS, this.EFEITOS); },
+  item(id){ return this.todos().find(x => x.id === id && true) || this.todos().find(x => x.id === id); },
+  itemDe(slot, id){ return this.todos().find(x => x.slot === slot && x.id === id); },
+  tem(slot, id){ return !!this.est().tem[slot + ":" + id]; },
+  liberado(it){ const rec = (Progresso.dados.escalada || {}).recorde || 1; return !it.req || rec >= it.req; },
+  comprar(slot, id){
+    const it = this.itemDe(slot, id); if(!it) return;
+    const c = this.est(), chave = slot + ":" + id;
+    if(c.tem[chave]){ mostrarToast("Você já tem este item 😉"); return; }
+    if(!this.liberado(it)){ mostrarToast(`🔒 Exige recorde nível ${it.req} na Escalada`); return; }
+    if(this.saldo() < it.preco){ mostrarToast(`Faltam 🌱 ${(it.preco - this.saldo()).toLocaleString("pt-BR")} sementes`); return; }
+    c.gastas += it.preco; c.tem[chave] = true; c.usando[slot] = id;
+    Progresso.salvar(); mostrarToast(`🎉 ${it.nome} é seu — e já está EQUIPADO!`);
+    if(typeof renderLoja === "function") renderLoja();
+  },
+  equipar(slot, id){
+    const c = this.est(); if(!c.tem[slot + ":" + id]) return;
+    c.usando[slot] = (c.usando[slot] === id) ? null : id;
+    Progresso.salvar();
+    if(typeof renderLoja === "function") renderLoja();
+  },
+  usando(slot){
+    const c = this.est(); const id = c.usando[slot];
+    return (id && c.tem[slot + ":" + id]) ? this.itemDe(slot, id) : null;
+  },
+  qtdItens(){ return Object.keys(this.est().tem).length; }
+};
+/* Avatar com borda equipada (qualquer tamanho) e pet animado */
+function bordaWrap(avatarHTML, bordaId){
+  return `<span class="avb ${bordaId ? "avb-" + bordaId : ""}">${avatarHTML}</span>`;
+}
+function petHTML(petId, tam){
+  const it = petId ? COSM.itemDe("pet", petId) : null;
+  if(!it) return "";
+  const s = tam || 26;
+  return it.img
+    ? `<img src="${it.img}" class="pet anim-${it.anim}" style="width:${s}px;height:auto" alt="pet">`
+    : `<span class="pet anim-${it.anim}" style="font-size:${Math.round(s * 0.85)}px">${it.emo}</span>`;
+}
+/* Medalhas: paga 🌱 uma única vez por medalha conquistada (metal define o prêmio) */
+function creditarMedalhas(){
+  if(typeof listaConquistas !== "function") return;
+  const p = Progresso.dados; p.medalhasPagas = p.medalhasPagas || {};
+  const premio = { bronze:50, prata:150, ouro:400, diamante:1000 };
+  let total = 0, qtd = 0;
+  listaConquistas().forEach(c => {
+    if(c.ok && !p.medalhasPagas[c.nome]){ p.medalhasPagas[c.nome] = true; total += premio[c.metal] || 50; qtd++; }
+  });
+  if(total > 0){
+    COSM.ganhar(total, null);
+    mostrarToast(`🏅 ${qtd} medalha${qtd > 1 ? "s" : ""} nova${qtd > 1 ? "s" : ""}! +🌱 ${total.toLocaleString("pt-BR")}`);
+  }
+}
+
+/* ==================================================================
+   ESCALADA — LOTE A: a montanha agora vai do nível 1 ao 1000.
+   - Curva de XP progressiva: somando os 1000 níveis ≈ 7,7 MILHÕES
+     de XP — uma jornada de anos; ninguém "zera" o FalaFina.
+   - 8 FAIXAS (Base→Imortal) que definem conteúdo, tamanho da prova
+     e corações. O formato das perguntas por faixa chega no Lote B.
+   - Correção: o conteúdo de Fluência (n3) NUNCA entrava na escalada
+     (tiers paravam em [0,1,2]) — agora entra a partir da faixa Ouro.
+   - Pular continua permitido; falhar no pulo manda pro nível 1.
+   ================================================================== */
+const ESCALADA_TOPO = 1000;
+const FAIXAS_ESCALADA = [
+  { ate:9,    nome:"Base da Montanha", emoji:"⛺", tiers:[0] },
+  { ate:24,   nome:"Trilha de Bronze", emoji:"🥉", tiers:[0,1] },
+  { ate:49,   nome:"Encosta de Prata", emoji:"🥈", tiers:[0,1,2] },
+  { ate:99,   nome:"Penhasco de Ouro", emoji:"🥇", tiers:[0,1,2,3] },
+  { ate:249,  nome:"Geleira de Diamante", emoji:"💎", tiers:[0,1,2,3] },
+  { ate:499,  nome:"Zona dos Mestres", emoji:"🧙", tiers:[0,1,2,3] },
+  { ate:999,  nome:"Reino das Lendas", emoji:"🐉", tiers:[0,1,2,3] },
+  { ate:1000, nome:"O TOPO — Imortal", emoji:"⛰️", tiers:[0,1,2,3] }
+];
+function faixaDoNivel(n){ return FAIXAS_ESCALADA.find(f => n <= f.ate) || FAIXAS_ESCALADA[FAIXAS_ESCALADA.length - 1]; }
+/* XP do nível n: 10 + 7n + 0,0125n² (nv1≈17 · nv100≈835 · nv1000≈19.510).
+   Soma de 1 a 1000 ≈ 7,69 milhões de XP. */
+function xpDoNivel(n){ return Math.round(10 + 7 * n + 0.0125 * n * n); }
 function regrasDoNivel(n){
+  n = Math.min(Math.max(1, n), ESCALADA_TOPO);
+  const fx = faixaDoNivel(n);
   return {
-    perguntas: Math.min(6 + Math.floor(n / 2), 14),
-    errosPermitidos: n < 5 ? 2 : (n < 15 ? 1 : 0),
-    xp: 10 + n,
-    tiers: n <= 10 ? [0] : (n <= 20 ? [0,1] : [0,1,2])
+    perguntas: Math.min(6 + Math.floor(n / 2), 20),
+    errosPermitidos: n < 10 ? 2 : (n < 50 ? 1 : (6 + Math.floor(n / 2) >= 16 ? 1 : 0)),
+    xp: xpDoNivel(n),
+    tiers: fx.tiers,
+    faixa: fx
   };
 }
 function gerarDesafioEscalada(n){
@@ -3270,25 +3485,32 @@ function iniciarEscalada(alvo, ehPulo){
     erros: 0, errosFeitos: 0,
     respondendo: false, treino: false, infinito: false,
     escalada: true, alvoNivel: alvo, ehPulo: !!ehPulo,
-    errosPermitidos: d.regras.errosPermitidos, xpNivel: d.regras.xp
+    errosPermitidos: d.regras.errosPermitidos, xpNivel: d.regras.xp,
+    t0: Date.now()
   };
   renderQuizPergunta();
   irPara("tela-quiz");
 }
 function renderEscalada(){
   const e = Progresso.dados.escalada;
+  if(e.nivel > ESCALADA_TOPO) e.nivel = ESCALADA_TOPO;
   const r = regrasDoNivel(e.nivel);
+  const pct = Math.max(0.5, Math.min(100, (e.nivel / ESCALADA_TOPO) * 100));
+  const noTopo = e.recorde >= ESCALADA_TOPO;
   let html = `<div class="esc-card">
-    <div style="font-weight:800;font-size:.85rem;color:var(--tinta-suave);letter-spacing:1px">VOCÊ ESTÁ NO NÍVEL</div>
+    <div style="font-weight:800;font-size:.8rem;letter-spacing:1px;color:var(--verde)">${r.faixa.emoji} ${r.faixa.nome.toUpperCase()}</div>
+    <div style="font-weight:800;font-size:.85rem;color:var(--tinta-suave);letter-spacing:1px;margin-top:6px">VOCÊ ESTÁ NO NÍVEL</div>
     <div class="esc-nivel">${e.nivel}</div>
-    <div style="font-weight:700;color:var(--tinta-suave);font-size:.9rem;margin-top:4px">Recorde: nível ${e.recorde} · Este nível: ${r.perguntas} desafios, ${r.errosPermitidos} erro(s) permitido(s)</div>
-    <button class="btn-principal" id="escJogar" style="margin-top:16px">⚔️ Enfrentar o nível ${e.nivel}</button>
+    <div style="background:rgba(33,49,58,.12);border-radius:99px;height:12px;margin:10px 18px;overflow:hidden"><div style="width:${pct.toFixed(1)}%;height:100%;background:linear-gradient(90deg,var(--verde),var(--amarelo));border-radius:99px"></div></div>
+    <div style="font-weight:800;font-size:.8rem;color:var(--tinta-suave)">🏔️ Jornada ao topo: nível ${e.nivel} de ${ESCALADA_TOPO}</div>
+    <div style="font-weight:700;color:var(--tinta-suave);font-size:.9rem;margin-top:8px">Recorde: nível ${e.recorde} · Esta prova: ${r.perguntas} desafios · ${r.errosPermitidos ? "❤️".repeat(r.errosPermitidos) + " de folga" : "💀 sem direito a erro"} · vale <b>⭐ ${r.xp} XP</b></div>
+    <button class="btn-principal" id="escJogar" style="margin-top:16px">${noTopo ? "⛰️ Defender o TOPO (nível 1000)" : `⚔️ Enfrentar o nível ${e.nivel}`}</button>
   </div>
   <div class="esc-card" style="border-color:var(--coral)">
     <div style="font-weight:800;font-size:1rem">😈 Acha que aguenta mais?</div>
     <div style="font-weight:600;color:var(--tinta-suave);font-size:.9rem;margin:6px 0 12px">Pule direto pra um nível mais alto. Venceu: o nível é seu. <b>Falhou: volta pro nível 1.</b></div>
     <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
-      ${[5,10,30].filter(x => x > e.nivel).map(x => `<button class="btn-principal azul" style="width:auto;padding:12px 20px" data-pulo="${x}">🚀 Nível ${x}</button>`).join("") || '<span style="font-weight:700;color:var(--tinta-suave)">Você já passou dos pulos rápidos — siga um a um ou digite abaixo!</span>'}
+      ${[5,10,30,50,100,250,500].filter(x => x > e.nivel).slice(0,3).map(x => `<button class="btn-principal azul" style="width:auto;padding:12px 20px" data-pulo="${x}">🚀 Nível ${x}</button>`).join("") || '<span style="font-weight:700;color:var(--tinta-suave)">Você já passou dos pulos rápidos — siga um a um ou digite abaixo!</span>'}
     </div>
     <div style="display:flex;gap:10px;margin-top:12px;justify-content:center;align-items:center">
       <input type="number" id="escPuloLivre" min="${e.nivel + 1}" placeholder="nível..." style="width:110px;font-family:inherit;font-weight:800;font-size:1rem;padding:11px;border:2.5px solid rgba(33,49,58,.2);border-radius:12px">
@@ -3297,22 +3519,50 @@ function renderEscalada(){
   </div>`;
   $("#escaladaConteudo").innerHTML = html;
   $("#escJogar").addEventListener("click", () => iniciarEscalada(Progresso.dados.escalada.nivel, false));
+  const chipLoja = document.createElement("button");
+  chipLoja.className = "loja-aba"; chipLoja.style.cssText = "display:block;margin:12px auto 0;border-color:#E8B84C;background:#FFF3D6";
+  chipLoja.textContent = `🛍️ Loja · 🌱 ${COSM.saldo().toLocaleString("pt-BR")}`;
+  chipLoja.addEventListener("click", () => navPara("loja"));
+  $("#escaladaConteudo").appendChild(chipLoja);
   document.querySelectorAll("[data-pulo]").forEach(b => b.addEventListener("click", () => iniciarEscalada(Number(b.dataset.pulo), true)));
   $("#escPuloIr").addEventListener("click", () => {
-    const v = Number($("#escPuloLivre").value);
+    const v = Math.floor(Number($("#escPuloLivre").value));
     if(!v || v <= Progresso.dados.escalada.nivel){ mostrarToast("Escolha um nível MAIOR que o seu 😉"); return; }
+    if(v > ESCALADA_TOPO){ mostrarToast(`A montanha termina no nível ${ESCALADA_TOPO} ⛰️`); return; }
     iniciarEscalada(v, true);
   });
 }
 function vencerEscalada(){
   const e = Progresso.dados.escalada;
-  e.nivel = quizEstado.alvoNivel + 1;
-  if(quizEstado.alvoNivel > e.recorde) e.recorde = quizEstado.alvoNivel;
+  const vencido = quizEstado.alvoNivel;
+  e.nivel = Math.min(vencido + 1, ESCALADA_TOPO);
+  if(vencido > (e.recorde || 1)) e.recorde = vencido;
   registrarAtividade(quizEstado.xpNivel);
-  $("#concluTitulo").textContent = `🗼 Nível ${quizEstado.alvoNivel} conquistado!`;
-  $("#concluTexto").textContent = quizEstado.ehPulo
-    ? "PULO PERFEITO! Coragem premiada — você provou que aguentava."
-    : `Subindo! Próximo desafio: nível ${e.nivel}. A escalada não tem fim... até onde você vai?`;
+  /* 🌱 ECONOMIA: sementes por vitória + baú de dezena + recorde de tempo */
+  e.tempos = e.tempos || {}; e.baus = e.baus || {};
+  let ganhoSem = 5 + Math.floor(vencido / 5), extras = [];
+  const seg = quizEstado.t0 ? Math.max(1, Math.round((Date.now() - quizEstado.t0) / 1000)) : null;
+  if(seg){
+    if(e.tempos[vencido] && seg < e.tempos[vencido]){ ganhoSem += 15; extras.push("⏱️ RECORDE DE TEMPO +🌱15"); }
+    if(!e.tempos[vencido] || seg < e.tempos[vencido]) e.tempos[vencido] = seg;
+    const ritmo = Math.round((seg / Math.max(1, quizEstado.total)) * 10) / 10;
+    if(!e.melhorRitmo || ritmo < e.melhorRitmo) e.melhorRitmo = ritmo;
+  }
+  if(vencido % 10 === 0 && !e.baus[vencido]){
+    e.baus[vencido] = true; const bau = 50 + vencido;
+    ganhoSem += bau; extras.push(`🎁 BAÚ DO NÍVEL ${vencido} +🌱${bau}`);
+  }
+  COSM.ganhar(ganhoSem, null);
+  const linhaSem = ` Você ganhou 🌱 ${ganhoSem} sementes${extras.length ? " (" + extras.join(" · ") + ")" : ""}${seg ? ` · tempo: ${seg}s` : ""}.`;
+  const fxAntes = faixaDoNivel(vencido), fxDepois = faixaDoNivel(e.nivel);
+  $("#concluTitulo").textContent = vencido >= ESCALADA_TOPO ? "⛰️ O TOPO DO MUNDO É SEU!" : `🗼 Nível ${vencido} conquistado!`;
+  $("#concluTexto").textContent = vencido >= ESCALADA_TOPO
+    ? "Nível 1000. Pouquíssimas pessoas no planeta chegam aqui. Você é oficialmente IMORTAL da montanha do FalaFina. 🏆"
+    : (fxDepois !== fxAntes
+      ? `NOVA FAIXA DESBLOQUEADA: ${fxDepois.emoji} ${fxDepois.nome}! Próximo desafio: nível ${e.nivel}.`
+      : (quizEstado.ehPulo
+        ? "PULO PERFEITO! Coragem premiada — você provou que aguentava."
+        : `Subindo! Próximo desafio: nível ${e.nivel}. O topo fica no 1000... até onde você vai?`)) + linhaSem;
   $("#concluXP").textContent = String(quizEstado.xpNivel);
   $("#btnProximoModulo").style.display = "none";
   irPara("tela-conclusao");
@@ -3441,33 +3691,52 @@ function salvarPerfil(){
   renderHome();
   irPara("tela-home");
 }
+let rankAba = "xp";
 function renderRanking(){
   const medalha = ["🥇","🥈","🥉"];
   const alvo = $("#rankingLista");
+  const ABAS = [
+    { id:"xp",       nome:"⭐ XP",        valor: c => `⭐ ${(c.xp || 0).toLocaleString("pt-BR")}`,    ord:(a,b) => (b.xp||0) - (a.xp||0) },
+    { id:"escalada", nome:"🗼 Escalada",  valor: c => `🗼 nv ${c.recorde || 1}`,                      ord:(a,b) => (b.recorde||1) - (a.recorde||1) || (b.xp||0) - (a.xp||0) },
+    { id:"desafios", nome:"🎯 Desafios",  valor: c => `🎯 ${c.desafios || 0}`,                        ord:(a,b) => (b.desafios||0) - (a.desafios||0) || (b.xp||0) - (a.xp||0) },
+    { id:"tempo",    nome:"⚡ Velocidade", valor: c => c.ritmo ? `⚡ ${c.ritmo}s/pergunta` : "—",      ord:(a,b) => (a.ritmo||9999) - (b.ritmo||9999), filtro: c => !!c.ritmo }
+  ];
   const desenhar = (lista, mundial) => {
+    const aba = ABAS.find(a => a.id === rankAba) || ABAS[0];
+    let ordenada = lista.slice().sort(aba.ord);
+    if(aba.filtro) ordenada = ordenada.filter(aba.filtro);
     const selo = mundial
       ? '<p style="font-weight:800;color:var(--verde);font-size:.85rem;margin:0 0 8px">🌎 Ranking mundial — atualizado agora</p>'
       : '<p style="font-weight:800;color:var(--tinta-suave);font-size:.85rem;margin:0 0 8px">📴 Sem internet — mostrando só os perfis deste aparelho</p>';
-    alvo.innerHTML = selo + (lista.length ? lista.map((c, i) => `
-    <div class="rank-item ${c.voce ? "eu" : ""}">
+    alvo.innerHTML = `<div class="loja-abas" style="margin-top:0">${ABAS.map(a => `<button class="loja-aba ${a.id === rankAba ? "ativa" : ""}" data-raba="${a.id}">${a.nome}</button>`).join("")}
+      <button class="loja-aba" id="rkLoja" style="margin-left:auto;border-color:#E8B84C;background:#FFF3D6">🛍️ Loja</button></div>`
+      + selo + (ordenada.length ? ordenada.map((c, i) => `
+    <div class="rank-item ${c.voce ? "eu" : ""} ${c.efeito ? "fx-" + c.efeito : ""}">
       <div class="rank-pos">${medalha[i] || (i + 1) + "º"}</div>
-      <div class="avatar-mini">${c.foto ? `<img src="${c.foto}" alt="">` : "👤"}</div>
-      <div><b>${esc(c.nome)}${c.voce ? " (você)" : ""}</b><small>${tituloPorXP(c.xp || 0)} · 🔥 ${c.diasSeguidos || 0} dias · 🗼 nv ${c.recorde || 1}</small></div>
-      <div class="rank-xp">⭐ ${c.xp || 0}</div>
-    </div>`).join("") : '<p style="font-weight:700;color:var(--tinta-suave)">Ainda não há alunos no ranking. Estude um pouquinho e volte!</p>');
+      ${bordaWrap(`<div class="avatar-mini">${c.foto ? `<img src="${c.foto}" alt="">` : "👤"}</div>`, c.borda)}
+      <div style="min-width:0"><b style="display:flex;align-items:center;gap:6px">${esc(c.nome)}${c.voce ? " (você)" : ""} ${petHTML(c.pet, 22)}</b><small>${tituloPorXP(c.xp || 0)} · 🔥 ${c.diasSeguidos || 0} dias · 🗼 nv ${c.recorde || 1}</small></div>
+      <div class="rank-xp" style="margin-left:auto">${aba.valor(c)}</div>
+    </div>`).join("") : '<p style="font-weight:700;color:var(--tinta-suave)">Ninguém neste placar ainda — seja o primeiro! 😏</p>');
+    alvo.querySelectorAll("[data-raba]").forEach(b => b.addEventListener("click", () => { rankAba = b.dataset.raba; renderRanking(); }));
+    const rl = alvo.querySelector("#rkLoja"); if(rl) rl.addEventListener("click", () => navPara("loja"));
   };
-  // 1) OFFLINE FIRST: mostra na hora os perfis deste aparelho
+  const meusCosm = slot => { const u = COSM.usando(slot); return u ? u.id : null; };
   const eu = Contas.sessao();
-  const locais = Object.values(Contas.todas()).filter(c => c.progresso).map(c => ({
-    nome: c.nome, voce: c.email === eu,
-    foto: (c.perfil && c.perfil.foto) || null,
-    xp: c.progresso.xp || 0,
-    diasSeguidos: c.progresso.diasSeguidos || 0,
-    recorde: (c.progresso.escalada && c.progresso.escalada.recorde) || 1
-  }));
-  locais.sort((a, b) => b.xp - a.xp);
+  const locais = Object.values(Contas.todas()).filter(c => c.progresso).map(c => {
+    const co = (c.progresso.cosmeticos || {}), us = co.usando || {}, tem = co.tem || {};
+    const uso = s => (us[s] && tem[s + ":" + us[s]]) ? us[s] : null;
+    return {
+      nome: c.nome, voce: c.email === eu,
+      foto: (c.perfil && c.perfil.foto) || null,
+      xp: c.progresso.xp || 0,
+      diasSeguidos: c.progresso.diasSeguidos || 0,
+      recorde: (c.progresso.escalada && c.progresso.escalada.recorde) || 1,
+      desafios: Object.keys(c.progresso.resgates || {}).length,
+      ritmo: (c.progresso.escalada && c.progresso.escalada.melhorRitmo) || null,
+      borda: uso("borda"), pet: uso("pet"), efeito: uso("efeito")
+    };
+  });
   desenhar(locais, false);
-  // 2) Busca o ranking mundial e troca quando chegar
   Nuvem.ranking().then(r => {
     if(r.ok && r.dados && Array.isArray(r.dados.ranking) && telaAtual === "tela-ranking"){
       desenhar(r.dados.ranking, true);
@@ -4564,7 +4833,8 @@ function renderDesafios(){
     if(p.resgates[k]) return;
     p.resgates[k] = true;
     registrarAtividade(d.xp);
-    mostrarToast(`🎁 +${d.xp} XP — ${d.nome} concluído!`);
+    COSM.ganhar(20, null);
+    mostrarToast(`🎁 +${d.xp} XP e 🌱 +20 — ${d.nome} concluído!`);
     renderDesafios();
   }));
 }
@@ -4573,23 +4843,62 @@ function listaConquistas(){
   const p = Progresso.dados;
   const feitos = Object.keys(p.modulosFeitos || {}).length;
   const dom = Object.keys((p.sim || {}).dominadas || {}).length;
+  const rec = (p.escalada || {}).recorde || 1;
+  const baus = Object.keys((p.escalada || {}).baus || {}).length;
+  const desf = Object.keys(p.resgates || {}).length;
+  const itens = (typeof COSM !== "undefined") ? COSM.qtdItens() : 0;
+  const M = (ic, nome, desc, ok, metal) => ({ ic, nome, desc, ok, metal });
   return [
-    { ic:"🐣", nome:"Primeiro Passo", desc:"Conclua sua 1ª aula", ok: feitos >= 1 },
-    { ic:"📚", nome:"Estudante", desc:"Conclua 5 aulas", ok: feitos >= 5 },
-    { ic:"🎓", nome:"Dedicado", desc:"Conclua 10 aulas", ok: feitos >= 10 },
-    { ic:"🏅", nome:"Maratonista", desc:"Conclua 20 aulas", ok: feitos >= 20 },
-    { ic:"⭐", nome:"Primeiras Estrelas", desc:"Chegue a 100 XP", ok: (p.xp || 0) >= 100 },
-    { ic:"🌟", nome:"Brilhante", desc:"Chegue a 500 XP", ok: (p.xp || 0) >= 500 },
-    { ic:"💫", nome:"Constelação", desc:"Chegue a 1.500 XP", ok: (p.xp || 0) >= 1500 },
-    { ic:"🔥", nome:"Pegou Fogo", desc:"3 dias seguidos", ok: (p.melhorSeq || 0) >= 3 },
-    { ic:"🚒", nome:"Incêndio", desc:"7 dias seguidos", ok: (p.melhorSeq || 0) >= 7 },
-    { ic:"🌋", nome:"Vulcão", desc:"14 dias seguidos", ok: (p.melhorSeq || 0) >= 14 },
-    { ic:"🔤", nome:"Colecionador", desc:"Aprenda 50 palavras", ok: palavrasAprendidas() >= 50 },
-    { ic:"📖", nome:"Dicionário Vivo", desc:"Aprenda 150 palavras", ok: palavrasAprendidas() >= 150 },
-    { ic:"🎙️", nome:"Entrevistado", desc:"Domine 10 respostas no Simulador", ok: dom >= 10 },
-    { ic:"🤝", nome:"Contratado!", desc:"Domine 30 respostas no Simulador", ok: dom >= 30 },
-    { ic:"🎤", nome:"Voz Ativa", desc:"20 pronúncias reconhecidas", ok: somaStats("pronOk") >= 20 },
-    { ic:"🗼", nome:"Escalador", desc:"Chegue ao nível 5 da Escalada", ok: ((p.escalada || {}).recorde || 1) >= 5 }
+    /* 🗼 Escalada (7) */
+    M("🗼","Escalador","Recorde nível 5 na Escalada", rec>=5, "bronze"),
+    M("⛰️","Montanhista","Recorde nível 25", rec>=25, "bronze"),
+    M("🥈","Encosta de Prata","Recorde nível 50", rec>=50, "prata"),
+    M("🥇","Penhasco de Ouro","Recorde nível 100", rec>=100, "ouro"),
+    M("💎","Geleira de Diamante","Recorde nível 250", rec>=250, "ouro"),
+    M("🐉","Reino das Lendas","Recorde nível 500", rec>=500, "diamante"),
+    M("👑","IMORTAL","Vença o nível 1000", rec>=1000, "diamante"),
+    /* ⭐ XP (9) */
+    M("⭐","Primeiras Estrelas","Chegue a 100 XP", (p.xp||0)>=100, "bronze"),
+    M("🌟","Brilhante","Chegue a 500 XP", (p.xp||0)>=500, "bronze"),
+    M("💫","Constelação","Chegue a 1.500 XP", (p.xp||0)>=1500, "bronze"),
+    M("🌠","Cometa","Chegue a 5.000 XP", (p.xp||0)>=5000, "prata"),
+    M("🪐","Planetário","Chegue a 15.000 XP", (p.xp||0)>=15000, "prata"),
+    M("☀️","Sol Nascente","Chegue a 50.000 XP", (p.xp||0)>=50000, "ouro"),
+    M("🌌","Via Láctea","Chegue a 150.000 XP", (p.xp||0)>=150000, "ouro"),
+    M("🚀","Astronauta","Chegue a 500.000 XP", (p.xp||0)>=500000, "diamante"),
+    M("🛸","Fora da Órbita","Chegue a 2.000.000 XP", (p.xp||0)>=2000000, "diamante"),
+    /* 🔥 Ofensiva (6) */
+    M("🔥","Pegou Fogo","3 dias seguidos", (p.melhorSeq||0)>=3, "bronze"),
+    M("🚒","Incêndio","7 dias seguidos", (p.melhorSeq||0)>=7, "bronze"),
+    M("🌋","Vulcão","14 dias seguidos", (p.melhorSeq||0)>=14, "prata"),
+    M("☄️","Meteoro","30 dias seguidos", (p.melhorSeq||0)>=30, "prata"),
+    M("🐲","Chama Eterna","100 dias seguidos", (p.melhorSeq||0)>=100, "ouro"),
+    M("🎆","Ano em Chamas","365 dias seguidos", (p.melhorSeq||0)>=365, "diamante"),
+    /* 🔤 Palavras (3) */
+    M("🔤","Colecionador de Palavras","Aprenda 50 palavras", palavrasAprendidas()>=50, "bronze"),
+    M("📖","Dicionário Vivo","Aprenda 150 palavras", palavrasAprendidas()>=150, "prata"),
+    M("🧠","Biblioteca Humana","Aprenda 400 palavras", palavrasAprendidas()>=400, "ouro"),
+    /* 📚 Aulas (4) */
+    M("🐣","Primeiro Passo","Conclua sua 1ª aula", feitos>=1, "bronze"),
+    M("📚","Estudante","Conclua 5 aulas", feitos>=5, "bronze"),
+    M("🎓","Dedicado","Conclua 10 aulas", feitos>=10, "prata"),
+    M("🏅","Maratonista","Conclua 20 aulas", feitos>=20, "ouro"),
+    /* 🎙️ Entrevista e voz (3) */
+    M("🎙️","Entrevistado","Domine 10 respostas no Simulador", dom>=10, "prata"),
+    M("🤝","Contratado!","Domine 30 respostas no Simulador", dom>=30, "ouro"),
+    M("🎤","Voz Ativa","20 pronúncias reconhecidas", somaStats("pronOk")>=20, "prata"),
+    /* 🎯 Desafios (3) */
+    M("🎯","Caçador de Desafios","Resgate 5 desafios", desf>=5, "bronze"),
+    M("🏹","Atirador de Elite","Resgate 25 desafios", desf>=25, "prata"),
+    M("🏆","Lenda dos Desafios","Resgate 100 desafios", desf>=100, "ouro"),
+    /* 🎁 Baús (3) */
+    M("🎁","Primeiro Baú","Abra 1 baú da Escalada (níveis 10, 20, 30...)", baus>=1, "bronze"),
+    M("📦","Tesoureiro","Abra 5 baús", baus>=5, "prata"),
+    M("🗝️","Caçador de Tesouros","Abra 20 baús", baus>=20, "ouro"),
+    /* 🛍️ Colecionador da Loja (3) */
+    M("🛍️","Primeira Compra","Compre 1 item na Loja", itens>=1, "bronze"),
+    M("🧢","Estiloso","Tenha 5 itens da Loja", itens>=5, "prata"),
+    M("💠","Colecionador Supremo","Tenha TODAS as 30 peças da Loja", itens>=30, "diamante")
   ];
 }
 function conquistasFeitas(){ return listaConquistas().filter(c => c.ok); }
@@ -4601,7 +4910,8 @@ function renderConquistas(){
       <div class="anel" style="--p:${Math.round(ok / l.length * 100)};--cor:var(--sol)"><div><b>${ok}/${l.length}</b><small>TROFÉUS</small></div></div>
       <p style="font-weight:700">Cada conquista conta a história do seu inglês. ${ok ? "Continue colecionando! 🏆" : "A primeira está a UMA aula de distância. 😉"}</p>
     </div>
-    <div class="conq-grid">${l.map(c => `<div class="conq ${c.ok ? "" : "trancada"}"><span class="ic">${c.ok ? c.ic : "🔒"}</span><b>${c.nome}</b><small>${c.desc}</small></div>`).join("")}</div>`;
+    <div class="conq-grid">${l.map(c => `<div class="conq ${c.ok ? "medal-" + c.metal : "trancada"}"><span class="ic">${c.ok ? c.ic : "🔒"}</span><b>${c.nome}</b><small>${c.desc}</small><small style="font-weight:800;color:#8C5A20">${({bronze:"🥉 Bronze · 🌱50",prata:"🥈 Prata · 🌱150",ouro:"🥇 Ouro · 🌱400",diamante:"💎 Diamante · 🌱1.000"})[c.metal]}</small></div>`).join("")}</div>`;
+  if(typeof creditarMedalhas === "function") creditarMedalhas();
 }
 /* ---------- PRÁTICA ---------- */
 function renderPratica(){
@@ -4676,10 +4986,11 @@ function renderMeuPerfil(){
   const pos = contas.findIndex(x => x.email === Contas.sessao()) + 1;
   $("#meuPerfilConteudo").innerHTML = `
   <div class="cardb"><div class="perfil-topo">
-    <div class="avatar-g">${c.perfil && c.perfil.foto ? `<img src="${c.perfil.foto}" alt="">` : "👤"}</div>
+    ${bordaWrap(`<div class="avatar-g">${c.perfil && c.perfil.foto ? `<img src="${c.perfil.foto}" alt="">` : "👤"}</div>`, (COSM.usando("borda") || {}).id)}
     <div style="flex:1;min-width:160px">
-      <h2 style="font-family:var(--f-display)">${esc(c.nome)}</h2>
-      <p style="font-weight:800;color:var(--tinta-suave)">${tituloPorXP(p.xp || 0)} · Nível ${nivelNum()}${pos ? ` · ${pos}º no ranking` : ""}</p>
+      <h2 style="font-family:var(--f-display);display:flex;align-items:center;gap:8px">${esc(c.nome)} ${petHTML((COSM.usando("pet") || {}).id, 34)}</h2>
+      <p style="font-weight:800;color:var(--tinta-suave)">${tituloPorXP(p.xp || 0)} · Nível ${nivelNum()}${pos ? ` · ${pos}º no ranking` : ""} · ${(faixaDoNivel((p.escalada || {}).recorde || 1)).emoji} ${(faixaDoNivel((p.escalada || {}).recorde || 1)).nome}</p>
+      <p class="chip-semente" style="margin-top:6px">🌱 ${COSM.saldo().toLocaleString("pt-BR")} sementes</p>
     </div>
     <button class="btn-resg" style="width:auto;padding:10px 16px" id="mpEditar">✏️ Editar perfil</button>
   </div>
@@ -4694,12 +5005,66 @@ function renderMeuPerfil(){
   <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
     <button class="btn-principal" style="width:auto;flex:1;min-width:150px" id="mpConq">🏆 Conquistas</button>
     <button class="btn-principal azul" style="width:auto;flex:1;min-width:150px" id="mpRank">📊 Ranking</button>
+    <button class="btn-principal" style="width:auto;flex:1;min-width:150px;background:#E8952E;box-shadow:0 4px 0 #A66312" id="mpLoja">🛍️ Loja</button>
     <button class="btn-principal" style="width:auto;flex:1;min-width:150px;background:var(--tinta-suave);box-shadow:0 4px 0 #3d4a52" id="mpCfg">⚙️ Configurações</button>
   </div>`;
   $("#mpEditar").addEventListener("click", () => { if(typeof abrirPerfil === "function") abrirPerfil(); else irPara("tela-perfil"); });
   $("#mpConq").addEventListener("click", () => navPara("conquistas"));
   $("#mpRank").addEventListener("click", () => navPara("ranking"));
+  $("#mpLoja").addEventListener("click", () => navPara("loja"));
   $("#mpCfg").addEventListener("click", () => navPara("config"));
+}
+/* ==================================================================
+   🛍️ LOJA RPG — bordas, pets, efeitos e pacotes de sementes.
+   ================================================================== */
+let lojaAba = "borda";
+function renderLoja(){
+  const c = Contas.atual();
+  const foto = c && c.perfil && c.perfil.foto ? `<img src="${c.perfil.foto}" alt="">` : "👤";
+  const rec = (Progresso.dados.escalada || {}).recorde || 1;
+  const cartao = it => {
+    const chave = it.slot + ":" + it.id;
+    const tem = COSM.est().tem[chave];
+    const emUso = COSM.est().usando[it.slot] === it.id && tem;
+    const bloqueado = !COSM.liberado(it);
+    let preview = "";
+    if(it.slot === "borda") preview = bordaWrap(`<div class="avatar-mini" style="width:52px;height:52px;font-size:1.5rem">${foto}</div>`, it.id);
+    else if(it.slot === "pet") preview = `<div style="height:56px;display:flex;align-items:center">${petHTML(it.id, 46)}</div>`;
+    else preview = `<div class="rank-item fx-${it.id}" style="width:100%;padding:8px;margin:0;font-size:.72rem;font-weight:800">✨ Sua linha no ranking</div>`;
+    let botao;
+    if(emUso) botao = `<button class="emuso" data-eq="${chave}">Em uso ✅ (tirar)</button>`;
+    else if(tem) botao = `<button class="usar" data-eq="${chave}">Usar</button>`;
+    else if(bloqueado) botao = `<button disabled>🔒 Exige nível ${it.req}</button>`;
+    else botao = `<button data-buy="${chave}">Comprar 🌱 ${it.preco.toLocaleString("pt-BR")}</button>`;
+    return `<div class="loja-item ${tem ? "tem" : ""}">${preview}<b>${it.nome}</b><small style="font-weight:700;color:var(--tinta-suave)">${it.desc}</small>${tem ? "" : `<span class="preco">🌱 ${it.preco.toLocaleString("pt-BR")}</span>`}${botao}</div>`;
+  };
+  const catalogo = lojaAba === "borda" ? COSM.BORDAS : (lojaAba === "pet" ? COSM.PETS : (lojaAba === "efeito" ? COSM.EFEITOS : null));
+  let corpo;
+  if(catalogo){
+    corpo = `<div class="loja-grid">${catalogo.map(cartao).join("")}</div>`;
+  } else {
+    corpo = `<div class="cardb" style="margin-bottom:12px"><b>💰 Comprar sementes (em breve)</b>
+      <p style="font-weight:700;color:var(--tinta-suave);font-size:.9rem;margin-top:6px">Pagamento por Pix está chegando. Por enquanto, TODAS as sementes podem ser ganhas jogando — de graça:</p>
+      <p style="font-weight:700;font-size:.88rem;margin-top:8px">🗼 Vencer nível da Escalada: <b>🌱 5 + nível÷5</b> &nbsp;·&nbsp; 🎁 Baú a cada 10 níveis: <b>🌱 50 + nível</b><br>
+      🎯 Desafio diário resgatado: <b>🌱 20</b> &nbsp;·&nbsp; ☀️ Primeiro estudo do dia: <b>🌱 10</b><br>
+      ⏱️ Recorde de tempo batido: <b>🌱 15</b> &nbsp;·&nbsp; 🏅 Medalhas: <b>🌱 50 a 1.000</b> cada</p></div>
+    <div class="loja-grid">${COSM.PACOTES.map(pc => `<div class="loja-item"><div style="font-size:2rem">💰</div><b>🌱 ${pc.s.toLocaleString("pt-BR")}</b><span class="preco">R$ ${pc.rs}</span><button disabled>Em breve 🔜</button></div>`).join("")}</div>`;
+  }
+  $("#lojaConteudo").innerHTML = `
+  <div class="cardb" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+    <span class="chip-semente" style="font-size:1.05rem">🌱 ${COSM.saldo().toLocaleString("pt-BR")} sementes</span>
+    <small style="font-weight:800;color:var(--tinta-suave)">Seu recorde: 🗼 nível ${rec} — itens lendários exigem níveis altos</small>
+  </div>
+  <div class="loja-abas">
+    <button class="loja-aba ${lojaAba === "borda" ? "ativa" : ""}" data-laba="borda">🖼️ Bordas</button>
+    <button class="loja-aba ${lojaAba === "pet" ? "ativa" : ""}" data-laba="pet">🐾 Pets</button>
+    <button class="loja-aba ${lojaAba === "efeito" ? "ativa" : ""}" data-laba="efeito">✨ Efeitos</button>
+    <button class="loja-aba ${lojaAba === "semente" ? "ativa" : ""}" data-laba="semente">🌱 Sementes</button>
+  </div>
+  ${corpo}`;
+  $("#lojaConteudo").querySelectorAll("[data-laba]").forEach(b => b.addEventListener("click", () => { lojaAba = b.dataset.laba; renderLoja(); }));
+  $("#lojaConteudo").querySelectorAll("[data-buy]").forEach(b => b.addEventListener("click", () => { const [s, id] = b.dataset.buy.split(":"); COSM.comprar(s, id); }));
+  $("#lojaConteudo").querySelectorAll("[data-eq]").forEach(b => b.addEventListener("click", () => { const [s, id] = b.dataset.eq.split(":"); COSM.equipar(s, id); }));
 }
 /* ---------- NAVEGAÇÃO DO SHELL ---------- */
 const FF_ROTAS = {
@@ -4713,6 +5078,7 @@ const FF_ROTAS = {
   comunidade:{ tela:"tela-comunidade", titulo:"👥 Comunidade", render: renderComunidade },
   meuperfil: { tela:"tela-meuperfil", titulo:"🪪 Meu Perfil", render: renderMeuPerfil },
   config:    { tela:"tela-config", titulo:"⚙️ Configurações", render: renderConfig },
+  loja:      { tela:"tela-loja", titulo:"🛍️ Loja", render: renderLoja },
   simulador: { tela:"tela-simulador", titulo:"🎙️ Simulador de Entrevista", render: () => renderSimConfig() }
 };
 function navPara(rota){
@@ -4727,7 +5093,7 @@ const FF_TITULOS = {
   "tela-ranking":"📊 Ranking", "tela-comunidade":"👥 Comunidade", "tela-meuperfil":"🪪 Meu Perfil",
   "tela-config":"⚙️ Configurações", "tela-simulador":"🎙️ Simulador de Entrevista",
   "tela-entrevista":"🎙️ Entrevista ao vivo", "tela-licao":"📖 Aula", "tela-quiz":"📝 Exercícios",
-  "tela-conclusao":"🎉 Parabéns!", "tela-escalada":"🗼 Escalada", "tela-perfil":"🪪 Perfil", "tela-paywall":"👑 FalaFina Premium"
+  "tela-conclusao":"🎉 Parabéns!", "tela-escalada":"🗼 Escalada", "tela-perfil":"🪪 Perfil", "tela-paywall":"👑 FalaFina Premium", "tela-loja":"🛍️ Loja"
 };
 const FF_SEM_SHELL = ["tela-onboarding","tela-inicio","tela-cadastro","tela-login","tela-paywall"];
 function ffAposIrPara(tela){
