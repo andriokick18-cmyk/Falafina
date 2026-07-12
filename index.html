@@ -397,20 +397,172 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--azul);outline-offse
 .sim-acoes-fb button{font-weight:800;font-size:.85rem;padding:9px 12px;border-radius:12px;background:rgba(33,49,58,.07)}
 .cv-area{width:100%;min-height:150px;font-family:inherit;font-weight:600;font-size:.95rem;padding:12px;border:2.5px solid rgba(33,49,58,.2);border-radius:14px;background:var(--branco);margin-top:8px}
 .cv-tag{display:inline-flex;align-items:center;gap:6px;background:var(--verde-claro);border:2px solid var(--verde);color:var(--verde-escuro);font-weight:800;font-size:.88rem;border-radius:999px;padding:6px 13px;margin:4px 4px 0 0}
+
+/* ============================================================
+   REDESIGN V2 — layout dos mockups: sidebar verde no desktop,
+   abas embaixo no celular, cards brancos sobre fundo creme.
+   ============================================================ */
+:root{ --fundo:#F6F4EE; --side:#0B5C3F; --side-2:#07452F; --borda:rgba(33,49,58,.10); }
+body{ background:var(--fundo); }
+.app{ display:flex; min-height:100dvh; }
+/* ---- SIDEBAR (desktop) ---- */
+.sidebar{ width:248px; min-width:248px; background:linear-gradient(180deg,var(--side),var(--side-2)); color:#fff; padding:18px 14px 14px; display:flex; flex-direction:column; gap:6px; position:sticky; top:0; height:100dvh; overflow-y:auto; border-radius:0 26px 26px 0; }
+.sb-logo{ display:flex; align-items:center; gap:10px; padding:4px 6px 14px; }
+.sb-logo img{ width:46px; height:46px; border-radius:14px; }
+.sb-logo b{ font-family:var(--f-display); font-size:1.3rem; }
+.sb-logo b i{ font-style:normal; color:var(--sol); }
+.sb-logo small{ display:block; font-size:.58rem; letter-spacing:1.4px; font-weight:800; opacity:.85; }
+.sb-nav{ display:flex; flex-direction:column; gap:3px; }
+.sb-item{ display:flex; align-items:center; gap:11px; padding:10px 12px; border-radius:13px; font-weight:800; font-size:.95rem; color:#EAF6EF; text-align:left; }
+.sb-item .ic{ width:22px; text-align:center; }
+.sb-item:hover{ background:rgba(255,255,255,.10); }
+.sb-item.ativo{ background:var(--verde); box-shadow:inset 0 0 0 2px rgba(255,255,255,.25); }
+.sb-premium{ margin-top:auto; background:rgba(255,255,255,.08); border:1.5px solid rgba(255,255,255,.18); border-radius:18px; padding:14px; text-align:center; }
+.sb-premium b{ display:flex; align-items:center; justify-content:center; gap:6px; font-family:var(--f-display); }
+.sb-premium p{ font-size:.8rem; font-weight:700; opacity:.9; margin:6px 0 10px; }
+.sb-premium button{ width:100%; background:var(--sol); color:#5C4400; font-weight:800; border-radius:12px; padding:10px; box-shadow:0 3px 0 #C89A20; }
+.sb-mascote{ width:92px; margin:12px auto 0; display:block; filter:drop-shadow(0 4px 6px rgba(0,0,0,.25)); }
+/* ---- ÁREA PRINCIPAL ---- */
+.principal{ flex:1; min-width:0; display:flex; flex-direction:column; }
+.topo{ position:sticky; top:0; z-index:40; background:rgba(246,244,238,.92); backdrop-filter:blur(8px); display:flex; align-items:center; gap:10px; padding:14px 20px; border-bottom:1.5px solid var(--borda); }
+.topo .titulo-pagina{ font-family:var(--f-display); font-weight:700; font-size:1.35rem; color:var(--verde-escuro); margin-right:auto; display:flex; align-items:center; gap:8px; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.btn-voltar{ font-weight:800; color:var(--verde-escuro); background:var(--branco); border:2px solid var(--borda); border-radius:999px; padding:7px 14px; font-size:.88rem; }
+.xp-pill{ display:flex; align-items:center; gap:6px; background:var(--branco); border:2px solid var(--sol); border-radius:999px; padding:6px 13px; font-weight:800; font-size:.9rem; white-space:nowrap; }
+.avatar-mini{ width:40px; height:40px; border-radius:50%; background:var(--verde-claro); display:flex; align-items:center; justify-content:center; font-size:1.15rem; overflow:hidden; border:2.5px solid var(--verde); flex:none; }
+.avatar-mini img{ width:100%; height:100%; object-fit:cover; }
+.conteudo{ flex:1; width:100%; max-width:1180px; margin:0 auto; padding:20px clamp(14px,3vw,28px) 96px; }
+.tela{ display:none; animation:entrar .25s ease; }
+.tela.ativa{ display:block; }
+/* ---- TAB BAR (celular) ---- */
+.tabbar{ display:none; position:fixed; left:0; right:0; bottom:0; z-index:60; background:var(--branco); border-top:2px solid var(--borda); padding:6px 4px calc(6px + env(safe-area-inset-bottom)); justify-content:space-around; }
+.tb-item{ display:flex; flex-direction:column; align-items:center; gap:2px; font-size:.66rem; font-weight:800; color:var(--tinta-suave); padding:4px 10px; border-radius:12px; min-width:56px; }
+.tb-item .ic{ font-size:1.3rem; }
+.tb-item.ativo{ color:var(--verde); background:var(--verde-claro); }
+@media (max-width:979px){ .sidebar{ display:none; } .tabbar{ display:flex; } }
+@media (min-width:980px){ body.logado #btnVoltar{ display:none !important; } }
+body.sem-shell .sidebar, body.sem-shell .tabbar, body.sem-shell .pill-grupo{ display:none !important; }
+body.sem-shell .topo .titulo-pagina{ visibility:hidden; }
+/* ---- COMPONENTES DOS MOCKUPS ---- */
+.cardb{ background:var(--branco); border:1.5px solid var(--borda); border-radius:20px; padding:18px; box-shadow:0 2px 8px rgba(33,49,58,.05); }
+.grid-2{ display:grid; grid-template-columns:1fr 330px; gap:18px; align-items:start; }
+@media (max-width:979px){ .grid-2{ grid-template-columns:1fr; } }
+.lateral{ display:flex; flex-direction:column; gap:16px; }
+.secao-t{ font-family:var(--f-display); font-weight:700; font-size:1.08rem; margin:0 0 12px; display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.anel{ --p:0; --cor:var(--verde); width:118px; height:118px; border-radius:50%; background:conic-gradient(var(--cor) calc(var(--p)*1%), #E8E5DC 0); display:flex; align-items:center; justify-content:center; flex:none; }
+.anel > div{ width:88px; height:88px; border-radius:50%; background:var(--branco); display:flex; flex-direction:column; align-items:center; justify-content:center; }
+.anel b{ font-family:var(--f-display); font-size:1.35rem; color:var(--verde-escuro); }
+.anel small{ font-size:.62rem; font-weight:800; color:var(--tinta-suave); }
+.semana{ display:flex; gap:6px; }
+.semana span{ width:30px; height:30px; border-radius:50%; background:#EDEAE1; display:flex; align-items:center; justify-content:center; font-size:.72rem; font-weight:800; color:var(--tinta-suave); }
+.semana span.feito{ background:var(--verde); color:#fff; }
+.semana span.hoje{ outline:2.5px solid var(--sol); }
+.acoes-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:10px; }
+.acao{ background:var(--branco); border:1.5px solid var(--borda); border-radius:16px; padding:14px 10px; text-align:center; font-weight:800; font-size:.82rem; display:flex; flex-direction:column; gap:6px; align-items:center; transition:transform .12s; }
+.acao:hover{ transform:translateY(-2px); border-color:var(--verde); }
+.acao .ic{ font-size:1.55rem; }
+.pillx{ display:inline-flex; align-items:center; gap:6px; border-radius:999px; padding:5px 12px; font-weight:800; font-size:.8rem; background:var(--verde-claro); color:var(--verde-escuro); }
+.aula-item{ display:flex; align-items:center; gap:14px; background:var(--branco); border:1.5px solid var(--borda); border-radius:18px; padding:14px 16px; margin-bottom:10px; }
+.aula-item.atual{ border:2px solid var(--sol); }
+.aula-num{ width:48px; height:48px; border-radius:50%; background:var(--verde); color:#fff; display:flex; align-items:center; justify-content:center; font-family:var(--f-display); font-weight:700; font-size:1.15rem; flex:none; }
+.aula-num.trava{ background:#CFCBC0; }
+.aula-meio{ flex:1; min-width:0; }
+.aula-meio b{ font-family:var(--f-display); font-size:1.02rem; }
+.aula-meio p{ font-size:.84rem; font-weight:600; color:var(--tinta-suave); margin:2px 0 6px; }
+.aula-est{ display:flex; align-items:center; gap:8px; }
+.mini-barra{ flex:1; max-width:220px; height:8px; border-radius:99px; background:#EDEAE1; overflow:hidden; }
+.mini-barra i{ display:block; height:100%; background:var(--verde); border-radius:99px; }
+.estrelas{ font-size:.8rem; letter-spacing:1px; }
+.aula-btn{ flex:none; font-weight:800; font-size:.86rem; border-radius:13px; padding:10px 16px; }
+.aula-btn.ok{ background:var(--verde-claro); color:var(--verde-escuro); }
+.aula-btn.vai{ background:var(--verde); color:#fff; box-shadow:0 3px 0 var(--verde-escuro); }
+.aula-btn.trava{ background:#EDEAE1; color:#9A958A; }
+.chips-tab{ display:flex; gap:8px; overflow-x:auto; padding-bottom:6px; margin-bottom:14px; scrollbar-width:none; }
+.chips-tab::-webkit-scrollbar{ display:none; }
+.chip-tab{ flex:none; font-weight:800; font-size:.86rem; padding:9px 16px; border-radius:999px; background:var(--branco); border:1.5px solid var(--borda); color:var(--tinta); }
+.chip-tab.ativo{ background:var(--verde); color:#fff; border-color:var(--verde); }
+.lista-limpa{ display:flex; flex-direction:column; gap:8px; }
+.linha-cat{ display:flex; align-items:center; justify-content:space-between; font-weight:800; font-size:.9rem; border-radius:12px; padding:10px 13px; }
+.des-card{ background:var(--branco); border:1.5px solid var(--borda); border-radius:18px; padding:16px; display:flex; flex-direction:column; gap:8px; }
+.des-card .top{ display:flex; align-items:center; gap:10px; }
+.des-card .top .ic{ font-size:1.7rem; }
+.des-card b{ font-family:var(--f-display); }
+.des-card p{ font-size:.83rem; font-weight:600; color:var(--tinta-suave); }
+.des-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(215px,1fr)); gap:12px; }
+.des-rec{ display:flex; align-items:center; justify-content:space-between; font-size:.84rem; font-weight:800; }
+.btn-resg{ background:var(--verde); color:#fff; border-radius:12px; padding:9px; font-weight:800; box-shadow:0 3px 0 var(--verde-escuro); }
+.btn-resg:disabled{ background:#EDEAE1; color:#9A958A; box-shadow:none; cursor:default; }
+.btn-resg.feito{ background:var(--sol-claro); color:#7A5A00; box-shadow:none; }
+.conq-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:12px; }
+.conq{ background:var(--branco); border:1.5px solid var(--borda); border-radius:18px; padding:16px 12px; text-align:center; }
+.conq .ic{ font-size:2rem; }
+.conq b{ display:block; font-size:.88rem; margin-top:6px; }
+.conq small{ font-weight:700; color:var(--tinta-suave); font-size:.74rem; }
+.conq.trancada{ opacity:.45; filter:grayscale(1); }
+.stat-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(110px,1fr)); gap:10px; }
+.stat-mini{ background:var(--verde-claro); border-radius:14px; padding:12px; text-align:center; }
+.stat-mini b{ font-family:var(--f-display); font-size:1.2rem; color:var(--verde-escuro); display:block; }
+.stat-mini small{ font-weight:800; font-size:.7rem; color:var(--tinta-suave); }
+.perfil-topo{ display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+.avatar-g{ width:86px; height:86px; border-radius:50%; overflow:hidden; background:var(--verde-claro); display:flex; align-items:center; justify-content:center; font-size:2.4rem; border:3px solid var(--verde); }
+.avatar-g img{ width:100%; height:100%; object-fit:cover; }
+.grafico-wrap{ height:120px; }
+.rank-item{ display:flex; align-items:center; gap:12px; background:var(--branco); border:1.5px solid var(--borda); border-radius:16px; padding:12px 14px; margin-bottom:8px; }
+.rank-item.eu{ border:2px solid var(--verde); background:var(--verde-claro); }
+.rank-pos{ font-family:var(--f-display); font-weight:700; min-width:36px; text-align:center; font-size:1.05rem; }
+.rank-item small{ display:block; color:var(--tinta-suave); font-weight:700; font-size:.76rem; }
+.rank-xp{ margin-left:auto; font-weight:800; color:var(--verde-escuro); white-space:nowrap; }
+.fav-linha{ display:flex; align-items:center; gap:10px; background:var(--branco); border:1.5px solid var(--borda); border-radius:14px; padding:10px 13px; margin-bottom:8px; font-weight:700; }
+.fav-linha .estrela{ font-size:1.25rem; margin-left:auto; }
+.cfg-linha{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 4px; border-bottom:1.5px solid var(--borda); font-weight:700; }
+.dica-card{ background:linear-gradient(135deg,#EAF6EF,#FFF6DF); border-radius:18px; padding:16px; display:flex; gap:12px; align-items:center; }
+.dica-card img{ width:56px; flex:none; }
+.dica-card p{ font-size:.86rem; font-weight:700; }
+.faixa-trofeu{ display:flex; align-items:center; gap:14px; background:var(--sol-claro); border:1.5px solid var(--sol); border-radius:18px; padding:14px 18px; margin-top:16px; flex-wrap:wrap; font-weight:800; }
+#tela-trilha > .cabecalho-trilha{ display:none; }
+.pill-grupo{ display:flex; gap:8px; align-items:center; }
+/* telas do painel ocupam a largura toda (as antigas continuam 560px) */
+#tela-home,#tela-trilha,#tela-revisao,#tela-desafios,#tela-pratica,#tela-conquistas,#tela-comunidade,#tela-config,#tela-meuperfil,#tela-ranking{ max-width:none; padding:8px 0 40px; }
+@media (max-width:979px){ #tela-home,#tela-trilha,#tela-revisao,#tela-desafios,#tela-pratica,#tela-conquistas,#tela-comunidade,#tela-config,#tela-meuperfil,#tela-ranking{ padding:4px 0 30px; } }
+
 </style>
 </head>
 <body>
 
+<div class="app">
+<aside class="sidebar" aria-label="Menu principal">
+  <div class="sb-logo"><img src="icon-192.png" alt=""><div><b>Fala<i>Fina</i></b><small>INGLÊS PARA BRASILEIROS</small></div></div>
+  <nav class="sb-nav">
+    <button class="sb-item" data-rota="home"><span class="ic">🏠</span>Início</button>
+    <button class="sb-item" data-rota="aulas"><span class="ic">📚</span>Aulas</button>
+    <button class="sb-item" data-rota="aulas"><span class="ic">🧭</span>Trilha de Estudos</button>
+    <button class="sb-item" data-rota="pratica"><span class="ic">🎯</span>Prática</button>
+    <button class="sb-item" data-rota="desafios"><span class="ic">🏆</span>Desafios</button>
+    <button class="sb-item" data-rota="revisao"><span class="ic">🔄</span>Revisão</button>
+    <button class="sb-item" data-rota="conquistas"><span class="ic">🏅</span>Conquistas</button>
+    <button class="sb-item" data-rota="ranking"><span class="ic">📊</span>Ranking</button>
+    <button class="sb-item" data-rota="comunidade"><span class="ic">👥</span>Comunidade</button>
+    <button class="sb-item" data-rota="meuperfil"><span class="ic">🪪</span>Meu Perfil</button>
+    <button class="sb-item" data-rota="config"><span class="ic">⚙️</span>Configurações</button>
+  </nav>
+  <div class="sb-premium">
+    <b>👑 Seja Premium</b>
+    <p>Desbloqueie todos os recursos e aprenda sem limites!</p>
+    <button id="sbPremium">Quero ser Premium</button>
+  </div>
+  <img class="sb-mascote" src="mascote.png" alt="Mascote FalaFina">
+</aside>
+<div class="principal">
 <header class="topo">
   <button class="btn-voltar" id="btnVoltar" aria-label="Voltar">← Voltar</button>
-  <div class="logo">FalaFina <small>inglês BR</small></div>
-  <div style="display:flex;gap:8px;align-items:center">
+  <span class="titulo-pagina" id="tituloPagina">FalaFina</span>
+  <div class="pill-grupo">
     <div class="xp-pill" style="background:#FCE4DB;border-color:var(--coral);color:#8C3212" title="Dias seguidos estudando">🔥 <span id="streakValor">0</span></div>
     <div class="xp-pill" title="Seus pontos de experiência">⭐ <span id="xpValor">0</span> XP</div>
     <div class="xp-pill" id="nuvemStatus" style="min-width:34px;text-align:center" title="Estado da nuvem">☁️</div>
-    <button class="avatar-mini" id="btnAvatar" aria-label="Meu perfil">👤</button>
   </div>
+  <button class="avatar-mini" id="btnAvatar" aria-label="Meu perfil">👤</button>
 </header>
+<div class="conteudo">
 
 <!-- ================= TELA: INÍCIO (LANDING) ================= -->
 <main class="tela" id="tela-inicio">
@@ -639,6 +791,32 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--azul);outline-offse
   </div>
 </main>
 
+<!-- ================= TELA: HOME (dashboard) ================= -->
+<main class="tela" id="tela-home"><div id="homeConteudo"></div></main>
+<!-- ================= TELA: REVISÃO ================= -->
+<main class="tela" id="tela-revisao"><div id="revisaoConteudo"></div></main>
+<!-- ================= TELA: DESAFIOS ================= -->
+<main class="tela" id="tela-desafios"><div id="desafiosConteudo"></div></main>
+<!-- ================= TELA: PRÁTICA ================= -->
+<main class="tela" id="tela-pratica"><div id="praticaConteudo"></div></main>
+<!-- ================= TELA: CONQUISTAS ================= -->
+<main class="tela" id="tela-conquistas"><div id="conquistasConteudo"></div></main>
+<!-- ================= TELA: COMUNIDADE ================= -->
+<main class="tela" id="tela-comunidade"><div id="comunidadeConteudo"></div></main>
+<!-- ================= TELA: CONFIGURAÇÕES ================= -->
+<main class="tela" id="tela-config"><div id="configConteudo"></div></main>
+<!-- ================= TELA: MEU PERFIL ================= -->
+<main class="tela" id="tela-meuperfil"><div id="meuPerfilConteudo"></div></main>
+</div><!-- /conteudo -->
+</div><!-- /principal -->
+</div><!-- /app -->
+<nav class="tabbar" aria-label="Menu">
+  <button class="tb-item" data-rota="home"><span class="ic">🏠</span>Início</button>
+  <button class="tb-item" data-rota="aulas"><span class="ic">📚</span>Aulas</button>
+  <button class="tb-item" data-rota="pratica"><span class="ic">🎯</span>Prática</button>
+  <button class="tb-item" data-rota="desafios"><span class="ic">🏆</span>Desafios</button>
+  <button class="tb-item" data-rota="meuperfil"><span class="ic">🪪</span>Perfil</button>
+</nav>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -703,6 +881,12 @@ function mesclarProgresso(a, b){
   const r = Object.assign({}, a, b);
   r.xp = Math.max(a.xp || 0, b.xp || 0);
   r.recordeStreak = Math.max(a.recordeStreak || 0, b.recordeStreak || 0);
+  r.melhorSeq = Math.max(a.melhorSeq || 0, b.melhorSeq || 0);
+  r.stats = Object.assign({}, b.stats || {}, a.stats || {});
+  for(const k in (b.stats || {})){ const sa = (a.stats || {})[k], sb = b.stats[k]; if(sa && sb) r.stats[k] = ((sb.ex || 0) > (sa.ex || 0)) ? sb : sa; }
+  r.favoritos = Object.assign({}, a.favoritos || {}, b.favoritos || {});
+  r.resgates = Object.assign({}, a.resgates || {}, b.resgates || {});
+  r.sim = { dominadas: Object.assign({}, (a.sim || {}).dominadas || {}, (b.sim || {}).dominadas || {}), erros: Object.assign({}, (a.sim || {}).erros || {}, (b.sim || {}).erros || {}) };
   r.diasSeguidos = Math.max(a.diasSeguidos || 0, b.diasSeguidos || 0);
   r.ultimoDiaAtivo = [a.ultimoDiaAtivo, b.ultimoDiaAtivo].filter(Boolean).sort().pop() || undefined;
   if((a.dataXpHoje || "") > (b.dataXpHoje || "")){ r.dataXpHoje = a.dataXpHoje; r.xpHoje = a.xpHoje || 0; }
@@ -867,6 +1051,7 @@ const Fala = (() => {
       const norm = s => s.toLowerCase().replace(/[^a-z' ]/g, " ").split(/\s+/).filter(Boolean);
       const alvoP = norm(alvo);
       const ok = ditos.some(d => { const dp = norm(d); return alvoP.every(w => dp.includes(w)); });
+      if(typeof registrarPronuncia === "function") registrarPronuncia(ok);
       mostrarToast(ok ? "🎯 Perfeito! Pronúncia reconhecida!" : `👂 Ouvi: "${(ditos[0] || "...").trim()}" — tenta de novo!`);
     };
     r.onend = soltar;
@@ -1774,7 +1959,128 @@ const NIVEIS = [
   id:"n2", nome:"Conversação", tag:"NÍVEL 2", cor:"#B05CB8",
   descricao:"Tempos verbais, perguntas e respostas, conversas do trabalho e do dia a dia.",
   modulos:[
-    { id:"n2m1", temas:["verbos","gramatica"], titulo:"Estou fazendo agora: o -ING", icone:"⏳", corIco:"#F5E4F7",
+    { id:"n2g1", temas:["verbos","gramatica"], titulo:"Verbo TO BE — ser e estar", icone:"🧱", corIco:"#E1F3EA",
+      intro:"O tijolo de TODA a gramática do inglês: am, is, are. São só três palavrinhas — e elas valem por dois verbos nossos: SER e ESTAR ao mesmo tempo.",
+      xp:90,
+      cards:[
+        { figura:"🧱", pt:"Eu sou / Eu estou", en:"I am", som:"ái ém",
+          quando:"AM só existe com I. \"I am Andrio\" (eu sou o Andrio), \"I am tired\" (eu estou cansado). Um só verbo pros nossos dois.",
+          dica:"Encurtado vira I'm (áim) — e é assim que os americanos falam 99% das vezes.",
+          exEn:"I am from Brazil.", exSom:"ái ém fróm brazíl.", exPt:"Eu sou do Brasil." },
+        { figura:"👉", pt:"Você é / Você está", en:"You are", som:"iú ar",
+          quando:"ARE acompanha you, we (nós) e they (eles). \"You are my friend\" = você é meu amigo.",
+          dica:"Encurtado: you're (iór), we're (uír), they're (dhér).",
+          exEn:"You are a good worker.", exSom:"iú ar a gúd uôr-ker.", exPt:"Você é um bom trabalhador." },
+        { figura:"👨", pt:"Ele é / Ela está", en:"He is / She is", som:"rí iz / chí iz",
+          quando:"IS acompanha he (ele), she (ela) e it (coisa/animal). \"She is my wife\" = ela é minha esposa.",
+          exEn:"He is my boss. She is my coworker.", exSom:"rí iz mái bós. chí iz mái cou-uôr-ker.", exPt:"Ele é meu chefe. Ela é minha colega." },
+        { figura:"📦", pt:"Isso é / Está", en:"It is", som:"it iz",
+          quando:"IT é o \"ele/ela\" das coisas: objeto, clima, animal. \"It is hot\" = está quente. Em inglês, clima e coisa sempre precisam do IT.",
+          dica:"Encurtado: it's (its). \"It's ok\" = está tudo bem — você já fala isso!",
+          exEn:"It is hot today.", exSom:"it iz rót tchu-dêi.", exPt:"Está quente hoje." },
+        { figura:"👥", pt:"Nós somos / Eles estão", en:"We are / They are", som:"uí ar / dhêi ar",
+          quando:"We = nós, they = eles/elas. Os dois usam ARE. \"We are ready\" = estamos prontos. \"They are here\" = eles estão aqui.",
+          exEn:"We are ready to work.", exSom:"uí ar rédi tu uôrk.", exPt:"Nós estamos prontos pra trabalhar." },
+        { figura:"🎯", pt:"A tabelinha inteira", en:"I am · you are · he/she/it is · we are · they are", som:"ém · ar · iz · ar · ar",
+          quando:"Decore como música: AM com I; IS com he/she/it; ARE com o resto. Essa tabelinha aparece em TUDO daqui pra frente — perguntas, negativas, -ING, going to...",
+          dica:"Regra do bolso: uma pessoa só e não sou eu nem você? → IS. Mais de um? → ARE. Eu? → AM.",
+          exEn:"I am here, she is there, they are outside.", exSom:"ái ém rír, chí iz dhér, dhêi ar áut-sáid.", exPt:"Eu estou aqui, ela está lá, eles estão lá fora." },
+      ],
+      quiz:[
+        { pergunta:"Complete: \"I ____ from Brazil.\"", falar:"I am from Brazil",
+          opcoes:["is","am","are","be"], correta:1,
+          dica:"AM é exclusivo do I: I am = eu sou / eu estou." },
+        { pergunta:"Complete: \"She ____ my coworker.\"", falar:"She is my coworker",
+          opcoes:["am","are","is","been"], correta:2,
+          dica:"He, she e it pedem IS. She is = ela é/está." },
+        { pergunta:"Complete: \"They ____ at work now.\"", falar:"They are at work now",
+          opcoes:["is","am","are","was"], correta:2,
+          dica:"You, we e they pedem ARE. They are = eles estão." },
+        { pergunta:"\"It's hot today\" quer dizer...", falar:"It's hot today",
+          opcoes:["Ele é alto hoje","Está quente hoje","Isso é difícil hoje","Faz frio hoje"], correta:1,
+          dica:"Clima em inglês usa IT: it's hot (está quente), it's cold (está frio)." },
+      ]
+    },
+    { id:"n2g2", temas:["verbos","gramatica"], titulo:"TO BE — negar e perguntar", icone:"🔁", corIco:"#E4EDFA",
+      intro:"Com am/is/are na mão, negar e perguntar é um passe de mágica: NOT depois do verbo pra negar, verbo pra frente pra perguntar. Sem decoreba nova.",
+      xp:90,
+      cards:[
+        { figura:"🚫", pt:"Não sou / Não estou", en:"I am not", som:"ái ém nót",
+          quando:"Pra negar, cole NOT depois do to be: I am not tired (não estou cansado), She is not here (ela não está aqui).",
+          dica:"Encurtados que os americanos usam: isn't (ízent) e aren't (árent). \"She isn't here\".",
+          exEn:"I am not tired. I can work more.", exSom:"ái ém nót táierd. ái quén uôrk mór.", exPt:"Não estou cansado. Posso trabalhar mais." },
+        { figura:"❓", pt:"Você é...? / Você está...?", en:"Are you...?", som:"ar iú...?",
+          quando:"Pra perguntar, o to be pula pra frente: You are ready → Are you ready? (você está pronto?). Só inverte, sem palavra extra.",
+          exEn:"Are you ready?", exSom:"ar iú rédi?", exPt:"Você está pronto?" },
+        { figura:"🕵️", pt:"Ele é...? / Ela está...?", en:"Is he...? / Is she...?", som:"iz rí...? / iz chí...?",
+          quando:"Mesma mágica com is: Is she your boss? (ela é sua chefe?), Is it far? (é longe?).",
+          exEn:"Is it far from here?", exSom:"iz it fár fróm rír?", exPt:"É longe daqui?" },
+        { figura:"✅", pt:"Sim, sou / Não, não sou", en:"Yes, I am / No, I'm not", som:"iés, ái ém / nôu, áim nót",
+          quando:"Resposta curta educada: repete só o to be. \"Are you Brazilian?\" → \"Yes, I am.\" Não precisa repetir a frase inteira.",
+          dica:"Cuidado: na resposta curta afirmativa NÃO se encurta. É \"Yes, I am\", nunca \"Yes, I'm\".",
+          exEn:"— Are you Brazilian? — Yes, I am!", exSom:"— ar iú brazílian? — iés, ái ém!", exPt:"— Você é brasileiro? — Sim, sou!" },
+        { figura:"📍", pt:"Onde está...?", en:"Where is...? / Where are...?", som:"uér iz...? / uér ar...?",
+          quando:"Junte uma palavrinha-pergunta na frente: Where is the bathroom? (onde é o banheiro?), Where are you? (onde você está?).",
+          exEn:"Where is the supervisor?", exSom:"uér iz dhi súper-váizor?", exPt:"Onde está o supervisor?" },
+        { figura:"🧲", pt:"O truque completo", en:"afirma → nega (not) → pergunta (inverte)", som:"—",
+          quando:"You are ok. → You are NOT ok. → ARE you ok? Um verbo, três jogadas. Esse mesmo truque vai valer pro -ING, pro going to e pro futuro.",
+          exEn:"You are ok. You are not ok. Are you ok?", exSom:"iú ar ôu-quêi. iú ar nót ôu-quêi. ar iú ôu-quêi?", exPt:"Você está bem. Você não está bem. Você está bem?" },
+      ],
+      quiz:[
+        { pergunta:"Como se NEGA \"He is my boss\"?", falar:null,
+          opcoes:["He not is my boss","He no my boss","He is not my boss","Not he is my boss"], correta:2,
+          dica:"O NOT entra DEPOIS do to be: He is not (isn't) my boss." },
+        { pergunta:"Como se PERGUNTA se ela está pronta?", falar:"Is she ready?",
+          opcoes:["She is ready?","Does she ready?","She ready is?","Is she ready?"], correta:3,
+          dica:"O to be pula pra frente: Is she ready? Sem do/does — to be se vira sozinho." },
+        { pergunta:"\"Are you ok?\" — resposta curta certa:", falar:"Yes, I am",
+          opcoes:["Yes, I'm","Yes, I am","Yes, I is","Yes, am"], correta:1,
+          dica:"Resposta curta afirmativa nunca encurta: Yes, I am." },
+        { pergunta:"\"Where is the bathroom?\" significa...", falar:"Where is the bathroom?",
+          opcoes:["Quando abre o banheiro?","Onde é o banheiro?","De quem é o banheiro?","O banheiro está limpo?"], correta:1,
+          dica:"Where (uér) = onde. A pergunta mais útil de qualquer viagem." },
+      ]
+    },
+    { id:"n2g3", temas:["verbos","gramatica"], titulo:"Present Simple — a rotina", icone:"📅", corIco:"#FFF3D1",
+      intro:"O tempo da rotina: o que você faz todo dia, sempre, geralmente. E a pegadinha nº 1 do inglês inteiro: o S do he/she/it. Vamos dominar isso hoje.",
+      xp:90,
+      cards:[
+        { figura:"🔄", pt:"Eu trabalho (todo dia)", en:"I work every day", som:"ái uôrk évri dêi",
+          quando:"Rotina não usa to be nem -ING: é o verbo puro. I work (trabalho), I live (moro), I wake up (acordo). Simples assim com I, you, we, they.",
+          exEn:"I work from Monday to Saturday.", exSom:"ái uôrk fróm mãn-dêi tu sé-turdêi.", exPt:"Eu trabalho de segunda a sábado." },
+        { figura:"⚠️", pt:"ELE trabalha = works", en:"He works / She works", som:"rí uôrks / chí uôrks",
+          quando:"A pegadinha famosa: com he/she/it o verbo ganha S. He works, she lives, it costs. Esquecer esse S é O erro clássico do brasileiro.",
+          dica:"Macete: hE, shE, it → E de \"Ele\" → verbo com S. I work, mas HE workS.",
+          exEn:"He works at a hotel.", exSom:"rí uôrks ét a routél.", exPt:"Ele trabalha num hotel." },
+        { figura:"🙅", pt:"Não trabalho = don't", en:"I don't work", som:"ái dôunt uôrk",
+          quando:"Verbo comum não nega sozinho: chama o ajudante DON'T. I don't work on Sundays (não trabalho aos domingos). Com he/she/it, o ajudante vira DOESN'T.",
+          exEn:"I don't work on Sundays.", exSom:"ái dôunt uôrk ón sân-dêis.", exPt:"Eu não trabalho aos domingos." },
+        { figura:"🤝", pt:"Ele não trabalha = doesn't", en:"He doesn't work", som:"rí dâzent uôrk",
+          quando:"Com he/she/it: doesn't + verbo SEM S. O S mudou de casa: saiu do verbo e entrou no doeS. \"She doesn't like\" (não \"doesn't likes\").",
+          dica:"Regra do S único: ou ele está no DOES, ou no verbo — nunca nos dois.",
+          exEn:"She doesn't like cold weather.", exSom:"chí dâzent láik côuld ué-dher.", exPt:"Ela não gosta de frio." },
+        { figura:"❓", pt:"Você trabalha? = Do you...?", en:"Do you work...? / Does he work...?", som:"du iú uôrk? / dâz rí uôrk?",
+          quando:"Pergunta de rotina começa com DO (ou DOES pra he/she/it): Do you work here? Does she speak English? O verbo fica puro.",
+          exEn:"Do you work here?", exSom:"du iú uôrk rír?", exPt:"Você trabalha aqui?" },
+        { figura:"⏰", pt:"As palavras da rotina", en:"always · usually · sometimes · never", som:"ól-uêis · iú-juali · sâm-táims · néver",
+          quando:"Sempre, geralmente, às vezes, nunca — os carimbos da rotina. \"I always arrive on time\" = eu sempre chego no horário (frase de ouro pra entrevista!).",
+          exEn:"I always arrive on time.", exSom:"ái ól-uêis aráiv ón táim.", exPt:"Eu sempre chego no horário." },
+      ],
+      quiz:[
+        { pergunta:"Complete: \"She ____ at a restaurant.\"", falar:"She works at a restaurant",
+          opcoes:["work","works","working","is work"], correta:1,
+          dica:"He/she/it na rotina → verbo com S: she workS." },
+        { pergunta:"Como se diz \"Eu não trabalho aos domingos\"?", falar:"I don't work on Sundays",
+          opcoes:["I no work on Sundays","I don't work on Sundays","I am not work on Sundays","I doesn't work on Sundays"], correta:1,
+          dica:"Verbo comum nega com DON'T: I don't work." },
+        { pergunta:"Qual está CERTA?", falar:null,
+          opcoes:["He doesn't likes coffee","He don't like coffee","He doesn't like coffee","He not like coffee"], correta:2,
+          dica:"Doesn't + verbo puro: o S já está no doeS, o verbo fica sem." },
+        { pergunta:"Como perguntar \"Você fala inglês?\"", falar:"Do you speak English?",
+          opcoes:["You speak English?","Do you speak English?","Are you speak English?","Speak you English?"], correta:1,
+          dica:"Pergunta de rotina = DO na frente: Do you speak English?" },
+      ]
+    },    { id:"n2m1", temas:["verbos","gramatica"], titulo:"Estou fazendo agora: o -ING", icone:"⏳", corIco:"#F5E4F7",
       intro:"Bem-vindo ao Nível 2! Aqui começa a gramática de verdade — mas relaxa: o segredo do inglês falado AGORA cabe numa fórmula de 3 peças que você já tem duas.",
       xp:90,
       cards:[
@@ -1833,14 +2139,322 @@ const NIVEIS = [
           dica:"What (o quê) + are you doing (você está fazendo). A pergunta mais falada do inglês do dia a dia." },
       ]
     },
-  ]
+    { id:"n2g5", temas:["verbos","gramatica"], titulo:"Past Simple — o que já aconteceu", icone:"⏪", corIco:"#FCE4DB",
+      intro:"Contar o que você JÁ fez é o coração de qualquer entrevista: \"trabalhei 5 anos\", \"morei em...\". A regra geral é um -ED no verbo — e uma turminha de rebeldes pra conhecer.",
+      xp:90,
+      cards:[
+        { figura:"⏪", pt:"Trabalhei = worked", en:"I worked", som:"ái uôrkt",
+          quando:"Passado dos verbos comuns: verbo + ED. work → worked, clean → cleaned, live → lived. E serve pra TODAS as pessoas: I worked, she worked, they worked — sem S, sem mudança.",
+          dica:"O -ED quase nunca soa \"éd\": worked = uôrkT, cleaned = clínD. É um t/d rapidinho no final.",
+          exEn:"I worked on a farm for five years.", exSom:"ái uôrkt ón a fárm fór fáiv iérs.", exPt:"Trabalhei numa fazenda por cinco anos." },
+        { figura:"🏴‍☠️", pt:"Os rebeldes (irregulares)", en:"go → went · have → had · do → did", som:"uént · réd · díd",
+          quando:"Uns 80 verbos mudam de forma em vez de ganhar -ED. Os campeões: went (fui), had (tive), did (fiz), made (fiz/fabriquei), got (peguei), came (vim).",
+          exEn:"I went to work early yesterday.", exSom:"ái uént tu uôrk ôrli iés-terdêi.", exPt:"Fui trabalhar cedo ontem." },
+        { figura:"🧰", pt:"Era / Estava = was, were", en:"I was · you were", som:"ái uóz · iú uér",
+          quando:"O passado do to be: was (pra I, he, she, it) e were (pra you, we, they). \"I was a driver in Brazil\" = eu era motorista no Brasil.",
+          exEn:"I was a gardener in Brazil.", exSom:"ái uóz a gár-dener in brazíl.", exPt:"Eu era jardineiro no Brasil." },
+        { figura:"🙅", pt:"Não fui / não fiz = didn't", en:"I didn't work", som:"ái dídent uôrk",
+          quando:"Negar no passado: DIDN'T + verbo no presente puro. \"I didn't go\" (não fui) — o did já carrega o passado, o verbo volta ao normal.",
+          dica:"Regra do passado único: ou no DID, ou no verbo. \"I didn't went\" NÃO existe.",
+          exEn:"I didn't miss one day of work.", exSom:"ái dídent mís uãn dêi óv uôrk.", exPt:"Não faltei um dia de trabalho." },
+        { figura:"❓", pt:"Você trabalhou...? = Did you...?", en:"Did you work...?", som:"díd iú uôrk?",
+          quando:"Pergunta no passado: DID na frente, verbo puro. \"Did you work abroad?\" = você trabalhou fora? É a estrutura das perguntas de entrevista sobre experiência.",
+          exEn:"Did you work with machines?", exSom:"díd iú uôrk uíth machíns?", exPt:"Você trabalhou com máquinas?" },
+        { figura:"🗓️", pt:"Os carimbos do passado", en:"yesterday · last year · ago", som:"iés-terdêi · lést iér · agôu",
+          quando:"Yesterday (ontem), last week/year (semana/ano passado), two years ago (dois anos atrás). \"Ago\" vem DEPOIS do tempo: five years ago.",
+          exEn:"I started this job two years ago.", exSom:"ái stárted dhis djób tchú iérs agôu.", exPt:"Comecei nesse trabalho dois anos atrás." },
+      ],
+      quiz:[
+        { pergunta:"Complete: \"I ____ in a hotel last year.\"", falar:"I worked in a hotel last year",
+          opcoes:["work","worked","working","works"], correta:1,
+          dica:"Last year = passado → verbo + ED: worked." },
+        { pergunta:"O passado de GO é...", falar:"went",
+          opcoes:["goed","gone","went","going"], correta:2,
+          dica:"Go é rebelde: go → went (fui). \"Goed\" não existe." },
+        { pergunta:"Como se diz \"Eu não faltei\"?", falar:"I didn't miss",
+          opcoes:["I didn't missed","I no missed","I didn't miss","I not miss"], correta:2,
+          dica:"Didn't + verbo puro: o passado já está no DID." },
+        { pergunta:"Complete: \"I ____ a driver in Brazil.\"", falar:"I was a driver in Brazil",
+          opcoes:["were","was","am","did"], correta:1,
+          dica:"Passado do to be com I: was. (You/we/they = were.)" },
+      ]
+    },
+    { id:"n2g6", temas:["verbos","gramatica"], titulo:"Present Perfect — have + feito", icone:"🌉", corIco:"#E1F3EA",
+      intro:"O tempo-ponte: liga o passado ao agora. \"I have worked here for two years\" = trabalho aqui há dois anos (comecei antes e AINDA estou). O queridinho das entrevistas.",
+      xp:100,
+      cards:[
+        { figura:"🌉", pt:"A fórmula da ponte", en:"have/has + particípio", som:"rév / réz + ...",
+          quando:"HAVE (ou HAS pra he/she/it) + a 3ª forma do verbo: worked, been, done. Usa quando a ação começou no passado e importa AGORA: experiência de vida, coisa recém-feita.",
+          dica:"Nos regulares o particípio é igual ao passado: worked, cleaned. Rebeldes têm forma própria: been, done, gone, had.",
+          exEn:"I have worked here for two years.", exSom:"ái rév uôrkt rír fór tchú iérs.", exPt:"Trabalho aqui há dois anos." },
+        { figura:"🧳", pt:"Já estive / Já fiz (experiência)", en:"I have been / I have done", som:"ái rév bín / ái rév dân",
+          quando:"Pra contar experiências sem dizer quando: \"I have worked with cattle\" (já trabalhei com gado). Se disser a data, aí é past simple: \"I worked there in 2023\".",
+          exEn:"I have worked in construction and landscaping.", exSom:"ái rév uôrkt in cons-trâk-shion énd lénds-kêiping.", exPt:"Já trabalhei em construção e paisagismo." },
+        { figura:"⏳", pt:"Há quanto tempo: for e since", en:"for two years / since 2024", som:"fór tchú iérs / síns tuénti tuénti-fór",
+          quando:"FOR + duração (for two years = por dois anos). SINCE + ponto de partida (since 2024 = desde 2024). Os dois grudam no present perfect.",
+          exEn:"I have lived here since 2024.", exSom:"ái rév lívd rír síns tuénti tuénti-fór.", exPt:"Moro aqui desde 2024." },
+        { figura:"✨", pt:"Já / ainda não: already, yet", en:"already / not... yet", som:"ól-rédi / iét",
+          quando:"Already = já (afirmando): \"I have already finished\" (já terminei). Yet = ainda (negando ou perguntando): \"I haven't finished yet\" (ainda não terminei).",
+          exEn:"I have already finished my work.", exSom:"ái rév ól-rédi fí-nishd mái uôrk.", exPt:"Já terminei meu trabalho." },
+        { figura:"❓", pt:"Você já...? = Have you ever...?", en:"Have you ever...?", som:"rév iú éver...?",
+          quando:"A pergunta de experiência: \"Have you ever worked abroad?\" = você já trabalhou fora alguma vez? EVER = alguma vez na vida. Resposta: \"Yes, I have\" / \"No, I haven't\".",
+          exEn:"Have you ever worked on a farm?", exSom:"rév iú éver uôrkt ón a fárm?", exPt:"Você já trabalhou numa fazenda?" },
+        { figura:"⚖️", pt:"Perfect ✕ Passado", en:"I have worked ✕ I worked in 2023", som:"—",
+          quando:"Sem data = present perfect (experiência que conta até hoje). Com data/momento fechado = past simple. \"I have driven trucks\" ✕ \"I drove trucks in 2022\".",
+          dica:"Falou yesterday, last year, ago, in 2023? → past simple, sem have.",
+          exEn:"I have driven trucks. I drove trucks in 2022.", exSom:"ái rév drí-ven trâks. ái drôuv trâks in tuénti tuénti-tchú.", exPt:"Já dirigi caminhões. Dirigi caminhões em 2022." },
+      ],
+      quiz:[
+        { pergunta:"Complete: \"She has ____ her homework.\"", falar:"She has already finished her homework",
+          opcoes:["already finished","already finish","finish already","finishing"], correta:0,
+          dica:"Has + particípio: finished. Already entra entre o have/has e o verbo." },
+        { pergunta:"\"Trabalho aqui há dois anos (e continuo)\" =", falar:"I have worked here for two years",
+          opcoes:["I work here two years ago","I have worked here for two years","I working here for two years","I worked here since two years"], correta:1,
+          dica:"Começou no passado e continua = present perfect + FOR (duração)." },
+        { pergunta:"Complete: \"I have lived here ____ 2024.\"", falar:"I have lived here since 2024",
+          opcoes:["for","since","ago","yet"], correta:1,
+          dica:"Ponto de partida (2024) = SINCE. Duração (two years) = FOR." },
+        { pergunta:"\"Have you ever worked abroad?\" — resposta curta certa:", falar:"Yes, I have",
+          opcoes:["Yes, I worked","Yes, I have","Yes, I ever","Yes, I has"], correta:1,
+          dica:"Pergunta com have responde com have: Yes, I have / No, I haven't." },
+      ]
+    },
+    { id:"n2g7", temas:["verbos","gramatica"], titulo:"Past Perfect — o passado do passado", icone:"⏮️", corIco:"#F5E4F7",
+      intro:"Duas coisas aconteceram no passado e uma veio ANTES da outra? A mais antiga leva HAD: \"When I arrived, the bus had left\" — quando cheguei, o ônibus JÁ TINHA saído.",
+      xp:100,
+      cards:[
+        { figura:"⏮️", pt:"A fórmula: had + particípio", en:"had + worked / left / finished", som:"réd + ...",
+          quando:"HAD (pra todo mundo, sem exceção) + particípio. Marca a ação que aconteceu PRIMEIRO entre duas do passado. É o nosso \"tinha feito\".",
+          exEn:"The bus had left when I arrived.", exSom:"dhi bâs réd léft uén ái aráivd.", exPt:"O ônibus tinha saído quando eu cheguei." },
+        { figura:"🎬", pt:"Cena de duas ações", en:"When I got there, they had started.", som:"uén ái gót dhér, dhêi réd stárted.",
+          quando:"Ação 1 (had started = tinham começado) veio antes; ação 2 (got there = cheguei) veio depois. O HAD conta pro ouvinte qual foi primeiro.",
+          exEn:"When I got there, they had started the meeting.", exSom:"uén ái gót dhér, dhêi réd stárted dhi mírin.", exPt:"Quando cheguei lá, eles tinham começado a reunião." },
+        { figura:"💼", pt:"Na entrevista", en:"Before I came here, I had worked...", som:"bifór ái quêim rír, ái réd uôrkt...",
+          quando:"Perfeito pra contar sua história em ordem: \"Before I moved to the city, I had worked on farms\" — antes de me mudar, eu tinha trabalhado em fazendas.",
+          exEn:"Before this job, I had worked in two hotels.", exSom:"bifór dhis djób, ái réd uôrkt in tchú routéls.", exPt:"Antes desse emprego, eu tinha trabalhado em dois hotéis." },
+        { figura:"🙅", pt:"Negando: hadn't", en:"I hadn't finished yet", som:"ái ré-dent fí-nishd iét",
+          quando:"Had + not = hadn't. \"I hadn't finished when the boss called\" = eu não tinha terminado quando o chefe chamou.",
+          exEn:"I hadn't finished when he called me.", exSom:"ái ré-dent fí-nishd uén rí cóld mi.", exPt:"Eu não tinha terminado quando ele me chamou." },
+        { figura:"🧭", pt:"Quando usar (e quando não)", en:"had = só quando a ordem importa", som:"—",
+          quando:"Se a ordem dos fatos está clara ou só tem uma ação, use o past simple normal. O past perfect entra quando você precisa deixar claro o que veio ANTES.",
+          dica:"Falou \"before\", \"when\", \"already\" numa história do passado? Grande chance de um HAD por perto.",
+          exEn:"I had never seen snow before I came here.", exSom:"ái réd néver sín snôu bifór ái quêim rír.", exPt:"Eu nunca tinha visto neve antes de vir pra cá." },
+      ],
+      quiz:[
+        { pergunta:"Complete: \"When I arrived, the meeting ____.\"", falar:"When I arrived, the meeting had started",
+          opcoes:["has started","had started","starts","starting"], correta:1,
+          dica:"A reunião começou ANTES de você chegar → had started (tinha começado)." },
+        { pergunta:"\"Eu nunca tinha visto neve\" =", falar:"I had never seen snow",
+          opcoes:["I never see snow","I had never seen snow","I have never see snow","I didn't never saw snow"], correta:1,
+          dica:"Tinha (antes de outro momento do passado) = HAD + particípio: had seen." },
+        { pergunta:"O past perfect usa...", falar:null,
+          opcoes:["have/has + verbo","had + particípio","did + verbo","was + ING"], correta:1,
+          dica:"HAD pra todo mundo + particípio: had worked, had left, had done." },
+        { pergunta:"Qual frase mostra o que aconteceu PRIMEIRO?", falar:null,
+          opcoes:["The bus left","I arrived","The bus had left","I was arriving"], correta:2,
+          dica:"O HAD marca a ação mais antiga: the bus had left = o ônibus JÁ tinha saído." },
+      ]
+    },
+    { id:"n2g8", temas:["verbos","gramatica"], titulo:"Futuro com WILL", icone:"🔮", corIco:"#E4EDFA",
+      intro:"O futuro mais fácil do inglês: WILL + verbo, pra qualquer pessoa, sem mudar nada. E é o futuro das promessas — o que você mais vai usar no consulado: \"I will return to Brazil\".",
+      xp:90,
+      cards:[
+        { figura:"🔮", pt:"Vou = will", en:"I will work / She will help", som:"ái uíl uôrk / chí uíl rélp",
+          quando:"WILL + verbo puro, igual pra todo mundo: I will, she will, they will. Usa pra promessas, decisões na hora e previsões.",
+          dica:"Encurtado: I'll (áiol), she'll (chíol), we'll (uíol). No dia a dia é assim que sai.",
+          exEn:"I will work hard every day.", exSom:"ái uíl uôrk rárd évri dêi.", exPt:"Vou trabalhar duro todos os dias." },
+        { figura:"🤝", pt:"A frase do consulado", en:"I will return to Brazil.", som:"ái uíl ritôrn tu brazíl.",
+          quando:"Promessa firme com will: \"I will return to Brazil when my contract ends\". É literalmente a frase que decide visto.",
+          exEn:"I will return to Brazil when my contract ends.", exSom:"ái uíl ritôrn tu brazíl uén mái cón-tract énds.", exPt:"Vou voltar pro Brasil quando meu contrato terminar." },
+        { figura:"🙅", pt:"Não vou = won't", en:"I won't be late", som:"ái uôunt bi lêit",
+          quando:"Will + not = won't (uôunt). \"I won't be late\" = não vou me atrasar. \"I won't miss work\" = não vou faltar.",
+          exEn:"I won't miss a single day.", exSom:"ái uôunt mís a sín-gol dêi.", exPt:"Não vou faltar um dia sequer." },
+        { figura:"❓", pt:"Você vai...? = Will you...?", en:"Will you...?", som:"uíl iú...?",
+          quando:"Pergunta: will pra frente. \"Will you come back next season?\" = você vai voltar na próxima temporada? Resposta: \"Yes, I will\" / \"No, I won't\".",
+          exEn:"Will you work this weekend?", exSom:"uíl iú uôrk dhis uík-énd?", exPt:"Você vai trabalhar esse fim de semana?" },
+        { figura:"🌦️", pt:"Previsão", en:"It will rain tomorrow", som:"it uíl rêin tumórou",
+          quando:"Previsões e futuro distante: it will rain (vai chover), prices will go up (os preços vão subir). Tomorrow (amanhã), next week (semana que vem), soon (em breve).",
+          exEn:"It will be cold tomorrow morning.", exSom:"it uíl bi côuld tumórou mór-nin.", exPt:"Vai fazer frio amanhã de manhã." },
+        { figura:"💪", pt:"Decisão na hora", en:"I'll do it!", som:"áiol du it!",
+          quando:"Decidiu agora, na hora? WILL: o chefe pergunta quem pode ajudar e você responde \"I'll do it!\" (eu faço!). Voluntariar-se em inglês = will na veia.",
+          exEn:"Don't worry, I'll help you.", exSom:"dôunt uôrri, áiol rélp iú.", exPt:"Não se preocupe, eu te ajudo." },
+      ],
+      quiz:[
+        { pergunta:"\"Vou voltar pro Brasil\" =", falar:"I will return to Brazil",
+          opcoes:["I return to Brazil yesterday","I will return to Brazil","I returning to Brazil","I did return Brazil"], correta:1,
+          dica:"Futuro/promessa = WILL + verbo: I will return." },
+        { pergunta:"O encurtado de \"will not\" é...", falar:"won't",
+          opcoes:["willn't","won't","not will","din't"], correta:1,
+          dica:"Will not = won't (uôunt). I won't be late = não vou me atrasar." },
+        { pergunta:"Complete: \"____ you come back next season?\"", falar:"Will you come back next season?",
+          opcoes:["Do","Are","Will","Did"], correta:2,
+          dica:"Pergunta de futuro: WILL na frente. Will you come back?" },
+        { pergunta:"O chefe pede um voluntário. Você diz:", falar:"I'll do it!",
+          opcoes:["I did it!","I'll do it!","I doing it!","Me do!"], correta:1,
+          dica:"Decisão na hora = will: I'll do it! (eu faço!)." },
+      ]
+    },
+    { id:"n2g9", temas:["verbos","gramatica"], titulo:"Futuro com GOING TO — o plano", icone:"🗺️", corIco:"#FFF3D1",
+      intro:"Will é promessa e decisão na hora; GOING TO é o plano que já existe: \"I am going to work in the US\" — já está combinado, contratado, decidido. O futuro dos seus planos reais.",
+      xp:90,
+      cards:[
+        { figura:"🗺️", pt:"A fórmula do plano", en:"am/is/are + going to + verbo", som:"gôuin tchu",
+          quando:"O to be volta ao jogo: I am going to travel (vou viajar — já planejado), She is going to start Monday (ela vai começar segunda). Plano feito = going to.",
+          exEn:"I am going to work in the United States.", exSom:"ái ém gôuin tchu uôrk in dhi iunáited stêits.", exPt:"Eu vou trabalhar nos Estados Unidos." },
+        { figura:"🎙️", pt:"Como o americano fala: GONNA", en:"I'm gonna work...", som:"áim gâna uôrk",
+          quando:"Na rua, going to vira GONNA (gâna): \"I'm gonna call you\" = vou te ligar. Você NÃO precisa falar gonna — mas PRECISA entender quando ouvirem você.",
+          dica:"Gonna já inclui o \"to\": I'm gonna go ✅ / I'm gonna to go ❌.",
+          exEn:"I'm gonna talk to the boss.", exSom:"áim gâna tók tchu dhi bós.", exPt:"Vou falar com o chefe." },
+        { figura:"📅", pt:"Plano combinado", en:"We are going to start in April.", som:"uí ar gôuin tchu stárt in êi-pril.",
+          quando:"Datas de contrato, viagem marcada, mudança planejada: tudo going to. \"My season is going to start in April\".",
+          exEn:"My contract is going to start in April.", exSom:"mái cón-tract iz gôuin tchu stárt in êi-pril.", exPt:"Meu contrato vai começar em abril." },
+        { figura:"🌩️", pt:"Vai acontecer (dá pra VER)", en:"Look! It's going to rain.", som:"lúk! its gôuin tchu rêin.",
+          quando:"Quando os sinais estão na sua frente: céu preto → \"it's going to rain\". Caixa balançando → \"it's going to fall\" (vai cair). Evidência visível = going to.",
+          exEn:"Careful! The box is going to fall!", exSom:"quér-ful! dhi bóks iz gôuin tchu fól!", exPt:"Cuidado! A caixa vai cair!" },
+        { figura:"⚖️", pt:"Will ✕ Going to", en:"I'll help! ✕ I'm going to travel in May", som:"—",
+          quando:"Decidiu AGORA ou promete? → will. Já estava planejado? → going to. \"I'll answer the phone\" (decidi agora) ✕ \"I'm going to visit my family in December\" (plano).",
+          dica:"Não trave: se errar entre os dois, TODO MUNDO entende do mesmo jeito. Essa diferença é pra lapidar, não pra travar você.",
+          exEn:"I'm going to save money to build my house.", exSom:"áim gôuin tchu sêiv mâni tchu bíld mái ráus.", exPt:"Vou juntar dinheiro pra construir minha casa." },
+      ],
+      quiz:[
+        { pergunta:"Plano já decidido (\"vou trabalhar nos EUA\") usa...", falar:"I am going to work in the US",
+          opcoes:["will","going to","did","have"], correta:1,
+          dica:"Plano que já existe = going to: I am going to work in the US." },
+        { pergunta:"\"I'm gonna call you\" é o jeito falado de...", falar:"I'm going to call you",
+          opcoes:["I will call you","I'm going to call you","I called you","I can call you"], correta:1,
+          dica:"Gonna = going to na boca do americano. Entender é obrigatório!" },
+        { pergunta:"Céu escuro, vento forte. Você diz:", falar:"It's going to rain",
+          opcoes:["It's going to rain","It rained","It rains every day","It won't weather"], correta:0,
+          dica:"Sinal visível na sua frente = going to: it's going to rain." },
+        { pergunta:"Complete o plano: \"My contract ____ start in April.\"", falar:"My contract is going to start in April",
+          opcoes:["is going to","will going","going","is go to"], correta:0,
+          dica:"to be + going to: my contract IS GOING TO start." },
+      ]
+    },
+    { id:"n2g10", temas:["verbos","gramatica"], titulo:"Modais: CAN e COULD", icone:"💪", corIco:"#E1F3EA",
+      intro:"CAN é o verbo-canivete: consigo, posso, sei fazer — tudo numa palavra. \"I can drive\", \"Can you help me?\". Se você só pudesse levar um verbo pra entrevista, era esse.",
+      xp:90,
+      cards:[
+        { figura:"💪", pt:"Consigo / Sei fazer", en:"I can drive / I can cook", som:"ái quén dráiv / ái quén cúk",
+          quando:"CAN + verbo puro, igual pra todos (sem S, sem to): I can, she can, they can. É como você lista habilidades: I can drive, I can use a mower, I can cook.",
+          exEn:"I can operate a tractor.", exSom:"ái quén ópe-rêit a tréc-tor.", exPt:"Eu sei operar um trator." },
+        { figura:"🙅", pt:"Não consigo = can't", en:"I can't come today", som:"ái quént cãm tchu-dêi",
+          quando:"Can + not = can't (quént). \"I can't hear you\" = não consigo te ouvir. Atenção ao som: can (quén) ✕ can't (quénT) — esse T final muda tudo.",
+          dica:"Na dúvida se ouviu can ou can't, pergunte: \"Can or can't?\". Americano faz isso também!",
+          exEn:"Sorry, I can't hear you well.", exSom:"sóri, ái quént rír iú uél.", exPt:"Desculpe, não consigo te ouvir bem." },
+        { figura:"🙏", pt:"Pedindo: Can you...?", en:"Can you help me, please?", som:"quén iú rélp mi, plíz?",
+          quando:"Pedidos do dia a dia: Can you repeat? (pode repetir?), Can you show me? (pode me mostrar?). As frases salva-vidas do trabalho novo.",
+          exEn:"Can you show me, please?", exSom:"quén iú shôu mi, plíz?", exPt:"Pode me mostrar, por favor?" },
+        { figura:"🎩", pt:"Poderia = could (educado)", en:"Could you repeat, please?", som:"cúd iú ripít, plíz?",
+          quando:"COULD é o can de terno: mais educado. \"Could you speak slowly?\" = poderia falar devagar? Com chefe, cliente e oficial do consulado, could ganha pontos.",
+          exEn:"Could you speak slowly, please?", exSom:"cúd iú spík slôu-li, plíz?", exPt:"Poderia falar devagar, por favor?" },
+        { figura:"⏪", pt:"Conseguia (no passado)", en:"I could work 10 hours", som:"ái cúd uôrk tén áuers",
+          quando:"Could também é o passado de can: \"In Brazil I could work ten hours a day\" = no Brasil eu conseguia trabalhar dez horas por dia.",
+          exEn:"When I was young, I could run fast.", exSom:"uén ái uóz iâng, ái cúd rân fést.", exPt:"Quando eu era jovem, conseguia correr rápido." },
+        { figura:"🪪", pt:"Permissão", en:"Can I...? / May I...?", som:"quén ái...? / mêi ái...?",
+          quando:"Pedir permissão: \"Can I use the bathroom?\" (posso usar o banheiro?). O super formal é MAY: \"May I come in?\" (posso entrar?) — o oficial do consulado usa esse.",
+          exEn:"Can I take a break?", exSom:"quén ái têik a brêik?", exPt:"Posso fazer uma pausa?" },
+      ],
+      quiz:[
+        { pergunta:"\"Eu sei dirigir\" =", falar:"I can drive",
+          opcoes:["I know drive","I can drive","I can to drive","I drive can"], correta:1,
+          dica:"CAN + verbo puro, sem \"to\": I can drive." },
+        { pergunta:"Complete (educado, pro chefe): \"____ you repeat, please?\"", falar:"Could you repeat, please?",
+          opcoes:["Could","Do","Are","Have"], correta:0,
+          dica:"Could = can de terno. Could you repeat, please?" },
+        { pergunta:"\"She can't come today\" significa...", falar:"She can't come today",
+          opcoes:["Ela pode vir hoje","Ela não pode vir hoje","Ela veio hoje","Ela virá amanhã"], correta:1,
+          dica:"Can't = não pode/não consegue. Ouça o T no final: quénT." },
+        { pergunta:"Pedir permissão pra fazer uma pausa:", falar:"Can I take a break?",
+          opcoes:["I take break now","Can I take a break?","Break me can?","I can break you"], correta:1,
+          dica:"Can I + verbo = posso...? Can I take a break? (Break = pausa.)" },
+      ]
+    },
+    { id:"n2g11", temas:["verbos","gramatica"], titulo:"Modais: MUST, HAVE TO e SHOULD", icone:"📏", corIco:"#FCE4DB",
+      intro:"As palavras da obrigação e do conselho — as que mais aparecem em regras de trabalho, placas e manuais: must (deve), have to (tem que), should (deveria).",
+      xp:90,
+      cards:[
+        { figura:"📏", pt:"Deve (regra forte)", en:"must", som:"mâst",
+          quando:"MUST = obrigação séria, regra: \"You must wear a helmet\" (você deve usar capacete). É a palavra das placas e dos manuais de segurança do trabalho.",
+          exEn:"You must wear safety glasses here.", exSom:"iú mâst uér sêif-ti glé-siz rír.", exPt:"Você deve usar óculos de proteção aqui." },
+        { figura:"✅", pt:"Tem que", en:"have to / has to", som:"rév tchu / réz tchu",
+          quando:"HAVE TO = tem que (obrigação do dia a dia): \"I have to work tomorrow\" (tenho que trabalhar amanhã). He/she = has to. É o mais usado na fala.",
+          exEn:"I have to wake up at five.", exSom:"ái rév tchu uêik âp ét fáiv.", exPt:"Tenho que acordar às cinco." },
+        { figura:"🚫", pt:"É PROIBIDO = must not", en:"You must not smoke here", som:"iú mâst nót smôuk rír",
+          quando:"MUST NOT (mustn't) = proibido: \"You must not smoke here\". Cuidado com a pegadinha: DON'T HAVE TO é diferente — significa \"não precisa\"!",
+          dica:"must not = proibido ❌ · don't have to = não é obrigado 😌. Confundir os dois muda TUDO.",
+          exEn:"You don't have to work on Sunday.", exSom:"iú dôunt rév tchu uôrk ón sân-dêi.", exPt:"Você não precisa trabalhar no domingo." },
+        { figura:"💡", pt:"Deveria (conselho)", en:"should", som:"shúd",
+          quando:"SHOULD = conselho: \"You should drink more water\" (você deveria beber mais água). \"You should study every day\" — o FalaFina falando com você!",
+          exEn:"You should practice English every day.", exSom:"iú shúd préc-tis ín-glish évri dêi.", exPt:"Você deveria praticar inglês todo dia." },
+        { figura:"🩺", pt:"Pedindo conselho", en:"What should I do?", som:"uót shúd ái du?",
+          quando:"\"What should I do?\" = o que eu devo fazer? A pergunta perfeita pro supervisor quando você termina uma tarefa e quer a próxima.",
+          exEn:"I finished. What should I do now?", exSom:"ái fí-nishd. uót shúd ái du náu?", exPt:"Terminei. O que devo fazer agora?" },
+        { figura:"🦺", pt:"Frases prontas do trabalho", en:"You must clock in. You have to use gloves.", som:"iú mâst clók in. iú rév tchu iúz glâvs.",
+          quando:"Clock in/out = bater o ponto. \"You must clock in at 7\" = você deve bater o ponto às 7. Regras de trabalho vivem de must e have to — agora você entende todas.",
+          exEn:"You must clock in before your shift.", exSom:"iú mâst clók in bifór iór shíft.", exPt:"Você deve bater o ponto antes do turno." },
+      ],
+      quiz:[
+        { pergunta:"Placa de obra: \"You ____ wear a helmet.\"", falar:"You must wear a helmet",
+          opcoes:["should","must","can","would"], correta:1,
+          dica:"Regra de segurança = MUST: obrigação forte." },
+        { pergunta:"\"You don't have to work on Sunday\" significa...", falar:null,
+          opcoes:["É proibido trabalhar domingo","Você não precisa trabalhar domingo","Você deve trabalhar domingo","Você nunca trabalha"], correta:1,
+          dica:"Don't have to = não é obrigado. (Proibido seria must not!)" },
+        { pergunta:"Dar um conselho (\"você deveria descansar\"):", falar:"You should rest",
+          opcoes:["You must rest","You should rest","You rest now","You can't rest"], correta:1,
+          dica:"Conselho = SHOULD: you should rest." },
+        { pergunta:"\"Tenho que acordar às cinco\" =", falar:"I have to wake up at five",
+          opcoes:["I must not wake up at five","I should slept five","I wake have five","I have to wake up at five"], correta:3,
+          dica:"Obrigação do dia a dia = have to: I have to wake up at five." },
+      ]
+    },  ]
 },
 {
   id:"n3", nome:"Fluência", tag:"NÍVEL 3", cor:"#E4572E",
   descricao:"Phrasal verbs, gírias, expressões e o inglês real que os americanos falam.",
   modulos:[
-    { id:"n3m1", titulo:"Phrasal verbs do dia a dia", icone:"🧩", corIco:"#FCE4DB", bloqueadoDev:true,
-      intro:"", xp:100, cards:[], quiz:[] },
+    { id:"n3m1", temas:["verbos","gramatica"], titulo:"Phrasal verbs do dia a dia", icone:"🧩", corIco:"#FCE4DB",
+      intro:"O inglês REAL da rua e do trabalho: verbo + partícula que juntos mudam de sentido. Wake up, pick up, turn on... Os americanos vivem deles — a partir de hoje, você também.",
+      xp:100,
+      cards:[
+        { figura:"⏰", pt:"Acordar / Levantar", en:"wake up / get up", som:"uêik âp / guét âp",
+          quando:"Wake up = acordar (abrir o olho). Get up = levantar da cama. \"I wake up at 5 and get up at 5:10\" — a dupla que abre todo dia de trabalho.",
+          exEn:"I wake up at five every day.", exSom:"ái uêik âp ét fáiv évri dêi.", exPt:"Eu acordo às cinco todo dia." },
+        { figura:"🚐", pt:"Buscar / Pegar", en:"pick up", som:"pík âp",
+          quando:"Pick up = buscar alguém/algo: \"The van picks us up at 6\" (a van nos busca às 6). Também é atender o telefone: \"pick up the phone\".",
+          exEn:"The van picks us up at six.", exSom:"dhi vén píks âs âp ét síks.", exPt:"A van nos busca às seis." },
+        { figura:"💡", pt:"Ligar / Desligar", en:"turn on / turn off", som:"tôrn ón / tôrn óf",
+          quando:"Turn on = ligar, turn off = desligar — luz, máquina, celular. \"Turn off the mower before checking the blade\" = desligue o cortador antes de checar a lâmina.",
+          exEn:"Turn off the machine, please.", exSom:"tôrn óf dhi machín, plíz.", exPt:"Desligue a máquina, por favor." },
+        { figura:"👕", pt:"Vestir / Tirar", en:"put on / take off", som:"pút ón / têik óf",
+          quando:"Put on = vestir/colocar (put on your gloves = coloque as luvas). Take off = tirar (take off your boots). No aeroporto, take off também é o avião decolar!",
+          exEn:"Put on your gloves before you start.", exSom:"pút ón iór glâvs bifór iú stárt.", exPt:"Coloque as luvas antes de começar." },
+        { figura:"🗑️", pt:"Tirar o lixo / Preencher", en:"take out / fill out", som:"têik áut / fíl áut",
+          quando:"Take out the trash = tirar o lixo. Fill out = preencher formulário: \"fill out this form\" — você vai ouvir isso em TODA papelada do visto e do trabalho.",
+          exEn:"Please fill out this form.", exSom:"plíz fíl áut dhis fórm.", exPt:"Por favor, preencha este formulário." },
+        { figura:"🔎", pt:"Procurar / Cuidar", en:"look for / look after", som:"lúk fór / lúk áfter",
+          quando:"Look for = procurar (\"I'm looking for the manager\"). Look after = cuidar de (\"she looks after the kids\"). O look muda de vida conforme a partícula.",
+          exEn:"I'm looking for the supervisor.", exSom:"áim lúkin fór dhi súper-váizor.", exPt:"Estou procurando o supervisor." },
+        { figura:"🤝", pt:"Desistir ✕ Continuar", en:"give up ✕ keep going", som:"guív âp ✕ quíp gôuin",
+          quando:"Give up = desistir. Keep going = continuar em frente. \"Don't give up, keep going!\" — a frase que você vai dizer pra si mesmo aprendendo inglês.",
+          exEn:"Don't give up! Keep going!", exSom:"dôunt guív âp! quíp gôuin!", exPt:"Não desista! Continue!" },
+      ],
+      quiz:[
+        { pergunta:"\"A van nos busca às 6\" usa...", falar:"The van picks us up at six",
+          opcoes:["takes off","picks up","turns on","gives up"], correta:1,
+          dica:"Pick up = buscar alguém: the van picks us up." },
+        { pergunta:"Antes de mexer na lâmina do cortador, você deve...", falar:"Turn off the machine",
+          opcoes:["turn on the machine","turn off the machine","take off the machine","fill out the machine"], correta:1,
+          dica:"Turn off = desligar. Segurança primeiro, sempre!" },
+        { pergunta:"\"Fill out this form\" significa...", falar:"Fill out this form",
+          opcoes:["Rasgue este formulário","Preencha este formulário","Entregue este formulário","Dobre este formulário"], correta:1,
+          dica:"Fill out = preencher. Papelada de visto e trabalho vive disso." },
+        { pergunta:"\"Don't give up!\" quer dizer...", falar:"Don't give up!",
+          opcoes:["Não suba!","Não devolva!","Não desista!","Não grite!"], correta:2,
+          dica:"Give up = desistir. Don't give up = não desista — nunca! 💪" },
+      ]
+    },
   ]
 }
 ];
@@ -1868,6 +2482,7 @@ const Progresso = {
   concluirModulo(id){
     if(!this.dados.modulosFeitos[id]){
       this.dados.modulosFeitos[id] = { data: new Date().toISOString() };
+      try{ estatDia().aulas = (estatDia().aulas || 0) + 1; }catch(e){}
     }
     this.salvar();
   }
@@ -1907,10 +2522,12 @@ function registrarAtividade(xp){
   if(p.dataXpHoje !== hoje){ p.dataXpHoje = hoje; p.xpHoje = 0; }
   p.xpHoje += xp;
   p.xp += xp;
+  try{ estatDia().xp = (estatDia().xp || 0) + xp; }catch(e){}
   if(p.ultimoDiaAtivo !== hoje){
     p.diasSeguidos = (p.ultimoDiaAtivo === hojeStr(-86400000)) ? (p.diasSeguidos || 0) + 1 : 1;
     p.ultimoDiaAtivo = hoje;
   }
+  p.melhorSeq = Math.max(p.melhorSeq || 0, p.diasSeguidos || 0);
   Progresso.salvar();
   atualizarXP();
 }
@@ -1952,6 +2569,7 @@ function irPara(tela){
   telaAtual = tela;
   $("#btnVoltar").style.display = (tela === "tela-onboarding") ? "none" : "flex";
   $("#rodapeLicao").classList.toggle("visivel", tela === "tela-licao");
+  if(typeof ffAposIrPara === "function") try{ ffAposIrPara(tela); }catch(e){}
   window.scrollTo(0,0);
 }
 function esc(s){
@@ -2380,6 +2998,7 @@ function concluirNivelamento(){
 
 /* Resultado unificado: SRS + streak + XP + fila (múltipla escolha E montar frase) */
 function aplicarResultado(certo, q){
+  if(typeof registrarEstat === "function") registrarEstat(q, certo);
   if(quizEstado.nivelamento){
     quizEstado.fila.shift();
     const nv = q._nvTeste || 0;
@@ -2783,7 +3402,7 @@ async function fazerLogin(){
   Nuvem.agendar();
   mostrarToast(`De volta, ${conta.nome}! 🦜`);
   if(!conta.perfil) abrirPerfil();
-  else { renderTrilha(); irPara("tela-trilha"); }
+  else { renderHome(); irPara("tela-home"); }
 }
 function abrirPerfil(){
   const c = Contas.atual();
@@ -2814,8 +3433,8 @@ function salvarPerfil(){
   Progresso.dados.nivelEscolhido = c.perfil.nivel;
   Progresso.salvar();
   mostrarToast(usuarioCrianca() ? "Perfil salvo! Modo diversão ativado 🧸" : "Perfil salvo! Aulas do seu jeito ✔");
-  renderTrilha();
-  irPara("tela-trilha");
+  renderHome();
+  irPara("tela-home");
 }
 function renderRanking(){
   const medalha = ["🥇","🥈","🥉"];
@@ -2890,8 +3509,8 @@ document.querySelectorAll(".op-nivel[data-nivel]").forEach(btn => {
     }
     Progresso.dados.nivelEscolhido = n;
     Progresso.salvar();
-    renderTrilha();
-    irPara("tela-trilha");
+    renderHome();
+    irPara("tela-home");
     const bloco = document.getElementById("bloco-" + NIVEIS[n].id);
     if(bloco) setTimeout(() => bloco.scrollIntoView({ behavior:"smooth", block:"start" }), 150);
   });
@@ -2922,10 +3541,10 @@ $("#btnVoltar").addEventListener("click", () => {
   if(telaAtual === "tela-cadastro" || telaAtual === "tela-login"){ irPara("tela-inicio"); return; }
   if(telaAtual === "tela-perfil"){
     const c = Contas.atual();
-    if(c && c.perfil){ renderTrilha(); irPara("tela-trilha"); } else { mostrarToast("Complete o perfil primeiro 😊 (é rapidinho)"); }
+    if(c && c.perfil){ renderHome(); irPara("tela-home"); } else { mostrarToast("Complete o perfil primeiro 😊 (é rapidinho)"); }
     return;
   }
-  if(Contas.atual()){ renderTrilha(); irPara("tela-trilha"); } else { irPara("tela-inicio"); }
+  if(Contas.atual()){ renderHome(); irPara("tela-home"); } else { irPara("tela-inicio"); }
 });
 /* Navegação: início / cadastro / login / perfil */
 $("#btnIrCadastro").addEventListener("click", () => irPara("tela-cadastro"));
@@ -2935,7 +3554,7 @@ $("#linkParaCadastro").addEventListener("click", () => irPara("tela-cadastro"));
 $("#btnCadastrar").addEventListener("click", fazerCadastro);
 $("#btnLogar").addEventListener("click", fazerLogin);
 $("#btnSalvarPerfil").addEventListener("click", salvarPerfil);
-$("#btnAvatar").addEventListener("click", () => { if(Contas.atual()) abrirPerfil(); else irPara("tela-inicio"); });
+$("#btnAvatar").addEventListener("click", () => { if(Contas.atual()) navPara("meuperfil"); else irPara("tela-inicio"); });
 $("#btnSair").addEventListener("click", () => {
   if(confirm("Sair da conta? Seu progresso fica salvo aqui pra quando voltar.")){
     Contas.sair();
@@ -3459,6 +4078,620 @@ $("#simEnsina").addEventListener("click", simEnsinar);
 $("#simEncerrar").addEventListener("click", () => { if(confirm("Encerrar a entrevista? Seu XP fica guardado.")) encerrarSim(); });
 $("#cvAnalisar").addEventListener("click", analisarCV);
 
+/* ==================================================================
+   REDESIGN V2 — motor do painel (Início, Revisão, Desafios,
+   Conquistas, Prática, Comunidade, Configurações, Meu Perfil)
+   ================================================================== */
+/* >>>> EDITE AQUI, ANDRIO: seus contatos <<<< */
+const FF_CONTATO = {
+  whatsapp: "5500000000000",                 // seu número com DDI+DDD, só dígitos
+  grupo: "https://chat.whatsapp.com/SEU-LINK-DO-GRUPO"
+};
+function abrirZap(msg){ window.open("https://wa.me/" + FF_CONTATO.whatsapp + "?text=" + encodeURIComponent(msg), "_blank"); }
+
+/* ---------- ESTATÍSTICAS DIÁRIAS (alimentam desafios e gráficos) ---------- */
+function estatDia(){
+  const p = Progresso.dados;
+  if(!p.stats) p.stats = {};
+  const h = hojeStr();
+  if(!p.stats[h]) p.stats[h] = { ex:0, certos:0, gram:0, gramC:0, esc:0, escC:0, pron:0, pronOk:0, aulas:0, xp:0 };
+  return p.stats[h];
+}
+function registrarEstat(q, certo){
+  try{
+    const s = estatDia();
+    s.ex++; if(certo) s.certos++;
+    const gram = (moduloAberto && moduloAberto.temas && moduloAberto.temas.includes("gramatica"));
+    if(gram){ s.gram++; if(certo) s.gramC++; }
+    if(q && (q.falarAntes || q.tipoAudio)){ s.esc++; if(certo) s.escC++; }
+    Progresso.salvar();
+  }catch(e){}
+}
+function registrarPronuncia(ok){
+  try{ const s = estatDia(); s.pron++; if(ok) s.pronOk++; Progresso.salvar(); }catch(e){}
+}
+function somaStats(campo, dias){
+  const p = Progresso.dados.stats || {};
+  let t = 0;
+  for(let i = 0; i < (dias || 3650); i++){
+    const d = p[hojeStr(-i * 86400000)];
+    if(d) t += (d[campo] || 0);
+    if(dias === undefined && i > 400) break;
+  }
+  return t;
+}
+/* ---------- NÍVEL NUMÉRICO ---------- */
+function nivelNum(){ return Math.floor((Progresso.dados.xp || 0) / 350) + 1; }
+function faltaNivel(){ return 350 - ((Progresso.dados.xp || 0) % 350); }
+function nomeNivel(){ const t = tituloPorXP(Progresso.dados.xp || 0); return t.replace(/^[^ ]+ /, ""); }
+/* ---------- LISTA GLOBAL DE MÓDULOS ---------- */
+function todosModulos(){ return NIVEIS.flatMap(nv => nv.modulos.map(m => ({ m, nv }))); }
+function moduloProgresso(m){
+  if(Progresso.moduloFeito(m.id)) return 100;
+  const srs = Progresso.dados.srs || {};
+  const chaves = (m.cards || []).map(c => c.en).filter(en => srs[en] && srs[en].caixa >= 1);
+  return m.cards && m.cards.length ? Math.round((chaves.length / m.cards.length) * 100) : 0;
+}
+function proximoModulo(){
+  for(const nv of NIVEIS){
+    for(let i = 0; i < nv.modulos.length; i++){
+      const m = nv.modulos[i];
+      if(!Progresso.moduloFeito(m.id) && !m.bloqueadoDev && moduloDesbloqueado(nv, i) && (m.cards || []).length) return m;
+    }
+  }
+  return NIVEIS[0].modulos[0];
+}
+function palavrasAprendidas(){
+  const s = Progresso.dados.srs || {};
+  return Object.keys(s).filter(k => s[k].caixa >= 1).length;
+}
+/* ---------- HOME (dashboard) ---------- */
+function renderHome(){
+  const p = Progresso.dados;
+  const c = Contas.atual() || { nome:"Aluno" };
+  const total = todosModulos().filter(x => !x.m.bloqueadoDev).length;
+  const feitos = Object.keys(p.modulosFeitos || {}).length;
+  const pct = total ? Math.round(feitos / total * 100) : 0;
+  const prox = proximoModulo();
+  const devidos = itensDevidos().length;
+  const streak = (p.ultimoDiaAtivo === hojeStr() || p.ultimoDiaAtivo === hojeStr(-86400000)) ? (p.diasSeguidos || 0) : 0;
+  /* semana: domingo → sábado */
+  const letras = ["D","S","T","Q","Q","S","S"];
+  const hoje = new Date();
+  let semana = "";
+  for(let i = 6; i >= 0; i--){
+    const d = new Date(Date.now() - i * 86400000);
+    const st = (p.stats || {})[hojeStr(-i * 86400000)];
+    semana += `<span class="${st && st.xp > 0 ? "feito" : ""} ${i === 0 ? "hoje" : ""}" title="${d.toLocaleDateString("pt-BR")}">${st && st.xp > 0 ? "✓" : letras[d.getDay()]}</span>`;
+  }
+  const contas = Object.values(Contas.todas()).filter(x => x.progresso).sort((a,b) => (b.progresso.xp||0) - (a.progresso.xp||0));
+  const eu = Contas.sessao();
+  const med = ["🥇","🥈","🥉"];
+  const rankHtml = contas.slice(0,5).map((x,i) => `
+    <div class="rank-item ${x.email === eu ? "eu" : ""}" style="margin-bottom:6px;padding:9px 12px">
+      <div class="rank-pos">${med[i] || (i+1)+"º"}</div>
+      <div style="min-width:0"><b style="font-size:.9rem">${esc(x.nome)}${x.email === eu ? " (você)" : ""}</b></div>
+      <div class="rank-xp" style="font-size:.85rem">${x.progresso.xp || 0} XP</div>
+    </div>`).join("") || `<p style="font-weight:700;color:var(--tinta-suave);font-size:.88rem">Estude um pouquinho pra aparecer aqui! 😄</p>`;
+  const trilhaStrip = todosModulos().filter(x => !x.m.bloqueadoDev).slice(Math.max(0, todosModulos().findIndex(x => x.m.id === prox.id) - 2)).slice(0,7).map(x => {
+    const ok = Progresso.moduloFeito(x.m.id);
+    const atual = x.m.id === prox.id;
+    return `<button class="acao" style="min-width:96px;${atual ? "border:2px solid var(--sol)" : ""}" data-mod="${x.m.id}">
+      <span class="ic">${ok ? "✅" : (atual ? x.m.icone : "🔒")}</span>${esc(x.m.titulo.split("—")[0].trim())}</button>`;
+  }).join("");
+  $("#homeConteudo").innerHTML = `
+  <div class="grid-2">
+    <div>
+      <div class="cardb" style="display:flex;gap:18px;align-items:center;flex-wrap:wrap">
+        <div class="anel" style="--p:${pct}"><div><b>${pct}%</b><small>GERAL</small></div></div>
+        <div style="flex:1;min-width:170px">
+          <p style="font-weight:800;color:var(--tinta-suave);font-size:.82rem">SEU PROGRESSO</p>
+          <p style="font-family:var(--f-display);font-size:1.5rem;font-weight:700">⭐ ${p.xp || 0} XP · Nível ${nivelNum()}</p>
+          <p style="font-weight:700;color:var(--tinta-suave);font-size:.9rem">${esc(tituloPorXP(p.xp || 0))} · faltam ${faltaNivel()} XP pro próximo nível</p>
+          <div class="mini-barra" style="max-width:100%;margin-top:8px"><i style="width:${Math.round(((p.xp||0)%350)/3.5)}%"></i></div>
+        </div>
+        <button class="btn-principal" style="width:auto;padding:13px 22px" id="homeContinuar">▶️ Continuar Aprendendo</button>
+      </div>
+      <div class="cardb" style="margin-top:16px">
+        <div class="secao-t">O que você quer fazer hoje?</div>
+        <div class="acoes-grid">
+          <button class="acao" data-ir="aulas"><span class="ic">📚</span>Aulas</button>
+          <button class="acao" data-ir="revisao"><span class="ic">🔄</span>Revisão</button>
+          <button class="acao" data-ir="desafios"><span class="ic">🏆</span>Desafios</button>
+          <button class="acao" data-ir="pratica"><span class="ic">🎯</span>Prática</button>
+          <button class="acao" data-ir="simulador"><span class="ic">🎙️</span>Entrevista</button>
+          <button class="acao" data-ir="comunidade"><span class="ic">👥</span>Comunidade</button>
+        </div>
+      </div>
+      <div class="cardb" style="margin-top:16px">
+        <div class="secao-t">Sua Trilha de Estudos <button class="btn-link" style="padding:0;font-size:.85rem" data-ir="aulas">Ver todas →</button></div>
+        <div style="display:flex;gap:10px;overflow-x:auto;padding-bottom:4px">${trilhaStrip}</div>
+      </div>
+      <div class="faixa-troveu faixa-trofeu">
+        <span>⭐ ${feitos} módulos</span><span>🔥 melhor sequência: ${p.melhorSeq || streak} dias</span>
+        <span>🏆 ${conquistasFeitas().length} conquistas</span><span>🔤 ${palavrasAprendidas()} palavras aprendidas</span>
+      </div>
+    </div>
+    <div class="lateral">
+      <div class="cardb">
+        <div class="secao-t">Sequência atual</div>
+        <p style="font-family:var(--f-display);font-size:1.6rem;font-weight:700">🔥 ${streak} dia${streak === 1 ? "" : "s"}</p>
+        <div class="semana" style="margin-top:10px">${semana}</div>
+        <p style="font-weight:700;color:var(--tinta-suave);font-size:.82rem;margin-top:8px">${streak > 0 ? "Continue assim! 🔥" : "Estude hoje pra acender o fogo!"}</p>
+      </div>
+      <div class="cardb">
+        <div class="secao-t">Revisão rápida</div>
+        <p style="font-weight:700;font-size:.92rem">${devidos ? `<b style="color:var(--azul)">${devidos} itens</b> esperando revisão — é assim que fixa!` : "Nada vencido agora. 👏"}</p>
+        <button class="btn-principal azul" style="margin-top:10px" data-ir="revisao">Começar revisão</button>
+      </div>
+      <div class="cardb">
+        <div class="secao-t">Ranking geral <button class="btn-link" style="padding:0;font-size:.85rem" data-ir="ranking">Ver todos</button></div>
+        <div id="homeRankMini">${rankHtml}</div>
+      </div>
+      <div class="dica-card"><img src="mascote.png" alt=""><p><b>Dica do FalaFina:</b> ${dicaDoDia()}</p></div>
+    </div>
+  </div>`;
+  $("#homeContinuar").addEventListener("click", () => abrirModulo(prox.id));
+  ligarAcoes($("#homeConteudo"));
+  /* ranking mundial da nuvem (offline first: local já está na tela) */
+  if(typeof Nuvem !== "undefined" && Nuvem.ranking){
+    Nuvem.ranking().then(r => {
+      const alvo = $("#homeRankMini");
+      if(!alvo || !r.ok || !r.dados || !Array.isArray(r.dados.ranking)) return;
+      alvo.innerHTML = r.dados.ranking.slice(0,5).map((x,i) => `
+        <div class="rank-item ${x.voce ? "eu" : ""}" style="margin-bottom:6px;padding:9px 12px">
+          <div class="rank-pos">${med[i] || (i+1)+"º"}</div>
+          <div style="min-width:0"><b style="font-size:.9rem">${esc(x.nome)}${x.voce ? " (você)" : ""}</b></div>
+          <div class="rank-xp" style="font-size:.85rem">${x.xp || 0} XP</div>
+        </div>`).join("") || alvo.innerHTML;
+    }).catch(() => {});
+  }
+}
+const DICAS_FF = [
+  "estudar 10 minutos TODO dia vale mais que 2 horas uma vez por semana. 💚",
+  "fale em voz alta! Sussurrar não treina a boca — o inglês mora na boca.",
+  "errar aqui é de graça. Errar lá fora custa caro. Aproveite pra errar muito!",
+  "revise antes de dormir: a memória fixa enquanto você dorme. 😴",
+  "aprenda as ferramentas do SEU trabalho em inglês — é o vocabulário que paga o boleto.",
+  "no Simulador de Entrevista, responda como se fosse de verdade. Treino é ensaio geral!"
+];
+function dicaDoDia(){ return DICAS_FF[new Date().getDate() % DICAS_FF.length]; }
+function ligarAcoes(raiz){
+  raiz.querySelectorAll("[data-ir]").forEach(b => b.addEventListener("click", () => navPara(b.dataset.ir)));
+  raiz.querySelectorAll("[data-mod]").forEach(b => b.addEventListener("click", () => abrirModulo(b.dataset.mod)));
+}
+/* ---------- AULAS / TRILHA (substitui o render antigo) ---------- */
+let aulasFiltro = "todas", aulasEstado = "todas";
+function renderTrilha(){
+  const cats = [
+    { id:"todas", nome:"📖 Trilha Principal" },
+    { id:"n0", nome:"⭐ Básico" }, { id:"n1", nome:"🚶 Sobrevivência" },
+    { id:"n2", nome:"💬 Conversação" }, { id:"n3", nome:"🚀 Fluência" },
+    { id:"h2x", nome:"🌾 Trabalho H-2B/H-2A" }
+  ];
+  const ests = [
+    { id:"todas", nome:"Todas as Aulas", ic:"📚" }, { id:"feitas", nome:"Concluídas", ic:"✅" },
+    { id:"andamento", nome:"Em Progresso", ic:"🕗" }, { id:"novas", nome:"Não Iniciadas", ic:"⭕" },
+    { id:"trava", nome:"Bloqueadas", ic:"🔒" }
+  ];
+  let itens = [], idx = 0;
+  for(const nv of NIVEIS){
+    for(let i = 0; i < nv.modulos.length; i++){
+      const m = nv.modulos[i];
+      const feito = Progresso.moduloFeito(m.id);
+      const travado = m.bloqueadoDev || (!feito && !moduloDesbloqueado(nv, i));
+      itens.push({ m, nv, idx, feito, travado, prog: moduloProgresso(m) });
+      idx++;
+    }
+  }
+  const atual = itens.find(i => !i.feito && !i.travado);
+  let vis = itens.filter(i => aulasFiltro === "todas" || (aulasFiltro === "h2x" ? (i.m.temas || []).some(t => ["h2x","entrevista","trabalho"].includes(t)) : i.nv.id === aulasFiltro));
+  vis = vis.filter(i =>
+    aulasEstado === "todas" ? true :
+    aulasEstado === "feitas" ? i.feito :
+    aulasEstado === "andamento" ? (!i.feito && !i.travado && i.prog > 0) :
+    aulasEstado === "novas" ? (!i.feito && !i.travado && i.prog === 0) : i.travado);
+  const feitosN = itens.filter(i => i.feito).length;
+  const html = `
+  <div class="grid-2">
+    <div>
+      <div class="chips-tab">${cats.map(c => `<button class="chip-tab ${aulasFiltro === c.id ? "ativo" : ""}" data-f="${c.id}">${c.nome}</button>`).join("")}</div>
+      ${vis.map(i => {
+        const estrelas = i.feito ? "⭐⭐⭐" : (i.prog >= 50 ? "⭐⭐☆" : (i.prog > 0 ? "⭐☆☆" : "☆☆☆"));
+        const st = i.feito ? `<button class="aula-btn ok" data-mod="${i.m.id}">Concluída ✔</button>`
+          : i.travado ? `<button class="aula-btn trava">🔒 Bloqueada</button>`
+          : `<button class="aula-btn vai" data-mod="${i.m.id}">${i.prog > 0 || (atual && atual.m.id === i.m.id) ? "Continuar ▶" : "Começar ▶"}</button>`;
+        return `<div class="aula-item ${atual && atual.m.id === i.m.id ? "atual" : ""}">
+          <div class="aula-num ${i.travado ? "trava" : ""}">${i.travado ? "🔒" : i.idx + 1}</div>
+          <div class="aula-meio">
+            <b>${i.m.icone} ${esc(i.m.titulo)}</b>
+            <p>${esc(i.nv.nome)} · ${(i.m.cards || []).length} cards · +${i.m.xp || 50} XP</p>
+            <div class="aula-est"><span class="estrelas">${estrelas}</span><div class="mini-barra"><i style="width:${i.prog}%"></i></div><small style="font-weight:800">${i.prog}%</small></div>
+          </div>${st}</div>`;
+      }).join("") || `<p class="cardb" style="font-weight:700">Nenhuma aula neste filtro. 😉</p>`}
+    </div>
+    <div class="lateral">
+      <div class="cardb" style="display:flex;gap:14px;align-items:center">
+        <div class="anel" style="--p:${itens.length ? Math.round(feitosN / itens.length * 100) : 0}"><div><b>${itens.length ? Math.round(feitosN / itens.length * 100) : 0}%</b><small>TRILHA</small></div></div>
+        <div><b style="font-family:var(--f-display)">Progresso da Trilha</b>
+          <p style="font-weight:700;font-size:.88rem;color:var(--tinta-suave)">Aulas concluídas: <b>${feitosN} / ${itens.length}</b></p>
+          <p style="font-weight:700;font-size:.88rem;color:var(--tinta-suave)">XP total: <b>${Progresso.dados.xp || 0}</b></p>
+        </div>
+      </div>
+      <div class="cardb"><div class="secao-t">Filtros</div>
+        <div class="lista-limpa">${ests.map(e => `<button class="linha-cat" style="background:${aulasEstado === e.id ? "var(--verde-claro)" : "transparent"}" data-e="${e.id}"><span>${e.ic} ${e.nome}</span></button>`).join("")}</div>
+      </div>
+      <div class="dica-card"><img src="mascote.png" alt=""><p><b>Dica do FalaFina:</b> pratique um pouco todos os dias e veja seu inglês decolar! 🚀</p></div>
+    </div>
+  </div>`;
+  $("#trilhaConteudo").innerHTML = html;
+  const raizT = $("#trilhaConteudo");
+  raizT.querySelectorAll("[data-f]").forEach(b => b.addEventListener("click", () => { aulasFiltro = b.dataset.f; renderTrilha(); }));
+  raizT.querySelectorAll("[data-e]").forEach(b => b.addEventListener("click", () => { aulasEstado = b.dataset.e; renderTrilha(); }));
+  raizT.querySelectorAll("[data-mod]").forEach(b => b.addEventListener("click", () => abrirModulo(b.dataset.mod)));
+}
+/* ---------- REVISÃO ---------- */
+let revTab = "inteligente";
+function bancoDone(){
+  const feitos = NIVEIS.flatMap(nv => nv.modulos).filter(m => Progresso.moduloFeito(m.id) && (m.cards || []).length);
+  let b = [];
+  for(const m of feitos) b = b.concat(gerarBanco(m));
+  return b;
+}
+function iniciarSessaoRevisao(perguntas, rotulo){
+  if(!perguntas.length){ mostrarToast("Nada pra revisar aqui ainda 😉 Conclua uma aula primeiro!"); return; }
+  const escolhidas = embaralhar(perguntas).slice(0, 12);
+  moduloAberto = null;
+  quizEstado = { perguntas: escolhidas, fila: embaralhar(escolhidas.map((q,i) => i)), total: escolhidas.length, acertosUnicos: new Set(), erros: 0, respondendo: false, treino: true, revisao: true };
+  mostrarToast("🔄 " + rotulo);
+  renderQuizPergunta();
+  irPara("tela-quiz");
+}
+function renderRevisao(){
+  const p = Progresso.dados;
+  const srs = p.srs || {};
+  const chaves = Object.keys(srs);
+  const agora = Date.now();
+  const devidas = chaves.filter(k => srs[k].proxima <= agora);
+  const aprendendo = chaves.filter(k => srs[k].caixa >= 1 && srs[k].caixa < 3);
+  const memorizadas = chaves.filter(k => srs[k].caixa >= 3);
+  const errosCh = chaves.filter(k => (srs[k].erros || 0) > 0 && srs[k].caixa < 4);
+  const favs = p.favoritos || {};
+  const banco = bancoDone();
+  const tabs = [
+    { id:"inteligente", nome:"🧠 Revisão Inteligente" }, { id:"aula", nome:"📅 Por Aula" },
+    { id:"palavras", nome:"🔤 Palavras" }, { id:"erros", nome:"❌ Erros" }, { id:"favoritos", nome:"⭐ Favoritos" }
+  ];
+  let corpo = "";
+  if(revTab === "inteligente"){
+    corpo = `<div class="cardb" style="display:flex;gap:14px;align-items:center;flex-wrap:wrap">
+      <img src="mascote.png" style="width:64px" alt="">
+      <p style="flex:1;min-width:180px;font-weight:700">A Revisão Inteligente traz o que está <b>vencendo na sua memória</b> (repetição espaçada de verdade). Agora: <b style="color:var(--azul)">${devidas.length} itens</b>.</p>
+      <button class="btn-principal azul" style="width:auto" id="revIntBtn">Revisar agora ▶</button></div>`;
+  } else if(revTab === "aula"){
+    const feitos = NIVEIS.flatMap(nv => nv.modulos).filter(m => Progresso.moduloFeito(m.id));
+    corpo = feitos.length ? `<div class="lista-limpa">` + feitos.map(m => `
+      <button class="linha-cat" style="background:var(--branco);border:1.5px solid var(--borda)" data-aula="${m.id}"><span>${m.icone} ${esc(m.titulo)}</span><span>Revisar ▶</span></button>`).join("") + `</div>`
+      : `<p class="cardb" style="font-weight:700">Conclua sua primeira aula pra revisar por aula. 😊</p>`;
+  } else if(revTab === "palavras"){
+    corpo = `<div class="cardb" style="display:flex;gap:14px;align-items:center;flex-wrap:wrap">
+      <span style="font-size:2.2rem">🔤</span>
+      <p style="flex:1;min-width:180px;font-weight:700">Um giro geral por <b>tudo que você já aprendeu</b> (${palavrasAprendidas()} palavras) — embaralhado e sem dó.</p>
+      <button class="btn-principal" style="width:auto" id="revPalBtn">Girar a roleta ▶</button></div>`;
+  } else if(revTab === "erros"){
+    corpo = `<div class="cardb" style="display:flex;gap:14px;align-items:center;flex-wrap:wrap">
+      <span style="font-size:2.2rem">🎯</span>
+      <p style="flex:1;min-width:180px;font-weight:700">Só o que você já errou (${errosCh.length} itens). Transformar erro em acerto é o atalho mais rápido que existe.</p>
+      <button class="btn-principal" style="width:auto;background:var(--coral);box-shadow:0 4px 0 #B23A17" id="revErrBtn">Encarar meus erros ▶</button></div>`;
+  } else {
+    const aprendidasCards = NIVEIS.flatMap(nv => nv.modulos).filter(m => Progresso.moduloFeito(m.id)).flatMap(m => m.cards || []);
+    corpo = `<p style="font-weight:700;margin-bottom:10px">Toque na ⭐ pra guardar suas palavras preferidas — depois treine só elas.</p>
+      <button class="btn-principal" style="margin-bottom:12px" id="revFavBtn">Treinar favoritos (${Object.keys(favs).length}) ▶</button>` +
+      (aprendidasCards.length ? aprendidasCards.map(c => `
+        <div class="fav-linha"><span>${c.figura || "🔤"}</span><span><b>${esc(c.en)}</b> · ${esc(c.pt)}</span>
+        <button class="estrela" data-fav="${esc(c.en)}">${favs[c.en] ? "⭐" : "☆"}</button></div>`).join("")
+      : `<p class="cardb" style="font-weight:700">Conclua uma aula pra montar sua lista. 😊</p>`);
+  }
+  /* gráfico dos últimos 6 dias */
+  let pontos = [], labels = "";
+  for(let i = 5; i >= 0; i--){
+    const st = (p.stats || {})[hojeStr(-i * 86400000)] || { ex:0, certos:0 };
+    pontos.push(st.ex ? Math.round(st.certos / st.ex * 100) : null);
+  }
+  const validos = pontos.map((v,i) => ({ v, i })).filter(o => o.v !== null);
+  const poly = validos.map(o => `${20 + o.i * 52},${105 - o.v * 0.9}`).join(" ");
+  const grafico = validos.length ? `<svg viewBox="0 0 300 120" style="width:100%;height:100%">
+    ${[0,25,50,75,100].map(y => `<line x1="14" x2="290" y1="${105 - y * 0.9}" y2="${105 - y * 0.9}" stroke="#EDEAE1" stroke-width="1.5"/>`).join("")}
+    <polyline points="${poly}" fill="none" stroke="var(--verde)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+    ${validos.map(o => `<circle cx="${20 + o.i * 52}" cy="${105 - o.v * 0.9}" r="4.5" fill="var(--verde)"/>`).join("")}
+    ${validos.length ? `<text x="${20 + validos[validos.length-1].i * 52}" y="${99 - validos[validos.length-1].v * 0.9}" font-size="11" font-weight="800" fill="var(--verde-escuro)" text-anchor="middle">${validos[validos.length-1].v}%</text>` : ""}
+  </svg>` : `<p style="font-weight:700;color:var(--tinta-suave);font-size:.85rem">Responda exercícios pra ver seu desempenho aqui. 📈</p>`;
+  $("#revisaoConteudo").innerHTML = `
+  <div class="grid-2">
+    <div>
+      <div class="chips-tab">${tabs.map(t => `<button class="chip-tab ${revTab === t.id ? "ativo" : ""}" data-t="${t.id}">${t.nome}</button>`).join("")}</div>
+      ${corpo}
+    </div>
+    <div class="lateral">
+      <div class="cardb"><div class="secao-t">Revisão por memória</div>
+        <div class="lista-limpa">
+          <div class="linha-cat" style="background:var(--sol-claro)"><span>🟡 Vou revisar hoje</span><b>${devidas.length}</b></div>
+          <div class="linha-cat" style="background:var(--azul-claro)"><span>🔵 Estou aprendendo</span><b>${aprendendo.length}</b></div>
+          <div class="linha-cat" style="background:var(--verde-claro)"><span>🟢 Memorizado</span><b>${memorizadas.length}</b></div>
+        </div></div>
+      <div class="cardb"><div class="secao-t">Desempenho recente</div><div class="grafico-wrap">${grafico}</div></div>
+      <div class="faixa-trofeu" style="margin-top:0">🏆 Revise todos os dias! <span>🔥 Melhor sequência: ${p.melhorSeq || 0} dias</span></div>
+    </div>
+  </div>`;
+  const raiz = $("#revisaoConteudo");
+  raiz.querySelectorAll("[data-t]").forEach(b => b.addEventListener("click", () => { revTab = b.dataset.t; renderRevisao(); }));
+  const liga = (sel, fn) => { const el = raiz.querySelector(sel); if(el) el.addEventListener("click", fn); };
+  liga("#revIntBtn", () => { const set = new Set(devidas); iniciarSessaoRevisao(banco.filter(q => q.chave && set.has(q.chave)), "Revisão Inteligente"); });
+  liga("#revPalBtn", () => iniciarSessaoRevisao(banco, "Roleta de palavras"));
+  liga("#revErrBtn", () => { const set = new Set(errosCh); iniciarSessaoRevisao(banco.filter(q => q.chave && set.has(q.chave)), "Caça aos erros"); });
+  liga("#revFavBtn", () => { const set = new Set(Object.keys(p.favoritos || {})); iniciarSessaoRevisao(banco.filter(q => q.chave && set.has(q.chave)), "Treino dos favoritos"); });
+  raiz.querySelectorAll("[data-aula]").forEach(b => b.addEventListener("click", () => {
+    const m = NIVEIS.flatMap(nv => nv.modulos).find(x => x.id === b.dataset.aula);
+    if(m) iniciarSessaoRevisao(gerarBanco(m), "Revisão: " + m.titulo);
+  }));
+  raiz.querySelectorAll("[data-fav]").forEach(b => b.addEventListener("click", () => {
+    if(!p.favoritos) p.favoritos = {};
+    const k = b.dataset.fav;
+    if(p.favoritos[k]) delete p.favoritos[k]; else p.favoritos[k] = true;
+    Progresso.salvar(); renderRevisao();
+  }));
+}
+/* ---------- DESAFIOS ---------- */
+function listaDesafios(){
+  const s = estatDia();
+  const p = Progresso.dados;
+  const streak = (p.ultimoDiaAtivo === hojeStr() || p.ultimoDiaAtivo === hojeStr(-86400000)) ? (p.diasSeguidos || 0) : 0;
+  const diarios = [
+    { id:"d1", ic:"📗", nome:"Complete 1 aula", desc:"Conclua um módulo hoje.", tem:s.aulas, meta:1, xp:150, periodo:"dia" },
+    { id:"d2", ic:"🎯", nome:"Faça 10 exercícios", desc:"Responda 10 perguntas hoje.", tem:s.ex, meta:10, xp:100, periodo:"dia" },
+    { id:"d3", ic:"🎤", nome:"Pratique pronúncia 3x", desc:"Use o microfone 3 vezes hoje.", tem:s.pron, meta:3, xp:80, periodo:"dia" }
+  ];
+  const destaque = [
+    { id:"f1", ic:"🔥", nome:"Sequência de Fogo", desc:"Estude 7 dias seguidos.", tem:streak, meta:7, xp:300, periodo:"semana" },
+    { id:"f2", ic:"🧠", nome:"Mestre da Gramática", desc:"Acerte 20 exercícios de gramática.", tem:somaStats("gramC"), meta:20, xp:250, periodo:"unico" },
+    { id:"f3", ic:"🎧", nome:"Ouvido Atento", desc:"Acerte 15 perguntas de escuta.", tem:somaStats("escC"), meta:15, xp:200, periodo:"unico" },
+    { id:"f4", ic:"🎙️", nome:"Pronto pra Entrevista", desc:"Domine 10 respostas no Simulador.", tem:Object.keys((p.sim || {}).dominadas || {}).length, meta:10, xp:300, periodo:"unico" }
+  ];
+  const mais = [
+    { id:"m1", ic:"⏱️", nome:"Corrida contra o tempo", desc:"Responda 15 perguntas num dia só.", tem:s.ex, meta:15, xp:180, periodo:"dia" },
+    { id:"m2", ic:"🗣️", nome:"FalaFina Fluente", desc:"Tenha 5 frases reconhecidas no microfone.", tem:somaStats("pronOk"), meta:5, xp:220, periodo:"unico" },
+    { id:"m3", ic:"🎁", nome:"Desafio Surpresa", desc:"Complete os 3 desafios diários de hoje.", tem:diarios.filter(d => d.tem >= d.meta).length, meta:3, xp:300, periodo:"dia" }
+  ];
+  return { diarios, destaque, mais };
+}
+function chaveResgate(d){ return d.periodo === "dia" ? d.id + ":" + hojeStr() : (d.periodo === "semana" ? d.id + ":" + hojeStr().slice(0,7) : d.id); }
+function renderDesafios(){
+  const p = Progresso.dados;
+  if(!p.resgates) p.resgates = {};
+  const { diarios, destaque, mais } = listaDesafios();
+  const card = d => {
+    const pct = Math.min(Math.round(d.tem / d.meta * 100), 100);
+    const feito = d.tem >= d.meta;
+    const resgatado = !!p.resgates[chaveResgate(d)];
+    return `<div class="des-card">
+      <div class="top"><span class="ic">${d.ic}</span><div><b>${d.nome}</b><p>${d.desc}</p></div></div>
+      <div class="aula-est"><div class="mini-barra" style="max-width:none"><i style="width:${pct}%"></i></div><small style="font-weight:800">${Math.min(d.tem,d.meta)}/${d.meta}</small></div>
+      <div class="des-rec"><span>Recompensa: <b style="color:var(--verde-escuro)">+${d.xp} XP</b></span></div>
+      <button class="btn-resg ${resgatado ? "feito" : ""}" data-resg="${d.id}" ${(!feito || resgatado) ? "disabled" : ""}>${resgatado ? "Concluído! 🔥" : (feito ? "Resgatar 🎁" : "Continuar")}</button>
+    </div>`;
+  };
+  const concl = [...diarios, ...destaque, ...mais].filter(d => p.resgates[chaveResgate(d)]).length;
+  const totalD = diarios.length + destaque.length + mais.length;
+  $("#desafiosConteudo").innerHTML = `
+  <div class="grid-2">
+    <div>
+      <div class="secao-t">🏆 Desafios em destaque</div>
+      <div class="des-grid">${destaque.map(card).join("")}</div>
+      <div class="secao-t" style="margin-top:20px">Mais desafios</div>
+      <div class="des-grid">${mais.map(card).join("")}</div>
+      <div class="faixa-trofeu"><img src="mascote.png" style="width:46px" alt=""> <b>Novos desafios todos os dias!</b> Volte sempre e supere seus limites! 🚀</div>
+    </div>
+    <div class="lateral">
+      <div class="cardb" style="display:flex;gap:14px;align-items:center">
+        <div class="anel" style="--p:${Math.round(concl / totalD * 100)}"><div><b>${Math.round(concl / totalD * 100)}%</b><small>HOJE</small></div></div>
+        <div><b style="font-family:var(--f-display)">Seu progresso</b><p style="font-weight:700;font-size:.88rem;color:var(--tinta-suave)">Desafios resgatados: <b>${concl} / ${totalD}</b></p></div>
+      </div>
+      <div class="cardb"><div class="secao-t">Desafios diários <span class="pillx">🕐 zera à meia-noite</span></div>
+        <div class="des-grid" style="grid-template-columns:1fr">${diarios.map(card).join("")}</div>
+      </div>
+    </div>
+  </div>`;
+  $("#desafiosConteudo").querySelectorAll("[data-resg]").forEach(b => b.addEventListener("click", () => {
+    const todos = [...diarios, ...destaque, ...mais];
+    const d = todos.find(x => x.id === b.dataset.resg);
+    if(!d || d.tem < d.meta) return;
+    const k = chaveResgate(d);
+    if(p.resgates[k]) return;
+    p.resgates[k] = true;
+    registrarAtividade(d.xp);
+    mostrarToast(`🎁 +${d.xp} XP — ${d.nome} concluído!`);
+    renderDesafios();
+  }));
+}
+/* ---------- CONQUISTAS ---------- */
+function listaConquistas(){
+  const p = Progresso.dados;
+  const feitos = Object.keys(p.modulosFeitos || {}).length;
+  const dom = Object.keys((p.sim || {}).dominadas || {}).length;
+  return [
+    { ic:"🐣", nome:"Primeiro Passo", desc:"Conclua sua 1ª aula", ok: feitos >= 1 },
+    { ic:"📚", nome:"Estudante", desc:"Conclua 5 aulas", ok: feitos >= 5 },
+    { ic:"🎓", nome:"Dedicado", desc:"Conclua 10 aulas", ok: feitos >= 10 },
+    { ic:"🏅", nome:"Maratonista", desc:"Conclua 20 aulas", ok: feitos >= 20 },
+    { ic:"⭐", nome:"Primeiras Estrelas", desc:"Chegue a 100 XP", ok: (p.xp || 0) >= 100 },
+    { ic:"🌟", nome:"Brilhante", desc:"Chegue a 500 XP", ok: (p.xp || 0) >= 500 },
+    { ic:"💫", nome:"Constelação", desc:"Chegue a 1.500 XP", ok: (p.xp || 0) >= 1500 },
+    { ic:"🔥", nome:"Pegou Fogo", desc:"3 dias seguidos", ok: (p.melhorSeq || 0) >= 3 },
+    { ic:"🚒", nome:"Incêndio", desc:"7 dias seguidos", ok: (p.melhorSeq || 0) >= 7 },
+    { ic:"🌋", nome:"Vulcão", desc:"14 dias seguidos", ok: (p.melhorSeq || 0) >= 14 },
+    { ic:"🔤", nome:"Colecionador", desc:"Aprenda 50 palavras", ok: palavrasAprendidas() >= 50 },
+    { ic:"📖", nome:"Dicionário Vivo", desc:"Aprenda 150 palavras", ok: palavrasAprendidas() >= 150 },
+    { ic:"🎙️", nome:"Entrevistado", desc:"Domine 10 respostas no Simulador", ok: dom >= 10 },
+    { ic:"🤝", nome:"Contratado!", desc:"Domine 30 respostas no Simulador", ok: dom >= 30 },
+    { ic:"🎤", nome:"Voz Ativa", desc:"20 pronúncias reconhecidas", ok: somaStats("pronOk") >= 20 },
+    { ic:"🗼", nome:"Escalador", desc:"Chegue ao nível 5 da Escalada", ok: ((p.escalada || {}).recorde || 1) >= 5 }
+  ];
+}
+function conquistasFeitas(){ return listaConquistas().filter(c => c.ok); }
+function renderConquistas(){
+  const l = listaConquistas();
+  const ok = l.filter(c => c.ok).length;
+  $("#conquistasConteudo").innerHTML = `
+    <div class="cardb" style="display:flex;gap:14px;align-items:center;margin-bottom:16px">
+      <div class="anel" style="--p:${Math.round(ok / l.length * 100)};--cor:var(--sol)"><div><b>${ok}/${l.length}</b><small>TROFÉUS</small></div></div>
+      <p style="font-weight:700">Cada conquista conta a história do seu inglês. ${ok ? "Continue colecionando! 🏆" : "A primeira está a UMA aula de distância. 😉"}</p>
+    </div>
+    <div class="conq-grid">${l.map(c => `<div class="conq ${c.ok ? "" : "trancada"}"><span class="ic">${c.ok ? c.ic : "🔒"}</span><b>${c.nome}</b><small>${c.desc}</small></div>`).join("")}</div>`;
+}
+/* ---------- PRÁTICA ---------- */
+function renderPratica(){
+  const crianca = usuarioCrianca();
+  $("#praticaConteudo").innerHTML = `
+  <div class="des-grid" style="grid-template-columns:repeat(auto-fill,minmax(250px,1fr))">
+    ${crianca ? "" : `<div class="des-card"><div class="top"><span class="ic">🎙️</span><div><b>Simulador de Entrevista</b><p>Treine em inglês as entrevistas reais do H-2B/H-2A: agência, empregador, consulado e chegada.</p></div></div><button class="btn-resg" id="prSim">Entrar na sala ▶</button></div>`}
+    <div class="des-card"><div class="top"><span class="ic">♾️</span><div><b>Treino Infinito</b><p>Perguntas sem fim de tudo que você já aprendeu. Repetição espaçada de verdade.</p></div></div><button class="btn-resg" id="prInf">Treinar ▶</button></div>
+    <div class="des-card"><div class="top"><span class="ic">🗼</span><div><b>Escalada</b><p>Suba de nível respondendo sem errar. Errou, desce. Até onde você aguenta?</p></div></div><button class="btn-resg" id="prEsc">Escalar ▶</button></div>
+    <div class="des-card"><div class="top"><span class="ic">🎤</span><div><b>Treino de Pronúncia</b><p>Revise suas palavras falando no microfone — o app confere se saiu certo.</p></div></div><button class="btn-resg" id="prPron">Falar ▶</button></div>
+    <div class="des-card"><div class="top"><span class="ic">❌</span><div><b>Caça aos Erros</b><p>Só o que você já errou. Vire o jogo.</p></div></div><button class="btn-resg" id="prErr">Encarar ▶</button></div>
+  </div>`;
+  const liga = (id, fn) => { const el = $("#praticaConteudo").querySelector(id); if(el) el.addEventListener("click", fn); };
+  liga("#prSim", () => { renderSimConfig(); irPara("tela-simulador"); });
+  liga("#prInf", () => iniciarInfinito());
+  liga("#prEsc", () => { renderEscalada(); irPara("tela-escalada"); });
+  liga("#prPron", () => { revTab = "palavras"; navPara("revisao"); mostrarToast("Dica: use o 🎤 nos cards e no feedback!"); });
+  liga("#prErr", () => { revTab = "erros"; navPara("revisao"); });
+}
+/* ---------- COMUNIDADE ---------- */
+function renderComunidade(){
+  $("#comunidadeConteudo").innerHTML = `
+  <div class="grid-2"><div>
+    <div class="cardb" style="text-align:center;padding:30px 20px">
+      <img src="mascote.png" style="width:90px" alt="">
+      <h2 style="font-family:var(--f-display);margin:10px 0 6px">Comunidade FalaFina 💚</h2>
+      <p style="font-weight:700;color:var(--tinta-suave);max-width:460px;margin:0 auto">Brasileiros aprendendo inglês e se ajudando no caminho H-2B/H-2A: dúvidas, dicas de entrevista, vagas e aquela força nos dias difíceis.</p>
+      <button class="btn-principal" style="max-width:320px;margin:16px auto 0" id="comGrupo">💬 Entrar no grupo do WhatsApp</button>
+      <p style="font-weight:700;font-size:.8rem;color:var(--tinta-suave);margin-top:10px">Comunidade dentro do app: em breve! 🚧</p>
+    </div>
+  </div>
+  <div class="lateral">
+    <div class="cardb"><div class="secao-t">👑 Seja Premium</div>
+      <p style="font-weight:700;font-size:.9rem">Acompanhamento de perto, correções personalizadas e prioridade nas novidades. Fale direto com a gente:</p>
+      <button class="btn-principal" style="margin-top:10px;background:var(--sol);color:#5C4400;box-shadow:0 4px 0 #C89A20" id="comPremium">Quero ser Premium 👑</button>
+    </div>
+  </div></div>`;
+  $("#comGrupo").addEventListener("click", () => window.open(FF_CONTATO.grupo, "_blank"));
+  $("#comPremium").addEventListener("click", () => abrirZap("Olá! Quero ser Premium do FalaFina 👑"));
+}
+/* ---------- CONFIGURAÇÕES ---------- */
+function renderConfig(){
+  const p = Progresso.dados;
+  if(!p.cfg) p.cfg = { vozAuto:true };
+  $("#configConteudo").innerHTML = `
+  <div class="cardb">
+    <div class="cfg-linha"><span>🔊 Ler perguntas do Simulador em voz alta</span><input type="checkbox" id="cfgVoz" ${p.cfg.vozAuto !== false ? "checked" : ""} style="width:22px;height:22px;accent-color:var(--verde)"></div>
+    <div class="cfg-linha"><span>📲 Instalar o FalaFina no celular</span><button class="btn-resg" style="width:auto;padding:8px 14px" id="cfgPwa">Instalar</button></div>
+    <div class="cfg-linha"><span>🪪 Editar meu perfil (foto, idade, focos)</span><button class="btn-resg" style="width:auto;padding:8px 14px" id="cfgPerfil">Editar</button></div>
+    <div class="cfg-linha"><span>💬 Falar com o suporte</span><button class="btn-resg" style="width:auto;padding:8px 14px" id="cfgZap">WhatsApp</button></div>
+    <div class="cfg-linha"><span>🚪 Sair da conta</span><button class="btn-resg" style="width:auto;padding:8px 14px;background:var(--tinta-suave);box-shadow:0 3px 0 #3d4a52" id="cfgSair">Sair</button></div>
+    <div class="cfg-linha" style="border-bottom:none"><span>🗑️ Apagar todo o meu progresso</span><button class="btn-resg" style="width:auto;padding:8px 14px;background:var(--coral);box-shadow:0 3px 0 #B23A17" id="cfgApagar">Apagar</button></div>
+  </div>
+  <p style="font-weight:700;color:var(--tinta-suave);font-size:.82rem;margin-top:12px;text-align:center">FalaFina · Inglês para Brasileiros 💚 Seus dados ficam salvos neste aparelho.</p>`;
+  $("#cfgVoz").addEventListener("change", e => { p.cfg.vozAuto = e.target.checked; simCfg.voz = e.target.checked; const cb = $("#simVoz"); if(cb) cb.checked = e.target.checked; Progresso.salvar(); });
+  $("#cfgPwa").addEventListener("click", () => { if(pwaPrompt){ pwaPrompt.prompt(); } else mostrarToast("No menu do navegador: 'Adicionar à tela inicial' 😉"); });
+  $("#cfgPerfil").addEventListener("click", () => { if(typeof abrirPerfil === "function") abrirPerfil(); else irPara("tela-perfil"); });
+  $("#cfgZap").addEventListener("click", () => abrirZap("Olá! Preciso de ajuda com o FalaFina 😊"));
+  $("#cfgSair").addEventListener("click", () => { if(confirm("Sair da conta? Seu progresso fica salvo.")){ Contas.sair(); document.body.classList.add("sem-shell"); irPara("tela-inicio"); } });
+  $("#cfgApagar").addEventListener("click", () => {
+    if(confirm("APAGAR TODO o progresso desta conta? Não tem volta!") && confirm("Certeza absoluta? XP, aulas e sequência serão zerados.")){
+      Progresso.dados = { xp:0, nivelEscolhido:Progresso.dados.nivelEscolhido, modulosFeitos:{}, escalada:{ nivel:1, recorde:1 } };
+      Progresso.salvar(); atualizarXP(); mostrarToast("Progresso zerado. Recomeço é coragem! 💪"); renderConfig();
+    }
+  });
+}
+/* ---------- MEU PERFIL ---------- */
+function renderMeuPerfil(){
+  const c = Contas.atual(); if(!c) return;
+  const p = Progresso.dados;
+  const contas = Object.values(Contas.todas()).filter(x => x.progresso).sort((a,b) => (b.progresso.xp||0) - (a.progresso.xp||0));
+  const pos = contas.findIndex(x => x.email === Contas.sessao()) + 1;
+  $("#meuPerfilConteudo").innerHTML = `
+  <div class="cardb"><div class="perfil-topo">
+    <div class="avatar-g">${c.perfil && c.perfil.foto ? `<img src="${c.perfil.foto}" alt="">` : "👤"}</div>
+    <div style="flex:1;min-width:160px">
+      <h2 style="font-family:var(--f-display)">${esc(c.nome)}</h2>
+      <p style="font-weight:800;color:var(--tinta-suave)">${tituloPorXP(p.xp || 0)} · Nível ${nivelNum()}${pos ? ` · ${pos}º no ranking` : ""}</p>
+    </div>
+    <button class="btn-resg" style="width:auto;padding:10px 16px" id="mpEditar">✏️ Editar perfil</button>
+  </div>
+  <div class="stat-grid" style="margin-top:16px">
+    <div class="stat-mini"><b>${p.xp || 0}</b><small>XP TOTAL</small></div>
+    <div class="stat-mini"><b>🔥 ${p.melhorSeq || 0}</b><small>MELHOR SEQUÊNCIA</small></div>
+    <div class="stat-mini"><b>${Object.keys(p.modulosFeitos || {}).length}</b><small>AULAS FEITAS</small></div>
+    <div class="stat-mini"><b>${conquistasFeitas().length}</b><small>CONQUISTAS</small></div>
+    <div class="stat-mini"><b>${palavrasAprendidas()}</b><small>PALAVRAS</small></div>
+    <div class="stat-mini"><b>${Object.keys((p.sim || {}).dominadas || {}).length}</b><small>ENTREVISTA 💪</small></div>
+  </div></div>
+  <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
+    <button class="btn-principal" style="width:auto;flex:1;min-width:150px" id="mpConq">🏆 Conquistas</button>
+    <button class="btn-principal azul" style="width:auto;flex:1;min-width:150px" id="mpRank">📊 Ranking</button>
+    <button class="btn-principal" style="width:auto;flex:1;min-width:150px;background:var(--tinta-suave);box-shadow:0 4px 0 #3d4a52" id="mpCfg">⚙️ Configurações</button>
+  </div>`;
+  $("#mpEditar").addEventListener("click", () => { if(typeof abrirPerfil === "function") abrirPerfil(); else irPara("tela-perfil"); });
+  $("#mpConq").addEventListener("click", () => navPara("conquistas"));
+  $("#mpRank").addEventListener("click", () => navPara("ranking"));
+  $("#mpCfg").addEventListener("click", () => navPara("config"));
+}
+/* ---------- NAVEGAÇÃO DO SHELL ---------- */
+const FF_ROTAS = {
+  home:      { tela:"tela-home", titulo:"👋 Início", render: renderHome },
+  aulas:     { tela:"tela-trilha", titulo:"📚 Aulas / Trilha de Estudos", render: renderTrilha },
+  pratica:   { tela:"tela-pratica", titulo:"🎯 Prática", render: renderPratica },
+  desafios:  { tela:"tela-desafios", titulo:"🏆 Desafios", render: renderDesafios },
+  revisao:   { tela:"tela-revisao", titulo:"🔄 Revisão", render: renderRevisao },
+  conquistas:{ tela:"tela-conquistas", titulo:"🏅 Conquistas", render: renderConquistas },
+  ranking:   { tela:"tela-ranking", titulo:"📊 Ranking", render: renderRanking },
+  comunidade:{ tela:"tela-comunidade", titulo:"👥 Comunidade", render: renderComunidade },
+  meuperfil: { tela:"tela-meuperfil", titulo:"🪪 Meu Perfil", render: renderMeuPerfil },
+  config:    { tela:"tela-config", titulo:"⚙️ Configurações", render: renderConfig },
+  simulador: { tela:"tela-simulador", titulo:"🎙️ Simulador de Entrevista", render: () => renderSimConfig() }
+};
+function navPara(rota){
+  const r = FF_ROTAS[rota]; if(!r) return;
+  if(!Contas.atual() && rota !== "home"){ mostrarToast("Entre na sua conta primeiro 😊"); return; }
+  try{ r.render(); }catch(e){ console.error(e); }
+  irPara(r.tela);
+}
+const FF_TITULOS = {
+  "tela-home":"👋 Início", "tela-trilha":"📚 Aulas / Trilha de Estudos", "tela-pratica":"🎯 Prática",
+  "tela-desafios":"🏆 Desafios", "tela-revisao":"🔄 Revisão", "tela-conquistas":"🏅 Conquistas",
+  "tela-ranking":"📊 Ranking", "tela-comunidade":"👥 Comunidade", "tela-meuperfil":"🪪 Meu Perfil",
+  "tela-config":"⚙️ Configurações", "tela-simulador":"🎙️ Simulador de Entrevista",
+  "tela-entrevista":"🎙️ Entrevista ao vivo", "tela-licao":"📖 Aula", "tela-quiz":"📝 Exercícios",
+  "tela-conclusao":"🎉 Parabéns!", "tela-escalada":"🗼 Escalada", "tela-perfil":"🪪 Perfil"
+};
+const FF_SEM_SHELL = ["tela-onboarding","tela-inicio","tela-cadastro","tela-login"];
+function ffAposIrPara(tela){
+  const tt = $("#tituloPagina");
+  if(tt) tt.textContent = FF_TITULOS[tela] || "FalaFina";
+  document.body.classList.toggle("sem-shell", FF_SEM_SHELL.includes(tela) || !Contas.atual());
+  document.body.classList.toggle("logado", !!Contas.atual());
+  const mapa = { "tela-home":"home", "tela-trilha":"aulas", "tela-pratica":"pratica", "tela-desafios":"desafios",
+    "tela-revisao":"revisao", "tela-conquistas":"conquistas", "tela-ranking":"ranking", "tela-comunidade":"comunidade",
+    "tela-meuperfil":"meuperfil", "tela-config":"config", "tela-simulador":"pratica", "tela-entrevista":"pratica",
+    "tela-licao":"aulas", "tela-quiz":"aulas", "tela-escalada":"pratica", "tela-conclusao":"aulas" };
+  const ativa = mapa[tela] || "";
+  document.querySelectorAll(".sb-item").forEach(b => b.classList.toggle("ativo", b.dataset.rota === ativa));
+  document.querySelectorAll(".tb-item").forEach(b => b.classList.toggle("ativo", b.dataset.rota === ativa));
+}
+document.querySelectorAll(".sb-item, .tb-item").forEach(b => b.addEventListener("click", () => navPara(b.dataset.rota)));
+const sbPrem = $("#sbPremium");
+if(sbPrem) sbPrem.addEventListener("click", () => abrirZap("Olá! Quero ser Premium do FalaFina 👑"));
+
 /* ---------- BOOT ---------- */
 Progresso.carregar();
 atualizarXP();
@@ -3466,7 +4699,7 @@ iniciarPWA();
 const contaBoot = Contas.atual();
 if(contaBoot){
   if(!contaBoot.perfil){ abrirPerfil(); }
-  else { renderTrilha(); irPara("tela-trilha"); }
+  else { renderHome(); irPara("tela-home"); }
 } else {
   irPara("tela-inicio");
 }

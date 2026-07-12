@@ -17,7 +17,7 @@ const crypto = require("crypto");
 const PORT = process.env.PORT || 3000;
 const PUBLICO = __dirname; // site na mesma pasta do servidor (sem subpastas)
 // Arquivos que o navegador PODE baixar — todo o resto é bloqueado
-const ARQUIVOS_PUBLICOS = new Set(["/index.html", "/sw.js", "/manifest.json", "/icon-192.png", "/icon-512.png"]);
+const ARQUIVOS_PUBLICOS = new Set(["/index.html", "/sw.js", "/manifest.json", "/icon-192.png", "/icon-512.png", "/mascote.png"]);
 const LIMITE_CORPO = 400 * 1024;      // 400 KB por requisição
 const LIMITE_FOTO = 80 * 1024;        // foto de perfil (data URL 128px ≈ 10-20 KB)
 
@@ -118,6 +118,12 @@ function mesclarProgresso(a, b) {
   const r = Object.assign({}, a, b);
   r.xp = Math.max(a.xp || 0, b.xp || 0);
   r.recordeStreak = Math.max(a.recordeStreak || 0, b.recordeStreak || 0);
+  r.melhorSeq = Math.max(a.melhorSeq || 0, b.melhorSeq || 0);
+  r.stats = Object.assign({}, b.stats || {}, a.stats || {});
+  for(const k in (b.stats || {})){ const sa = (a.stats || {})[k], sb = b.stats[k]; if(sa && sb) r.stats[k] = ((sb.ex || 0) > (sa.ex || 0)) ? sb : sa; }
+  r.favoritos = Object.assign({}, a.favoritos || {}, b.favoritos || {});
+  r.resgates = Object.assign({}, a.resgates || {}, b.resgates || {});
+  r.sim = { dominadas: Object.assign({}, (a.sim || {}).dominadas || {}, (b.sim || {}).dominadas || {}), erros: Object.assign({}, (a.sim || {}).erros || {}, (b.sim || {}).erros || {}) };
   r.diasSeguidos = Math.max(a.diasSeguidos || 0, b.diasSeguidos || 0);
   r.ultimoDiaAtivo = [a.ultimoDiaAtivo, b.ultimoDiaAtivo].filter(Boolean).sort().pop();
   if ((a.dataXpHoje || "") > (b.dataXpHoje || "")) { r.dataXpHoje = a.dataXpHoje; r.xpHoje = a.xpHoje || 0; }
