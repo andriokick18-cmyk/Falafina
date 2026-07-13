@@ -384,6 +384,16 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--azul);outline-offse
 .sim-balao.fb ul{margin:6px 0 0 18px;font-weight:600;font-size:.92rem}
 .sim-balao.fase{align-self:center;background:var(--tinta);color:#fff;font-weight:800;font-size:.9rem;border-radius:999px;padding:8px 18px;box-shadow:none}
 .sim-modelo{margin-top:10px;background:var(--azul-claro);border-radius:12px;padding:10px 12px}
+.carr-ensina{margin-top:10px;background:var(--sol-claro,#FFF3D1);border:1.5px solid var(--sol,#FFC53D);border-radius:12px;padding:10px 12px}
+.carr-ensina .rot{font-weight:800;font-size:.82rem;color:#7A5A00;margin-bottom:4px}
+.carr-ensina ul{margin:0 0 0 18px;padding:0;font-weight:700;font-size:.86rem;color:#5C4400}
+.carr-opcoes{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.carr-opcao{font-family:inherit;font-weight:700;font-size:.92rem;text-align:left;background:var(--branco,#fff);border:2px solid rgba(33,49,58,.18);border-radius:12px;padding:10px 14px;cursor:pointer;transition:transform .1s}
+.carr-opcao:hover:not(:disabled){transform:translateY(-1px);border-color:var(--verde,#00885F)}
+.carr-opcao small{font-weight:600;color:var(--tinta-suave,#5A6B74);display:block;margin-top:3px}
+.carr-opcao:disabled{cursor:default;opacity:.75}
+.carr-opcao.certa{border-color:var(--verde,#00885F);background:var(--verde-claro,#E1F3EA)}
+.carr-opcao.errada{border-color:#D9481C;background:#FCE4DB}
 .sim-modelo .rot{font-weight:800;font-size:.72rem;letter-spacing:1px;color:var(--azul-escuro)}
 .sim-modelo .en{font-weight:800;color:var(--azul-escuro);margin-top:2px}
 .sim-entrada{position:sticky;bottom:0;background:var(--papel);padding:10px 0 14px;border-top:2px solid rgba(33,49,58,.08);margin-top:16px}
@@ -659,6 +669,45 @@ body.sem-shell .topo .titulo-pagina{ visibility:hidden; }
 .bau-cta{background:var(--verde,#00885F);color:#fff;font-weight:800;border-radius:14px;padding:12px 18px;box-shadow:0 4px 0 var(--verde-escuro,#00674A);width:100%;max-width:320px;margin:6px auto 0;font-size:.95rem}
 .bau-cta:disabled{background:#b9c2c8;box-shadow:none}
 .bau-fechar{margin-top:16px;font-weight:800;color:var(--tinta-suave);background:none;border:none;padding:8px;cursor:pointer}
+.jar-status{display:flex;justify-content:space-around;text-align:center}
+.jar-status small{display:block;font-weight:700;color:var(--tinta-suave);font-size:.72rem}
+.jar-canteiro{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:12px;background:var(--verde-claro);border-radius:14px;padding:12px}
+.jar-planta{display:flex;flex-direction:column;align-items:center;font-size:1.5rem;width:64px}
+.jar-planta small{font-size:.6rem;font-weight:800;color:var(--verde-escuro);text-align:center;overflow:hidden;text-overflow:ellipsis;max-width:64px;white-space:nowrap}
+.jar-modo{font-weight:800;font-size:.8rem;letter-spacing:.5px;color:var(--verde-escuro);margin-bottom:8px}
+.jar-alvo{font-family:var(--f-display);font-size:1.5rem;font-weight:700;margin:8px 0}
+.tut-passos{display:flex;flex-direction:column;gap:10px;text-align:left;margin:14px 0}
+.tut-passo{display:flex;gap:12px;align-items:flex-start;background:var(--branco,#fff);border:1.5px solid rgba(33,49,58,.10);border-radius:14px;padding:10px 12px}
+.tut-passo span{font-size:1.5rem;flex:none}
+.tut-passo p{font-weight:700;font-size:.88rem;margin:0}
+.hub-ajuda{position:absolute;top:8px;right:8px;width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.9);border:1.5px solid rgba(33,49,58,.2);font-weight:800;font-size:.85rem;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2}
+.hub-ajuda:hover{background:var(--verde,#00885F);color:#fff}
+.hub-jogo{position:relative}
+.hub-hero{position:relative}
+.hub-hero .hub-ajuda{top:10px;right:10px}
+.sim-timer{position:sticky;top:6px;z-index:5;align-self:flex-end;background:var(--branco,#fff);border:2px solid var(--sol,#FFC53D);border-radius:99px;padding:6px 14px;font-weight:800;box-shadow:0 3px 8px rgba(33,49,58,.12)}
+.sim-timer.urgente{border-color:#D9481C;color:#D9481C;animation:timerPulsa .6s ease-in-out infinite alternate}
+@keyframes timerPulsa{from{transform:scale(1)}to{transform:scale(1.07)}}
+.hub-hero{display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:linear-gradient(135deg,#FFF8E7,#FFE9AE);border:2.5px solid var(--sol,#FFC53D);border-radius:20px;padding:18px;cursor:pointer;margin-bottom:14px;transition:transform .12s}
+.hub-hero:hover{transform:translateY(-2px)}
+.hub-hero-txt{flex:1;min-width:200px}
+.hub-hero-txt b{font-family:var(--f-display);font-size:1.15rem;display:block;margin:4px 0}
+.hub-hero-txt p{font-weight:700;color:var(--tinta-suave);font-size:.86rem}
+.hub-tag{font-size:.66rem;background:var(--sol,#FFC53D);color:#5C4400;padding:2px 8px;border-radius:99px;font-weight:800}
+.hub-duplo{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:720px){.hub-duplo{grid-template-columns:1fr}}
+.hub-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.hub-jogo{font-family:inherit;text-align:left;border:2px solid rgba(33,49,58,.12);border-radius:18px;padding:14px;cursor:pointer;display:flex;flex-direction:column;gap:4px;transition:transform .12s,box-shadow .12s}
+.hub-jogo:hover{transform:translateY(-2px);box-shadow:0 6px 14px rgba(33,49,58,.12)}
+.hub-jogo .ic{font-size:1.9rem}
+.hub-jogo b{font-family:var(--f-display);font-size:1rem}
+.hub-jogo small{font-weight:700;color:var(--tinta-suave);font-size:.78rem}
+.hub-skill{font-size:.7rem;font-weight:800;background:rgba(255,255,255,.75);border-radius:99px;padding:3px 8px;align-self:flex-start;margin-top:4px}
+.skill-linha{display:flex;align-items:center;gap:10px;font-weight:700;font-size:.85rem;margin-bottom:6px}
+.skill-linha span{width:130px;flex:none}
+.skill-linha b{width:42px;text-align:right;flex:none}
+.skill-barra{flex:1;height:10px;background:rgba(33,49,58,.10);border-radius:99px;overflow:hidden}
+.skill-barra i{display:block;height:100%;background:linear-gradient(90deg,var(--verde,#00885F),#7BC950);border-radius:99px;transition:width .4s}
 .faixa-bau{display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,#FFF3D6,#FFE7B0);border:2px solid #E8B84C;border-radius:18px;padding:14px 18px;margin-top:14px;cursor:pointer;animation:faixaBauPulsa 2s ease-in-out infinite}
 @keyframes faixaBauPulsa{0%,100%{box-shadow:0 0 0 rgba(232,184,76,0)}50%{box-shadow:0 0 16px rgba(232,184,76,.6)}}
 </style>
@@ -671,7 +720,7 @@ body.sem-shell .topo .titulo-pagina{ visibility:hidden; }
   <nav class="sb-nav">
     <button class="sb-item" data-rota="home"><span class="ic">🏠</span>Início</button>
     <button class="sb-item" data-rota="aulas"><span class="ic">📚</span>Aulas</button>
-    <button class="sb-item" data-rota="pratica"><span class="ic">🎯</span>Prática</button>
+    <button class="sb-item" data-rota="pratica"><span class="ic">🎮</span>Jogos</button>
     <button class="sb-item" data-rota="desafios"><span class="ic">🏆</span>Desafios</button>
     <button class="sb-item" data-rota="revisao"><span class="ic">🔄</span>Revisão</button>
     <button class="sb-item" data-rota="ranking"><span class="ic">📊</span>Ranking</button>
@@ -902,6 +951,7 @@ body.sem-shell .topo .titulo-pagina{ visibility:hidden; }
   <div class="sim-secao">⚙️ Como você quer treinar?</div>
   <label class="sim-opcao"><input type="checkbox" id="simVoz" checked> 🔊 Entrevistador fala as perguntas em voz alta</label>
   <label class="sim-opcao"><input type="checkbox" id="simRealista"> 😰 Modo realista — esconder tradução e pronúncia (como na vida real)</label>
+  <label class="sim-opcao"><input type="checkbox" id="simTimer"> ⏱️ Treinar com tempo — pressão progressiva: quanto mais respostas você domina, menos tempo recebe (desmarque se precisar de mais calma; sem pressa também se aprende)</label>
   <button class="btn-principal" id="simIniciar" style="margin-top:18px">🎬 Começar a entrevista</button>
   <p class="sim-nota" id="simContagem" style="text-align:center"></p>
   <div class="sim-secao" style="margin-top:26px">📄 Ou treine a partir do SEU currículo</div>
@@ -951,6 +1001,35 @@ body.sem-shell .topo .titulo-pagina{ visibility:hidden; }
   </div>
 </main>
 
+<!-- ================= TELA: DITADO RELÂMPAGO (listening) ================= -->
+<main class="tela" id="tela-ditado">
+  <div style="max-width:560px;margin:0 auto">
+    <div class="cardb" style="text-align:center">
+      <div style="display:flex;justify-content:space-between;font-weight:800;margin-bottom:10px"><span id="ditVidas"></span><span id="ditCombo" style="color:var(--coral)"></span><span id="ditXP"></span></div>
+      <p style="font-family:var(--f-display);font-size:1.2rem;font-weight:700">👂 Escreva o que você OUVIU</p>
+      <p style="font-weight:700;color:var(--tinta-suave);font-size:.85rem;margin:4px 0 14px">Sem ler nada — só o ouvido. Aperte 🔊 pra repetir quantas vezes quiser.</p>
+      <button class="btn-som" id="ditRepetir" style="font-size:2.2rem;width:76px;height:76px;border-radius:50%">🔊</button>
+      <textarea id="ditResp" placeholder="Digite em inglês o que ouviu..." style="width:100%;margin-top:14px;min-height:72px;border-radius:14px;border:2px solid var(--borda);padding:12px;font-family:inherit;font-weight:700;font-size:1rem"></textarea>
+      <button class="btn-principal" id="ditConferir" style="margin-top:12px">Conferir ✔</button>
+      <div id="ditFeedback"></div>
+      <button class="btn-link" id="ditSair" style="margin-top:10px">🏁 Encerrar</button>
+    </div>
+  </div>
+</main>
+
+<!-- ================= TELA: JARDIM DE PALAVRAS (léxico 4 modos) ================= -->
+<main class="tela" id="tela-jardim">
+  <div style="max-width:560px;margin:0 auto">
+    <div class="cardb" id="jarTopo"></div>
+    <div class="cardb" style="margin-top:12px;text-align:center">
+      <div style="display:flex;justify-content:space-between;font-weight:800;margin-bottom:8px"><span>🌻 Jardim de Palavras</span><span id="jarProg"></span></div>
+      <div id="jarExercicio"><p style="font-weight:700;color:var(--tinta-suave)">Aperte "Regar" pra começar a sessão 🌱</p></div>
+      <button class="btn-principal" id="jarRegar" style="margin-top:12px">💧 Regar (treinar) ▶</button>
+      <button class="btn-link" id="jarSair" style="margin-top:8px">🏁 Voltar aos Jogos</button>
+    </div>
+  </div>
+</main>
+
 <!-- ================= TELA: HOME (dashboard) ================= -->
 <main class="tela" id="tela-home"><div id="homeConteudo"></div></main>
 <!-- ================= TELA: REVISÃO ================= -->
@@ -976,7 +1055,7 @@ body.sem-shell .topo .titulo-pagina{ visibility:hidden; }
 <nav class="tabbar" aria-label="Menu">
   <button class="tb-item" data-rota="home"><span class="ic">🏠</span>Início</button>
   <button class="tb-item" data-rota="aulas"><span class="ic">📚</span>Aulas</button>
-  <button class="tb-item" data-rota="pratica"><span class="ic">🎯</span>Prática</button>
+  <button class="tb-item" data-rota="pratica"><span class="ic">🎮</span>Jogos</button>
   <button class="tb-item" data-rota="desafios"><span class="ic">🏆</span>Desafios</button>
   <button class="tb-item" data-rota="meuperfil"><span class="ic">🪪</span>Perfil</button>
 </nav>
@@ -4284,6 +4363,8 @@ function concluirNivelamento(){
 /* Resultado unificado: SRS + streak + XP + fila (múltipla escolha E montar frase) */
 function aplicarResultado(certo, q){
   if(typeof registrarEstat === "function") registrarEstat(q, certo);
+  if(quizEstado.escalada && typeof ENGINE !== "undefined") ENGINE.registrar("speed", certo);
+  if(quizEstado.infinito && typeof ENGINE !== "undefined") ENGINE.registrar("vocab", certo);
   if(quizEstado.escalada && quizEstado._tqLimite){
     const gasto = Date.now() - (quizEstado._tq || 0);
     pararTimerPergunta();
@@ -5868,6 +5949,20 @@ const CARR_TEMPLATES = {
     ]
   }
 };
+/* Distratores genéricos pra modo múltipla escolha (níveis iniciantes) */
+const CARR_DISTRATORES = [
+  { en:"I don't understand the question.", pt:"Eu não entendo a pergunta." },
+  { en:"Maybe, I'm not sure yet.", pt:"Talvez, ainda não tenho certeza." },
+  { en:"I don't want to answer that.", pt:"Eu não quero responder isso." },
+  { en:"That's not important right now.", pt:"Isso não é importante agora." },
+  { en:"I have no experience at all.", pt:"Eu não tenho experiência nenhuma." },
+  { en:"That is a secret, I cannot say.", pt:"Isso é segredo, não posso dizer." },
+  { en:"I need to think about it later.", pt:"Eu preciso pensar sobre isso depois." }
+];
+/* Abaixo deste nível, o Modo Carreira ENSINA primeiro (mostra o que a
+   resposta precisa ter) e pede reconhecimento por múltipla escolha —
+   só depois disso vira produção livre (digitar/falar). */
+const CARR_NIVEL_MC = 6;
 const CARR_FOLLOWUPS = [
   {en:"And why does that matter to you personally?", som:"énd uái dâz dhét méter tu iú pérsonali?", pt:"E por que isso importa pra você pessoalmente?"},
   {en:"Can you give me a specific example?", som:"quén iú guív mi a spesífic egzémpol?", pt:"Você pode me dar um exemplo específico?"},
@@ -5894,20 +5989,27 @@ function carrVagaDoPerfil(){
   return Math.random() < 0.35 ? "geral" : chaves[Math.floor(Math.random() * chaves.length)];
 }
 /* Gera 1 pergunta 100% combinada — nunca a mesma sequência duas vezes */
+let CARR_ULTIMAS = [];
 function gerarPerguntaCarreira(nivel){
-  const etapas = carrEtapasPorNivel(nivel);
-  const etapa = etapas[Math.floor(Math.random() * etapas.length)];
-  const tier = carrTierPorNivel(nivel);
-  const vagaId = carrVagaDoPerfil();
-  const voc = (CARR_VOCAB[vagaId] || CARR_VOCAB.geral)[Math.floor(Math.random() * (CARR_VOCAB[vagaId] || CARR_VOCAB.geral).length)];
-  const emp = CARR_EMPRESAS[Math.floor(Math.random() * CARR_EMPRESAS.length)];
-  const cid = CARR_CIDADES[Math.floor(Math.random() * CARR_CIDADES.length)];
-  const poolTier = CARR_TEMPLATES[etapa][tier] || CARR_TEMPLATES[etapa][1];
-  const tpl = poolTier[Math.floor(Math.random() * poolTier.length)];
-  const q = tpl(voc, emp, cid);
-  q.etapa = etapa;
-  q.abertura = CARR_ABERTURAS[etapa][Math.floor(Math.random() * CARR_ABERTURAS[etapa].length)];
-  q.followup = (tier >= 2 && Math.random() < 0.4) ? CARR_FOLLOWUPS[Math.floor(Math.random() * CARR_FOLLOWUPS.length)] : null;
+  let q, tentativas = 0;
+  do{
+    const etapas = carrEtapasPorNivel(nivel);
+    const etapa = etapas[Math.floor(Math.random() * etapas.length)];
+    const tier = carrTierPorNivel(nivel);
+    const vagaId = carrVagaDoPerfil();
+    const voc = (CARR_VOCAB[vagaId] || CARR_VOCAB.geral)[Math.floor(Math.random() * (CARR_VOCAB[vagaId] || CARR_VOCAB.geral).length)];
+    const emp = CARR_EMPRESAS[Math.floor(Math.random() * CARR_EMPRESAS.length)];
+    const cid = CARR_CIDADES[Math.floor(Math.random() * CARR_CIDADES.length)];
+    const poolTier = CARR_TEMPLATES[etapa][tier] || CARR_TEMPLATES[etapa][1];
+    const tpl = poolTier[Math.floor(Math.random() * poolTier.length)];
+    q = tpl(voc, emp, cid);
+    q.etapa = etapa;
+    q.abertura = CARR_ABERTURAS[etapa][Math.floor(Math.random() * CARR_ABERTURAS[etapa].length)];
+    q.followup = (tier >= 2 && Math.random() < 0.4) ? CARR_FOLLOWUPS[Math.floor(Math.random() * CARR_FOLLOWUPS.length)] : null;
+    tentativas++;
+  } while(CARR_ULTIMAS.includes(q.en) && tentativas < 6);
+  CARR_ULTIMAS.push(q.en);
+  if(CARR_ULTIMAS.length > 4) CARR_ULTIMAS.shift();
   return q;
 }
 
@@ -5933,7 +6035,7 @@ const CV_MAPA = [
   { re:/irriga|pivô|pivo |gotejamento|bomba d/i, prog:"h2a", vaga:"irrigacao", nome:"💧 Irrigação" }
 ];
 /* ---------- MOTOR DO SIMULADOR ---------- */
-let simCfg = { prog:"h2b", tipo:"empregador", vaga:"geral", voz:true, realista:false };
+let simCfg = { prog:"h2b", tipo:"empregador", vaga:"geral", voz:true, realista:false, timer:false };
 let simEstado = null;
 function simDados(){
   const p = Progresso.dados;
@@ -6010,6 +6112,37 @@ function simAtualizarTopo(){
   $("#simBarra").style.width = Math.min(Math.round((e.respondidas / Math.max(totalQ,1)) * 100), 100) + "%";
   $("#simCont").textContent = `${e.respondidas}/${totalQ}${e.rodadaReforco ? " · 🔁 reforço" : ""} · ⭐ ${e.xpGanho}`;
 }
+/* ⏱️ TIMER EDUCACIONAL da entrevista — pressão progressiva:
+   começa folgado (60s) e diminui conforme o aluno DOMINA respostas
+   (mínimo 20s). Acessibilidade: recurso 100% opcional (checkbox),
+   e estourar o tempo nunca pune — só vira "vamos aprender essa". */
+let simTimerId = null;
+function simTempoLimite(){
+  const dominadas = Object.keys(simDados().dominadas || {}).length;
+  return Math.max(20, 60 - Math.floor(dominadas / 3) * 4); /* -4s a cada 3 dominadas */
+}
+function simPararTimer(){ if(simTimerId){ clearInterval(simTimerId); simTimerId = null; } const el = $("#simTimerBox"); if(el) el.remove(); }
+function simIniciarTimer(){
+  simPararTimer();
+  if(!simCfg.timer) return;
+  let resta = simTempoLimite();
+  const box = document.createElement("div");
+  box.id = "simTimerBox"; box.className = "sim-timer";
+  box.innerHTML = `⏱️ <b>${resta}s</b>`;
+  $("#simChat").appendChild(box);
+  simTimerId = setInterval(() => {
+    resta--;
+    const b = box.querySelector("b"); if(b) b.textContent = resta + "s";
+    box.classList.toggle("urgente", resta <= 10);
+    if(resta <= 0){
+      simPararTimer();
+      if(simEstado && simEstado.atual){
+        simBolha("⏱️ O tempo acabou — na vida real acontece! Vamos ver a resposta modelo com calma:", "fase");
+        simEnsinar();
+      }
+    }
+  }, 1000);
+}
 function simProxima(){
   const e = simEstado;
   simAtualizarTopo();
@@ -6044,6 +6177,7 @@ function simProxima(){
   const aj = ultima.querySelector(".simAjuda");
   if(aj) aj.addEventListener("click", () => { ultima.querySelector(".simOculto").style.display = "block"; aj.style.display = "none"; });
   if(simCfg.voz) Fala.dizer(q.en);
+  simIniciarTimer();
   $("#simResposta").value = "";
   $("#simResposta").focus({ preventScroll: true });
 }
@@ -6058,6 +6192,7 @@ const SIM_PT_SINAIS = [" que "," não "," nao "," para "," você "," voce "," tr
 function simAvaliar(){
   const e = simEstado, q = e.atual;
   if(!q || !e.fila) return;
+  simPararTimer();
   const bruto = $("#simResposta").value.trim();
   if(!bruto){ mostrarToast("Escreva ou fale sua resposta primeiro 😉"); return; }
   const norm = simNormalizar(bruto);
@@ -6067,6 +6202,7 @@ function simAvaliar(){
     if(p.w.some(w => norm.includes(" " + w + " "))) ok.push(p); else falta.push(p);
   }
   const pareceuPT = !ok.length && SIM_PT_SINAIS.some(s => norm.includes(s));
+  if(typeof ENGINE !== "undefined") ENGINE.registrar("speaking", ok.length > 0 && !falta.length);
   e.respondidas++;
   let classe, titulo, xp = 0;
   if(ok.length && !falta.length){
@@ -6091,6 +6227,7 @@ function simAvaliar(){
 function simEnsinar(){
   const e = simEstado, q = e.atual;
   if(!q) return;
+  simPararTimer();
   e.respondidas++; e.aprender++;
   e.erradas.push(q);
   const s = simDados(); s.erros[simIndexDe(q)] = (s.erros[simIndexDe(q)] || 0) + 1;
@@ -6117,6 +6254,7 @@ function simFeedback(classe, titulo, ok, falta, q){
   div.querySelector(".simContinuar").addEventListener("click", simProxima);
 }
 function encerrarSim(){
+  simPararTimer();
   const e = simEstado;
   if(!e) return;
   registrarAtividade(0);
@@ -6193,20 +6331,74 @@ function carrProxima(){
   carrAtualizarTopo();
   const q = gerarPerguntaCarreira(c.nivel);
   carreiraEstado.atual = q;
-  const esconder = carrTierPorNivel(c.nivel) >= 3;
-  carrBolha(`<div class="quem">${q.abertura}</div>
-    <div class="en">${esc(q.en)} <button class="btn-som" data-falar="${esc(q.en)}" aria-label="Ouvir pergunta">🔊</button></div>
+  const modoMC = c.nivel < CARR_NIVEL_MC;
+  const tier = carrTierPorNivel(c.nivel);
+  /* 👂 Variação de listening: às vezes a pergunta chega SÓ POR ÁUDIO
+     (texto escondido) — treina o ouvido dentro da própria Carreira. */
+  const soAudio = !modoMC && tier >= 2 && Math.random() < 0.3;
+  const esconder = !modoMC && (tier >= 3 || soAudio);
+  const dicaPrevia = modoMC ? `<div class="carr-ensina">
+      <div class="rot">💡 Pra responder bem, sua fala precisa ter:</div>
+      <ul>${q.ps.map(p => `<li>${esc(p.pt)}</li>`).join("")}</ul>
+    </div>` : "";
+  carrBolha(`<div class="quem">${q.abertura}${soAudio ? " · 👂 SÓ DE OUVIDO" : ""}</div>
+    ${soAudio ? `<div class="en">🔊 Ouça a pergunta <button class="btn-som" data-falar="${esc(q.en)}" aria-label="Ouvir pergunta">🔊</button></div>` : `<div class="en">${esc(q.en)} <button class="btn-som" data-falar="${esc(q.en)}" aria-label="Ouvir pergunta">🔊</button></div>`}
     ${esconder ? `<button class="btn-link carrAjuda" style="padding:4px 0;font-size:.85rem">👁️ Não entendi — mostrar ajuda</button><div class="carrOculto" style="display:none">` : ""}
+    ${soAudio ? `<div class="en" style="margin-top:4px">${esc(q.en)}</div>` : ""}
     <div class="som">🗣️ ${esc(q.som)}</div>
     <div class="pt">🇧🇷 ${esc(q.pt)}</div>
-    ${esconder ? "</div>" : ""}`, "oficial");
+    ${esconder ? "</div>" : ""}
+    ${dicaPrevia}
+    ${modoMC ? `<div class="carr-opcoes" id="carrOpcoesMC"></div>` : ""}`, "oficial");
   const ultima = $("#carrChat").lastElementChild;
   ultima.querySelectorAll("[data-falar]").forEach(b => b.addEventListener("click", () => Fala.dizer(b.dataset.falar, b)));
   const aj = ultima.querySelector(".carrAjuda");
   if(aj) aj.addEventListener("click", () => { ultima.querySelector(".carrOculto").style.display = "block"; aj.style.display = "none"; });
+  q._soAudio = soAudio;
+  if(modoMC){
+    /* Nível iniciante: reconhecer a resposta certa entre opções — ensina antes de exigir produção livre */
+    $("#carrEntrada").style.display = "none";
+    const distratores = embaralhar(CARR_DISTRATORES).slice(0, 2);
+    const opcoes = embaralhar([{ en:q.mo.en, pt:q.mo.pt, ok:true }, ...distratores.map(d => Object.assign({}, d, { ok:false }))]);
+    const cont = ultima.querySelector("#carrOpcoesMC");
+    cont.innerHTML = opcoes.map((o, i) => `<button class="carr-opcao" data-i="${i}">${esc(o.en)}<br><small>🇧🇷 ${esc(o.pt)}</small></button>`).join("");
+    cont.querySelectorAll("[data-i]").forEach(b => b.addEventListener("click", () => {
+      cont.querySelectorAll("[data-i]").forEach(x => x.disabled = true);
+      const escolhida = opcoes[Number(b.dataset.i)];
+      b.classList.add(escolhida.ok ? "certa" : "errada");
+      carrAvaliarMC(escolhida.ok, escolhida.en, q);
+    }));
+  } else {
+    $("#carrEntrada").style.display = "";
+    $("#carrResposta").value = "";
+    $("#carrResposta").focus({ preventScroll:true });
+  }
   Fala.dizer(q.en);
-  $("#carrResposta").value = "";
-  $("#carrResposta").focus({ preventScroll:true });
+}
+function carrAvaliarMC(acertou, textoEscolhido, q){
+  const e = carreiraEstado;
+  if(!e) return;
+  ENGINE.registrar("grammar", acertou);
+  carrBolha(esc(textoEscolhido), "voce");
+  const c = carrDados();
+  let classe, titulo, subiu = false;
+  if(acertou){
+    classe = "otima"; titulo = "🌟 Isso mesmo! Você reconheceu a resposta certa — SUBIU de nível.";
+    c.nivel++; c.acertos = (c.acertos || 0) + 1; subiu = true;
+    const xp = carrXpDoNivel(c.nivel - 1);
+    const sem = Math.round(xp / 3);
+    e.xpGanho += xp; e.girassoisGanho += sem;
+    registrarAtividade(xp);
+    COSM.ganhar(sem, null);
+  } else {
+    classe = "aprender"; titulo = "📚 Quase — essa não era a resposta certa. Olha o modelo (o nível continua o mesmo, sem punição):";
+  }
+  e.respondidas++;
+  c.respondidas = (c.respondidas || 0) + 1;
+  Progresso.salvar();
+  e.atual = null;
+  carrFeedback(classe, titulo, acertou ? q.ps : [], acertou ? [] : q.ps, q, subiu);
+  carrAtualizarTopo();
 }
 function carrAvaliar(){
   const e = carreiraEstado, q = e && e.atual;
@@ -6222,7 +6414,15 @@ function carrAvaliar(){
   e.respondidas++;
   const c = carrDados();
   let classe, titulo, subiu = false;
-  if(ok.length && !falta.length){
+  ENGINE.registrar("grammar", ok.length && !falta.length);
+  if(q._soAudio) ENGINE.registrar("listening", ok.length && !falta.length);
+  const palavrasResp = bruto.split(/\s+/).filter(Boolean).length;
+  if(ok.length && !falta.length && palavrasResp < 3){
+    /* Cobriu o ponto-chave mas com 1-2 palavras: entrevista real exige frase completa */
+    classe = "parcial"; titulo = "👍 Certo — mas numa entrevista de verdade, responda com uma FRASE completa (olha o modelo). Monte a frase inteira na próxima!";
+    const xpP = Math.round(carrXpDoNivel(c.nivel) / 4);
+    e.xpGanho += xpP; registrarAtividade(xpP);
+  } else if(ok.length && !falta.length){
     classe = "otima"; titulo = "🌟 Resposta forte! Você SUBIU de nível.";
     c.nivel++; c.acertos = (c.acertos || 0) + 1; subiu = true;
     const xp = carrXpDoNivel(c.nivel - 1);
@@ -6357,6 +6557,7 @@ document.querySelectorAll("#simTipo .fchip").forEach(b => b.addEventListener("cl
 }));
 $("#simVoz").addEventListener("change", e => simCfg.voz = e.target.checked);
 $("#simRealista").addEventListener("change", e => simCfg.realista = e.target.checked);
+$("#simTimer") && $("#simTimer").addEventListener("change", e => simCfg.timer = e.target.checked);
 $("#simIniciar").addEventListener("click", iniciarSim);
 $("#simMic").addEventListener("click", simGravar);
 $("#simEnviar").addEventListener("click", simAvaliar);
@@ -6460,6 +6661,7 @@ function registrarEstat(q, certo){
   }catch(e){}
 }
 function registrarPronuncia(ok){
+  try{ if(typeof ENGINE !== "undefined") ENGINE.registrar("speaking", ok); }catch(e){}
   try{ const s = estatDia(); s.pron++; if(ok) s.pronOk++; Progresso.salvar(); }catch(e){}
 }
 function somaStats(campo, dias){
@@ -6971,28 +7173,563 @@ function renderConquistas(){
   if(typeof creditarMedalhas === "function") creditarMedalhas();
 }
 /* ---------- PRÁTICA ---------- */
+/* ==================================================================
+   🧠 FALAFINA LEARNING ENGINE (leve, sem overengineering)
+   Camada central de inteligência educacional compartilhada por TODOS
+   os jogos. Cada jogo registra tentativas por HABILIDADE; a engine
+   calcula domínio, recomenda o próximo jogo e alimenta a telemetria.
+   Sem IA externa, sem custo, funciona offline. Dados monotônicos
+   (contadores só crescem) → merge seguro no servidor.
+   ================================================================== */
+const ENGINE = {
+  SKILLS: {
+    listening: { nome:"Listening",  ic:"👂" },
+    speaking:  { nome:"Speaking",   ic:"🗣️" },
+    vocab:     { nome:"Vocabulário",ic:"🔤" },
+    grammar:   { nome:"Gramática",  ic:"🧩" },
+    speed:     { nome:"Velocidade", ic:"⚡" }
+  },
+  dados(){
+    const p = Progresso.dados;
+    if(!p.habilidades) p.habilidades = {};
+    for(const s of Object.keys(this.SKILLS)){
+      if(!p.habilidades[s]) p.habilidades[s] = { tent:0, ok:0 };
+    }
+    if(!p.jogosUso) p.jogosUso = {};
+    return p;
+  },
+  /* Todo jogo chama isto: skill treinada + acertou? */
+  registrar(skill, acertou){
+    const p = this.dados();
+    if(!p.habilidades[skill]) return;
+    p.habilidades[skill].tent++;
+    if(acertou) p.habilidades[skill].ok++;
+  },
+  jogou(idJogo){
+    const p = this.dados();
+    p.jogosUso[idJogo] = (p.jogosUso[idJogo] || 0) + 1;
+    p.jogosUltimo = idJogo;
+    Progresso.salvar();
+  },
+  dominio(skill){
+    const h = this.dados().habilidades[skill];
+    if(!h || h.tent < 5) return null; /* poucos dados = não opina */
+    return Math.round(h.ok / h.tent * 100);
+  },
+  /* Habilidade mais fraca com dados suficientes; senão, a menos treinada */
+  pontoFraco(){
+    const p = this.dados();
+    let pior = null, piorPct = 101;
+    for(const s of Object.keys(this.SKILLS)){
+      const pct = this.dominio(s);
+      if(pct !== null && pct < piorPct){ piorPct = pct; pior = s; }
+    }
+    /* Só é "ponto fraco" de verdade abaixo de 80% — habilidade forte não precisa de reforço */
+    if(pior && piorPct < 80) return { skill:pior, pct:piorPct, motivo:"precisa de reforço" };
+    let menos = null, menosT = Infinity;
+    for(const s of Object.keys(this.SKILLS)){
+      const t = p.habilidades[s].tent;
+      if(t < menosT){ menosT = t; menos = s; }
+    }
+    return { skill:menos, pct:null, motivo:"ainda pouco treinada" };
+  },
+  /* Mapeia habilidade → jogo que mais a desenvolve */
+  jogoParaSkill(skill){
+    return { listening:"ditado", speaking:"pronuncia", vocab:"infinito", grammar:"carreira", speed:"escalada" }[skill] || "carreira";
+  }
+};
+
+/* CORPUS LEXICAL — Tranche 1 (~460 palavras): alta frequência do inglês
+   real + vocabulário de trabalho H-2B/H-2A. Formato: [en, pt, som].
+   Ordenado por bandas de frequência: o Jardim planta na ordem.
+   Tranches futuras: só concatenar aqui — a engine escala sozinha. */
+const LEX_CORPUS = [
+["time","tempo","táim"],["people","pessoas","pípol"],["day","dia","dêi"],["way","jeito / caminho","uêi"],["thing","coisa","thíng"],["work","trabalho","uôrk"],["life","vida","láif"],["hand","mão","rénd"],["week","semana","uík"],["place","lugar","plêis"],["job","emprego","djób"],["money","dinheiro","mâni"],["house","casa","ráus"],["friend","amigo","frénd"],["name","nome","nêim"],["hour","hora","áuer"],["night","noite","náit"],["water","água","uóter"],["food","comida","fúd"],["month","mês","mãnth"],
+["home","lar / casa","rôum"],["room","quarto / sala","rúm"],["family","família","fémili"],["morning","manhã","mórnin"],["question","pergunta","quéschon"],["boss","chefe","bós"],["door","porta","dór"],["car","carro","car"],["city","cidade","síti"],["country","país","cãntri"],["phone","telefone","fôun"],["year","ano","íer"],["word","palavra","uôrd"],["number","número","nãmber"],["problem","problema","próblem"],["help","ajuda","rélp"],["today","hoje","tudêi"],["tomorrow","amanhã","tumórou"],["yesterday","ontem","iésterdêi"],["weekend","fim de semana","uíquénd"],
+["good","bom","gúd"],["new","novo","niú"],["big","grande","big"],["small","pequeno","smól"],["long","longo","lóng"],["short","curto","chórt"],["hot","quente","rót"],["cold","frio","côuld"],["easy","fácil","ízi"],["hard","difícil / duro","rárd"],["fast","rápido","fést"],["slow","devagar","slôu"],["early","cedo","érli"],["late","tarde / atrasado","lêit"],["happy","feliz","répi"],["tired","cansado","táierd"],["hungry","com fome","rângri"],["thirsty","com sede","thérsti"],["ready","pronto","rédi"],["busy","ocupado","bízi"],
+["clean","limpo / limpar","clín"],["dirty","sujo","dérti"],["safe","seguro","sêif"],["dangerous","perigoso","dêindjeros"],["heavy","pesado","révi"],["light","leve / luz","láit"],["full","cheio","fúl"],["empty","vazio","émpti"],["open","aberto / abrir","ôupen"],["closed","fechado","clôuzd"],["right","certo / direita","ráit"],["wrong","errado","róng"],["same","mesmo / igual","sêim"],["different","diferente","díferent"],["important","importante","impórtant"],["strong","forte","stróng"],["careful","cuidadoso","quérfol"],["free","livre / grátis","frí"],["cheap","barato","tchíp"],["expensive","caro","ekspénsiv"],
+["go","ir","gôu"],["come","vir","câm"],["make","fazer / criar","mêik"],["take","pegar / levar","têik"],["get","conseguir / pegar","guét"],["give","dar","guív"],["see","ver","sí"],["know","saber / conhecer","nôu"],["think","pensar / achar","thínk"],["want","querer","uónt"],["need","precisar","níd"],["find","encontrar","fáind"],["tell","contar / dizer","tél"],["ask","perguntar / pedir","ésk"],["say","dizer","sêi"],["talk","conversar","tók"],["speak","falar","spík"],["listen","escutar","lísen"],["hear","ouvir","ríer"],["understand","entender","ândersténd"],
+["eat","comer","ít"],["drink","beber","drínk"],["sleep","dormir","slíp"],["wake up","acordar","uêik âp"],["walk","andar / caminhar","uók"],["run","correr","rân"],["drive","dirigir","dráiv"],["buy","comprar","bái"],["sell","vender","sél"],["pay","pagar","pêi"],["cost","custar","cóst"],["wait","esperar","uêit"],["start","começar","stárt"],["finish","terminar","fínich"],["stop","parar","stóp"],["stay","ficar","stêi"],["leave","sair / deixar","lív"],["arrive","chegar","aráiv"],["return","voltar / devolver","ritôrn"],["bring","trazer","bríng"],
+["use","usar","iúz"],["put","colocar","pút"],["carry","carregar","quéri"],["hold","segurar","rôuld"],["push","empurrar","púch"],["pull","puxar","púl"],["lift","levantar / erguer","líft"],["move","mover / mudar","múv"],["cut","cortar","cât"],["fix","consertar","fíks"],["build","construir","bíld"],["break","quebrar","brêik"],["wash","lavar","uóch"],["cook","cozinhar","cúk"],["clean up","limpar / arrumar","clín âp"],["check","checar / conferir","tchék"],["change","trocar / mudar","tchêindj"],["turn on","ligar","tôrn ón"],["turn off","desligar","tôrn óf"],["close","fechar","clôuz"],
+["learn","aprender","lérn"],["teach","ensinar","títch"],["read","ler","ríd"],["write","escrever","ráit"],["remember","lembrar","rimémber"],["forget","esquecer","forguét"],["try","tentar","trái"],["practice","praticar","préktis"],["show","mostrar","chôu"],["explain","explicar","eksplêin"],["repeat","repetir","ripít"],["answer","responder / resposta","énser"],["call","ligar / chamar","cól"],["send","enviar","sénd"],["receive","receber","risív"],["sign","assinar","sáin"],["fill out","preencher","fíl áut"],["choose","escolher","tchúz"],["decide","decidir","disáid"],["believe","acreditar","bilív"],
+["supervisor","supervisor","súpervaizor"],["manager","gerente","ménedjer"],["coworker","colega de trabalho","côu-uôrker"],["employee","funcionário","emploí"],["employer","empregador","emplóier"],["team","equipe","tím"],["shift","turno","chíft"],["schedule","horário / escala","skédiul"],["break time","intervalo","brêik táim"],["overtime","hora extra","ôuvertáim"],["paycheck","contracheque","pêitchék"],["salary","salário","sélari"],["wage","salário por hora","uêidj"],["tip","gorjeta","típ"],["training","treinamento","trêinin"],["experience","experiência","ekspíriens"],["skill","habilidade","skíl"],["task","tarefa","tésk"],["meeting","reunião","mítin"],["rule","regra","rúl"],
+["tool","ferramenta","túl"],["machine","máquina","machín"],["equipment","equipamento","ikuípment"],["gloves","luvas","glâvs"],["boots","botas","búts"],["helmet","capacete","rélmet"],["uniform","uniforme","iúniform"],["ladder","escada (de mão)","léder"],["truck","caminhão","trâk"],["box","caixa","bóks"],["bag","sacola / mala","bég"],["key","chave","quí"],["knife","faca","náif"],["hammer","martelo","rémer"],["shovel","pá","chóvel"],["rope","corda","rôup"],["nail","prego","nêil"],["screw","parafuso","skrú"],["paint","tinta / pintar","pêint"],["wood","madeira","uúd"],
+["kitchen","cozinha","kítchen"],["bathroom","banheiro","béthrum"],["bedroom","quarto de dormir","bédrum"],["floor","chão / andar","flór"],["wall","parede","uól"],["window","janela","uíndou"],["table","mesa","têibol"],["chair","cadeira","tchér"],["bed","cama","béd"],["towel","toalha","táuel"],["soap","sabão","sôup"],["trash","lixo","tréch"],["broom","vassoura","brúm"],["mop","esfregão","móp"],["vacuum","aspirador","vékium"],["sheet","lençol","chít"],["pillow","travesseiro","pílou"],["blanket","cobertor","blénket"],["mirror","espelho","míror"],["shelf","prateleira","chélf"],
+["plate","prato","plêit"],["cup","xícara / copo","câp"],["glass","copo (de vidro)","glés"],["fork","garfo","fórk"],["spoon","colher","spún"],["pan","panela / frigideira","pén"],["pot","panela funda","pót"],["oven","forno","âven"],["stove","fogão","stôuv"],["fridge","geladeira","frídj"],["freezer","congelador","frízer"],["sink","pia","sínk"],["bread","pão","bréd"],["meat","carne","mít"],["chicken","frango","tchíquen"],["fish","peixe","fích"],["rice","arroz","ráis"],["beans","feijão","bíns"],["egg","ovo","ég"],["cheese","queijo","tchíz"],
+["salt","sal","sólt"],["sugar","açúcar","chúgar"],["oil","óleo","óil"],["milk","leite","mílk"],["coffee","café","cófi"],["juice","suco","djús"],["fruit","fruta","frút"],["apple","maçã","épol"],["orange","laranja","órendj"],["banana","banana","banéna"],["vegetable","legume / verdura","védjtebol"],["potato","batata","potêito"],["onion","cebola","ânion"],["tomato","tomate","tomêito"],["lettuce","alface","létes"],["breakfast","café da manhã","brékfest"],["lunch","almoço","lântch"],["dinner","jantar","díner"],["snack","lanche","snék"],["meal","refeição","míl"],
+["head","cabeça","réd"],["eye","olho","ái"],["ear","orelha / ouvido","íer"],["mouth","boca","máuth"],["nose","nariz","nôuz"],["arm","braço","árm"],["leg","perna","lég"],["foot","pé","fút"],["back","costas","bék"],["finger","dedo","fínguer"],["hurt","machucar / doer","rôrt"],["pain","dor","pêin"],["sick","doente","sík"],["doctor","médico","dóktor"],["hospital","hospital","róspital"],["medicine","remédio","médisin"],["accident","acidente","éksident"],["emergency","emergência","imêrdjensi"],["insurance","seguro","inchúrans"],["rest","descansar / descanso","rést"],
+["street","rua","strít"],["road","estrada","rôud"],["store","loja","stór"],["market","mercado","márket"],["bank","banco","bénk"],["church","igreja","tchôrtch"],["school","escola","skúl"],["airport","aeroporto","érport"],["bus","ônibus","bâs"],["train","trem","trêin"],["ticket","passagem / bilhete","tíket"],["map","mapa","mép"],["address","endereço","édres"],["left","esquerda","léft"],["straight","reto / em frente","strêit"],["near","perto","níer"],["far","longe","fár"],["here","aqui","ríer"],["there","lá / ali","dhér"],["corner","esquina / canto","córner"],
+["rain","chuva","rêin"],["snow","neve","snôu"],["sun","sol","sân"],["wind","vento","uínd"],["cloud","nuvem","cláud"],["storm","tempestade","stórm"],["ice","gelo","áis"],["weather","clima / tempo","uédher"],["season","estação / temporada","sízon"],["summer","verão","sâmer"],["winter","inverno","uínter"],["spring","primavera","spríng"],["fall","outono / cair","fól"],["tree","árvore","trí"],["grass","grama","grés"],["flower","flor","fláuer"],["plant","planta / plantar","plént"],["garden","jardim","gárden"],["leaf","folha","líf"],["dirt","terra / sujeira","dért"],
+["always","sempre","ólueis"],["never","nunca","néver"],["sometimes","às vezes","sâmtáims"],["usually","geralmente","iújuali"],["often","frequentemente","ófen"],["again","de novo","aguén"],["now","agora","náu"],["soon","em breve / logo","sún"],["later","mais tarde","lêiter"],["before","antes","bifór"],["after","depois","áfter"],["together","juntos","tugédher"],["alone","sozinho","alôun"],["maybe","talvez","mêibi"],["sure","claro / com certeza","chúr"],["of course","claro","óv córs"],["please","por favor","plíz"],["thanks","obrigado","thénks"],["sorry","desculpa","sóri"],["excuse me","com licença","ekskiúz mi"],
+["everything","tudo","évrithing"],["something","algo / alguma coisa","sâmthing"],["nothing","nada","nâthing"],["everyone","todo mundo","évriuân"],["someone","alguém","sâmuân"],["nobody","ninguém","nôubadi"],["everywhere","em todo lugar","évriuér"],["somewhere","em algum lugar","sâmuér"],["first","primeiro","fêrst"],["last","último","lést"],["next","próximo","nékst"],["other","outro","âdher"],["another","um outro","anâdher"],["both","ambos / os dois","bôuth"],["each","cada","ítch"],["few","poucos","fiú"],["many","muitos","méni"],["much","muito","mâtch"],["more","mais","mór"],["less","menos","lés"],
+["boss's office","escritório do chefe","bóses ófis"],["front desk","recepção","frânt désk"],["warehouse","armazém / depósito","uérráus"],["basement","porão","bêisment"],["parking lot","estacionamento","párkin lót"],["entrance","entrada","éntrans"],["exit","saída","éksit"],["stairs","escadas","stérs"],["elevator","elevador","élevêitor"],["hallway","corredor","róluêi"],["office","escritório","ófis"],["restroom","banheiro (público)","réstrum"],["locker","armário (com chave)","lóker"],["sign here","assine aqui","sáin ríer"],["push the button","aperte o botão","púch dhi bâton"],["watch out","cuidado","uótch áut"],["be careful","tenha cuidado","bi quérfol"],["hurry up","apresse-se","rôri âp"],["slow down","vá mais devagar","slôu dáun"],["good job","bom trabalho","gúd djób"],
+["contract","contrato","cóntract"],["document","documento","dókiument"],["passport","passaporte","pésport"],["visa","visto","víza"],["application","inscrição / candidatura","eplikêichon"],["interview","entrevista","ínterviu"],["appointment","compromisso / consulta","apóintment"],["deadline","prazo final","dédlain"],["form","formulário","fórm"],["signature","assinatura","sígnetchur"],["copy","cópia","cópi"],["license","licença / habilitação","láisens"],["permit","permissão / alvará","pêrmit"],["law","lei","ló"],["legal","legal (da lei)","lígal"],["tax","imposto","téks"],["rent","aluguel","rént"],["bill","conta (a pagar)","bíl"],["receipt","recibo","risít"],["deposit","depósito / caução","dipózit"],
+["begin","iniciar","biguín"],["continue","continuar","contíniu"],["improve","melhorar","imprúv"],["increase","aumentar","incrís"],["reduce","reduzir","ridiús"],["prepare","preparar","pripér"],["organize","organizar","órganaiz"],["deliver","entregar","dilíver"],["pick up","buscar / pegar","pík âp"],["drop off","deixar / entregar","dróp óf"],["set up","montar / instalar","sét âp"],["clean out","esvaziar limpando","clín áut"],["throw away","jogar fora","thrôu auêi"],["put away","guardar","pút auêi"],["look for","procurar","lúk fór"],["take care","cuidar","têik quér"],["make sure","garantir","mêik chúr"],["find out","descobrir","fáind áut"],["give up","desistir","guív âp"],["keep going","continuar em frente","quíp gôuin"]
+];
+
+/* ==================================================================
+   🌻 JARDIM DE PALAVRAS — corpus lexical por frequência + domínio em
+   4 MODOS por palavra (a arquitetura que sustenta anos de uso):
+     L = reconhecer LENDO   (vê a palavra → escolhe o sentido)
+     O = reconhecer OUVINDO (só áudio → escolhe o sentido)
+     E = produzir ESCREVENDO (vê o sentido → digita em inglês)
+     F = produzir FALANDO    (fala no microfone)
+   Cada modo tem caixa SRS 0→3. Palavra FLORESCE quando os 4 modos
+   chegam à caixa 2+. Matemática: N palavras × 4 modos × ~5 exposições
+   espaçadas — o conteúdo cresce por tranches do corpus, os motores
+   ficam prontos de uma vez.
+   ================================================================== */
+const LEX = {
+  INTERVALOS: [0, 1, 3, 7], /* dias por caixa (0 = já vence hoje) */
+  MAX_ATIVAS: 12,           /* mudas crescendo ao mesmo tempo */
+  dados(){
+    const p = Progresso.dados;
+    if(!p.lexico) p.lexico = {}; /* { idx: {l,o,e,f, prox:{l,o,e,f}} } */
+    return p.lexico;
+  },
+  palavra(i){ return LEX_CORPUS[i]; }, /* [en, pt, som] */
+  estado(i){
+    const d = this.dados();
+    if(!d[i]) d[i] = { l:0, o:0, e:0, f:0, prox:{ l:0, o:0, e:0, f:0 } };
+    return d[i];
+  },
+  estagio(i){ const s = this.estado(i); return Math.min(4, Math.floor((s.l + s.o + s.e + s.f) / 3)); },
+  floresceu(i){ const s = this.estado(i); return s.l >= 2 && s.o >= 2 && s.e >= 2 && s.f >= 2; },
+  registrar(i, modo, certo){
+    const s = this.estado(i);
+    s[modo] = certo ? Math.min(3, s[modo] + 1) : Math.max(0, s[modo] - 1);
+    s.prox[modo] = Date.now() + this.INTERVALOS[s[modo]] * 86400000;
+    const mapa = { l:"vocab", o:"listening", e:"vocab", f:"speaking" };
+    ENGINE.registrar(mapa[modo], certo);
+    Progresso.salvar();
+  },
+  ativas(){ return Object.keys(this.dados()).map(Number).filter(i => !this.floresceu(i)); },
+  floridas(){ return Object.keys(this.dados()).map(Number).filter(i => this.floresceu(i)); },
+  /* Monta a sessão: modos vencidos das ativas primeiro; planta mudas novas se sobrar vaga */
+  montarSessao(qtd){
+    const agora = Date.now(), fila = [];
+    let ativas = this.ativas();
+    while(ativas.length < this.MAX_ATIVAS){
+      const prox = LEX_CORPUS.findIndex((_, i) => !this.dados()[i]);
+      if(prox < 0) break;
+      this.estado(prox); /* planta a muda */
+      ativas = this.ativas();
+      if(fila.length > 200) break;
+    }
+    for(const i of ativas){
+      const s = this.estado(i);
+      for(const m of ["l","o","e","f"]){
+        /* modo destrava em escada: O precisa de L≥1; E de O≥1; F de E≥1 */
+        const trava = { l:true, o:s.l >= 1, e:s.o >= 1, f:s.e >= 1 }[m];
+        if(trava && s[m] < 3 && s.prox[m] <= agora) fila.push({ i, m });
+      }
+    }
+    /* Revisão de floridas de vez em quando (10%) pra não enferrujar */
+    const fl = this.floridas();
+    if(fl.length && Math.random() < 0.4){
+      const i = fl[Math.floor(Math.random() * fl.length)];
+      fila.push({ i, m: ["l","o","e","f"][Math.floor(Math.random() * 4)] });
+    }
+    return embaralhar(fila).slice(0, qtd);
+  },
+  distratores(i, n){
+    const outros = [];
+    while(outros.length < n){
+      const j = Math.floor(Math.random() * LEX_CORPUS.length);
+      if(j !== i && !outros.includes(j)) outros.push(j);
+    }
+    return outros;
+  }
+};
+let jardimEstado = null;
+function iniciarJardim(){
+  const fila = LEX.montarSessao(8);
+  if(!fila.length){ mostrarToast("🌻 Nada vencendo agora — seu jardim está regado! Volte mais tarde."); renderJardim(); irPara("tela-jardim"); return; }
+  ENGINE.jogou("jardim");
+  jardimEstado = { fila, pos:0, certas:0, xp:0 };
+  renderJardim();
+  irPara("tela-jardim");
+  jardimProxima();
+}
+function renderJardim(){
+  const total = LEX_CORPUS.length;
+  const floridas = LEX.floridas().length, ativas = LEX.ativas().length;
+  $("#jarTopo").innerHTML = `
+    <div class="jar-status">
+      <div><b style="font-family:var(--f-display);font-size:1.15rem">🌻 ${floridas}</b><small>floresceram</small></div>
+      <div><b style="font-family:var(--f-display);font-size:1.15rem">🌱 ${ativas}</b><small>crescendo</small></div>
+      <div><b style="font-family:var(--f-display);font-size:1.15rem">${total - floridas - ativas}</b><small>sementes no pacote</small></div>
+    </div>
+    <div class="jar-canteiro">${LEX.ativas().slice(0, 12).map(i => {
+      const est = LEX.estagio(i);
+      const ic = ["🌰","🌱","🌿","🌾","🌻"][est];
+      return `<span class="jar-planta" title="${esc(LEX.palavra(i)[0])}">${ic}<small>${esc(LEX.palavra(i)[0])}</small></span>`;
+    }).join("")}</div>`;
+}
+function jardimProxima(){
+  const e = jardimEstado;
+  if(!e || e.pos >= e.fila.length){ jardimFim(); return; }
+  const { i, m } = e.fila[e.pos++];
+  const [en, pt, som] = LEX.palavra(i);
+  e.atual = { i, m };
+  $("#jarProg").textContent = `${e.pos}/${e.fila.length} · ⭐ ${e.xp}`;
+  const alvo = $("#jarExercicio");
+  const rotulos = { l:"👁️ LEIA e escolha o sentido", o:"👂 OUÇA e escolha o sentido", e:"✍️ ESCREVA em inglês", f:"🎤 FALE em inglês" };
+  let html = `<p class="jar-modo">${rotulos[m]}</p>`;
+  if(m === "l" || m === "o"){
+    const ops = embaralhar([i, ...LEX.distratores(i, 3)]);
+    html += m === "l"
+      ? `<p class="jar-alvo">${esc(en)}</p>`
+      : `<button class="btn-som" id="jarOuvir" style="font-size:2rem;width:64px;height:64px;border-radius:50%">🔊</button>`;
+    html += `<div class="carr-opcoes">${ops.map(j => `<button class="carr-opcao" data-op="${j}">${esc(LEX.palavra(j)[1])}</button>`).join("")}</div>`;
+  } else if(m === "e"){
+    html += `<p class="jar-alvo">🇧🇷 ${esc(pt)}</p>
+      <input id="jarResp" autocomplete="off" autocapitalize="off" placeholder="Digite em inglês..." style="width:100%;border:2px solid var(--borda);border-radius:12px;padding:12px;font-weight:700;font-size:1rem;font-family:inherit">
+      <button class="btn-principal" id="jarConf" style="margin-top:10px">Conferir ✔</button>`;
+  } else {
+    html += `<p class="jar-alvo">${esc(en)}</p><p style="font-weight:700;color:var(--tinta-suave)">🗣️ ${esc(som)} · 🇧🇷 ${esc(pt)}</p>
+      <button class="btn-principal btn-mic-grande" id="jarFalar">🎤 Falar</button>
+      <button class="btn-link" id="jarPular" style="margin-top:6px">Sem microfone agora — pular</button>`;
+  }
+  html += `<div id="jarFeed"></div>`;
+  alvo.innerHTML = html;
+  if(m === "o"){ Fala.dizer(en); $("#jarOuvir").addEventListener("click", () => Fala.dizer(en, $("#jarOuvir"))); }
+  alvo.querySelectorAll("[data-op]").forEach(b => b.addEventListener("click", () => {
+    alvo.querySelectorAll("[data-op]").forEach(x => x.disabled = true);
+    const certo = Number(b.dataset.op) === i;
+    b.classList.add(certo ? "certa" : "errada");
+    jardimResultado(certo, en, pt, som);
+  }));
+  const jc = $("#jarConf");
+  if(jc){
+    const conferir = () => {
+      const dito = ($("#jarResp").value || "").toLowerCase().trim().replace(/[^a-z ]/g, "");
+      jardimResultado(dito === en.toLowerCase(), en, pt, som);
+    };
+    jc.addEventListener("click", conferir);
+    $("#jarResp").addEventListener("keydown", ev => { if(ev.key === "Enter") conferir(); });
+    $("#jarResp").focus({ preventScroll:true });
+  }
+  const jf = $("#jarFalar");
+  if(jf) jf.addEventListener("click", () => {
+    const Rec = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if(!Rec){ mostrarToast("🎤 Sem reconhecimento de voz — pulando este modo"); jardimResultado(true, en, pt, som, true); return; }
+    let r; try{ r = new Rec(); }catch(err){ mostrarToast("🎤 Microfone indisponível"); return; }
+    r.lang = "en-US"; r.interimResults = false;
+    jf.textContent = "👂 Ouvindo..."; jf.classList.add("gravando");
+    r.onresult = ev => {
+      const dito = ev.results[0][0].transcript.toLowerCase();
+      registrarPronuncia(dito.includes(en.toLowerCase()));
+      jardimResultado(dito.includes(en.toLowerCase()), en, pt, som);
+    };
+    r.onerror = () => { jf.textContent = "🎤 Falar"; jf.classList.remove("gravando"); mostrarToast("Não ouvi — tente de novo"); };
+    r.onend = () => { jf.textContent = "🎤 Falar"; jf.classList.remove("gravando"); };
+    try{ r.start(); }catch(err){}
+  });
+  const jp = $("#jarPular");
+  if(jp) jp.addEventListener("click", () => jardimResultado(true, en, pt, som, true));
+}
+function jardimResultado(certo, en, pt, som, pulou){
+  const e = jardimEstado;
+  if(!e || !e.atual) return;
+  const { i, m } = e.atual;
+  e.atual = null;
+  if(!pulou) LEX.registrar(i, m, certo);
+  const antes = LEX.floresceu(i);
+  let ganho = 0;
+  if(certo && !pulou){ e.certas++; ganho = 3; e.xp += ganho; registrarAtividade(ganho); }
+  const flor = LEX.floresceu(i) && !antes;
+  if(flor){ COSM.ganhar(10, null); }
+  $("#jarFeed").innerHTML = `<div class="feedback ${certo ? "certo" : "errado"} mostrar">
+    ${certo ? (pulou ? "⏭️ Pulado" : "✅ Isso!") : "❌ Era:"} <b>${esc(en)}</b> — ${esc(pt)} <button class="btn-som" data-falar="${esc(en)}">🔊</button><br>🗣️ ${esc(som)}
+    ${flor ? `<br>🌻 <b>${esc(en)} FLORESCEU!</b> Você domina essa palavra nos 4 modos (+🌻 10)` : ""}
+    <br><button class="btn-principal" id="jarProx" style="margin-top:10px">Próxima ▶</button></div>`;
+  $("#jarFeed").querySelectorAll("[data-falar]").forEach(b => b.addEventListener("click", () => Fala.dizer(b.dataset.falar, b)));
+  $("#jarProx").addEventListener("click", jardimProxima);
+  renderJardim();
+}
+function jardimFim(){
+  const e = jardimEstado || { certas:0, xp:0, fila:[] };
+  $("#concluTitulo").textContent = "🌻 Sessão de rega concluída!";
+  $("#concluTexto").textContent = `Você regou ${e.fila.length} exercício(s) e acertou ${e.certas}. Cada palavra precisa dos 4 modos (ler, ouvir, escrever, falar) pra florescer — é assim que ela vira SUA de verdade.`;
+  $("#concluXP").textContent = String(e.xp);
+  $("#btnProximoModulo").style.display = "none";
+  jardimEstado = null;
+  irPara("tela-conclusao");
+}
+
+/* ==================================================================
+   👂 DITADO RELÂMPAGO — jogo de listening puro (mecânica própria):
+   você OUVE (sem ler nada) e escreve o que ouviu. 3 vidas, combo de
+   velocidade, frases vêm do que o aluno JÁ estudou (aulas concluídas)
+   — comprehensible input + retrieval de verdade, não pergunta-resposta.
+   ================================================================== */
+let ditadoEstado = null;
+function ditadoBanco(){
+  const feitas = NIVEIS.flatMap(nv => nv.modulos).filter(m => Progresso.moduloFeito(m.id));
+  let cards = feitas.flatMap(m => (m.cards || []).filter(c => c.en && c.en.length > 2 && c.en.length < 60));
+  if(cards.length < 8) cards = (NIVEIS[0].modulos[0].cards || []).filter(c => c.en); /* iniciantes: 1ª aula */
+  return cards;
+}
+function iniciarDitado(){
+  const banco = ditadoBanco();
+  if(!banco.length){ mostrarToast("Conclua sua primeira aula pra desbloquear o Ditado 😊"); return; }
+  ENGINE.jogou("ditado");
+  ditadoEstado = { banco: embaralhar(banco), i:0, vidas:3, combo:0, melhorCombo:0, certas:0, xp:0, inicioPergunta:0 };
+  irPara("tela-ditado");
+  ditadoProxima();
+}
+function ditadoProxima(){
+  const e = ditadoEstado;
+  if(!e) return;
+  if(e.i >= e.banco.length) e.banco = embaralhar(e.banco), e.i = 0;
+  e.atual = e.banco[e.i++];
+  e.inicioPergunta = Date.now();
+  $("#ditVidas").textContent = "❤️".repeat(e.vidas) + "🖤".repeat(3 - e.vidas);
+  $("#ditCombo").textContent = e.combo >= 2 ? `🔥 combo x${e.combo}` : "";
+  $("#ditXP").textContent = `⭐ ${e.xp}`;
+  $("#ditResp").value = "";
+  $("#ditFeedback").innerHTML = "";
+  $("#ditResp").disabled = false; $("#ditConferir").disabled = false;
+  Fala.dizer(e.atual.en);
+  $("#ditResp").focus({ preventScroll:true });
+}
+function ditadoNormalizar(s){
+  let t = " " + s.toLowerCase().replace(/[\u2019\u00b4`]/g, "'") + " ";
+  /* Expande contrações — "I'm" e "I am" contam como a mesma coisa */
+  t = t.replace(/n't /g, " not ").replace(/'m /g, " am ").replace(/'re /g, " are ")
+       .replace(/'ve /g, " have ").replace(/'ll /g, " will ").replace(/'d /g, " would ").replace(/'s /g, " is ");
+  return " " + t.replace(/[.,!?'"]/g, "").replace(/\s+/g, " ").trim() + " ";
+}
+function ditadoConferir(){
+  const e = ditadoEstado;
+  if(!e || !e.atual) return;
+  const dito = $("#ditResp").value.trim();
+  if(!dito){ mostrarToast("Escreva o que você ouviu 👂"); return; }
+  const alvo = ditadoNormalizar(e.atual.en), resp = ditadoNormalizar(dito);
+  const palavrasAlvo = alvo.trim().split(" ");
+  const acertos = palavrasAlvo.filter(w => resp.includes(" " + w + " ")).length;
+  const pct = acertos / palavrasAlvo.length;
+  const rapido = (Date.now() - e.inicioPergunta) < 12000;
+  const certo = pct >= 0.8;
+  ENGINE.registrar("listening", certo);
+  if(rapido) ENGINE.registrar("speed", certo);
+  $("#ditResp").disabled = true; $("#ditConferir").disabled = true;
+  if(certo){
+    e.certas++; e.combo++;
+    if(e.combo > e.melhorCombo) e.melhorCombo = e.combo;
+    const ganho = 4 + (e.combo >= 3 ? 2 : 0) + (rapido ? 2 : 0);
+    e.xp += ganho; registrarAtividade(ganho);
+    $("#ditFeedback").innerHTML = `<div class="feedback certo mostrar">✅ Isso! <b>${esc(e.atual.en)}</b> — ${esc(e.atual.pt)}${rapido ? " ⚡ bônus de velocidade!" : ""}<br><button class="btn-principal" id="ditProx" style="margin-top:10px">Próxima 🔊</button></div>`;
+  } else {
+    e.vidas--; e.combo = 0;
+    $("#ditFeedback").innerHTML = `<div class="feedback errado mostrar">👂 Era: <b>${esc(e.atual.en)}</b> <button class="btn-som" data-falar="${esc(e.atual.en)}">🔊</button><br>🗣️ ${esc(e.atual.som || "")}<br>🇧🇷 ${esc(e.atual.pt)}<br><button class="btn-principal" id="ditProx" style="margin-top:10px">${e.vidas > 0 ? "Continuar" : "Ver resultado"} ▶</button></div>`;
+    $("#ditFeedback").querySelectorAll("[data-falar]").forEach(b => b.addEventListener("click", () => Fala.dizer(b.dataset.falar, b)));
+  }
+  Progresso.salvar();
+  $("#ditProx").addEventListener("click", () => { e.vidas > 0 ? ditadoProxima() : ditadoFim(); });
+}
+function ditadoFim(){
+  const e = ditadoEstado;
+  $("#concluTitulo").textContent = "👂 Ditado Relâmpago!";
+  $("#concluTexto").textContent = `Você entendeu ${e.certas} frase(s) só de ouvido, melhor combo x${e.melhorCombo}. Treinar o ouvido é o que separa quem "sabe inglês" de quem ENTENDE inglês falado.`;
+  $("#concluXP").textContent = String(e.xp);
+  $("#btnProximoModulo").style.display = "none";
+  ditadoEstado = null;
+  irPara("tela-conclusao");
+}
+
+/* ==================================================================
+   🎮 JOGOS — Game Hub. Cada jogo tem identidade, habilidade-alvo e
+   mecânica própria (nada de 6 skins do mesmo quiz):
+   🧗 Carreira  = progressão infinita (grammar/contexto profissional)
+   🎙️ Entrevista = simulação real com pressão de tempo opcional (speaking)
+   👂 Ditado    = listening puro, escrever o que ouviu
+   🗼 Escalada  = corrida contra o relógio sem errar (speed)
+   🎤 Pronúncia = falar no microfone (speaking)
+   ♾️ Revisão Infinita = repetição espaçada (vocab)
+   ❌ Caça aos Erros = só o que você errou (pontos fracos)
+   ================================================================== */
+const JOGOS_LISTA = [
+  { id:"carreira",  ic:"🧗", nome:"Modo Carreira",    skill:"grammar",   cor:"#FFF3D1", desc:"Sua jornada infinita — nunca reseta, sempre mais difícil." },
+  { id:"entrevista",ic:"🎙️", nome:"Entrevista",       skill:"speaking",  cor:"#E4EDFA", desc:"Simulação real: agência, empregador, consulado, chegada." },
+  { id:"ditado",    ic:"👂", nome:"Ditado Relâmpago", skill:"listening", cor:"#E1F3EA", desc:"Escreva o que OUVIU. 3 vidas, combo de velocidade." },
+  { id:"jardim",    ic:"🌻", nome:"Jardim de Palavras", skill:"vocab", cor:"#FFF3D1", desc:"Cada palavra é uma planta: ler, ouvir, escrever e FALAR até florescer." },
+  { id:"escalada",  ic:"🗼", nome:"Escalada",         skill:"speed",     cor:"#FCE4DB", desc:"Suba sem errar, contra o relógio. Até onde aguenta?" },
+  { id:"pronuncia", ic:"🎤", nome:"Pronúncia",        skill:"speaking",  cor:"#F5E4F7", desc:"Fale no microfone — o app confere se saiu certo." },
+  { id:"infinito",  ic:"♾️", nome:"Revisão Infinita", skill:"vocab",     cor:"#E1F3EA", desc:"Repetição espaçada de tudo que você já aprendeu." },
+  { id:"erros",     ic:"❌", nome:"Caça aos Erros",   skill:"vocab",     cor:"#FCE4DB", desc:"Só o que você já errou. Vire o jogo." }
+];
+/* ==================================================================
+   📖 TUTORIAIS DOS JOGOS — na 1ª vez que abre um jogo, o FalaFina
+   ENSINA como ele funciona (mecânica, habilidade, como pontuar).
+   Depois, o "?" em cada card reabre quando quiser.
+   ================================================================== */
+const JOGOS_TUTORIAL = {
+  carreira: { ic:"🧗", nome:"Modo Carreira", passos:[
+    ["🎯","É a sua jornada H-2B/H-2A infinita: perguntas de recrutador, empregador, consulado, imigração e do dia a dia no trabalho."],
+    ["📈","Cada resposta forte SOBE seu nível pra sempre — nunca desce, nunca reseta. Quanto mais alto, mais difícil."],
+    ["🌱","Níveis 1-5: você aprende ANTES de responder (múltipla escolha). Do 6 em diante: resposta livre. Do 10 em diante: sem ajuda visível. Às vezes a pergunta vem SÓ por áudio 👂."],
+    ["⭐","É o jogo que dá MAIS XP do app — e girassóis junto. Responda com frases completas: 1 palavra não sobe de nível."]
+  ]},
+  entrevista: { ic:"🎙️", nome:"Entrevista", passos:[
+    ["🎬","Simulação da entrevista real: escolha programa, etapa e vaga — o entrevistador pergunta em inglês, você responde falando 🎤 ou digitando."],
+    ["🧩","Sua resposta é avaliada por PONTOS-CHAVE: o que o entrevistador precisava ouvir. Cobriu tudo = resposta forte."],
+    ["🔁","O que você errar volta numa rodada de reforço no final — repetição espaçada de verdade."],
+    ["⏱️","Ative o modo com tempo se quiser pressão progressiva: quanto mais respostas você domina, menos tempo recebe. Estourar o tempo nunca pune — vira aprendizado."]
+  ]},
+  ditado: { ic:"👂", nome:"Ditado Relâmpago", passos:[
+    ["🔊","Você OUVE uma frase em inglês — sem ler nada — e escreve o que ouviu. Pode repetir o áudio quantas vezes quiser."],
+    ["❤️","Você tem 3 vidas. Acertou 80% das palavras = ponto. \"I'm\" e \"I am\" contam como a mesma coisa."],
+    ["🔥","Acertos seguidos formam COMBO (+XP). Responder em menos de 12s dá bônus de velocidade ⚡."],
+    ["📚","As frases vêm das aulas que VOCÊ já concluiu — quanto mais aulas, mais variado o ditado."]
+  ]},
+  escalada: { ic:"🗼", nome:"Escalada", passos:[
+    ["🧗","Suba níveis respondendo rodadas SEM estourar o limite de erros. Cada nível: mais perguntas, menos tempo."],
+    ["⚡","Responder muito rápido conta como RELÂMPAGO — acumule pra ganhar bônus."],
+    ["🎁","A cada 10 níveis tem baú com girassóis. Seu RECORDE fica salvo pra sempre no ranking."],
+    ["😈","No modo pulo você arrisca ir direto pra um nível alto — mas se falhar, volta pro 1. Risco e recompensa."]
+  ]},
+  pronuncia: { ic:"🎤", nome:"Pronúncia", passos:[
+    ["🗣️","Fale as palavras e frases no microfone — o app reconhece sua voz e confere se saiu certo."],
+    ["👂","Ouça o áudio nativo primeiro, depois imite. Errou? Tente de novo, sem pressa."],
+    ["📊","Cada frase reconhecida alimenta sua habilidade de Speaking na barra do Hub."]
+  ]},
+  infinito: { ic:"♾️", nome:"Revisão Infinita", passos:[
+    ["🧠","Perguntas sem fim de TUDO que você já aprendeu, na hora exata em que seu cérebro ia esquecer (repetição espaçada)."],
+    ["🔥","Acertos seguidos formam sequência — seu recorde fica salvo. Errou? A sequência zera, mas o XP acumulado fica."],
+    ["🏁","Pare quando quiser com \"Encerrar e guardar meu XP\"."]
+  ]},
+  jardim: { ic:"🌻", nome:"Jardim de Palavras", passos:[
+    ["🌰","Cada palavra do inglês é uma SEMENTE. Pra ela florescer, você precisa dominar a palavra de 4 jeitos: 👁️ lendo, 👂 ouvindo, ✍️ escrevendo e 🎤 falando."],
+    ["🌱","Os modos destravam em escada: primeiro reconheça lendo, depois de ouvido, depois escreva, depois fale. É assim que a palavra vira SUA."],
+    ["💧","Cada sessão de rega traz o que está vencendo na sua memória (repetição espaçada) + sementes novas. Errou? A caixinha desce e a palavra volta antes."],
+    ["🌻","Palavra florescida = dominada nos 4 modos (+🌻 10 girassóis). São 420 sementes no pacote atual — e o pacote cresce."]
+  ]},
+  erros: { ic:"❌", nome:"Caça aos Erros", passos:[
+    ["🎯","Só aparece o que você JÁ ERROU em qualquer lugar do app. Transformar erro em acerto é o atalho mais rápido que existe."],
+    ["✅","Quando você domina um item errado, ele sai da lista — a missão é zerar a caça."]
+  ]}
+};
+function tutoriaisVistos(){
+  const p = Progresso.dados;
+  if(!p.tutoriaisVistos) p.tutoriaisVistos = {};
+  return p.tutoriaisVistos;
+}
+function abrirTutorialJogo(id, aoContinuar){
+  const t = JOGOS_TUTORIAL[id];
+  if(!t){ if(aoContinuar) aoContinuar(); return; }
+  const alvo = $("#bauCaixaConteudo");
+  alvo.innerHTML = `
+    <p class="bau-titulo">${t.ic} Como jogar: ${esc(t.nome)}</p>
+    <div class="tut-passos">${t.passos.map(p2 => `<div class="tut-passo"><span>${p2[0]}</span><p>${p2[1]}</p></div>`).join("")}</div>
+    ${aoContinuar ? `<button class="bau-cta" id="tutJogar">Entendi — jogar! ▶</button>` : ""}
+    <button class="bau-fechar" id="tutFechar">Fechar</button>`;
+  $("#bauOverlay").classList.add("aberto");
+  $("#tutFechar").addEventListener("click", fecharBauModal);
+  const bj = $("#tutJogar");
+  if(bj) bj.addEventListener("click", () => { fecharBauModal(); aoContinuar(); });
+}
+function abrirComoConecta(){
+  const alvo = $("#bauCaixaConteudo");
+  alvo.innerHTML = `
+    <p class="bau-titulo">🧠 Como os jogos se conectam</p>
+    <div class="tut-passos">
+      <div class="tut-passo"><span>🎮</span><p>Cada jogo treina uma habilidade diferente: 👂 Listening, 🗣️ Speaking, 🔤 Vocabulário, 🧩 Gramática e ⚡ Velocidade.</p></div>
+      <div class="tut-passo"><span>📊</span><p>Tudo que você acerta ou erra em QUALQUER jogo alimenta as barras de habilidade lá no Hub — os jogos conversam entre si.</p></div>
+      <div class="tut-passo"><span>🦜</span><p>O Fininho olha suas barras e recomenda o jogo certo pro seu ponto fraco do momento. Errou muito de ouvido? Ele manda pro Ditado.</p></div>
+      <div class="tut-passo"><span>🔄</span><p>O que você erra em um jogo aparece na Caça aos Erros e volta na Revisão na hora certa — nada se perde, tudo vira treino.</p></div>
+    </div>
+    <button class="bau-fechar" id="tutFechar2">Entendi!</button>`;
+  $("#bauOverlay").classList.add("aberto");
+  $("#tutFechar2").addEventListener("click", fecharBauModal);
+}
+function abrirJogo(id){
+  const vistos = tutoriaisVistos();
+  if(JOGOS_TUTORIAL[id] && !vistos[id]){
+    vistos[id] = true;
+    Progresso.salvar();
+    abrirTutorialJogo(id, () => abrirJogoDireto(id));
+    return;
+  }
+  abrirJogoDireto(id);
+}
+function abrirJogoDireto(id){
+  ENGINE.jogou(id);
+  if(id === "carreira") navPara("carreira");
+  else if(id === "entrevista"){ renderSimConfig(); irPara("tela-simulador"); }
+  else if(id === "ditado") iniciarDitado();
+  else if(id === "jardim") iniciarJardim();
+  else if(id === "escalada"){ renderEscalada(); irPara("tela-escalada"); }
+  else if(id === "pronuncia"){ revTab = "palavras"; navPara("revisao"); mostrarToast("Use o 🎤 nos cards e no feedback!"); }
+  else if(id === "infinito") iniciarInfinito();
+  else if(id === "erros"){ revTab = "erros"; navPara("revisao"); }
+}
 function renderPratica(){
   const crianca = usuarioCrianca();
+  const p = ENGINE.dados();
   const c = carrDados();
+  const fraco = ENGINE.pontoFraco();
+  const jogoRec = JOGOS_LISTA.find(j => j.id === ENGINE.jogoParaSkill(fraco.skill)) || JOGOS_LISTA[0];
+  const skillInfo = ENGINE.SKILLS[fraco.skill];
+  const ultimoId = p.jogosUltimo && p.jogosUltimo !== "carreira" ? p.jogosUltimo : null;
+  const ultimo = ultimoId ? JOGOS_LISTA.find(j => j.id === ultimoId) : null;
+  const s = estatDia();
+  const missoes = [
+    { ok:s.aulas >= 1, txt:"Concluir 1 aula", prog:`${Math.min(s.aulas,1)}/1` },
+    { ok:s.ex >= 10, txt:"Fazer 10 exercícios", prog:`${Math.min(s.ex,10)}/10` },
+    { ok:s.pron >= 3, txt:"Praticar pronúncia 3x", prog:`${Math.min(s.pron,3)}/3` }
+  ];
+  const barraSkill = sk => {
+    const pct = ENGINE.dominio(sk);
+    return `<div class="skill-linha"><span>${ENGINE.SKILLS[sk].ic} ${ENGINE.SKILLS[sk].nome}</span>
+      <div class="skill-barra"><i style="width:${pct === null ? 0 : pct}%"></i></div>
+      <b>${pct === null ? "—" : pct + "%"}</b></div>`;
+  };
   $("#praticaConteudo").innerHTML = `
-  <div class="des-card" style="border:2.5px solid var(--sol);background:linear-gradient(135deg,#FFF8E7,#FFF3D1);margin-bottom:16px">
-    <div class="top"><span class="ic">🧗</span><div><b style="font-size:1.05rem">Modo Carreira <span style="font-size:.7rem;background:var(--sol);color:#5C4400;padding:2px 8px;border-radius:99px;font-weight:800">★ PRINCIPAL</span></b><p>Sua jornada H-2B/H-2A <b>infinita</b> — perguntas, cenários e estilos sempre diferentes. Nunca reseta, só avança. Quanto mais alto o nível, maior o XP e mais difícil o desafio. Você está no <b>nível ${c.nivel}</b>.</p></div></div>
-    <button class="btn-principal" id="prCarreira" style="margin-top:6px">🚀 Continuar carreira (nível ${c.nivel}) ▶</button>
+  <div class="hub-hero" id="hubCarreira">
+    <div class="hub-hero-txt">
+      <span class="hub-tag">★ JOGO PRINCIPAL</span>
+      <b>🧗 Modo Carreira — nível ${c.nivel}</b>
+      <p>Sua jornada H-2B/H-2A infinita. Nunca reseta, só avança — e cada nível fica mais difícil.</p>
+    </div>
+    <button class="btn-principal" style="width:auto">Continuar ▶</button>
+    <span class="hub-ajuda" data-tut="carreira" role="button" aria-label="Como jogar Modo Carreira">?</span>
   </div>
-  <div class="des-grid" style="grid-template-columns:repeat(auto-fill,minmax(250px,1fr))">
-    ${crianca ? "" : `<div class="des-card"><div class="top"><span class="ic">🎙️</span><div><b>Simulador de Entrevista</b><p>Treine em inglês as entrevistas reais do H-2B/H-2A: agência, empregador, consulado e chegada.</p></div></div><button class="btn-resg" id="prSim">Entrar na sala ▶</button></div>`}
-    <div class="des-card"><div class="top"><span class="ic">♾️</span><div><b>Treino Infinito</b><p>Perguntas sem fim de tudo que você já aprendeu. Repetição espaçada de verdade.</p></div></div><button class="btn-resg" id="prInf">Treinar ▶</button></div>
-    <div class="des-card"><div class="top"><span class="ic">🗼</span><div><b>Escalada</b><p>Suba de nível respondendo sem errar. Até onde você aguenta?</p></div></div><button class="btn-resg" id="prEsc">Escalar ▶</button></div>
-    <div class="des-card"><div class="top"><span class="ic">🎤</span><div><b>Treino de Pronúncia</b><p>Revise suas palavras falando no microfone — o app confere se saiu certo.</p></div></div><button class="btn-resg" id="prPron">Falar ▶</button></div>
-    <div class="des-card"><div class="top"><span class="ic">❌</span><div><b>Caça aos Erros</b><p>Só o que você já errou. Vire o jogo.</p></div></div><button class="btn-resg" id="prErr">Encarar ▶</button></div>
-  </div>`;
-  const liga = (id, fn) => { const el = $("#praticaConteudo").querySelector(id); if(el) el.addEventListener("click", fn); };
-  liga("#prCarreira", () => navPara("carreira"));
-  liga("#prSim", () => { renderSimConfig(); irPara("tela-simulador"); });
-  liga("#prInf", () => iniciarInfinito());
-  liga("#prEsc", () => { renderEscalada(); irPara("tela-escalada"); });
-  liga("#prPron", () => { revTab = "palavras"; navPara("revisao"); mostrarToast("Dica: use o 🎤 nos cards e no feedback!"); });
-  liga("#prErr", () => { revTab = "erros"; navPara("revisao"); });
+  <div class="hub-duplo">
+    <div class="cardb hub-rec" id="hubRec">
+      <div class="secao-t" style="margin-bottom:4px">🦜 Fininho recomenda</div>
+      <p style="font-weight:700;font-size:.88rem">Sua habilidade de <b>${skillInfo.ic} ${skillInfo.nome}</b> ${fraco.pct !== null ? `está em <b>${fraco.pct}%</b> e` : ""} ${fraco.motivo}. Bora jogar <b>${jogoRec.ic} ${jogoRec.nome}</b>?</p>
+      <button class="btn-principal azul" style="margin-top:8px">Jogar agora ▶</button>
+    </div>
+    <div class="cardb">
+      <div class="secao-t" style="margin-bottom:6px">📋 Missões de hoje</div>
+      ${missoes.map(m => `<div class="linha-cat" style="background:${m.ok ? "var(--verde-claro)" : "var(--branco)"};border:1.5px solid var(--borda);margin-bottom:6px"><span>${m.ok ? "✅" : "⬜"} ${m.txt}</span><b>${m.prog}</b></div>`).join("")}
+    </div>
+  </div>
+  <div class="secao-t" style="margin:16px 0 10px">🎮 Todos os jogos</div>
+  <div class="hub-grid">
+    ${JOGOS_LISTA.filter(j => j.id !== "carreira" && !(crianca && j.id === "entrevista")).map(j => `
+      <button class="hub-jogo" data-jogo="${j.id}" style="background:${j.cor}">
+        <span class="hub-ajuda" data-tut="${j.id}" role="button" aria-label="Como jogar ${j.nome}">?</span>
+        <span class="ic">${j.ic}</span>
+        <b>${j.nome}</b>
+        <small>${j.desc}</small>
+        <span class="hub-skill">${ENGINE.SKILLS[j.skill].ic} treina ${ENGINE.SKILLS[j.skill].nome}${p.jogosUso[j.id] ? ` · jogado ${p.jogosUso[j.id]}x` : ""}</span>
+      </button>`).join("")}
+  </div>
+  <div class="cardb" style="margin-top:16px">
+    <div class="secao-t" style="margin-bottom:8px">📊 Suas habilidades</div>
+    ${Object.keys(ENGINE.SKILLS).map(barraSkill).join("")}
+    <p style="font-weight:700;color:var(--tinta-suave);font-size:.78rem;margin-top:8px">As barras se preenchem conforme você joga — cada jogo treina uma habilidade diferente. <button class="btn-link" id="hubComoConecta" style="padding:0;font-size:.78rem">🧠 Como os jogos se conectam →</button></p>
+  </div>
+  ${ultimo ? `<div class="faixa-trofeu" style="margin-top:14px;cursor:pointer" id="hubUltimo">🕹️ Continuar de onde parou: <b>${ultimo.ic} ${ultimo.nome}</b> ▶</div>` : ""}`;
+  $("#hubCarreira").addEventListener("click", () => abrirJogo("carreira"));
+  $("#hubRec").querySelector("button").addEventListener("click", () => abrirJogo(jogoRec.id));
+  $("#praticaConteudo").querySelectorAll("[data-jogo]").forEach(b => b.addEventListener("click", () => abrirJogo(b.dataset.jogo)));
+  $("#praticaConteudo").querySelectorAll("[data-tut]").forEach(el => el.addEventListener("click", ev => { ev.stopPropagation(); abrirTutorialJogo(el.dataset.tut, null); }));
+  const hcc = $("#hubComoConecta"); if(hcc) hcc.addEventListener("click", abrirComoConecta);
+  const hu = $("#hubUltimo"); if(hu) hu.addEventListener("click", () => abrirJogo(ultimo.id));
 }
 /* ---------- COMUNIDADE ---------- */
 function renderComunidade(){
@@ -7161,7 +7898,7 @@ function renderLoja(){
 const FF_ROTAS = {
   home:      { tela:"tela-home", titulo:"👋 Início", render: renderHome },
   aulas:     { tela:"tela-trilha", titulo:"📚 Aulas / Trilha de Estudos", render: renderTrilha },
-  pratica:   { tela:"tela-pratica", titulo:"🎯 Prática", render: renderPratica },
+  pratica:   { tela:"tela-pratica", titulo:"🎮 Jogos", render: renderPratica },
   desafios:  { tela:"tela-desafios", titulo:"🏆 Desafios", render: renderDesafios },
   revisao:   { tela:"tela-revisao", titulo:"🔄 Revisão", render: renderRevisao },
   conquistas:{ tela:"tela-conquistas", titulo:"🏅 Conquistas", render: renderConquistas },
@@ -7180,13 +7917,13 @@ function navPara(rota){
   irPara(r.tela);
 }
 const FF_TITULOS = {
-  "tela-home":"👋 Início", "tela-trilha":"📚 Aulas / Trilha de Estudos", "tela-pratica":"🎯 Prática",
+  "tela-home":"👋 Início", "tela-trilha":"📚 Aulas / Trilha de Estudos", "tela-pratica":"🎮 Jogos",
   "tela-desafios":"🏆 Desafios", "tela-revisao":"🔄 Revisão", "tela-conquistas":"🏅 Conquistas",
   "tela-ranking":"📊 Ranking", "tela-comunidade":"👥 Comunidade", "tela-meuperfil":"🪪 Meu Perfil",
   "tela-config":"⚙️ Configurações", "tela-simulador":"🎙️ Simulador de Entrevista",
   "tela-entrevista":"🎙️ Entrevista ao vivo", "tela-licao":"📖 Aula", "tela-quiz":"📝 Exercícios",
   "tela-conclusao":"🎉 Parabéns!", "tela-escalada":"🗼 Escalada", "tela-perfil":"🪪 Perfil", "tela-paywall":"👑 FalaFina Premium", "tela-loja":"🛍️ Loja",
-  "tela-carreira":"🧗 Modo Carreira"
+  "tela-carreira":"🧗 Modo Carreira", "tela-ditado":"👂 Ditado Relâmpago", "tela-jardim":"🌻 Jardim de Palavras"
 };
 const FF_SEM_SHELL = ["tela-onboarding","tela-inicio","tela-cadastro","tela-login","tela-paywall"];
 function ffAposIrPara(tela){
@@ -7198,12 +7935,24 @@ function ffAposIrPara(tela){
   const mapa = { "tela-home":"home", "tela-trilha":"aulas", "tela-pratica":"pratica", "tela-desafios":"desafios",
     "tela-revisao":"revisao", "tela-conquistas":"conquistas", "tela-ranking":"ranking", "tela-comunidade":"comunidade",
     "tela-meuperfil":"meuperfil", "tela-config":"config", "tela-simulador":"pratica", "tela-entrevista":"pratica",
-    "tela-licao":"aulas", "tela-quiz":"aulas", "tela-escalada":"pratica", "tela-conclusao":"aulas", "tela-carreira":"pratica", "tela-loja":"loja" };
+    "tela-licao":"aulas", "tela-quiz":"aulas", "tela-escalada":"pratica", "tela-conclusao":"aulas", "tela-carreira":"pratica", "tela-ditado":"pratica", "tela-jardim":"pratica", "tela-loja":"loja" };
   const ativa = mapa[tela] || "";
   document.querySelectorAll(".sb-item").forEach(b => b.classList.toggle("ativo", b.dataset.rota === ativa));
   document.querySelectorAll(".tb-item").forEach(b => b.classList.toggle("ativo", b.dataset.rota === ativa));
 }
 document.querySelectorAll(".sb-item, .tb-item").forEach(b => b.addEventListener("click", () => navPara(b.dataset.rota)));
+const jarRegarBtn = $("#jarRegar");
+if(jarRegarBtn) jarRegarBtn.addEventListener("click", () => { const f = LEX.montarSessao(8); if(!f.length){ mostrarToast("🌻 Jardim regado! Volte quando algo vencer."); return; } jardimEstado = { fila:f, pos:0, certas:0, xp:0 }; ENGINE.jogou("jardim"); jardimProxima(); });
+const jarSairBtn = $("#jarSair");
+if(jarSairBtn) jarSairBtn.addEventListener("click", () => { jardimEstado = null; navPara("pratica"); });
+const ditRepetirBtn = $("#ditRepetir");
+if(ditRepetirBtn) ditRepetirBtn.addEventListener("click", () => { if(ditadoEstado && ditadoEstado.atual) Fala.dizer(ditadoEstado.atual.en, ditRepetirBtn); });
+const ditConferirBtn = $("#ditConferir");
+if(ditConferirBtn) ditConferirBtn.addEventListener("click", ditadoConferir);
+const ditSairBtn = $("#ditSair");
+if(ditSairBtn) ditSairBtn.addEventListener("click", () => { if(ditadoEstado && ditadoEstado.certas > 0) ditadoFim(); else { ditadoEstado = null; navPara("pratica"); } });
+const ditRespArea = $("#ditResp");
+if(ditRespArea) ditRespArea.addEventListener("keydown", e => { if(e.key === "Enter"){ e.preventDefault(); ditadoConferir(); } });
 const sbGrupoWppBtn = $("#sbGrupoWpp");
 if(sbGrupoWppBtn) sbGrupoWppBtn.addEventListener("click", () => window.open(FF_CONTATO.grupo, "_blank"));
 const sbPrem = $("#sbPremium");

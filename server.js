@@ -168,6 +168,35 @@ function mesclarProgresso(a, b) {
     acertos: Math.max(carA.acertos || 0, carB.acertos || 0),
     respondidas: Math.max(carA.respondidas || 0, carB.respondidas || 0)
   };
+  /* Learning Engine: contadores por habilidade e uso de jogos — só crescem */
+  const habA = a.habilidades || {}, habB = b.habilidades || {};
+  r.habilidades = {};
+  for(const s of new Set([...Object.keys(habA), ...Object.keys(habB)])){
+    r.habilidades[s] = {
+      tent: Math.max((habA[s] || {}).tent || 0, (habB[s] || {}).tent || 0),
+      ok: Math.max((habA[s] || {}).ok || 0, (habB[s] || {}).ok || 0)
+    };
+  }
+  r.tutoriaisVistos = Object.assign({}, a.tutoriaisVistos || {}, b.tutoriaisVistos || {});
+  /* Jardim de Palavras: caixas SRS por modo — mescla pela MAIOR caixa
+     (não perde progresso) e pela data de revisão mais distante */
+  const lexA = a.lexico || {}, lexB = b.lexico || {};
+  r.lexico = {};
+  for(const i of new Set([...Object.keys(lexA), ...Object.keys(lexB)])){
+    const xa = lexA[i] || {}, xb = lexB[i] || {};
+    const pa = xa.prox || {}, pb = xb.prox || {};
+    r.lexico[i] = {
+      l: Math.max(xa.l || 0, xb.l || 0), o: Math.max(xa.o || 0, xb.o || 0),
+      e: Math.max(xa.e || 0, xb.e || 0), f: Math.max(xa.f || 0, xb.f || 0),
+      prox: { l: Math.max(pa.l || 0, pb.l || 0), o: Math.max(pa.o || 0, pb.o || 0),
+              e: Math.max(pa.e || 0, pb.e || 0), f: Math.max(pa.f || 0, pb.f || 0) }
+    };
+  }
+  const usoA = a.jogosUso || {}, usoB = b.jogosUso || {};
+  r.jogosUso = {};
+  for(const j of new Set([...Object.keys(usoA), ...Object.keys(usoB)])){
+    r.jogosUso[j] = Math.max(usoA[j] || 0, usoB[j] || 0);
+  }
   r.srs = Object.assign({}, a.srs || {});
   for (const k in (b.srs || {})) {
     const ia = r.srs[k], ib = b.srs[k];
