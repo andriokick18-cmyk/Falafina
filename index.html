@@ -758,12 +758,7 @@ body.sem-shell .btn-info-topo{display:none}
     <button class="sb-item" data-rota="home"><span class="ic">🏠</span>Início</button>
     <button class="sb-item" data-rota="aulas"><span class="ic">📚</span>Aulas</button>
     <button class="sb-item" data-rota="pratica"><span class="ic">🎮</span>Jogos</button>
-    <button class="sb-item" data-rota="desafios"><span class="ic">🏆</span>Desafios</button>
-    <button class="sb-item" data-rota="revisao"><span class="ic">🔄</span>Revisão</button>
-    <button class="sb-item" data-rota="ranking"><span class="ic">📊</span>Ranking</button>
-    <button class="sb-item" data-rota="conquistas"><span class="ic">🏅</span>Conquistas</button>
-    <button class="sb-item" data-rota="comunidade"><span class="ic">👥</span>Comunidade</button>
-    <button class="sb-item" data-rota="meuperfil"><span class="ic">🪪</span>Meu Perfil</button>
+    <button class="sb-item" data-rota="progresso"><span class="ic">📊</span>Progresso</button>
   </nav>
   <div class="sb-extras">
     <button class="sb-item" data-rota="loja"><span class="ic">🛍️</span>Loja</button>
@@ -878,6 +873,11 @@ body.sem-shell .btn-info-topo{display:none}
 
 <!-- ================= TELA: RANKING ================= -->
 <main class="tela" id="tela-ranking">
+  <div class="chips-tab" style="margin-bottom:12px">
+    <button class="chip-tab" data-irglobal="meuperfil">🪪 Perfil</button>
+    <button class="chip-tab" data-irglobal="conquistas">🏅 Conquistas</button>
+    <button class="chip-tab ativo" data-irglobal="ranking">📊 Ranking</button>
+  </div>
   <div class="cabecalho-trilha"><h2 style="display:flex;align-items:center;gap:10px">🏆 Ranking <button class="area-q" data-guia="ranking" aria-label="Entender o Ranking" style="font-size:.85rem;width:26px;height:26px">?</button></h2><p>Quem estuda mais, sobe. Ranking <b>mundial</b> do FalaFina 🌎 — todos os alunos, de todos os aparelhos. (Sem internet, mostra só os perfis deste aparelho.)</p></div>
   <div id="rankingLista"></div>
 </main>
@@ -1096,8 +1096,7 @@ body.sem-shell .btn-info-topo{display:none}
   <button class="tb-item" data-rota="home"><span class="ic">🏠</span>Início</button>
   <button class="tb-item" data-rota="aulas"><span class="ic">📚</span>Aulas</button>
   <button class="tb-item" data-rota="pratica"><span class="ic">🎮</span>Jogos</button>
-  <button class="tb-item" data-rota="desafios"><span class="ic">🏆</span>Desafios</button>
-  <button class="tb-item" data-rota="meuperfil"><span class="ic">🪪</span>Perfil</button>
+  <button class="tb-item" data-rota="progresso"><span class="ic">📊</span>Progresso</button>
 </nav>
 <div class="toast" id="toast"></div>
 <div class="bau-overlay" id="bauOverlay"><div class="bau-caixa" id="bauCaixaConteudo"></div></div>
@@ -7074,19 +7073,6 @@ function renderHome(){
   }
   const dias = diasTrialRestantes();
   const selo = ehPremium() ? "👑 Premium ativo" : (dias > 0 ? `🎁 ${dias} dia${dias === 1 ? "" : "s"} grátis` : "");
-  const med = ["🥇","🥈","🥉"];
-  const eu = Contas.sessao();
-  const locais = Object.values(Contas.todas()).filter(x => x.progresso).map(x => ({ nome:x.nome, voce:x.email === eu, xp:x.progresso.xp || 0 })).sort((x,y) => y.xp - x.xp);
-  const posEu = locais.findIndex(x => x.voce);
-  const linhaRank = (x, i) => `
-    <div class="rank-item ${x.voce ? "eu" : ""}" style="margin-bottom:6px;padding:8px 12px">
-      <div class="rank-pos">${med[i] || (i+1)+"º"}</div>
-      <div style="min-width:0"><b style="font-size:.9rem">${esc(x.nome)}${x.voce ? " (você)" : ""}</b></div>
-      <div class="rank-xp" style="font-size:.85rem">${x.xp} XP</div>
-    </div>`;
-  let rankMiniHtml = locais.slice(0,3).map(linhaRank).join("");
-  if(posEu >= 3) rankMiniHtml += linhaRank(locais[posEu], posEu);
-  if(!rankMiniHtml) rankMiniHtml = `<p style="font-weight:700;color:var(--tinta-suave);font-size:.88rem">Estude um pouquinho pra entrar no ranking! 😄</p>`;
   const linhaHoje = (ok, ic, txt, prog) => `
     <button class="linha-cat" style="background:${ok ? "var(--verde-claro)" : "var(--branco)"};border:1.5px solid var(--borda);width:100%" data-hj="${ic}">
       <span>${ok ? "✅" : "⬜"} ${txt}</span><b>${prog}</b>
@@ -7128,25 +7114,12 @@ function renderHome(){
       <p style="font-weight:700;color:var(--tinta-suave);font-size:.86rem;margin-bottom:10px">Sua história nos EUA em temporadas: agência → vaga → visto → chegada → trabalho. Agora: <b>${carrResumo()}</b>.</p>
       <button class="btn-principal" id="homeCarreira" style="max-width:340px">🚀 Continuar carreira ▶</button>
     </div>
-    <div class="cardb" style="margin-top:14px">
-      <div class="secao-t">🎯 Tudo que você pode praticar <button class="btn-link" style="padding:0;font-size:.85rem" id="homeMapa">🗺️ O que é cada área? →</button></div>
-      <div class="acoes-grid">
-        <button class="acao" data-ir2="pratica-sim"><span class="ic">🎙️</span><b>Simulador de Entrevista</b><small>ensaie a entrevista H-2B/H-2A falando inglês</small></button>
-        <button class="acao" data-ir2="pratica-inf"><span class="ic">♾️</span><b>Revisão Infinita</b><small>perguntas sem fim do que você já aprendeu</small></button>
-        <button class="acao" data-ir2="pratica-esc"><span class="ic">🗼</span><b>Escalada</b><small>treine velocidade: suba níveis sem errar</small></button>
-        <button class="acao" data-ir2="pratica-pron"><span class="ic">🎤</span><b>Pronúncia</b><small>fale no microfone e o app confere</small></button>
-        <button class="acao" data-ir2="pratica-err"><span class="ic">❌</span><b>Caça aos Erros</b><small>treine só o que você já errou</small></button>
-        <button class="acao" data-ir="aulas"><span class="ic">📚</span><b>Aulas / Trilha</b><small>lições passo a passo com o COMO SOA</small></button>
-        <button class="acao" data-ir="desafios"><span class="ic">🏆</span><b>Desafios</b><small>metas do dia que pagam XP extra</small></button>
-        <button class="acao" data-ir="revisao"><span class="ic">🔄</span><b>Revisão da Memória</b><small>revise antes de esquecer</small></button>
-        <button class="acao" data-ir="conquistas"><span class="ic">🏅</span><b>Conquistas</b><small>suas medalhas — valem girassóis</small></button>
-        <button class="acao" data-ir="loja"><span class="ic">🛍️</span><b>Loja</b><small>gaste seus 🌻 em bordas, pets e baús</small></button>
-      </div>
-    </div>
-    <div class="cardb" style="margin-top:14px">
-      <div class="secao-t">📊 Ranking <button class="btn-link" style="padding:0;font-size:.85rem" data-ir="ranking">Ver completo →</button></div>
-      <div id="homeRankMini">${rankMiniHtml}</div>
-      <button class="btn-principal azul" id="homeConvidar" style="margin-top:10px;max-width:340px">📣 Chamar um amigo pra competir</button>
+    <div class="cardb" style="margin-top:14px;display:flex;gap:4px 14px;flex-wrap:wrap;justify-content:center;padding:12px">
+      <button class="btn-link" data-ir="desafios" style="padding:4px 6px">🏆 Desafios</button>
+      <button class="btn-link" id="homeConvidar" style="padding:4px 6px">📣 Convidar amigo</button>
+      <button class="btn-link" id="homeGrupo" style="padding:4px 6px">👥 Grupo</button>
+      <button class="btn-link" data-ir="loja" style="padding:4px 6px">🛍️ Loja</button>
+      <button class="btn-link" id="homeMapa" style="padding:4px 6px">🗺️ Guia</button>
     </div>
     ${(typeof BAU !== "undefined") ? `<div class="${BAU.podeAbrirGratis() ? "faixa-bau" : "faixa-trofeu"}" id="homeBauFaixa" style="${BAU.podeAbrirGratis() ? "" : "cursor:pointer"}">
       <span style="font-size:1.8rem">🎁</span>
@@ -7182,37 +7155,22 @@ function renderHome(){
   });
   const homeCarreiraBtn = $("#homeCarreira");
   if(homeCarreiraBtn) homeCarreiraBtn.addEventListener("click", () => navPara("carreira"));
-  $("#homeConteudo").querySelectorAll("[data-ir2]").forEach(b => b.addEventListener("click", () => {
-    const alvo = b.dataset.ir2;
-    if(alvo === "pratica-sim"){ renderSimConfig(); irPara("tela-simulador"); }
-    else if(alvo === "pratica-inf") iniciarInfinito();
-    else if(alvo === "pratica-esc"){ renderEscalada(); irPara("tela-escalada"); }
-    else if(alvo === "pratica-pron"){ revTab = "palavras"; navPara("revisao"); mostrarToast(Fala.temMic ? "Dica: use o 🎤 nos cards e no feedback!" : "Aperte o 🔊 nos cards e repita em voz alta!"); }
-    else if(alvo === "pratica-err"){ revTab = "erros"; navPara("revisao"); }
-  }));
+  const homeGrupoBtn = $("#homeGrupo");
+  if(homeGrupoBtn) homeGrupoBtn.addEventListener("click", () => window.open(FF_CONTATO.grupo, "_blank"));
   const homeBauFaixa = $("#homeBauFaixa");
   if(homeBauFaixa) homeBauFaixa.addEventListener("click", () => {
     if(typeof BAU !== "undefined" && BAU.podeAbrirGratis()) abrirBauGratisModal();
     else { lojaAba = "baus"; navPara("loja"); }
   });
   ligarAcoes($("#homeConteudo"));
+  /* Missões do dia: TODO clique leva pra uma ação DE VERDADE — nunca
+     pra uma tela vazia ("cliquei e não aconteceu nada" é proibido) */
   $("#homeConteudo").querySelectorAll("[data-hj]").forEach(b => b.addEventListener("click", () => {
     const t = b.dataset.hj;
     if(t === "aula") abrirModulo(prox.id);
-    else if(t === "ex"){ revTab = "inteligente"; navPara("revisao"); }
-    else { revTab = "palavras"; navPara("revisao"); mostrarToast(Fala.temMic ? "Use o 🎤 nos cards pra praticar!" : "Aperte o 🔊 nos cards e repita em voz alta!"); }
+    else if(t === "ex") iniciarInfinito(); /* sempre tem perguntas, do zero */
+    else { abrirModulo(prox.id); mostrarToast(Fala.temMic ? "Nos cards da aula: ouça no 🔊 e fale no 🎤!" : "Nos cards da aula: aperte o 🔊 e repita em voz alta!"); }
   }));
-  if(typeof Nuvem !== "undefined" && Nuvem.ranking){
-    Nuvem.ranking().then(r => {
-      const alvo = $("#homeRankMini");
-      if(!alvo || !r.ok || !r.dados || !Array.isArray(r.dados.ranking) || !r.dados.ranking.length) return;
-      const lista = r.dados.ranking.map(x => ({ nome:x.nome, voce:!!x.voce, xp:x.xp || 0 }));
-      const pe = lista.findIndex(x => x.voce);
-      let out = lista.slice(0,3).map(linhaRank).join("");
-      if(pe >= 3) out += linhaRank(lista[pe], pe);
-      alvo.innerHTML = out;
-    }).catch(() => {});
-  }
 }
 const DICAS_FF = [
   "estudar 10 minutos TODO dia vale mais que 2 horas uma vez por semana. 💚",
@@ -7487,8 +7445,8 @@ function renderDesafios(){
   $("#desafiosConteudo").querySelectorAll("[data-vai]").forEach(b => b.addEventListener("click", () => {
     const v = b.dataset.vai;
     if(v === "aula") abrirModulo(proximoModulo().id);
-    else if(v === "exercicios"){ revTab = "inteligente"; navPara("revisao"); }
-    else if(v === "pronuncia"){ revTab = "palavras"; navPara("revisao"); mostrarToast(Fala.temMic ? "Use o 🎤 nos cards pra praticar!" : "Aperte o 🔊 nos cards e repita em voz alta!"); }
+    else if(v === "exercicios") iniciarInfinito(); /* sempre tem perguntas */
+    else if(v === "pronuncia"){ abrirModulo(proximoModulo().id); mostrarToast(Fala.temMic ? "Nos cards da aula: ouça no 🔊 e fale no 🎤!" : "Nos cards da aula: aperte o 🔊 e repita em voz alta!"); }
     else if(v === "carreira") navPara("carreira");
     else if(v === "ditado") abrirJogo("ditado");
     else if(v === "simulador"){ renderSimConfig(); irPara("tela-simulador"); }
@@ -7579,6 +7537,7 @@ function renderConquistas(){
   const l = listaConquistas();
   const ok = l.filter(c => c.ok).length;
   $("#conquistasConteudo").innerHTML = `
+    ${chipsProgresso("conquistas")}
     ${faixaArea("conquistas")}
     <div class="cardb" style="display:flex;gap:14px;align-items:center;margin-bottom:16px">
       <div class="anel" style="--p:${Math.round(ok / l.length * 100)};--cor:var(--sol)"><div><b>${ok}/${l.length}</b><small>TROFÉUS</small></div></div>
@@ -8115,9 +8074,18 @@ function abrirJogoDireto(id){
   else if(id === "ditado") iniciarDitado();
   else if(id === "jardim") iniciarJardim();
   else if(id === "escalada"){ renderEscalada(); irPara("tela-escalada"); }
-  else if(id === "pronuncia"){ revTab = "palavras"; navPara("revisao"); mostrarToast(Fala.temMic ? "Use o 🎤 nos cards e no feedback!" : "Aperte o 🔊 nos cards e repita em voz alta!"); }
+  else if(id === "pronuncia"){
+    /* aluno sem aula concluída cairia numa tela vazia — vai pra aula, que tem 🔊/🎤 */
+    if(palavrasAprendidas() === 0){ abrirModulo(proximoModulo().id); mostrarToast(Fala.temMic ? "Nos cards da aula: ouça no 🔊 e fale no 🎤!" : "Nos cards da aula: aperte o 🔊 e repita em voz alta!"); }
+    else { revTab = "palavras"; navPara("revisao"); mostrarToast(Fala.temMic ? "Use o 🎤 nos cards e no feedback!" : "Aperte o 🔊 nos cards e repita em voz alta!"); }
+  }
   else if(id === "infinito") iniciarInfinito();
-  else if(id === "erros"){ revTab = "erros"; navPara("revisao"); }
+  else if(id === "erros"){
+    const srs = Progresso.dados.srs || {};
+    const temErros = Object.keys(srs).some(k => (srs[k].erros || 0) > 0 && srs[k].caixa < 4);
+    if(!temErros){ mostrarToast("Você ainda não tem erros pra caçar 🎉 Bora de Revisão Infinita!"); iniciarInfinito(); }
+    else { revTab = "erros"; navPara("revisao"); }
+  }
 }
 function renderPratica(){
   const crianca = usuarioCrianca();
@@ -8246,7 +8214,7 @@ function renderMeuPerfil(){
   const contas = Object.values(Contas.todas()).filter(x => x.progresso).sort((a,b) => (b.progresso.xp||0) - (a.progresso.xp||0));
   const pos = contas.findIndex(x => x.email === Contas.sessao()) + 1;
   $("#meuPerfilConteudo").innerHTML = `
-  ${faixaArea("meuperfil")}
+  ${chipsProgresso("meuperfil")}
   <div class="cardb"><div class="perfil-topo">
     ${bordaWrap(`<div class="avatar-g">${c.perfil && c.perfil.foto ? `<img src="${c.perfil.foto}" alt="">` : "👤"}</div>`, (COSM.usando("borda") || {}).id)}
     <div style="flex:1;min-width:160px">
@@ -8265,17 +8233,15 @@ function renderMeuPerfil(){
     <div class="stat-mini"><b>${Object.keys((p.sim || {}).dominadas || {}).length}</b><small>ENTREVISTA 💪</small></div>
   </div></div>
   <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
-    <button class="btn-principal" style="width:auto;flex:1;min-width:150px" id="mpConq">🏆 Conquistas</button>
-    <button class="btn-principal azul" style="width:auto;flex:1;min-width:150px" id="mpRank">📊 Ranking</button>
-    <button class="btn-principal" style="width:auto;flex:1;min-width:150px;background:#E8952E;box-shadow:0 4px 0 #A66312" id="mpLoja">🛍️ Loja</button>
-    <button class="btn-principal" style="width:auto;flex:1;min-width:150px;background:var(--tinta-suave);box-shadow:0 4px 0 #3d4a52" id="mpCfg">⚙️ Configurações</button>
-    <button class="btn-principal azul" style="width:auto;flex:1;min-width:150px" id="mpConvidar">📣 Convidar amigo</button>
+    <button class="btn-principal" style="width:auto;flex:1;min-width:140px;background:#E8952E;box-shadow:0 4px 0 #A66312" id="mpLoja">🛍️ Loja</button>
+    <button class="btn-principal azul" style="width:auto;flex:1;min-width:140px" id="mpConvidar">📣 Convidar amigo</button>
+    <button class="btn-principal" style="width:auto;flex:1;min-width:140px" id="mpComunidade">👥 Comunidade</button>
+    <button class="btn-principal" style="width:auto;flex:1;min-width:140px;background:var(--tinta-suave);box-shadow:0 4px 0 #3d4a52" id="mpCfg">⚙️ Configurações</button>
   </div>`;
   $("#mpEditar").addEventListener("click", () => { if(typeof abrirPerfil === "function") abrirPerfil(); else irPara("tela-perfil"); });
-  $("#mpConq").addEventListener("click", () => navPara("conquistas"));
-  $("#mpRank").addEventListener("click", () => navPara("ranking"));
   $("#mpLoja").addEventListener("click", () => navPara("loja"));
   $("#mpCfg").addEventListener("click", () => navPara("config"));
+  $("#mpComunidade").addEventListener("click", () => navPara("comunidade"));
   $("#mpConvidar").addEventListener("click", convidarAmigo);
 }
 /* ==================================================================
@@ -8436,6 +8402,11 @@ const AREAS_GUIA = {
     ["🎁","Baús dão girassóis (e raridades). Tem um baú grátis por dia — não esqueça de abrir!"]
   ]}
 };
+/* Aba PROGRESSO = Perfil + Conquistas + Ranking num lugar só */
+AREAS_GUIA.progresso = Object.assign({}, AREAS_GUIA.meuperfil, {
+  ic:"📊", nome:"Meu Progresso",
+  resumo:"Seu perfil, suas conquistas e o ranking — tudo do seu avanço num lugar só (troque pelas abinhas no topo)."
+});
 /* Glossário H-2B/H-2A — mostrado no Mapa e onde precisar */
 const H2X_GLOSSARIO = `<div class="cardb" style="margin-top:10px;text-align:left;background:var(--sol-claro)">
   <b style="font-family:var(--f-display)">🌾 O que é H-2B e H-2A?</b>
@@ -8489,6 +8460,19 @@ document.addEventListener("click", e => {
   e.stopPropagation();
   abrirGuiaArea(el.dataset.guia);
 });
+/* Navegação global por atributo (chips do Progresso etc.) */
+document.addEventListener("click", e => {
+  const el = e.target.closest("[data-irglobal]");
+  if(el) navPara(el.dataset.irglobal);
+});
+/* Chips que unem Perfil, Conquistas e Ranking na aba PROGRESSO */
+function chipsProgresso(ativo){
+  return `<div class="chips-tab" style="margin-bottom:12px">
+    <button class="chip-tab ${ativo === "meuperfil" ? "ativo" : ""}" data-irglobal="meuperfil">🪪 Perfil</button>
+    <button class="chip-tab ${ativo === "conquistas" ? "ativo" : ""}" data-irglobal="conquistas">🏅 Conquistas</button>
+    <button class="chip-tab ${ativo === "ranking" ? "ativo" : ""}" data-irglobal="ranking">📊 Ranking</button>
+  </div>`;
+}
 let areaAtualRota = "home";
 
 /* ---------- NAVEGAÇÃO DO SHELL ---------- */
@@ -8501,7 +8485,8 @@ const FF_ROTAS = {
   conquistas:{ tela:"tela-conquistas", titulo:"🏅 Conquistas", render: renderConquistas },
   ranking:   { tela:"tela-ranking", titulo:"📊 Ranking", render: renderRanking },
   comunidade:{ tela:"tela-comunidade", titulo:"👥 Comunidade", render: renderComunidade },
-  meuperfil: { tela:"tela-meuperfil", titulo:"🪪 Meu Perfil", render: renderMeuPerfil },
+  meuperfil: { tela:"tela-meuperfil", titulo:"📊 Meu Progresso", render: renderMeuPerfil },
+  progresso: { tela:"tela-meuperfil", titulo:"📊 Meu Progresso", render: renderMeuPerfil },
   config:    { tela:"tela-config", titulo:"⚙️ Configurações", render: renderConfig },
   loja:      { tela:"tela-loja", titulo:"🛍️ Loja", render: renderLoja },
   simulador: { tela:"tela-simulador", titulo:"🎙️ Simulador de Entrevista", render: () => renderSimConfig() },
@@ -8529,9 +8514,9 @@ function ffAposIrPara(tela){
   document.body.classList.toggle("sem-shell", FF_SEM_SHELL.includes(tela) || !Contas.atual());
   document.body.classList.toggle("logado", !!Contas.atual());
   try{ atualizarSeloTrial(); }catch(e){}
-  const mapa = { "tela-home":"home", "tela-trilha":"aulas", "tela-pratica":"pratica", "tela-desafios":"desafios",
-    "tela-revisao":"revisao", "tela-conquistas":"conquistas", "tela-ranking":"ranking", "tela-comunidade":"comunidade",
-    "tela-meuperfil":"meuperfil", "tela-config":"config", "tela-simulador":"pratica", "tela-entrevista":"pratica",
+  const mapa = { "tela-home":"home", "tela-trilha":"aulas", "tela-pratica":"pratica", "tela-desafios":"home",
+    "tela-revisao":"home", "tela-conquistas":"progresso", "tela-ranking":"progresso", "tela-comunidade":"home",
+    "tela-meuperfil":"progresso", "tela-config":"progresso", "tela-simulador":"pratica", "tela-entrevista":"pratica",
     "tela-licao":"aulas", "tela-quiz":"aulas", "tela-escalada":"pratica", "tela-conclusao":"aulas", "tela-carreira":"pratica", "tela-ditado":"pratica", "tela-jardim":"pratica", "tela-loja":"loja" };
   const ativa = mapa[tela] || "";
   areaAtualRota = ativa || "home";
