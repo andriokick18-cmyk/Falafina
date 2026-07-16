@@ -710,6 +710,24 @@ body.sem-shell .topo .titulo-pagina{ visibility:hidden; }
 .skill-barra i{display:block;height:100%;background:linear-gradient(90deg,var(--verde,#00885F),#7BC950);border-radius:99px;transition:width .4s}
 .faixa-bau{display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,#FFF3D6,#FFE7B0);border:2px solid #E8B84C;border-radius:18px;padding:14px 18px;margin-top:14px;cursor:pointer;animation:faixaBauPulsa 2s ease-in-out infinite}
 @keyframes faixaBauPulsa{0%,100%{box-shadow:0 0 0 rgba(232,184,76,0)}50%{box-shadow:0 0 16px rgba(232,184,76,.6)}}
+
+/* ---------- GUIA DE ÁREAS: "onde estou e o que estou treinando" ---------- */
+.area-cab{display:flex;align-items:center;gap:12px;background:var(--verde-claro);border:2px solid rgba(0,136,95,.25);border-radius:16px;padding:10px 14px;margin-bottom:14px}
+.area-cab .ic{font-size:1.6rem;flex-shrink:0}
+.area-cab b{font-family:var(--f-display);font-size:.98rem;display:block}
+.area-cab p{font-weight:700;color:var(--tinta-suave);font-size:.8rem;line-height:1.35}
+.area-cab .area-q{margin-left:auto}
+.area-q{width:30px;height:30px;flex-shrink:0;border-radius:50%;background:var(--verde);color:#fff;font-weight:800;font-size:1rem;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 0 var(--verde-escuro)}
+.area-q:active{transform:translateY(2px);box-shadow:none}
+.btn-info-topo{width:30px;height:30px;flex-shrink:0;border-radius:50%;background:var(--verde-claro);border:2px solid var(--verde);color:var(--verde-escuro);font-weight:800;font-size:.95rem;display:flex;align-items:center;justify-content:center;margin-right:auto}
+.topo #tituloPagina{margin-right:0}
+body.sem-shell .btn-info-topo{display:none}
+.acao b{font-family:var(--f-display);font-weight:600;font-size:.84rem;line-height:1.2}
+.acao small{font-weight:700;color:var(--tinta-suave);font-size:.68rem;line-height:1.25}
+.mapa-item{display:flex;gap:12px;align-items:flex-start;text-align:left;background:var(--branco);border:1.5px solid var(--borda,rgba(33,49,58,.12));border-radius:14px;padding:10px 12px;margin-bottom:8px}
+.mapa-item .ic{font-size:1.4rem;flex-shrink:0;margin-top:2px}
+.mapa-item b{font-family:var(--f-display);font-size:.92rem;display:block}
+.mapa-item p{font-weight:700;color:var(--tinta-suave);font-size:.78rem;line-height:1.35}
 </style>
 </head>
 <body>
@@ -743,6 +761,7 @@ body.sem-shell .topo .titulo-pagina{ visibility:hidden; }
 <header class="topo">
   <button class="btn-voltar" id="btnVoltar" aria-label="Voltar">← Voltar</button>
   <span class="titulo-pagina" id="tituloPagina">FalaFina</span>
+  <button class="btn-info-topo" id="btnInfoArea" aria-label="O que é esta área? Toque para entender" title="O que é esta área?">?</button>
   <div class="pill-grupo">
     <div class="xp-pill" style="background:#FCE4DB;border-color:var(--coral);color:#8C3212" title="Dias seguidos estudando">🔥 <span id="streakValor">0</span></div>
     <div class="xp-pill" title="Seus pontos de experiência">⭐ <span id="xpValor">0</span> XP</div>
@@ -838,7 +857,7 @@ body.sem-shell .topo .titulo-pagina{ visibility:hidden; }
 
 <!-- ================= TELA: RANKING ================= -->
 <main class="tela" id="tela-ranking">
-  <div class="cabecalho-trilha"><h2>🏆 Ranking</h2><p>Quem estuda mais, sobe. Ranking <b>mundial</b> do FalaFina 🌎 — todos os alunos, de todos os aparelhos. (Sem internet, mostra só os perfis deste aparelho.)</p></div>
+  <div class="cabecalho-trilha"><h2 style="display:flex;align-items:center;gap:10px">🏆 Ranking <button class="area-q" data-guia="ranking" aria-label="Entender o Ranking" style="font-size:.85rem;width:26px;height:26px">?</button></h2><p>Quem estuda mais, sobe. Ranking <b>mundial</b> do FalaFina 🌎 — todos os alunos, de todos os aparelhos. (Sem internet, mostra só os perfis deste aparelho.)</p></div>
   <div id="rankingLista"></div>
 </main>
 
@@ -890,8 +909,8 @@ body.sem-shell .topo .titulo-pagina{ visibility:hidden; }
 <!-- ================= TELA 2: TRILHA ================= -->
 <main class="tela" id="tela-trilha">
   <div class="cabecalho-trilha">
-    <h2 id="trilhaSaudacao">Sua trilha 🦜</h2>
-    <p>Termine um módulo com <b>100% de acerto</b> para destravar o próximo. E leia sempre a faixa amarela <b>🗣️ COMO SOA</b> em voz alta — é ela que solta sua língua!</p>
+    <h2 id="trilhaSaudacao" style="display:flex;align-items:center;gap:10px">Sua trilha 🦜 <button class="area-q" data-guia="aulas" aria-label="Entender as Aulas" style="font-size:.85rem;width:26px;height:26px">?</button></h2>
+    <p>Aqui ficam as <b>aulas passo a passo</b> — cada palavra em português, inglês e <b>🗣️ COMO SOA</b> (a faixa amarela — leia sempre em voz alta, é ela que solta sua língua!). Termine um módulo com <b>100% de acerto</b> para destravar o próximo.</p>
   </div>
   <div id="trilhaConteudo"></div>
 </main>
@@ -6762,18 +6781,18 @@ function renderHome(){
       <button class="btn-principal" id="homeCarreira" style="max-width:340px">🚀 Continuar carreira ▶</button>
     </div>
     <div class="cardb" style="margin-top:14px">
-      <div class="secao-t">🎯 Tudo que você pode praticar</div>
+      <div class="secao-t">🎯 Tudo que você pode praticar <button class="btn-link" style="padding:0;font-size:.85rem" id="homeMapa">🗺️ O que é cada área? →</button></div>
       <div class="acoes-grid">
-        <button class="acao" data-ir2="pratica-sim"><span class="ic">🎙️</span>Simulador de Entrevista</button>
-        <button class="acao" data-ir2="pratica-inf"><span class="ic">♾️</span>Treino Infinito</button>
-        <button class="acao" data-ir2="pratica-esc"><span class="ic">🗼</span>Escalada</button>
-        <button class="acao" data-ir2="pratica-pron"><span class="ic">🎤</span>Pronúncia</button>
-        <button class="acao" data-ir2="pratica-err"><span class="ic">❌</span>Caça aos Erros</button>
-        <button class="acao" data-ir="aulas"><span class="ic">📚</span>Aulas / Trilha</button>
-        <button class="acao" data-ir="desafios"><span class="ic">🏆</span>Desafios</button>
-        <button class="acao" data-ir="revisao"><span class="ic">🔄</span>Revisão (SRS)</button>
-        <button class="acao" data-ir="conquistas"><span class="ic">🏅</span>Conquistas</button>
-        <button class="acao" data-ir="loja"><span class="ic">🛍️</span>Loja</button>
+        <button class="acao" data-ir2="pratica-sim"><span class="ic">🎙️</span><b>Simulador de Entrevista</b><small>ensaie a entrevista H-2B/H-2A falando inglês</small></button>
+        <button class="acao" data-ir2="pratica-inf"><span class="ic">♾️</span><b>Revisão Infinita</b><small>perguntas sem fim do que você já aprendeu</small></button>
+        <button class="acao" data-ir2="pratica-esc"><span class="ic">🗼</span><b>Escalada</b><small>treine velocidade: suba níveis sem errar</small></button>
+        <button class="acao" data-ir2="pratica-pron"><span class="ic">🎤</span><b>Pronúncia</b><small>fale no microfone e o app confere</small></button>
+        <button class="acao" data-ir2="pratica-err"><span class="ic">❌</span><b>Caça aos Erros</b><small>treine só o que você já errou</small></button>
+        <button class="acao" data-ir="aulas"><span class="ic">📚</span><b>Aulas / Trilha</b><small>lições passo a passo com o COMO SOA</small></button>
+        <button class="acao" data-ir="desafios"><span class="ic">🏆</span><b>Desafios</b><small>metas do dia que pagam XP extra</small></button>
+        <button class="acao" data-ir="revisao"><span class="ic">🔄</span><b>Revisão da Memória</b><small>revise antes de esquecer</small></button>
+        <button class="acao" data-ir="conquistas"><span class="ic">🏅</span><b>Conquistas</b><small>suas medalhas — valem girassóis</small></button>
+        <button class="acao" data-ir="loja"><span class="ic">🛍️</span><b>Loja</b><small>gaste seus 🌻 em bordas, pets e baús</small></button>
       </div>
     </div>
     <div class="cardb" style="margin-top:14px">
@@ -6787,6 +6806,8 @@ function renderHome(){
     </div>` : ""}
     <div class="dica-card" style="margin-top:14px"><img src="mascote.png" alt=""><p><b>Dica do FalaFina:</b> ${dicaDoDia()}</p></div>
   </div>`;
+  const homeMapaBtn = $("#homeMapa");
+  if(homeMapaBtn) homeMapaBtn.addEventListener("click", abrirMapaApp);
   $("#homePasso").addEventListener("click", () => {
     if(revisarPrimeiro){ revTab = "inteligente"; navPara("revisao"); }
     else abrirModulo(prox.id);
@@ -6985,6 +7006,7 @@ function renderRevisao(){
     ${validos.length ? `<text x="${20 + validos[validos.length-1].i * 52}" y="${99 - validos[validos.length-1].v * 0.9}" font-size="11" font-weight="800" fill="var(--verde-escuro)" text-anchor="middle">${validos[validos.length-1].v}%</text>` : ""}
   </svg>` : `<p style="font-weight:700;color:var(--tinta-suave);font-size:.85rem">Responda exercícios pra ver seu desempenho aqui. 📈</p>`;
   $("#revisaoConteudo").innerHTML = `
+  ${faixaArea("revisao")}
   <div class="grid-2">
     <div>
       <div class="chips-tab">${tabs.map(t => `<button class="chip-tab ${revTab === t.id ? "ativo" : ""}" data-t="${t.id}">${t.nome}</button>`).join("")}</div>
@@ -7061,6 +7083,7 @@ function renderDesafios(){
   const concl = [...diarios, ...destaque, ...mais].filter(d => p.resgates[chaveResgate(d)]).length;
   const totalD = diarios.length + destaque.length + mais.length;
   $("#desafiosConteudo").innerHTML = `
+  ${faixaArea("desafios")}
   <div class="grid-2">
     <div>
       <div class="secao-t">🏆 Desafios em destaque</div>
@@ -7165,6 +7188,7 @@ function renderConquistas(){
   const l = listaConquistas();
   const ok = l.filter(c => c.ok).length;
   $("#conquistasConteudo").innerHTML = `
+    ${faixaArea("conquistas")}
     <div class="cardb" style="display:flex;gap:14px;align-items:center;margin-bottom:16px">
       <div class="anel" style="--p:${Math.round(ok / l.length * 100)};--cor:var(--sol)"><div><b>${ok}/${l.length}</b><small>TROFÉUS</small></div></div>
       <p style="font-weight:700">Cada conquista conta a história do seu inglês. ${ok ? "Continue colecionando! 🏆" : "A primeira está a UMA aula de distância. 😉"}</p>
@@ -7183,11 +7207,11 @@ function renderConquistas(){
    ================================================================== */
 const ENGINE = {
   SKILLS: {
-    listening: { nome:"Listening",  ic:"👂" },
-    speaking:  { nome:"Speaking",   ic:"🗣️" },
-    vocab:     { nome:"Vocabulário",ic:"🔤" },
-    grammar:   { nome:"Gramática",  ic:"🧩" },
-    speed:     { nome:"Velocidade", ic:"⚡" }
+    listening: { nome:"Escuta",     ic:"👂", en:"Listening", desc:"entender o inglês de ouvido — chefe, cliente, oficial do consulado" },
+    speaking:  { nome:"Fala",       ic:"🗣️", en:"Speaking",  desc:"falar inglês em voz alta com pronúncia que o americano entende" },
+    vocab:     { nome:"Vocabulário",ic:"🔤", en:"Vocabulary",desc:"conhecer as palavras — ferramentas, comida, documentos, dia a dia" },
+    grammar:   { nome:"Gramática",  ic:"🧩", en:"Grammar",   desc:"montar frases certas e completas na hora de responder" },
+    speed:     { nome:"Velocidade", ic:"⚡", en:"Speed",     desc:"responder rápido, sem travar — como numa conversa de verdade" }
   },
   dados(){
     const p = Progresso.dados;
@@ -7551,14 +7575,14 @@ function ditadoFim(){
    ❌ Caça aos Erros = só o que você errou (pontos fracos)
    ================================================================== */
 const JOGOS_LISTA = [
-  { id:"carreira",  ic:"🧗", nome:"Modo Carreira",    skill:"grammar",   cor:"#FFF3D1", desc:"Sua jornada infinita — nunca reseta, sempre mais difícil." },
-  { id:"entrevista",ic:"🎙️", nome:"Entrevista",       skill:"speaking",  cor:"#E4EDFA", desc:"Simulação real: agência, empregador, consulado, chegada." },
-  { id:"ditado",    ic:"👂", nome:"Ditado Relâmpago", skill:"listening", cor:"#E1F3EA", desc:"Escreva o que OUVIU. 3 vidas, combo de velocidade." },
-  { id:"jardim",    ic:"🌻", nome:"Jardim de Palavras", skill:"vocab", cor:"#FFF3D1", desc:"Cada palavra é uma planta: ler, ouvir, escrever e FALAR até florescer." },
-  { id:"escalada",  ic:"🗼", nome:"Escalada",         skill:"speed",     cor:"#FCE4DB", desc:"Suba sem errar, contra o relógio. Até onde aguenta?" },
-  { id:"pronuncia", ic:"🎤", nome:"Pronúncia",        skill:"speaking",  cor:"#F5E4F7", desc:"Fale no microfone — o app confere se saiu certo." },
-  { id:"infinito",  ic:"♾️", nome:"Revisão Infinita", skill:"vocab",     cor:"#E1F3EA", desc:"Repetição espaçada de tudo que você já aprendeu." },
-  { id:"erros",     ic:"❌", nome:"Caça aos Erros",   skill:"vocab",     cor:"#FCE4DB", desc:"Só o que você já errou. Vire o jogo." }
+  { id:"carreira",  ic:"🧗", nome:"Modo Carreira",    skill:"grammar",   cor:"#FFF3D1", desc:"Entrevistas de trabalho H-2B/H-2A sem fim: responda em inglês e suba de nível pra sempre." },
+  { id:"entrevista",ic:"🎙️", nome:"Simulador de Entrevista", skill:"speaking", cor:"#E4EDFA", desc:"Ensaie a entrevista real do visto: agência, empregador, consulado e chegada nos EUA." },
+  { id:"ditado",    ic:"👂", nome:"Ditado Relâmpago", skill:"listening", cor:"#E1F3EA", desc:"Treine o OUVIDO: escute a frase em inglês e escreva o que ouviu. 3 vidas." },
+  { id:"jardim",    ic:"🌻", nome:"Jardim de Palavras", skill:"vocab", cor:"#FFF3D1", desc:"Aprenda palavra por palavra: ler, ouvir, escrever e FALAR até florescer." },
+  { id:"escalada",  ic:"🗼", nome:"Escalada",         skill:"speed",     cor:"#FCE4DB", desc:"Responda rápido e sem errar pra subir níveis. Até onde você aguenta?" },
+  { id:"pronuncia", ic:"🎤", nome:"Treino de Pronúncia", skill:"speaking", cor:"#F5E4F7", desc:"Fale no microfone — o app escuta e confere se sua pronúncia saiu certa." },
+  { id:"infinito",  ic:"♾️", nome:"Revisão Infinita", skill:"vocab",     cor:"#E1F3EA", desc:"Perguntas sem fim de tudo que você já aprendeu, na hora certa da memória." },
+  { id:"erros",     ic:"❌", nome:"Caça aos Erros",   skill:"vocab",     cor:"#FCE4DB", desc:"Treine só o que você já errou — transforme erro em acerto." }
 ];
 /* ==================================================================
    📖 TUTORIAIS DOS JOGOS — na 1ª vez que abre um jogo, o FalaFina
@@ -7572,7 +7596,7 @@ const JOGOS_TUTORIAL = {
     ["🌱","Níveis 1-5: você aprende ANTES de responder (múltipla escolha). Do 6 em diante: resposta livre. Do 10 em diante: sem ajuda visível. Às vezes a pergunta vem SÓ por áudio 👂."],
     ["⭐","É o jogo que dá MAIS XP do app — e girassóis junto. Responda com frases completas: 1 palavra não sobe de nível."]
   ]},
-  entrevista: { ic:"🎙️", nome:"Entrevista", passos:[
+  entrevista: { ic:"🎙️", nome:"Simulador de Entrevista", passos:[
     ["🎬","Simulação da entrevista real: escolha programa, etapa e vaga — o entrevistador pergunta em inglês, você responde falando 🎤 ou digitando."],
     ["🧩","Sua resposta é avaliada por PONTOS-CHAVE: o que o entrevistador precisava ouvir. Cobriu tudo = resposta forte."],
     ["🔁","O que você errar volta numa rodada de reforço no final — repetição espaçada de verdade."],
@@ -7590,10 +7614,10 @@ const JOGOS_TUTORIAL = {
     ["🎁","A cada 10 níveis tem baú com girassóis. Seu RECORDE fica salvo pra sempre no ranking."],
     ["😈","No modo pulo você arrisca ir direto pra um nível alto — mas se falhar, volta pro 1. Risco e recompensa."]
   ]},
-  pronuncia: { ic:"🎤", nome:"Pronúncia", passos:[
+  pronuncia: { ic:"🎤", nome:"Treino de Pronúncia", passos:[
     ["🗣️","Fale as palavras e frases no microfone — o app reconhece sua voz e confere se saiu certo."],
     ["👂","Ouça o áudio nativo primeiro, depois imite. Errou? Tente de novo, sem pressa."],
-    ["📊","Cada frase reconhecida alimenta sua habilidade de Speaking na barra do Hub."]
+    ["📊","Cada frase reconhecida alimenta sua habilidade de 🗣️ Fala na barra dos Jogos de Treino."]
   ]},
   infinito: { ic:"♾️", nome:"Revisão Infinita", passos:[
     ["🧠","Perguntas sem fim de TUDO que você já aprendeu, na hora exata em que seu cérebro ia esquecer (repetição espaçada)."],
@@ -7635,7 +7659,7 @@ function abrirComoConecta(){
   alvo.innerHTML = `
     <p class="bau-titulo">🧠 Como os jogos se conectam</p>
     <div class="tut-passos">
-      <div class="tut-passo"><span>🎮</span><p>Cada jogo treina uma habilidade diferente: 👂 Listening, 🗣️ Speaking, 🔤 Vocabulário, 🧩 Gramática e ⚡ Velocidade.</p></div>
+      <div class="tut-passo"><span>🎮</span><p>Cada jogo treina uma habilidade diferente: 👂 Escuta (listening), 🗣️ Fala (speaking), 🔤 Vocabulário, 🧩 Gramática e ⚡ Velocidade.</p></div>
       <div class="tut-passo"><span>📊</span><p>Tudo que você acerta ou erra em QUALQUER jogo alimenta as barras de habilidade lá no Hub — os jogos conversam entre si.</p></div>
       <div class="tut-passo"><span>🦜</span><p>O Fininho olha suas barras e recomenda o jogo certo pro seu ponto fraco do momento. Errou muito de ouvido? Ele manda pro Ditado.</p></div>
       <div class="tut-passo"><span>🔄</span><p>O que você erra em um jogo aparece na Caça aos Erros e volta na Revisão na hora certa — nada se perde, tudo vira treino.</p></div>
@@ -7682,11 +7706,12 @@ function renderPratica(){
   ];
   const barraSkill = sk => {
     const pct = ENGINE.dominio(sk);
-    return `<div class="skill-linha"><span>${ENGINE.SKILLS[sk].ic} ${ENGINE.SKILLS[sk].nome}</span>
+    return `<div class="skill-linha" title="${ENGINE.SKILLS[sk].en}: ${ENGINE.SKILLS[sk].desc}"><span>${ENGINE.SKILLS[sk].ic} ${ENGINE.SKILLS[sk].nome}</span>
       <div class="skill-barra"><i style="width:${pct === null ? 0 : pct}%"></i></div>
       <b>${pct === null ? "—" : pct + "%"}</b></div>`;
   };
   $("#praticaConteudo").innerHTML = `
+  ${faixaArea("pratica")}
   <div class="hub-hero" id="hubCarreira">
     <div class="hub-hero-txt">
       <span class="hub-tag">★ JOGO PRINCIPAL</span>
@@ -7734,6 +7759,7 @@ function renderPratica(){
 /* ---------- COMUNIDADE ---------- */
 function renderComunidade(){
   $("#comunidadeConteudo").innerHTML = `
+  ${faixaArea("comunidade")}
   <div class="grid-2"><div>
     <div class="cardb" style="text-align:center;padding:30px 20px">
       <img src="mascote.png" style="width:90px" alt="">
@@ -7757,6 +7783,7 @@ function renderConfig(){
   const p = Progresso.dados;
   if(!p.cfg) p.cfg = { vozAuto:true };
   $("#configConteudo").innerHTML = `
+  ${faixaArea("config")}
   <div class="cardb">
     <div class="cfg-linha"><span>🔊 Ler perguntas do Simulador em voz alta</span><input type="checkbox" id="cfgVoz" ${p.cfg.vozAuto !== false ? "checked" : ""} style="width:22px;height:22px;accent-color:var(--verde)"></div>
     <div class="cfg-linha"><span>📲 Instalar o FalaFina no celular</span><button class="btn-resg" style="width:auto;padding:8px 14px" id="cfgPwa">Instalar</button></div>
@@ -7785,6 +7812,7 @@ function renderMeuPerfil(){
   const contas = Object.values(Contas.todas()).filter(x => x.progresso).sort((a,b) => (b.progresso.xp||0) - (a.progresso.xp||0));
   const pos = contas.findIndex(x => x.email === Contas.sessao()) + 1;
   $("#meuPerfilConteudo").innerHTML = `
+  ${faixaArea("meuperfil")}
   <div class="cardb"><div class="perfil-topo">
     ${bordaWrap(`<div class="avatar-g">${c.perfil && c.perfil.foto ? `<img src="${c.perfil.foto}" alt="">` : "👤"}</div>`, (COSM.usando("borda") || {}).id)}
     <div style="flex:1;min-width:160px">
@@ -7868,6 +7896,7 @@ function renderLoja(){
     <div class="loja-grid">${COSM.PACOTES.map(pc => `<div class="loja-item"><div style="font-size:2rem">💰</div><b>🌻 ${pc.s.toLocaleString("pt-BR")}</b><span class="preco">R$ ${pc.rs}</span><button disabled>Em breve 🔜</button></div>`).join("")}</div>`;
   }
   $("#lojaConteudo").innerHTML = `
+  ${faixaArea("loja")}
   <div class="cardb" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
     <span class="chip-girassol" style="font-size:1.05rem">🌻 ${COSM.saldo().toLocaleString("pt-BR")} girassóis</span>
     <small style="font-weight:800;color:var(--tinta-suave)">Seu recorde: 🗼 nível ${rec} — itens lendários exigem níveis altos</small>
@@ -7894,13 +7923,132 @@ function renderLoja(){
     mostrarToast("Combine o pagamento no WhatsApp — assim que confirmarmos, seus baús entram na conta! 🎁");
   }));
 }
+/* ==================================================================
+   🗺️ GUIA DE ÁREAS — cada área do FalaFina explica O QUE ela é,
+   O QUE você treina nela e COMO ela ajuda no caminho H-2B/H-2A.
+   Aparece: na faixa verde no topo de cada área, no "?" do cabeçalho
+   e no Mapa do FalaFina (visão geral de tudo).
+   ================================================================== */
+const AREAS_GUIA = {
+  home: { ic:"🏠", nome:"Início", resumo:"Seu painel do dia: o próximo passo, as missões de hoje e atalhos pra tudo.", passos:[
+    ["🧭","O Início é o seu ponto de partida todo dia. O FalaFina olha seu progresso e já mostra o SEU PRÓXIMO PASSO — você nunca fica perdido pensando \"o que eu estudo agora?\"."],
+    ["📋","Logo abaixo ficam as missões de hoje (aula, exercícios e pronúncia). Completar as 3 mantém sua sequência 🔥 acesa."],
+    ["🚀","O card amarelo é o Modo Carreira — o treino principal de entrevista H-2B/H-2A. Um pouco dele todo dia te deixa pronto pra entrevista de verdade."],
+    ["❓","Em qualquer tela, toque no ? verde do topo pra entender onde você está e o que está treinando."]
+  ]},
+  aulas: { ic:"📚", nome:"Aulas · Trilha de Estudos", resumo:"Lições passo a passo, do zero até o inglês do trabalho — cada palavra em português, inglês e COMO SOA.", passos:[
+    ["🃏","Cada aula usa o Card Bilíngue: a palavra em português (verde), em inglês (azul) e a faixa amarela 🗣️ COMO SOA — a pronúncia escrita do nosso jeito (water = \"uórer\")."],
+    ["🪜","As aulas seguem uma trilha: termine uma com 100% de acerto pra destravar a próxima. Use os filtros no topo pra ver só as aulas de Trabalho H-2B/H-2A 🌾."],
+    ["✏️","No fim de cada aula tem um desafio (quiz). É ele que marca a aula como concluída e libera as frases pra Revisão e pro Ditado."],
+    ["🗣️","Leia a faixa COMO SOA sempre em voz alta — é ela que solta sua língua pro dia da entrevista."]
+  ]},
+  pratica: { ic:"🎮", nome:"Jogos de Treino", resumo:"8 jogos — cada um treina uma habilidade: escuta, fala, vocabulário, gramática e velocidade.", passos:[
+    ["🎯","Aqui não é brincadeira à toa: cada jogo treina UMA habilidade que você vai usar no trabalho e na entrevista. O card de cada jogo mostra o que ele treina."],
+    ["👂","Escuta = Ditado Relâmpago · 🗣️ Fala = Simulador e Pronúncia · 🔤 Vocabulário = Jardim, Revisão Infinita e Caça aos Erros · 🧩 Gramática = Modo Carreira · ⚡ Velocidade = Escalada."],
+    ["🦜","O Fininho acompanha suas barras de habilidade e recomenda o jogo certo pro seu ponto fraco do momento."],
+    ["❓","Na primeira vez em cada jogo aparece um tutorial. Pra rever, toque no ? do card do jogo."]
+  ]},
+  desafios: { ic:"🏆", nome:"Desafios", resumo:"Metas de estudo do dia e desafios especiais — complete e resgate XP e girassóis extras.", passos:[
+    ["📅","Os desafios diários (concluir aula, fazer exercícios, praticar pronúncia) zeram à meia-noite. São o \"mínimo do dia\" pra manter o inglês vivo."],
+    ["🌟","Os desafios em destaque são metas maiores — sequência de dias, domínio de respostas de entrevista — que constroem o hábito de longo prazo."],
+    ["🎁","Meta batida não resgata sozinha: volte aqui e toque em RESGATAR pra ganhar o XP e os 🌻 girassóis."]
+  ]},
+  revisao: { ic:"🔄", nome:"Revisão da Memória", resumo:"O app sabe QUANDO você vai esquecer cada palavra — e te chama pra revisar antes.", passos:[
+    ["🧠","Ciência da memória (repetição espaçada): revisar um pouco HOJE vale mais que decorar tudo de novo depois. A Revisão Inteligente traz só o que está vencendo."],
+    ["🗂️","Abas: 🧠 Inteligente (o que está vencendo) · 📅 Por Aula · 🔤 Palavras (giro geral) · ❌ Erros (só o que você errou) · ⭐ Favoritos (sua lista)."],
+    ["📈","O gráfico ao lado mostra seu desempenho dos últimos dias — dá pra VER seu inglês melhorando."],
+    ["💼","Pra quem vai de H-2B/H-2A: é a revisão que garante que o vocabulário do trabalho não fuja na hora H."]
+  ]},
+  conquistas: { ic:"🏅", nome:"Conquistas", resumo:"Suas medalhas: cada marco do seu inglês vira troféu — e paga girassóis.", passos:[
+    ["🏆","Cada conquista marca um marco real do seu aprendizado: aulas concluídas, palavras aprendidas, dias seguidos, respostas de entrevista dominadas."],
+    ["🌻","Medalha desbloqueada = girassóis na conta: 🥉 50 · 🥈 150 · 🥇 400 · 💎 1.000. Gaste na Loja."],
+    ["🔒","As trancadas mostram o que falta — use como lista de metas."]
+  ]},
+  ranking: { ic:"📊", nome:"Ranking", resumo:"Compare seu XP com todos os alunos do FalaFina — estudou mais, subiu.", passos:[
+    ["🌎","O ranking é mundial: todos os alunos, de todos os aparelhos. Sem internet, mostra só os perfis deste aparelho."],
+    ["⭐","A posição é por XP total. Tudo que você faz no app — aulas, jogos, desafios — soma XP."],
+    ["👨‍👩‍👧","Cada pessoa da família pode criar sua conta e competir junto."]
+  ]},
+  comunidade: { ic:"👥", nome:"Comunidade", resumo:"Brasileiros no mesmo caminho: dúvidas, dicas de entrevista e vagas H-2B/H-2A.", passos:[
+    ["💬","O grupo do WhatsApp reúne quem está aprendendo inglês e quem já foi trabalhar fora — dicas de entrevista, documentos e aquela força nos dias difíceis."],
+    ["🤝","Ninguém aprende sozinho: pergunte, responda e compartilhe sua evolução."]
+  ]},
+  meuperfil: { ic:"🪪", nome:"Meu Perfil", resumo:"Seu retrato no FalaFina: estatísticas, título, girassóis e itens equipados.", passos:[
+    ["📊","Aqui ficam seus números: XP, melhor sequência, aulas feitas, palavras aprendidas e respostas de entrevista dominadas 💪."],
+    ["✏️","Em Editar perfil você ajusta foto, idade e focos — o conteúdo do app se adapta a isso."]
+  ]},
+  config: { ic:"⚙️", nome:"Configurações", resumo:"Ajustes do app: voz, instalação no celular, perfil, suporte e conta.", passos:[
+    ["🔊","Ligue ou desligue a leitura em voz alta das perguntas do Simulador."],
+    ["📲","Instale o FalaFina no celular pra usar como aplicativo — funciona até offline."]
+  ]},
+  loja: { ic:"🛍️", nome:"Loja", resumo:"Gaste os 🌻 girassóis que ganhou estudando: bordas, pets, efeitos e baús.", passos:[
+    ["🌻","Girassóis se ganham JOGANDO: vencendo níveis da Escalada, resgatando desafios, desbloqueando medalhas e florescendo palavras no Jardim."],
+    ["🖼️","Bordas e efeitos deixam seu perfil único no ranking; pets te acompanham. Itens lendários exigem recorde alto na Escalada."],
+    ["🎁","Baús dão girassóis (e raridades). Tem um baú grátis por dia — não esqueça de abrir!"]
+  ]}
+};
+/* Glossário H-2B/H-2A — mostrado no Mapa e onde precisar */
+const H2X_GLOSSARIO = `<div class="cardb" style="margin-top:10px;text-align:left;background:var(--sol-claro)">
+  <b style="font-family:var(--f-display)">🌾 O que é H-2B e H-2A?</b>
+  <p style="font-weight:700;font-size:.82rem;color:var(--tinta-suave);margin-top:4px;line-height:1.4">
+  São os vistos de <b>trabalho temporário nos EUA</b> mais usados por brasileiros:<br>
+  · <b>H-2A</b> 🌾 — trabalho agrícola: fazendas, colheita, plantio.<br>
+  · <b>H-2B</b> 🏨 — trabalho fora da agricultura: hotéis, paisagismo, cozinha, construção, limpeza.<br>
+  O caminho tem 4 etapas de conversa em inglês: <b>agência → empregador → consulado → chegada nos EUA</b> — e o FalaFina treina você pra todas elas.</p>
+</div>`;
+function faixaArea(rota){
+  const a = AREAS_GUIA[rota]; if(!a) return "";
+  return `<div class="area-cab">
+    <span class="ic">${a.ic}</span>
+    <div style="min-width:0"><b>Você está em: ${a.nome}</b><p>${a.resumo}</p></div>
+    <button class="area-q" data-guia="${rota}" aria-label="Entender esta área">?</button>
+  </div>`;
+}
+function abrirGuiaArea(rota){
+  const a = AREAS_GUIA[rota];
+  if(!a){ abrirMapaApp(); return; }
+  const alvo = $("#bauCaixaConteudo");
+  alvo.innerHTML = `
+    <p class="bau-titulo">${a.ic} ${esc(a.nome)}</p>
+    <div class="tut-passos">${a.passos.map(p2 => `<div class="tut-passo"><span>${p2[0]}</span><p>${p2[1]}</p></div>`).join("")}</div>
+    <button class="bau-cta" id="guiaMapa" style="background:var(--azul);box-shadow:0 4px 0 var(--azul-escuro)">🗺️ Ver o mapa de TODAS as áreas</button>
+    <button class="bau-fechar" id="guiaFechar">Entendi ✔</button>`;
+  $("#bauOverlay").classList.add("aberto");
+  $("#guiaFechar").addEventListener("click", fecharBauModal);
+  $("#guiaMapa").addEventListener("click", abrirMapaApp);
+}
+function abrirMapaApp(){
+  const alvo = $("#bauCaixaConteudo");
+  const ordem = ["home","aulas","pratica","desafios","revisao","conquistas","ranking","comunidade","loja","meuperfil","config"];
+  alvo.innerHTML = `
+    <p class="bau-titulo">🗺️ Mapa do FalaFina</p>
+    <p style="font-weight:700;color:var(--tinta-suave);font-size:.85rem;margin-bottom:12px;text-align:left">O FalaFina inteiro em um olhar — o que é cada área e o que você treina nela. Toque em qualquer uma pra ver os detalhes:</p>
+    <div style="max-height:46vh;overflow-y:auto;text-align:left">
+      ${ordem.map(r => { const a = AREAS_GUIA[r]; return `<button class="mapa-item" data-guia="${r}" style="width:100%;cursor:pointer">
+        <span class="ic">${a.ic}</span><div><b>${a.nome}</b><p>${a.resumo}</p></div>
+      </button>`; }).join("")}
+      ${H2X_GLOSSARIO}
+    </div>
+    <button class="bau-fechar" id="mapaFechar">Fechar</button>`;
+  $("#bauOverlay").classList.add("aberto");
+  $("#mapaFechar").addEventListener("click", fecharBauModal);
+}
+/* Um listener só pra todos os "?" de área (inclusive os criados depois) */
+document.addEventListener("click", e => {
+  const el = e.target.closest("[data-guia]");
+  if(!el) return;
+  e.stopPropagation();
+  abrirGuiaArea(el.dataset.guia);
+});
+let areaAtualRota = "home";
+
 /* ---------- NAVEGAÇÃO DO SHELL ---------- */
 const FF_ROTAS = {
   home:      { tela:"tela-home", titulo:"👋 Início", render: renderHome },
   aulas:     { tela:"tela-trilha", titulo:"📚 Aulas / Trilha de Estudos", render: renderTrilha },
-  pratica:   { tela:"tela-pratica", titulo:"🎮 Jogos", render: renderPratica },
+  pratica:   { tela:"tela-pratica", titulo:"🎮 Jogos de Treino", render: renderPratica },
   desafios:  { tela:"tela-desafios", titulo:"🏆 Desafios", render: renderDesafios },
-  revisao:   { tela:"tela-revisao", titulo:"🔄 Revisão", render: renderRevisao },
+  revisao:   { tela:"tela-revisao", titulo:"🔄 Revisão da Memória", render: renderRevisao },
   conquistas:{ tela:"tela-conquistas", titulo:"🏅 Conquistas", render: renderConquistas },
   ranking:   { tela:"tela-ranking", titulo:"📊 Ranking", render: renderRanking },
   comunidade:{ tela:"tela-comunidade", titulo:"👥 Comunidade", render: renderComunidade },
@@ -7917,8 +8065,8 @@ function navPara(rota){
   irPara(r.tela);
 }
 const FF_TITULOS = {
-  "tela-home":"👋 Início", "tela-trilha":"📚 Aulas / Trilha de Estudos", "tela-pratica":"🎮 Jogos",
-  "tela-desafios":"🏆 Desafios", "tela-revisao":"🔄 Revisão", "tela-conquistas":"🏅 Conquistas",
+  "tela-home":"👋 Início", "tela-trilha":"📚 Aulas / Trilha de Estudos", "tela-pratica":"🎮 Jogos de Treino",
+  "tela-desafios":"🏆 Desafios", "tela-revisao":"🔄 Revisão da Memória", "tela-conquistas":"🏅 Conquistas",
   "tela-ranking":"📊 Ranking", "tela-comunidade":"👥 Comunidade", "tela-meuperfil":"🪪 Meu Perfil",
   "tela-config":"⚙️ Configurações", "tela-simulador":"🎙️ Simulador de Entrevista",
   "tela-entrevista":"🎙️ Entrevista ao vivo", "tela-licao":"📖 Aula", "tela-quiz":"📝 Exercícios",
@@ -7937,10 +8085,13 @@ function ffAposIrPara(tela){
     "tela-meuperfil":"meuperfil", "tela-config":"config", "tela-simulador":"pratica", "tela-entrevista":"pratica",
     "tela-licao":"aulas", "tela-quiz":"aulas", "tela-escalada":"pratica", "tela-conclusao":"aulas", "tela-carreira":"pratica", "tela-ditado":"pratica", "tela-jardim":"pratica", "tela-loja":"loja" };
   const ativa = mapa[tela] || "";
+  areaAtualRota = ativa || "home";
   document.querySelectorAll(".sb-item").forEach(b => b.classList.toggle("ativo", b.dataset.rota === ativa));
   document.querySelectorAll(".tb-item").forEach(b => b.classList.toggle("ativo", b.dataset.rota === ativa));
 }
 document.querySelectorAll(".sb-item, .tb-item").forEach(b => b.addEventListener("click", () => navPara(b.dataset.rota)));
+const btnInfoAreaEl = $("#btnInfoArea");
+if(btnInfoAreaEl) btnInfoAreaEl.addEventListener("click", () => abrirGuiaArea(areaAtualRota));
 const jarRegarBtn = $("#jarRegar");
 if(jarRegarBtn) jarRegarBtn.addEventListener("click", () => { const f = LEX.montarSessao(8); if(!f.length){ mostrarToast("🌻 Jardim regado! Volte quando algo vencer."); return; } jardimEstado = { fila:f, pos:0, certas:0, xp:0 }; ENGINE.jogou("jardim"); jardimProxima(); });
 const jarSairBtn = $("#jarSair");

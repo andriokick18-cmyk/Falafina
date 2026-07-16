@@ -1,6 +1,7 @@
-// FalaFina Service Worker v11 (Lote A: escalada 1→1000) — navegação enxuta + semana grátis — app instalável e funcionando offline
+// FalaFina Service Worker — app instalável e funcionando offline
+// v14: Guia de Áreas (Mapa do FalaFina, "?" em toda tela, nomes claros)
 // v8: ícones com nome correto (minúsculo) + NUNCA cacheia /api/ (dados da nuvem sempre frescos)
-const CACHE = "falafina-v13";
+const CACHE = "falafina-v14";
 const ARQUIVOS = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png", "./mascote.png"];
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ARQUIVOS)).then(() => self.skipWaiting()));
