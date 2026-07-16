@@ -313,6 +313,8 @@ async function tratarApi(req, res, rota, ip) {
   if (rota.startsWith("/api/premium") && req.method === "GET") return ativarPremium(req, res);
   // Rota admin pra creditar baús comprados (após confirmar pagamento manual)
   if (rota.startsWith("/api/creditar-baus") && req.method === "GET") return creditarBaus(req, res);
+  // Dados do Painel do Dono (protegido pela ADMIN_CHAVE)
+  if (rota.startsWith("/api/admin/dados") && req.method === "GET") return adminDados(req, res);
   if (req.method !== "POST") return responder(res, 405, { erro: "Método não permitido" });
   const corpo = await lerCorpo(req);
   if (!corpo) return responder(res, 400, { erro: "Corpo inválido ou grande demais" });
@@ -402,6 +404,7 @@ const servidor = http.createServer(async (req, res) => {
   try {
     if (rota.startsWith("/api/")) return await tratarApi(req, res, rota, ip);
     if (req.method !== "GET") return responder(res, 405, { erro: "Método não permitido" });
+    if (rota.split("?")[0] === "/admin") return servirAdmin(res);
     return servirArquivo(res, rota.split("?")[0]);
   } catch (e) {
     log("❌ Erro na rota " + rota + ": " + e.message);
@@ -446,6 +449,162 @@ process.on("SIGINT", desligar);
     log("🎁 Baús creditados: " + email + " +" + qtd + " (total comprados: " + c.progresso.cosmeticos.baus.comprados + ")");
     return responder(res, 200, { ok: true, email, qtd, totalComprados: c.progresso.cosmeticos.baus.comprados });
   }
+
+  /* ---------- ADMIN: dados do Painel do Dono ----------
+     Nunca expõe senha (nem hash). Só métricas de negócio. */
+  function adminDados(req, res) {
+    const u = new URL(req.url, "http://x");
+    const ADMIN = process.env.ADMIN_CHAVE || "";
+    if (!ADMIN) return responder(res, 403, { erro: "Defina ADMIN_CHAVE nas variáveis do Render para usar o painel." });
+    if ((u.searchParams.get("chave") || "") !== ADMIN) return responder(res, 403, { erro: "Chave errada." });
+    const contas = Object.values(CONTAS).map(c => {
+      const p = c.progresso || {};
+      return {
+        email: c.email,
+        nome: String(c.nome || "").slice(0, 30),
+        criadaEm: c.criadaEm || null,
+        ultimaSync: c.ultimaSync || null,
+        premiumAte: c.premiumAte || null,
+        xp: p.xp || 0,
+        diasSeguidos: p.diasSeguidos || 0,
+        melhorSeq: p.melhorSeq || 0,
+        trialInicio: p.trialInicio || null,
+        temporada: (p.carreira && p.carreira.temporada) || 1,
+        aulas: Object.keys(p.modulosFeitos || {}).length,
+        bausComprados: ((p.cosmeticos || {}).baus || {}).comprados || 0
+      };
+    });
+    return responder(res, 200, { ok: true, agora: Date.now(), trialDias: 7, contas });
+  }
+
+  /* ---------- ADMIN: Painel do Dono (/admin) ----------
+     Uma página, zero dependências. A página em si não tem dado nenhum —
+     tudo vem de /api/admin/dados, que exige a ADMIN_CHAVE. */
+  function servirAdmin(res) {
+    res.writeHead(200, { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store", "X-Robots-Tag": "noindex" });
+    res.end(PAGINA_ADMIN);
+  }
+  const PAGINA_ADMIN = `<!DOCTYPE html><html lang="pt-BR"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow"><title>FalaFina · Painel do Dono</title>
+<style>
+:root{--verde:#00885F;--papel:#FFF8EE;--tinta:#21313A;--suave:#5A6B74;--sol:#FFC53D;--coral:#E4572E;--azul:#2D5DA8}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,sans-serif;background:var(--papel);color:var(--tinta);padding:14px;font-size:15px}
+h1{font-size:1.25rem;margin-bottom:4px}
+.sub{color:var(--suave);font-weight:600;font-size:.85rem;margin-bottom:14px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:16px}
+.card{background:#fff;border:2px solid rgba(33,49,58,.12);border-radius:12px;padding:10px 12px}
+.card b{font-size:1.3rem;display:block}
+.card small{color:var(--suave);font-weight:700;font-size:.7rem;text-transform:uppercase;letter-spacing:.5px}
+.secao{font-weight:800;margin:18px 0 8px;font-size:1rem}
+.aluno{background:#fff;border:2px solid rgba(33,49,58,.12);border-radius:12px;padding:10px 12px;margin-bottom:8px}
+.aluno .top{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center}
+.aluno b{font-size:.95rem}
+.aluno .mail{color:var(--suave);font-weight:600;font-size:.8rem;word-break:break-all}
+.tag{font-size:.68rem;font-weight:800;padding:3px 8px;border-radius:99px;color:#fff;white-space:nowrap}
+.t-hoje{background:var(--coral)} .t-trial{background:var(--sol);color:#5C4400} .t-prem{background:var(--verde)} .t-exp{background:var(--suave)} .t-novo{background:var(--azul)}
+.meta{font-size:.78rem;color:var(--suave);font-weight:700;margin-top:4px}
+.acoes{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.acoes button{border:none;border-radius:9px;padding:7px 10px;font-weight:800;font-size:.78rem;cursor:pointer;color:#fff;background:var(--verde)}
+.acoes button.azul{background:var(--azul)} .acoes button.cinza{background:var(--suave)}
+input,select{font-family:inherit;font-weight:700;padding:10px;border:2px solid rgba(33,49,58,.2);border-radius:10px;font-size:.9rem}
+#busca{width:100%;margin-bottom:10px}
+#entrar{display:flex;gap:8px;margin:20px 0}
+#msg{font-weight:700;color:var(--coral);margin:8px 0;min-height:20px}
+.vazio{color:var(--suave);font-weight:700;font-size:.85rem;padding:8px}
+</style></head><body>
+<h1>🦜 FalaFina — Painel do Dono</h1>
+<p class="sub">Quem chamar hoje, quem é Premium, ativação em 1 toque. Só você vê isso (ADMIN_CHAVE).</p>
+<div id="entrar"><input type="password" id="chave" placeholder="Sua ADMIN_CHAVE" style="flex:1"><button onclick="entrar()" style="background:var(--verde);color:#fff;border:none;border-radius:10px;padding:10px 16px;font-weight:800;cursor:pointer">Entrar</button></div>
+<div id="msg"></div>
+<div id="painel" style="display:none">
+  <div class="cards" id="stats"></div>
+  <div class="secao">🎯 Quem chamar HOJE (trial acabando ou recém-expirado)</div>
+  <div id="chamar"></div>
+  <div class="secao">👥 Todos os alunos <span id="qtd" style="color:var(--suave)"></span></div>
+  <input id="busca" placeholder="Buscar por nome ou e-mail..." oninput="desenhar()">
+  <div id="lista"></div>
+</div>
+<script>
+"use strict";
+let CHAVE = localStorage.getItem("ff_admin_chave") || "";
+let DADOS = null;
+const $ = s => document.querySelector(s);
+if (CHAVE) { $("#chave").value = CHAVE; entrar(); }
+async function entrar() {
+  CHAVE = $("#chave").value.trim();
+  $("#msg").textContent = "Carregando...";
+  try {
+    const r = await fetch("/api/admin/dados?chave=" + encodeURIComponent(CHAVE));
+    const j = await r.json();
+    if (!j.ok) { $("#msg").textContent = "❌ " + (j.erro || "Erro"); return; }
+    localStorage.setItem("ff_admin_chave", CHAVE);
+    DADOS = j; $("#msg").textContent = ""; $("#painel").style.display = "block"; $("#entrar").style.display = "none";
+    desenhar();
+  } catch (e) { $("#msg").textContent = "❌ Sem conexão com o servidor"; }
+}
+function statusDe(c) {
+  const ag = DADOS.agora;
+  if (c.premiumAte && c.premiumAte > ag) return { id: "prem", rot: "👑 Premium até " + new Date(c.premiumAte).toLocaleDateString("pt-BR"), cls: "t-prem", pri: 3 };
+  if (!c.trialInicio) return { id: "novo", rot: "✨ Novo (trial não começou)", cls: "t-novo", pri: 4 };
+  const passados = Math.floor((ag - new Date(c.trialInicio + "T00:00:00").getTime()) / 86400000);
+  const resta = DADOS.trialDias - passados;
+  if (resta > 1) return { id: "trial", rot: "🎁 Trial: " + resta + " dias", cls: "t-trial", pri: 5 };
+  if (resta === 1 || resta === 0) return { id: "hoje", rot: resta === 1 ? "⏳ ÚLTIMO DIA de trial" : "🔴 Trial ACABA HOJE", cls: "t-hoje", pri: 1 };
+  return { id: "exp", rot: "🔒 Expirou há " + (-resta) + " dia" + (resta === -1 ? "" : "s"), cls: "t-exp", pri: (-resta <= 7 && c.xp > 30) ? 2 : 6 };
+}
+function cartaoAluno(c, st) {
+  const sync = c.ultimaSync ? new Date(c.ultimaSync).toLocaleDateString("pt-BR") : "nunca";
+  return '<div class="aluno"><div class="top"><div><b>' + esc(c.nome || "(sem nome)") + '</b><div class="mail">' + esc(c.email) + '</div></div><span class="tag ' + st.cls + '">' + st.rot + "</span></div>" +
+    '<div class="meta">⭐ ' + c.xp + " XP · 🔥 melhor " + c.melhorSeq + "d · 📚 " + c.aulas + " aulas · 🧗 T" + c.temporada + " · última visita: " + sync + "</div>" +
+    '<div class="acoes">' +
+    '<button onclick="premium(\\'' + c.email + '\\',30)">👑 +30 dias</button>' +
+    '<button onclick="premium(\\'' + c.email + '\\',90)">👑 +90</button>' +
+    '<button onclick="premium(\\'' + c.email + '\\',365)">👑 +1 ano</button>' +
+    '<button class="azul" onclick="baus(\\'' + c.email + '\\')">🎁 Baús</button>' +
+    '<button class="cinza" onclick="copiar(\\'' + c.email + '\\')">📋 copiar e-mail</button>' +
+    "</div></div>";
+}
+function esc(s) { return String(s).replace(/[&<>"']/g, m => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m])); }
+function desenhar() {
+  const ag = DADOS.agora, dia = 86400000;
+  const cs = DADOS.contas.map(c => ({ c, st: statusDe(c) }));
+  const ativos7 = cs.filter(x => x.c.ultimaSync && (ag - new Date(x.c.ultimaSync).getTime()) < 7 * dia).length;
+  const prem = cs.filter(x => x.st.id === "prem").length;
+  const trial = cs.filter(x => x.st.id === "trial" || x.st.id === "hoje").length;
+  const urg = cs.filter(x => x.st.pri <= 2);
+  $("#stats").innerHTML =
+    '<div class="card"><b>' + cs.length + "</b><small>contas</small></div>" +
+    '<div class="card"><b>' + ativos7 + "</b><small>ativos (7 dias)</small></div>" +
+    '<div class="card"><b>👑 ' + prem + "</b><small>premium</small></div>" +
+    '<div class="card"><b>🎁 ' + trial + "</b><small>em trial</small></div>" +
+    '<div class="card" style="border-color:var(--coral)"><b style="color:var(--coral)">🎯 ' + urg.length + "</b><small>pra chamar hoje</small></div>";
+  urg.sort((a, b) => a.st.pri - b.st.pri || b.c.xp - a.c.xp);
+  $("#chamar").innerHTML = urg.map(x => cartaoAluno(x.c, x.st)).join("") || '<p class="vazio">Ninguém urgente agora. 😎</p>';
+  const q = ($("#busca").value || "").toLowerCase();
+  const todos = cs.filter(x => !q || (x.c.nome || "").toLowerCase().includes(q) || x.c.email.includes(q));
+  todos.sort((a, b) => new Date(b.c.ultimaSync || 0) - new Date(a.c.ultimaSync || 0));
+  $("#qtd").textContent = "(" + todos.length + ")";
+  $("#lista").innerHTML = todos.map(x => cartaoAluno(x.c, x.st)).join("") || '<p class="vazio">Nenhum aluno encontrado.</p>';
+}
+async function premium(email, dias) {
+  if (!confirm("Ativar Premium por " + dias + " dias para\\n" + email + "?")) return;
+  const r = await fetch("/api/premium?chave=" + encodeURIComponent(CHAVE) + "&email=" + encodeURIComponent(email) + "&dias=" + dias);
+  const j = await r.json();
+  alert(j.ok ? "👑 Premium ativado até " + new Date(j.premiumAte).toLocaleDateString("pt-BR") : "❌ " + (j.erro || "Erro"));
+  entrar();
+}
+async function baus(email) {
+  const qtd = parseInt(prompt("Quantos baús creditar pra " + email + "?", "50") || "0", 10);
+  if (!qtd || qtd < 1) return;
+  const r = await fetch("/api/creditar-baus?chave=" + encodeURIComponent(CHAVE) + "&email=" + encodeURIComponent(email) + "&qtd=" + qtd);
+  const j = await r.json();
+  alert(j.ok ? "🎁 +" + qtd + " baús (total " + j.totalComprados + ")" : "❌ " + (j.erro || "Erro"));
+  entrar();
+}
+function copiar(t) { navigator.clipboard && navigator.clipboard.writeText(t); }
+</script></body></html>`;
 
   /* ---------- ADMIN: ativar Premium (só o Andrio) ----------
      Configure ADMIN_CHAVE nas variáveis de ambiente do Render.

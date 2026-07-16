@@ -1,11 +1,12 @@
 // FalaFina Service Worker — app instalável e funcionando offline
+// v19: PAINEL DO DONO (/admin) — quem chamar hoje, premium/baús em 1 toque; /admin nunca cacheado
 // v18: CONVERSÃO DA SEMANA GRÁTIS — Primeiros Passos (7 quests), banner de urgência, Paywall 2.0
 // v17: NINGUÉM FICA TRAVADO — missões se adaptam a aparelho sem mic/áudio, refazer aula conta, dica após 2 erros
 // v16: MODO CARREIRA 2.0 — temporadas com 6 capítulos, fila de domínio, história real H-2B/H-2A
 // v15: faixa-guia nas Aulas + desafios com botão "Treinar agora" que leva pro treino certo
 // v14: Guia de Áreas (Mapa do FalaFina, "?" em toda tela, nomes claros)
 // v8: ícones com nome correto (minúsculo) + NUNCA cacheia /api/ (dados da nuvem sempre frescos)
-const CACHE = "falafina-v18";
+const CACHE = "falafina-v19";
 const ARQUIVOS = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png", "./mascote.png"];
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ARQUIVOS)).then(() => self.skipWaiting()));
@@ -15,8 +16,8 @@ self.addEventListener("activate", e => {
 });
 self.addEventListener("fetch", e => {
   const url = new URL(e.request.url);
-  // API da nuvem: sempre rede, nunca cache (senão o ranking/sync ficaria velho)
-  if (url.pathname.startsWith("/api/") || e.request.method !== "GET") return;
+  // API da nuvem e Painel do Dono: sempre rede, nunca cache
+  if (url.pathname.startsWith("/api/") || url.pathname === "/admin" || e.request.method !== "GET") return;
   e.respondWith(
     fetch(e.request).then(r => {
       const copia = r.clone();
