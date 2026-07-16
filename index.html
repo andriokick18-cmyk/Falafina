@@ -1293,7 +1293,7 @@ function usuarioCrianca(){ const i = idadeUsuario(); return i !== null && i < 12
 
 /* ---------- ÁUDIO: voz nativa do aparelho (en-US), custo zero ---------- */
 const Fala = (() => {
-  const suportado = "speechSynthesis" in window;
+  const suportado = !!window.speechSynthesis;
   let vozEN = null;
   function escolherVoz(){
     if(!suportado) return;
@@ -1306,6 +1306,9 @@ const Fala = (() => {
   }
   function dizer(texto, botao){
     if(!suportado){ mostrarToast("Seu navegador não tem áudio de voz 😕"); return; }
+    /* aluno apertou o 🔊 de propósito → conta pra missão "ouvir áudios"
+       (alternativa de pronúncia pra aparelhos sem microfone) */
+    if(botao){ try{ const s = estatDia(); s.audio = (s.audio || 0) + 1; Progresso.salvar(); }catch(e){} }
     speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(texto);
     u.lang = "en-US";
@@ -3870,8 +3873,10 @@ const Progresso = {
   concluirModulo(id){
     if(!this.dados.modulosFeitos[id]){
       this.dados.modulosFeitos[id] = { data: new Date().toISOString() };
-      try{ estatDia().aulas = (estatDia().aulas || 0) + 1; }catch(e){}
     }
+    /* a missão do dia "Concluir 1 aula" conta TODA conclusão de quiz,
+       inclusive refazer aula antiga — senão quem revisa fica no 0/1 */
+    try{ estatDia().aulas = (estatDia().aulas || 0) + 1; }catch(e){}
     this.salvar();
   }
 };
@@ -4204,8 +4209,12 @@ function gerarBanco(mod){
     if(d.length===3) banco.push(montarPergunta(`O que significa "${c.en}" (soa: ${c.som})?`, c.en, c.pt, d, `${c.en} (${c.som}) = ${c.pt}.`, c.en, c.figura));
     d = amostrarDistratores(c.som, pool.map(x=>x.som), 3);
     if(d.length===3) banco.push(montarPergunta(`Como SOA "${c.en}"?`, c.en, c.som, d, `${c.en} soa "${c.som}" — ${c.pt}.`, c.en, c.figura));
-    d = amostrarDistratores(c.en, todos.map(x=>x.en), 3);
-    if(d.length===3) banco.push(montarPergunta("🔊 Aperte o alto-falante e escolha o que você OUVIU:", c.en, c.en, d, `Você ouviu "${c.en}" (${c.som}) = ${c.pt}.`, c.en, null));
+    /* pergunta só-de-ouvido: NUNCA em navegador sem voz (ex.: navegador
+       interno do WhatsApp) — senão o aluno fica preso sem ter como saber */
+    if(window.speechSynthesis){
+      d = amostrarDistratores(c.en, todos.map(x=>x.en), 3);
+      if(d.length===3) banco.push(montarPergunta("🔊 Aperte o alto-falante e escolha o que você OUVIU:", c.en, c.en, d, `Você ouviu "${c.en}" (${c.som}) = ${c.pt}.`, c.en, null));
+    }
     d = amostrarDistratores(c.exPt, pool.map(x=>x.exPt), 3);
     if(d.length===3) banco.push(montarPergunta(`O que significa a frase: "${c.exEn}"?`, c.exEn, c.exPt, d, `${c.exEn} (${c.exSom}) = ${c.exPt}`, c.en, c.figura));
     // Tipo 6 — COMPLETE A LACUNA (cloze): frases completas gravam melhor que palavras soltas
@@ -4338,7 +4347,13 @@ function iniciarTreino(){
 function iniciarQuiz(){
   if(!moduloAberto || !moduloAberto.quiz.length) return;
   const geradas = embaralhar(gerarBanco(moduloAberto)).slice(0, 4); // 4 surpresas novas a cada tentativa
-  const perguntas = moduloAberto.quiz.concat(geradas);
+  let perguntas = moduloAberto.quiz.concat(geradas);
+  /* navegador sem voz (ex.: WhatsApp): perguntas de escuta viram armadilha
+     sem saída — tira elas do quiz pra ninguém ficar travado na aula */
+  if(!window.speechSynthesis){
+    const semAudio = perguntas.filter(q => !/ouviu|ouvir|alto-falante|🔊/i.test(q.pergunta || ""));
+    if(semAudio.length >= 4) perguntas = semAudio;
+  }
   quizEstado = {
     perguntas,
     fila: embaralhar(perguntas.map((q,i) => i)),
@@ -4432,6 +4447,7 @@ function aplicarResultado(certo, q){
     }
   } else {
     quizEstado.erros++;
+    q._erros = (q._erros || 0) + 1; // depois de 2 erros, a dica aparece ANTES de responder
     if(quizEstado.escalada){
       quizEstado.errosFeitos++; // na escalada o erro não volta pra fila: ele CONTA
     } else {
@@ -4444,9 +4460,15 @@ function aplicarResultado(certo, q){
   }
 }
 
+/* SOCORRO ANTI-TRAVAMENTO: errou a mesma pergunta 2x → a dica aparece
+   ANTES de responder. Ninguém fica preso em loop na aula. */
+function dicaSocorro(q){
+  if(!q || (q._erros || 0) < 2 || !q.dica || quizEstado.escalada || quizEstado.nivelamento) return "";
+  return `<div style="background:var(--sol-claro);border:2px solid var(--sol);border-radius:14px;padding:10px 14px;margin:10px 0;font-weight:700;font-size:.9rem">💡 <b>Ajuda do Fininho</b> (essa já voltou ${q._erros}x): ${esc(q.dica)}</div>`;
+}
 /* Tela do exercício MONTE A FRASE (produção ativa) */
 function renderMontar(q){
-  let html = (q.figura ? `<div class="quiz-figura">${q.figura}</div>` : "") + `<h2 class="quiz-pergunta">${esc(q.pergunta)}</h2>
+  let html = (q.figura ? `<div class="quiz-figura">${q.figura}</div>` : "") + `<h2 class="quiz-pergunta">${esc(q.pergunta)}</h2>${dicaSocorro(q)}
   <div class="quiz-sub">🧩 Toque nas palavras na ordem certa (toque de novo pra devolver)</div>
   <div class="montar-resposta" id="mResp"><span class="mDica">toque nas palavras abaixo…</span></div>
   <div class="montar-banco" id="mBanco"></div>
@@ -4530,7 +4552,7 @@ function renderQuizPergunta(){
   const idxCerto = opcoesVista.indexOf(textoCerto);
   const letras = ["A","B","C","D"];
   let html = (q.texto ? `<div class="leitura-box">${q.titulo ? `<b>${esc(q.titulo)}</b>` : ""}${esc(q.texto).replace(/\n/g, "<br>")}</div>` : "")
-    + (q.figura ? `<div class="quiz-figura">${q.figura}</div>` : "") + `<h2 class="quiz-pergunta">${esc(q.pergunta)}</h2>`;
+    + (q.figura ? `<div class="quiz-figura">${q.figura}</div>` : "") + `<h2 class="quiz-pergunta">${esc(q.pergunta)}</h2>` + dicaSocorro(q);
   if(q.falar){
     html += `<div class="quiz-sub"><button class="btn-som" data-falar="${esc(q.falar)}" aria-label="Ouvir">🔊</button> Ouça antes de responder</div>`;
   }
@@ -4625,12 +4647,12 @@ function concluirModuloAtual(){
   const mod = moduloAberto;
   const jaFeito = Progresso.moduloFeito(mod.id);
   Progresso.concluirModulo(mod.id);
-  registrarAtividade(jaFeito ? 0 : mod.xp);
+  registrarAtividade(jaFeito ? 15 : mod.xp);
   $("#concluTitulo").textContent = `${mod.icone} ${mod.titulo}: concluído!`;
   $("#concluTexto").textContent = quizEstado.erros === 0
     ? "Gabaritou de primeira. Impressionante!"
     : `Você errou ${quizEstado.erros} vez(es), refez e acertou tudo. Errar e corrigir é como se aprende de verdade.`;
-  $("#concluXP").textContent = jaFeito ? "0 (revisão)" : mod.xp;
+  $("#concluXP").textContent = jaFeito ? "15 (revisão)" : mod.xp;
   const prox = proximoModulo(mod.id);
   $("#btnProximoModulo").style.display = prox ? "block" : "none";
   if(prox) $("#btnProximoModulo").dataset.mod = prox.id;
@@ -5114,7 +5136,7 @@ function iniciarTimerPergunta(q){
 }
 /* ⌨️ RENDER DO MODO DIGITAÇÃO */
 function renderDigitar(q){
-  let html = `<h2 class="quiz-pergunta">${esc(q.pergunta)}</h2>`;
+  let html = `<h2 class="quiz-pergunta">${esc(q.pergunta)}</h2>` + dicaSocorro(q);
   if(q.falar) html += `<div class="quiz-sub"><button class="btn-som" data-falar="${esc(q.falar)}" aria-label="Ouvir">🔊</button> Toque pra ouvir de novo</div>`;
   html += `<input type="text" id="digResposta" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Digite em inglês..." style="width:100%;max-width:420px;font-family:inherit;font-weight:800;font-size:1.1rem;padding:14px;border:2.5px solid rgba(33,49,58,.25);border-radius:14px;text-align:center">
   <button class="btn-principal" id="digConferir" style="margin-top:12px;max-width:420px">Conferir ✔</button>
@@ -6816,7 +6838,7 @@ function estatDia(){
   const p = Progresso.dados;
   if(!p.stats) p.stats = {};
   const h = hojeStr();
-  if(!p.stats[h]) p.stats[h] = { ex:0, certos:0, gram:0, gramC:0, esc:0, escC:0, pron:0, pronOk:0, aulas:0, xp:0 };
+  if(!p.stats[h]) p.stats[h] = { ex:0, certos:0, gram:0, gramC:0, esc:0, escC:0, pron:0, pronOk:0, aulas:0, xp:0, audio:0 };
   return p.stats[h];
 }
 function registrarEstat(q, certo){
@@ -6917,12 +6939,18 @@ function renderHome(){
       </div>
       <div class="semana" style="justify-content:center;margin-top:16px">${semana}</div>
     </div>
+    ${!window.speechSynthesis ? `<div class="cardb" style="margin-top:14px;background:var(--sol-claro);border:2px solid var(--sol)">
+      <b>🔇 Seu navegador está sem o áudio de voz</b>
+      <p style="font-weight:700;font-size:.85rem;color:var(--tinta-suave);margin-top:4px">Dá pra estudar assim mesmo (as missões se adaptam), mas pra OUVIR o inglês falado abra o FalaFina no <b>Chrome</b> (Android) ou <b>Safari</b> (iPhone). Se você abriu pelo WhatsApp, toque no menu ⋮ e escolha <b>"Abrir no navegador"</b>.</p>
+    </div>` : ""}
     <div class="cardb" style="margin-top:14px">
       <div class="secao-t">Hoje no FalaFina <button class="btn-link" style="padding:0;font-size:.85rem" data-ir="desafios">Desafios completos →</button></div>
       <div class="lista-limpa">
         ${linhaHoje(s.aulas >= 1, "aula", "Concluir 1 aula", `${Math.min(s.aulas,1)}/1`)}
         ${linhaHoje(s.ex >= 10, "ex", "Fazer 10 exercícios", `${Math.min(s.ex,10)}/10`)}
-        ${linhaHoje(s.pron >= 3, "pron", "Praticar pronúncia 3x", `${Math.min(s.pron,3)}/3`)}
+        ${Fala.temMic
+          ? linhaHoje(s.pron >= 3, "pron", "Praticar pronúncia 3x", `${Math.min(s.pron,3)}/3`)
+          : linhaHoje((s.audio || 0) >= 5, "pron", "Ouvir 5 áudios no 🔊 (e repetir em voz alta)", `${Math.min(s.audio || 0,5)}/5`)}
       </div>
     </div>
     <div class="cardb" style="margin-top:14px;border:2.5px solid var(--sol);background:linear-gradient(135deg,#FFF8E7,#FFF3D1)">
@@ -6969,7 +6997,7 @@ function renderHome(){
     if(alvo === "pratica-sim"){ renderSimConfig(); irPara("tela-simulador"); }
     else if(alvo === "pratica-inf") iniciarInfinito();
     else if(alvo === "pratica-esc"){ renderEscalada(); irPara("tela-escalada"); }
-    else if(alvo === "pratica-pron"){ revTab = "palavras"; navPara("revisao"); mostrarToast("Dica: use o 🎤 nos cards e no feedback!"); }
+    else if(alvo === "pratica-pron"){ revTab = "palavras"; navPara("revisao"); mostrarToast(Fala.temMic ? "Dica: use o 🎤 nos cards e no feedback!" : "Aperte o 🔊 nos cards e repita em voz alta!"); }
     else if(alvo === "pratica-err"){ revTab = "erros"; navPara("revisao"); }
   }));
   const homeBauFaixa = $("#homeBauFaixa");
@@ -6982,7 +7010,7 @@ function renderHome(){
     const t = b.dataset.hj;
     if(t === "aula") abrirModulo(prox.id);
     else if(t === "ex"){ revTab = "inteligente"; navPara("revisao"); }
-    else { revTab = "palavras"; navPara("revisao"); mostrarToast("Use o 🎤 nos cards pra praticar!"); }
+    else { revTab = "palavras"; navPara("revisao"); mostrarToast(Fala.temMic ? "Use o 🎤 nos cards pra praticar!" : "Aperte o 🔊 nos cards e repita em voz alta!"); }
   }));
   if(typeof Nuvem !== "undefined" && Nuvem.ranking){
     Nuvem.ranking().then(r => {
@@ -7197,11 +7225,16 @@ function listaDesafios(){
   const s = estatDia();
   const p = Progresso.dados;
   const streak = (p.ultimoDiaAtivo === hojeStr() || p.ultimoDiaAtivo === hojeStr(-86400000)) ? (p.diasSeguidos || 0) : 0;
-  /* "vai": pra onde o botão Treinar leva quem ainda não bateu a meta */
+  /* "vai": pra onde o botão Treinar leva quem ainda não bateu a meta.
+     Sem microfone no aparelho, a meta de pronúncia vira "ouvir áudios"
+     (senão a missão seria impossível — ninguém pode ficar travado). */
+  const temMic = (typeof Fala !== "undefined") && Fala.temMic;
   const diarios = [
-    { id:"d1", ic:"📗", nome:"Complete 1 aula", desc:"Conclua um módulo hoje.", tem:s.aulas, meta:1, xp:150, periodo:"dia", vai:"aula" },
+    { id:"d1", ic:"📗", nome:"Complete 1 aula", desc:"Conclua um módulo hoje (refazer aula antiga também vale).", tem:s.aulas, meta:1, xp:150, periodo:"dia", vai:"aula" },
     { id:"d2", ic:"🎯", nome:"Faça 10 exercícios", desc:"Responda 10 perguntas hoje.", tem:s.ex, meta:10, xp:100, periodo:"dia", vai:"exercicios" },
-    { id:"d3", ic:"🎤", nome:"Pratique pronúncia 3x", desc:"Use o microfone 3 vezes hoje.", tem:s.pron, meta:3, xp:80, periodo:"dia", vai:"pronuncia" }
+    temMic
+      ? { id:"d3", ic:"🎤", nome:"Pratique pronúncia 3x", desc:"Use o microfone 3 vezes hoje.", tem:s.pron, meta:3, xp:80, periodo:"dia", vai:"pronuncia" }
+      : { id:"d3", ic:"🔊", nome:"Ouça 5 áudios", desc:"Aperte o 🔊 e repita em voz alta 5 vezes hoje.", tem:s.audio || 0, meta:5, xp:80, periodo:"dia", vai:"pronuncia" }
   ];
   const destaque = [
     { id:"f1", ic:"🔥", nome:"Sequência de Fogo", desc:"Estude 7 dias seguidos.", tem:streak, meta:7, xp:300, periodo:"semana", vai:"aula" },
@@ -7211,7 +7244,9 @@ function listaDesafios(){
   ];
   const mais = [
     { id:"m1", ic:"⏱️", nome:"Corrida contra o tempo", desc:"Responda 15 perguntas num dia só.", tem:s.ex, meta:15, xp:180, periodo:"dia", vai:"exercicios" },
-    { id:"m2", ic:"🗣️", nome:"FalaFina Fluente", desc:"Tenha 5 frases reconhecidas no microfone.", tem:somaStats("pronOk"), meta:5, xp:220, periodo:"unico", vai:"pronuncia" },
+    temMic
+      ? { id:"m2", ic:"🗣️", nome:"FalaFina Fluente", desc:"Tenha 5 frases reconhecidas no microfone.", tem:somaStats("pronOk"), meta:5, xp:220, periodo:"unico", vai:"pronuncia" }
+      : { id:"m2", ic:"👂", nome:"Ouvinte de Elite", desc:"Ouça 30 áudios no total (aperte o 🔊 e repita em voz alta).", tem:somaStats("audio"), meta:30, xp:220, periodo:"unico", vai:"pronuncia" },
     { id:"m3", ic:"🎁", nome:"Desafio Surpresa", desc:"Complete os 3 desafios diários de hoje.", tem:diarios.filter(d => d.tem >= d.meta).length, meta:3, xp:300, periodo:"dia", vai:"aula" }
   ];
   return { diarios, destaque, mais };
@@ -7262,7 +7297,7 @@ function renderDesafios(){
     const v = b.dataset.vai;
     if(v === "aula") abrirModulo(proximoModulo().id);
     else if(v === "exercicios"){ revTab = "inteligente"; navPara("revisao"); }
-    else if(v === "pronuncia"){ revTab = "palavras"; navPara("revisao"); mostrarToast("Use o 🎤 nos cards pra praticar!"); }
+    else if(v === "pronuncia"){ revTab = "palavras"; navPara("revisao"); mostrarToast(Fala.temMic ? "Use o 🎤 nos cards pra praticar!" : "Aperte o 🔊 nos cards e repita em voz alta!"); }
     else if(v === "carreira") navPara("carreira");
     else if(v === "ditado") abrirJogo("ditado");
     else if(v === "simulador"){ renderSimConfig(); irPara("tela-simulador"); }
@@ -7569,20 +7604,33 @@ function jardimProxima(){
     const ops = embaralhar([i, ...LEX.distratores(i, 3)]);
     html += m === "l"
       ? `<p class="jar-alvo">${esc(en)}</p>`
-      : `<button class="btn-som" id="jarOuvir" style="font-size:2rem;width:64px;height:64px;border-radius:50%">🔊</button>`;
+      : ((window.speechSynthesis)
+        ? `<button class="btn-som" id="jarOuvir" style="font-size:2rem;width:64px;height:64px;border-radius:50%">🔊</button>`
+        : `<p style="font-weight:700;color:var(--tinta-suave);font-size:.85rem">Sem áudio neste navegador — leia como SOA:</p><p class="jar-alvo">🗣️ ${esc(som)}</p>`);
     html += `<div class="carr-opcoes">${ops.map(j => `<button class="carr-opcao" data-op="${j}">${esc(LEX.palavra(j)[1])}</button>`).join("")}</div>`;
   } else if(m === "e"){
     html += `<p class="jar-alvo">🇧🇷 ${esc(pt)}</p>
       <input id="jarResp" autocomplete="off" autocapitalize="off" placeholder="Digite em inglês..." style="width:100%;border:2px solid var(--borda);border-radius:12px;padding:12px;font-weight:700;font-size:1rem;font-family:inherit">
       <button class="btn-principal" id="jarConf" style="margin-top:10px">Conferir ✔</button>`;
   } else {
-    html += `<p class="jar-alvo">${esc(en)}</p><p style="font-weight:700;color:var(--tinta-suave)">🗣️ ${esc(som)} · 🇧🇷 ${esc(pt)}</p>
-      <button class="btn-principal btn-mic-grande" id="jarFalar">🎤 Falar</button>
-      <button class="btn-link" id="jarPular" style="margin-top:6px">Sem microfone agora — pular</button>`;
+    const temRec = !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+    if(temRec){
+      html += `<p class="jar-alvo">${esc(en)}</p><p style="font-weight:700;color:var(--tinta-suave)">🗣️ ${esc(som)} · 🇧🇷 ${esc(pt)}</p>
+        <button class="btn-principal btn-mic-grande" id="jarFalar">🎤 Falar</button>
+        <button class="btn-link" id="jarPular" style="margin-top:6px">Sem microfone agora — pular</button>`;
+    } else {
+      /* aparelho sem reconhecimento de voz: falar em voz alta lendo o
+         COMO SOA vale — senão a palavra nunca floresceria neste celular */
+      html += `<p class="jar-alvo">${esc(en)}</p><p style="font-weight:700;color:var(--tinta-suave)">🗣️ ${esc(som)} · 🇧🇷 ${esc(pt)}</p>
+        <p style="font-weight:700;font-size:.85rem;color:var(--tinta-suave);margin-top:6px">Seu navegador não tem reconhecimento de voz — treine assim: fale a palavra <b>EM VOZ ALTA 3 vezes</b>, lendo o 🗣️ COMO SOA.</p>
+        <button class="btn-principal" id="jarFaleiAlto" style="margin-top:8px">🗣️ Falei em voz alta ✔</button>`;
+    }
   }
   html += `<div id="jarFeed"></div>`;
   alvo.innerHTML = html;
-  if(m === "o"){ Fala.dizer(en); $("#jarOuvir").addEventListener("click", () => Fala.dizer(en, $("#jarOuvir"))); }
+  if(m === "o" && $("#jarOuvir")){ Fala.dizer(en); $("#jarOuvir").addEventListener("click", () => Fala.dizer(en, $("#jarOuvir"))); }
+  const jfa = $("#jarFaleiAlto");
+  if(jfa) jfa.addEventListener("click", () => jardimResultado(true, en, pt, som));
   alvo.querySelectorAll("[data-op]").forEach(b => b.addEventListener("click", () => {
     alvo.querySelectorAll("[data-op]").forEach(x => x.disabled = true);
     const certo = Number(b.dataset.op) === i;
@@ -7661,6 +7709,10 @@ function ditadoBanco(){
   return cards;
 }
 function iniciarDitado(){
+  if(!window.speechSynthesis){
+    mostrarToast("👂 O Ditado precisa de áudio e seu navegador não tem. Abra o FalaFina no Chrome que funciona! 😊");
+    return;
+  }
   const banco = ditadoBanco();
   if(!banco.length){ mostrarToast("Conclua sua primeira aula pra desbloquear o Ditado 😊"); return; }
   ENGINE.jogou("ditado");
@@ -7850,7 +7902,7 @@ function abrirJogoDireto(id){
   else if(id === "ditado") iniciarDitado();
   else if(id === "jardim") iniciarJardim();
   else if(id === "escalada"){ renderEscalada(); irPara("tela-escalada"); }
-  else if(id === "pronuncia"){ revTab = "palavras"; navPara("revisao"); mostrarToast("Use o 🎤 nos cards e no feedback!"); }
+  else if(id === "pronuncia"){ revTab = "palavras"; navPara("revisao"); mostrarToast(Fala.temMic ? "Use o 🎤 nos cards e no feedback!" : "Aperte o 🔊 nos cards e repita em voz alta!"); }
   else if(id === "infinito") iniciarInfinito();
   else if(id === "erros"){ revTab = "erros"; navPara("revisao"); }
 }
@@ -7867,7 +7919,9 @@ function renderPratica(){
   const missoes = [
     { ok:s.aulas >= 1, txt:"Concluir 1 aula", prog:`${Math.min(s.aulas,1)}/1` },
     { ok:s.ex >= 10, txt:"Fazer 10 exercícios", prog:`${Math.min(s.ex,10)}/10` },
-    { ok:s.pron >= 3, txt:"Praticar pronúncia 3x", prog:`${Math.min(s.pron,3)}/3` }
+    Fala.temMic
+      ? { ok:s.pron >= 3, txt:"Praticar pronúncia 3x", prog:`${Math.min(s.pron,3)}/3` }
+      : { ok:(s.audio || 0) >= 5, txt:"Ouvir 5 áudios no 🔊", prog:`${Math.min(s.audio || 0,5)}/5` }
   ];
   const barraSkill = sk => {
     const pct = ENGINE.dominio(sk);
