@@ -1,4 +1,5 @@
 // FalaFina Service Worker — app instalável e funcionando offline
+// v23: 🛡️ PROTETOR DE SEQUÊNCIA — faltou 1 dia, o protetor salva o 🔥 sozinho (Loja, 🌻300, máx 2)
 // v22: HOTFIX CRÍTICO — botão "Fazer o desafio" ficava escondido atrás da tabbar/banner PWA em conta nova no celular
 // v21: INDICAÇÃO PREMIADA — quem indica ganha 🎁2+🌻100, quem chega ganha 🎁1+🌻50 (campo no cadastro)
 // v20: CRESCIMENTO VIA WHATSAPP — cartão OG no compartilhamento + botões de convite com progresso real
@@ -9,7 +10,7 @@
 // v15: faixa-guia nas Aulas + desafios com botão "Treinar agora" que leva pro treino certo
 // v14: Guia de Áreas (Mapa do FalaFina, "?" em toda tela, nomes claros)
 // v8: ícones com nome correto (minúsculo) + NUNCA cacheia /api/ (dados da nuvem sempre frescos)
-const CACHE = "falafina-v22";
+const CACHE = "falafina-v23";
 const ARQUIVOS = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png", "./mascote.png"];
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ARQUIVOS)).then(() => self.skipWaiting()));

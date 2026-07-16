@@ -1199,6 +1199,9 @@ function mesclarProgresso(a, b){
     emp: carLider.emp || carA.emp || carB.emp || null,
     cid: carLider.cid || carA.cid || carB.cid || null
   };
+  /* 🛡️ Protetores: comprados/usados só crescem → máximo nunca perde nem duplica */
+  const prA = a.protetores || {}, prB = b.protetores || {};
+  r.protetores = { comprados: Math.max(prA.comprados || 0, prB.comprados || 0), usados: Math.max(prA.usados || 0, prB.usados || 0) };
   r.srs = Object.assign({}, a.srs || {});
   for(const k in (b.srs || {})){
     const ia = r.srs[k], ib = b.srs[k];
@@ -3939,7 +3942,16 @@ function registrarAtividade(xp){
   p.xp += xp;
   try{ estatDia().xp = (estatDia().xp || 0) + xp; }catch(e){}
   if(p.ultimoDiaAtivo !== hoje){
-    p.diasSeguidos = (p.ultimoDiaAtivo === hojeStr(-86400000)) ? (p.diasSeguidos || 0) + 1 : 1;
+    if(p.ultimoDiaAtivo === hojeStr(-86400000)){
+      p.diasSeguidos = (p.diasSeguidos || 0) + 1;
+    } else if(p.ultimoDiaAtivo === hojeStr(-2 * 86400000) && typeof PROTETOR !== "undefined" && PROTETOR.saldo() > 0){
+      /* faltou exatamente 1 dia e tem 🛡️: o protetor age sozinho */
+      PROTETOR.dados().usados++;
+      p.diasSeguidos = (p.diasSeguidos || 0) + 1;
+      if(typeof mostrarToast === "function") setTimeout(() => mostrarToast(`🛡️ Seu Protetor salvou a sequência — 🔥 ${p.diasSeguidos} dias continua viva!`), 600);
+    } else {
+      p.diasSeguidos = 1;
+    }
     p.ultimoDiaAtivo = hoje;
   }
   p.melhorSeq = Math.max(p.melhorSeq || 0, p.diasSeguidos || 0);
@@ -4778,6 +4790,31 @@ const COSM = {
    da Loja, e comprados/abertos só CRESCEM (mesmo padrão ganhas/gastas),
    então o servidor mescla pelo maior e ninguém perde baú comprado.
    ================================================================== */
+/* ==================================================================
+   🛡️ PROTETOR DE SEQUÊNCIA — a vida atropela, o 🔥 não morre.
+   Faltou EXATAMENTE 1 dia e tem protetor? Ele age sozinho e a
+   sequência continua. Carteira monotônica (comprados/usados só
+   crescem) → merge seguro no servidor. Máximo 2 em estoque.
+   ================================================================== */
+const PROTETOR = {
+  PRECO: 300,
+  MAX: 2,
+  dados(){
+    const p = Progresso.dados;
+    if(!p.protetores) p.protetores = { comprados:0, usados:0 };
+    return p.protetores;
+  },
+  saldo(){ const d = this.dados(); return Math.max(0, (d.comprados || 0) - (d.usados || 0)); },
+  comprar(){
+    if(this.saldo() >= this.MAX){ mostrarToast(`🛡️ Você já tem o máximo (${this.MAX} protetores)`); return; }
+    if(COSM.saldo() < this.PRECO){ mostrarToast(`Faltam 🌻 ${(this.PRECO - COSM.saldo()).toLocaleString("pt-BR")} girassóis`); return; }
+    COSM.est().gastas += this.PRECO;
+    this.dados().comprados++;
+    Progresso.salvar();
+    mostrarToast("🛡️ Protetor comprado! Se você faltar 1 dia, ele salva sua sequência sozinho.");
+    if(typeof renderLoja === "function") renderLoja();
+  }
+};
 const BAU = {
   /* Tabela de chances: pesos relativos (soma não precisa ser 100).
      10/20/50/100 = fácil e comum · 150 = incomum · 200 = raro (10x mais
@@ -7058,7 +7095,7 @@ function renderHome(){
   <div style="max-width:640px;margin:0 auto">
     <div class="cardb" style="text-align:center;padding:26px 20px">
       <p style="font-family:var(--f-display);font-size:1.35rem;font-weight:700">Olá, ${esc((c.nome || "Aluno").split(" ")[0])}! 👋</p>
-      <p style="font-weight:700;color:var(--tinta-suave);font-size:.9rem;margin:2px 0 14px">⭐ ${p.xp || 0} XP · Nível ${nivelNum()} · 🔥 ${streak} dia${streak === 1 ? "" : "s"}${selo ? " · " + selo : ""}</p>
+      <p style="font-weight:700;color:var(--tinta-suave);font-size:.9rem;margin:2px 0 14px">⭐ ${p.xp || 0} XP · Nível ${nivelNum()} · 🔥 ${streak} dia${streak === 1 ? "" : "s"}${(typeof PROTETOR !== "undefined" && PROTETOR.saldo() > 0) ? " 🛡️×" + PROTETOR.saldo() : ""}${selo ? " · " + selo : ""}</p>
       <div style="background:var(--verde-claro);border-radius:18px;padding:16px">
         <p style="font-weight:800;font-size:.78rem;color:var(--verde-escuro);letter-spacing:1px">SEU PRÓXIMO PASSO</p>
         <p style="font-family:var(--f-display);font-size:1.15rem;font-weight:700;margin:4px 0 12px">${revisarPrimeiro ? `🔄 Revisar ${devidos} itens da memória` : `${prox.icone} ${esc(prox.titulo)}`}</p>
@@ -7183,7 +7220,8 @@ const DICAS_FF = [
   "errar aqui é de graça. Errar lá fora custa caro. Aproveite pra errar muito!",
   "revise antes de dormir: a memória fixa enquanto você dorme. 😴",
   "aprenda as ferramentas do SEU trabalho em inglês — é o vocabulário que paga o boleto.",
-  "no Simulador de Entrevista, responda como se fosse de verdade. Treino é ensaio geral!"
+  "no Simulador de Entrevista, responda como se fosse de verdade. Treino é ensaio geral!",
+  "sequência 🔥 é ouro: tenha um 🛡️ Protetor na Loja pro dia que a vida atropelar."
 ];
 function dicaDoDia(){ return DICAS_FF[new Date().getDate() % DICAS_FF.length]; }
 function ligarAcoes(raiz){
@@ -8246,6 +8284,16 @@ function renderLoja(){
   let corpo;
   if(catalogo){
     corpo = `<div class="loja-grid">${catalogo.map(cartao).join("")}</div>`;
+  } else if(lojaAba === "protetor"){
+    const ps = PROTETOR.saldo();
+    corpo = `<div class="cardb" style="text-align:center;padding:24px 18px">
+      <div style="font-size:3rem">🛡️</div>
+      <b style="font-family:var(--f-display);font-size:1.15rem">Protetor de Sequência</b>
+      <p style="font-weight:700;color:var(--tinta-suave);font-size:.9rem;margin:8px auto;max-width:400px">A vida atropela: um dia sem estudar e o 🔥 morre. Com o Protetor, se você faltar <b>1 dia</b>, ele age <b>sozinho</b> e sua sequência continua viva. (Faltou 2 dias ou mais, nem ele salva 😉)</p>
+      <p style="font-weight:800;margin:10px 0">Você tem: ${"🛡️".repeat(ps) || "nenhum"} ${ps}/${PROTETOR.MAX}</p>
+      <button class="btn-principal" id="btProtetor" style="max-width:320px" ${ps >= PROTETOR.MAX ? "disabled" : ""}>${ps >= PROTETOR.MAX ? "Estoque cheio ✔" : `Comprar por 🌻 ${PROTETOR.PRECO}`}</button>
+      <p style="font-weight:700;font-size:.78rem;color:var(--tinta-suave);margin-top:8px">Quanto mais longa a sequência, mais dói perder — quem tem 🔥 7+ dias não sai de casa sem protetor.</p>
+    </div>`;
   } else if(lojaAba === "baus"){
     const estoque = BAU.estoque();
     const podeGratis = BAU.podeAbrirGratis();
@@ -8282,6 +8330,7 @@ function renderLoja(){
     <button class="loja-aba ${lojaAba === "pet" ? "ativa" : ""}" data-laba="pet">🐾 Pets</button>
     <button class="loja-aba ${lojaAba === "efeito" ? "ativa" : ""}" data-laba="efeito">✨ Efeitos</button>
     <button class="loja-aba ${lojaAba === "baus" ? "ativa" : ""}" data-laba="baus" style="border-color:#E8B84C;background:${lojaAba === "baus" ? "" : "#FFF3D6"}">🎁 Baús</button>
+    <button class="loja-aba ${lojaAba === "protetor" ? "ativa" : ""}" data-laba="protetor">🛡️ Protetor</button>
     <button class="loja-aba ${lojaAba === "girassol" ? "ativa" : ""}" data-laba="girassol">🌻 Girassóis</button>
   </div>
   ${corpo}`;
@@ -8292,6 +8341,8 @@ function renderLoja(){
   if(btAbrirEstoque) btAbrirEstoque.addEventListener("click", () => abrirLoteBauModal(Math.min(10, BAU.estoque())));
   const btBauGratisLoja = $("#btBauGratisLoja");
   if(btBauGratisLoja) btBauGratisLoja.addEventListener("click", abrirBauGratisModal);
+  const btProtetor = $("#btProtetor");
+  if(btProtetor) btProtetor.addEventListener("click", () => PROTETOR.comprar());
   $("#lojaConteudo").querySelectorAll("[data-baupack]").forEach(b => b.addEventListener("click", () => {
     const pc = BAU.PACOTES.find(p => p.id === b.dataset.baupack); if(!pc) return;
     const eu = Contas.sessao() || "";

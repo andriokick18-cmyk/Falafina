@@ -182,6 +182,9 @@ function mesclarProgresso(a, b) {
     emp: lider.emp || carA.emp || carB.emp || null,
     cid: lider.cid || carA.cid || carB.cid || null
   };
+  /* 🛡️ Protetores de sequência: comprados/usados só crescem → máximo é seguro */
+  const prA = a.protetores || {}, prB = b.protetores || {};
+  r.protetores = { comprados: Math.max(prA.comprados || 0, prB.comprados || 0), usados: Math.max(prA.usados || 0, prB.usados || 0) };
   /* Learning Engine: contadores por habilidade e uso de jogos — só crescem */
   const habA = a.habilidades || {}, habB = b.habilidades || {};
   r.habilidades = {};
