@@ -6797,12 +6797,31 @@ function ffGate(tela){
   return "tela-paywall";
 }
 function renderPaywall(){
+  const p = Progresso.dados;
+  const conta = Contas.atual() || { nome:"" };
+  const nome = (conta.nome || "").split(" ")[0];
+  const car = carrDados();
   $("#paywallConteudo").innerHTML = `
   <div class="cardb" style="max-width:520px;margin:24px auto;text-align:center;padding:30px 22px">
     <img src="mascote.png" style="width:96px" alt="">
-    <h2 style="font-family:var(--f-display);margin:12px 0 6px">Sua semana grátis terminou 💚</h2>
-    <p style="font-weight:700;color:var(--tinta-suave)">Que orgulho de ver você estudando! Seu progresso está <b>todo guardado na nuvem</b> — nada se perde. Pra continuar, ative o Premium falando com a gente:</p>
-    <button class="btn-principal" style="margin-top:16px;background:var(--sol);color:#5C4400;box-shadow:0 4px 0 #C89A20" id="pwZap">👑 Ativar meu Premium (WhatsApp)</button>
+    <h2 style="font-family:var(--f-display);margin:12px 0 6px">${nome ? esc(nome) + ", não" : "Não"} pare agora! 💚</h2>
+    <p style="font-weight:700;color:var(--tinta-suave)">Sua semana grátis terminou — e olha só o que você já construiu:</p>
+    <div class="stat-grid" style="margin:14px 0">
+      <div class="stat-mini"><b>⭐ ${p.xp || 0}</b><small>XP TOTAL</small></div>
+      <div class="stat-mini"><b>🔥 ${p.melhorSeq || 0}</b><small>DIAS SEGUIDOS</small></div>
+      <div class="stat-mini"><b>🔤 ${palavrasAprendidas()}</b><small>PALAVRAS</small></div>
+      <div class="stat-mini"><b>🧗 T${car.temporada}</b><small>CARREIRA</small></div>
+    </div>
+    <p style="font-weight:700;color:var(--tinta-suave);font-size:.9rem">Está tudo <b>guardado na nuvem</b> — nada se perde. Com o Premium você continua exatamente de onde parou:</p>
+    <div style="text-align:left;margin:12px auto;max-width:400px;font-weight:700;font-size:.9rem;display:flex;flex-direction:column;gap:6px">
+      <span>✅ Todas as aulas, jogos e o Modo Carreira sem limites</span>
+      <span>✅ Revisão inteligente que não deixa você esquecer</span>
+      <span>✅ Simulador de Entrevista H-2B/H-2A completo</span>
+      <span>✅ Suporte direto com a equipe no WhatsApp</span>
+      <span>✅ Novidades toda semana — o app não para de crescer</span>
+    </div>
+    <button class="btn-principal" style="margin-top:12px;background:var(--sol);color:#5C4400;box-shadow:0 4px 0 #C89A20" id="pwZap">👑 Quero ativar meu Premium (WhatsApp)</button>
+    <p style="font-weight:700;font-size:.78rem;color:var(--tinta-suave);margin-top:6px">Ativação na hora, direto com o Andrio — sem burocracia, sem cartão em site.</p>
     <button class="btn-principal azul" style="margin-top:10px" id="pwVerificar">🔄 Já paguei — verificar agora</button>
     <button class="btn-link" id="pwSair" style="margin-top:8px">Sair da conta</button>
   </div>`;
@@ -6891,6 +6910,46 @@ function palavrasAprendidas(){
   return Object.keys(s).filter(k => s[k].caixa >= 1).length;
 }
 /* ---------- HOME (dashboard) ---------- */
+/* ==================================================================
+   🚀 PRIMEIROS PASSOS — trilha de ativação da 1ª semana (o trial).
+   7 passos que apresentam o coração do app, cada um pagando 🌻.
+   Conclusão é COMPUTADA do progresso real (sem estado novo); o resgate
+   usa p.resgates (união no merge — nunca duplica nem se perde).
+   Aluno ativado na 1ª semana = aluno que fica e assina.
+   ================================================================== */
+function listaPrimeirosPassos(){
+  const p = Progresso.dados;
+  const c = carrDados();
+  const jogos = p.jogosUso || {};
+  return [
+    { id:"pp1", ic:"🐣", txt:"Conclua sua primeira aula", como:"Aulas → primeira da trilha", sem:20, ok:Object.keys(p.modulosFeitos || {}).length >= 1 },
+    { id:"pp2", ic:"📞", txt:"Feche o capítulo A Agência na Carreira", como:"Início → Continuar carreira", sem:25, ok:(c.temporada > 1 || c.cap >= 1) },
+    { id:"pp3", ic:"🌻", txt:"Regue o Jardim de Palavras 1 vez", como:"Jogos → Jardim de Palavras", sem:20, ok:(jogos.jardim || 0) >= 1 },
+    { id:"pp4", ic:"👂", txt:"Ouça 5 áudios do inglês", como:"aperte o 🔊 em qualquer card", sem:15, ok:(somaStats("audio") + somaStats("pron")) >= 5 },
+    { id:"pp5", ic:"🔥", txt:"Estude 2 dias seguidos", como:"volte amanhã que conta", sem:30, ok:(p.melhorSeq || 0) >= 2 },
+    { id:"pp6", ic:"🏆", txt:"Resgate 3 desafios", como:"área Desafios → Resgatar 🎁", sem:20, ok:Object.keys(p.resgates || {}).filter(k => !k.startsWith("pp")).length >= 3 },
+    { id:"pp7", ic:"⭐", txt:"Chegue a 300 XP", como:"tudo que você faz soma XP", sem:50, baus:2, ok:(p.xp || 0) >= 300 }
+  ];
+}
+function primeirosPassosPendentes(){
+  const resg = Progresso.dados.resgates || {};
+  return listaPrimeirosPassos().some(pp => !resg[pp.id]);
+}
+function cardPrimeirosPassos(){
+  const resg = Progresso.dados.resgates || {};
+  const lista = listaPrimeirosPassos();
+  const feitos = lista.filter(x => resg[x.id]).length;
+  const linhas = lista.map(x => {
+    if(resg[x.id]) return `<div class="linha-cat" style="background:var(--verde-claro);opacity:.6"><span>✅ ${x.txt}</span><b>🌻${x.sem}</b></div>`;
+    if(x.ok) return `<div class="linha-cat" style="background:var(--sol-claro);border:1.5px solid var(--sol)"><span>${x.ic} ${x.txt}</span><button class="btn-resg" data-pp="${x.id}" style="width:auto;padding:7px 12px">Resgatar 🌻${x.sem}${x.baus ? " +🎁" : ""}</button></div>`;
+    return `<div class="linha-cat" style="background:var(--branco);border:1.5px solid var(--borda)"><span>⬜ ${x.txt}<br><small style="color:var(--tinta-suave);font-weight:700">${x.como}</small></span><b style="flex-shrink:0">🌻${x.sem}${x.baus ? " +🎁🎁" : ""}</b></div>`;
+  }).join("");
+  return `<div class="cardb" style="margin-top:14px;border:2.5px solid var(--verde)">
+    <div class="secao-t">🚀 Primeiros Passos <span style="font-size:.82rem;font-weight:800;color:var(--verde-escuro)">${feitos}/7</span></div>
+    <p style="font-weight:700;color:var(--tinta-suave);font-size:.82rem;margin-bottom:8px">Sua primeira semana no FalaFina: complete os 7 passos e leve <b>🌻 180 + 🎁 2 baús</b>.</p>
+    <div class="lista-limpa">${linhas}</div>
+  </div>`;
+}
 function renderHome(){
   const p = Progresso.dados;
   const c = Contas.atual() || { nome:"Aluno" };
@@ -6943,6 +7002,12 @@ function renderHome(){
       <b>🔇 Seu navegador está sem o áudio de voz</b>
       <p style="font-weight:700;font-size:.85rem;color:var(--tinta-suave);margin-top:4px">Dá pra estudar assim mesmo (as missões se adaptam), mas pra OUVIR o inglês falado abra o FalaFina no <b>Chrome</b> (Android) ou <b>Safari</b> (iPhone). Se você abriu pelo WhatsApp, toque no menu ⋮ e escolha <b>"Abrir no navegador"</b>.</p>
     </div>` : ""}
+    ${(!ehPremium() && dias > 0 && dias <= 2) ? `<div class="cardb" style="margin-top:14px;background:linear-gradient(135deg,#FFF8E7,#FFE9AE);border:2.5px solid var(--sol)">
+      <b>⏳ ${dias === 1 ? "ÚLTIMO DIA da sua semana grátis!" : `Faltam só ${dias} dias da sua semana grátis`}</b>
+      <p style="font-weight:700;font-size:.85rem;color:var(--tinta-suave);margin:4px 0 10px">Seu progresso (⭐ ${p.xp || 0} XP, 🔥 ${p.melhorSeq || 0} dias) fica guardado na nuvem — ative o Premium agora e não pare no meio do caminho.</p>
+      <button class="btn-principal" id="homeTrialZap" style="max-width:340px;background:var(--sol);color:#5C4400;box-shadow:0 4px 0 #C89A20">👑 Garantir meu Premium ▶</button>
+    </div>` : ""}
+    ${primeirosPassosPendentes() ? cardPrimeirosPassos() : ""}
     <div class="cardb" style="margin-top:14px">
       <div class="secao-t">Hoje no FalaFina <button class="btn-link" style="padding:0;font-size:.85rem" data-ir="desafios">Desafios completos →</button></div>
       <div class="lista-limpa">
@@ -6986,6 +7051,23 @@ function renderHome(){
   </div>`;
   const homeMapaBtn = $("#homeMapa");
   if(homeMapaBtn) homeMapaBtn.addEventListener("click", abrirMapaApp);
+  const homeTrialZapBtn = $("#homeTrialZap");
+  if(homeTrialZapBtn) homeTrialZapBtn.addEventListener("click", () => abrirZap("Olá Andrio! Minha semana grátis do FalaFina está acabando e quero ativar o Premium 👑 Meu e-mail de cadastro: " + (Contas.sessao() || "")));
+  $("#homeConteudo").querySelectorAll("[data-pp]").forEach(b => b.addEventListener("click", () => {
+    const item = listaPrimeirosPassos().find(x => x.id === b.dataset.pp);
+    if(!item || !item.ok) return;
+    if(!p.resgates) p.resgates = {};
+    if(p.resgates[item.id]) return;
+    p.resgates[item.id] = true;
+    COSM.ganhar(item.sem, null);
+    if(item.baus) BAU.comprar(item.baus);
+    Progresso.salvar();
+    const completou = listaPrimeirosPassos().every(x => p.resgates[x.id]);
+    mostrarToast(completou
+      ? "🏁 PRIMEIROS PASSOS COMPLETOS! Agora você é de casa 💚"
+      : `🌻 +${item.sem}${item.baus ? ` e 🎁 ${item.baus} baús` : ""} — ${item.txt} ✔`);
+    renderHome();
+  }));
   $("#homePasso").addEventListener("click", () => {
     if(revisarPrimeiro){ revTab = "inteligente"; navPara("revisao"); }
     else abrirModulo(prox.id);
