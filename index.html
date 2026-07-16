@@ -1159,6 +1159,25 @@ function mesclarProgresso(a, b){
   r.modulosFeitos = Object.assign({}, a.modulosFeitos || {}, b.modulosFeitos || {});
   const ea = a.escalada || { nivel:1, recorde:1 }, eb = b.escalada || { nivel:1, recorde:1 };
   r.escalada = { nivel: Math.max(ea.nivel || 1, eb.nivel || 1), recorde: Math.max(ea.recorde || 1, eb.recorde || 1) };
+  /* Carreira: contadores = maior; posição na história = lado mais avançado */
+  const carA = a.carreira || {}, carB = b.carreira || {};
+  const carPos = x => [x.temporada || 1, x.cap || 0, x.capOk || 0];
+  const cpa = carPos(carA), cpb = carPos(carB);
+  let carLider = carA;
+  for(let i = 0; i < 3; i++){
+    if(cpa[i] !== cpb[i]){ carLider = cpa[i] > cpb[i] ? carA : carB; break; }
+  }
+  r.carreira = {
+    nivel: Math.max(carA.nivel || 1, carB.nivel || 1),
+    acertos: Math.max(carA.acertos || 0, carB.acertos || 0),
+    respondidas: Math.max(carA.respondidas || 0, carB.respondidas || 0),
+    temporada: carLider.temporada || 1,
+    cap: carLider.cap || 0,
+    capOk: carLider.capOk || 0,
+    temporadasFeitas: Math.max(carA.temporadasFeitas || 0, carB.temporadasFeitas || 0),
+    emp: carLider.emp || carA.emp || carB.emp || null,
+    cid: carLider.cid || carA.cid || carB.cid || null
+  };
   r.srs = Object.assign({}, a.srs || {});
   for(const k in (b.srs || {})){
     const ia = r.srs[k], ib = b.srs[k];
@@ -5820,7 +5839,8 @@ const CARR_ABERTURAS = {
   empregador: ["🤝 Entrevista por vídeo com o gerente:","🏢 No escritório da empresa, o empregador pergunta:","📞 Ligação de confirmação antes da temporada:"],
   consulado:  ["🏛️ No guichê do consulado, o oficial pergunta:","🛂 Entrevista de visto, direto ao ponto:"],
   chegada:    ["🛬 No balcão de imigração (CBP), o oficial pergunta:","🧳 Na alfândega, depois do voo:"],
-  trabalho:   ["👷 No meio do turno, seu supervisor pergunta:","☎️ Seu colega de trabalho te pergunta:","📋 Reunião rápida antes do turno:"]
+  trabalho:   ["👷 No meio do turno, seu supervisor pergunta:","☎️ Seu colega de trabalho te pergunta:","📋 Reunião rápida antes do turno:"],
+  avaliacao:  ["🏆 Conversa de fim de temporada com seu chefe:","📋 Avaliação final, no escritório do gerente:","🤝 Último dia de trabalho, o chefe te chama:"]
 };
 /* Perguntas-base por etapa e nível de dificuldade (tier 1=iniciante, 2=intermediário, 3=avançado).
    Cada função recebe (voc, emp, cidade) e devolve {en,som,pt,ps,mo,dk}. */
@@ -5966,6 +5986,34 @@ const CARR_TEMPLATES = {
         mo:{en:`I would have asked more questions earlier instead of guessing how to handle ${voc[0]} on my own.`, som:`ái úud rev éskt mór quéschons érlier instéd óv guésin ráu tu réndol ${voc[2]} ón mái ôun.`, pt:`Eu teria feito mais perguntas mais cedo em vez de tentar adivinhar como lidar com ${voc[1]} sozinho.`},
         dk:"Terceiro condicional puro — pergunta de reflexão/maturidade, típica de avaliação de desempenho avançada."})
     ]
+  },
+  avaliacao: {
+    1: [
+      (voc,emp,cid) => ({
+        en:"The season is ending. Would you like to come back next year?", som:"dhi sízon iz éndin. úud iú láik tu câm bék nékst íer?",
+        pt:"A temporada está acabando. Você gostaria de voltar no ano que vem?",
+        ps:[{pt:"dizer que sim, com vontade",w:["yes","love","come back","return","next"]},{pt:"agradecer a oportunidade",w:["thank","opportunity","grateful"]}],
+        mo:{en:"Yes, I'd love to come back next season. Thank you for the opportunity.", som:"iés, áid lâv tu câm bék nékst sízon. thénk iú fór dhi oportúniti.", pt:"Sim, adoraria voltar na próxima temporada. Obrigado pela oportunidade."},
+        dk:"Trabalhador convidado a voltar (returning worker) tem visto MUITO mais fácil no ano seguinte — essa resposta vale ouro."}),
+      (voc,emp,cid) => ({
+        en:`What did you learn this season working with ${voc[0]}?`, som:`uót did iú lérn dhis sízon uôrquin uíth ${voc[2]}?`,
+        pt:`O que você aprendeu nesta temporada trabalhando com ${voc[1]}?`,
+        ps:[{pt:"citar um aprendizado concreto",w:["learned","english","skills","better","faster","team"]}],
+        mo:{en:`I learned a lot — my English got better and I became faster with ${voc[0]}.`, som:`ái lérnd a lót — mái ínglich gót béter énd ái bikêim féster uíth ${voc[2]}.`, pt:`Aprendi muito — meu inglês melhorou e fiquei mais rápido com ${voc[1]}.`},
+        dk:"Avaliação final: cite crescimento concreto (inglês, velocidade, equipe). Chefe gosta de quem evolui."}),
+      (voc,emp,cid) => ({
+        en:"What was the hardest part of the season for you?", som:"uót uóz dhi rárdest párt óv dhi sízon fór iú?",
+        pt:"Qual foi a parte mais difícil da temporada pra você?",
+        ps:[{pt:"ser honesto sobre a dificuldade",w:["hard","difficult","first","beginning","weather","hours"]},{pt:"mostrar que superou",w:["but","learned","got used","better","adapted"]}],
+        mo:{en:"The first weeks were hard, but I got used to the pace and finished strong.", som:"dhi férst uíks uér rárd, bât ái gót iúzd tu dhi pêis énd fínicht stróng.", pt:"As primeiras semanas foram difíceis, mas me acostumei com o ritmo e terminei bem."},
+        dk:"Fórmula: dificuldade honesta + superação. Nunca diga que nada foi difícil — soa falso."}),
+      (voc,emp,cid) => ({
+        en:"We might need a crew leader next season. Would you be interested?", som:"uí máit níd a crú líder nékst sízon. úud iú bi íntrested?",
+        pt:"Talvez a gente precise de um líder de equipe na próxima temporada. Você teria interesse?",
+        ps:[{pt:"demonstrar interesse",w:["yes","interested","like","ready","happy"]},{pt:"mostrar responsabilidade",w:["responsibility","team","help","lead","learn"]}],
+        mo:{en:"Yes, I'd be very interested. I like helping the team and I'm ready for more responsibility.", som:"iés, áid bi véri íntrested. ái láik rélpin dhi tím énd áim rédi fór mór rispônsibiliti.", pt:"Sim, teria muito interesse. Gosto de ajudar a equipe e estou pronto pra mais responsabilidade."},
+        dk:"Promoção a crew leader = salário maior na próxima temporada. Interesse + humildade é a resposta certa."})
+    ]
   }
 };
 /* Distratores genéricos pra modo múltipla escolha (níveis iniciantes) */
@@ -5978,27 +6026,14 @@ const CARR_DISTRATORES = [
   { en:"That is a secret, I cannot say.", pt:"Isso é segredo, não posso dizer." },
   { en:"I need to think about it later.", pt:"Eu preciso pensar sobre isso depois." }
 ];
-/* Abaixo deste nível, o Modo Carreira ENSINA primeiro (mostra o que a
-   resposta precisa ter) e pede reconhecimento por múltipla escolha —
-   só depois disso vira produção livre (digitar/falar). */
-const CARR_NIVEL_MC = 6;
+/* Na Temporada 1 (capítulos Agência e Vaga), o Modo Carreira ENSINA
+   primeiro: mostra o que a resposta precisa ter e pede reconhecimento
+   por múltipla escolha — só depois vira produção livre (digitar/falar). */
 const CARR_FOLLOWUPS = [
   {en:"And why does that matter to you personally?", som:"énd uái dâz dhét méter tu iú pérsonali?", pt:"E por que isso importa pra você pessoalmente?"},
   {en:"Can you give me a specific example?", som:"quén iú guív mi a spesífic egzémpol?", pt:"Você pode me dar um exemplo específico?"},
   {en:"How would you handle it differently next time?", som:"ráu úud iú réndol it díferentli nékst táim?", pt:"Como você lidaria com isso diferente da próxima vez?"}
 ];
-/* Etapas liberadas conforme o nível (quanto mais alto, mais etapas entram no sorteio) */
-function carrEtapasPorNivel(nivel){
-  if(nivel < 6) return ["recrutador","empregador"];
-  if(nivel < 15) return ["recrutador","empregador","trabalho"];
-  if(nivel < 25) return ["recrutador","empregador","trabalho","consulado"];
-  return ["recrutador","empregador","trabalho","consulado","chegada"];
-}
-function carrTierPorNivel(nivel){
-  if(nivel < 10) return 1;
-  if(nivel < 30) return 2;
-  return 3;
-}
 function carrVagaDoPerfil(){
   const p = perfilAtual();
   if(p && p.h2bProfile && CARR_VOCAB[p.h2bProfile]) return p.h2bProfile;
@@ -6007,28 +6042,40 @@ function carrVagaDoPerfil(){
   const chaves = Object.keys(CARR_VOCAB).filter(k => k !== "geral");
   return Math.random() < 0.35 ? "geral" : chaves[Math.floor(Math.random() * chaves.length)];
 }
-/* Gera 1 pergunta 100% combinada — nunca a mesma sequência duas vezes */
+/* Gera 1 pergunta do CAPÍTULO ATUAL da temporada. Duas fontes:
+   os templates combinatórios (CARR_TEMPLATES, com a empresa/cidade DA
+   SUA temporada injetadas) e o banco grande do Simulador (BANCO_SIM,
+   128 itens) — variedade real, sem repetir as últimas 6. */
 let CARR_ULTIMAS = [];
-function gerarPerguntaCarreira(nivel){
-  let q, tentativas = 0;
+function gerarPerguntaCarreira(c){
+  const etapa = carrCapAtual(c).id;
+  const tier = carrTier(c);
+  let q = null, tentativas = 0;
   do{
-    const etapas = carrEtapasPorNivel(nivel);
-    const etapa = etapas[Math.floor(Math.random() * etapas.length)];
-    const tier = carrTierPorNivel(nivel);
+    q = null;
     const vagaId = carrVagaDoPerfil();
-    const voc = (CARR_VOCAB[vagaId] || CARR_VOCAB.geral)[Math.floor(Math.random() * (CARR_VOCAB[vagaId] || CARR_VOCAB.geral).length)];
-    const emp = CARR_EMPRESAS[Math.floor(Math.random() * CARR_EMPRESAS.length)];
-    const cid = CARR_CIDADES[Math.floor(Math.random() * CARR_CIDADES.length)];
-    const poolTier = CARR_TEMPLATES[etapa][tier] || CARR_TEMPLATES[etapa][1];
-    const tpl = poolTier[Math.floor(Math.random() * poolTier.length)];
-    q = tpl(voc, emp, cid);
+    const prog = vagaId === "geral"
+      ? (Math.random() < 0.5 ? "h2a" : "h2b")
+      : (SIM_VAGAS.h2a.some(v => v.id === vagaId) ? "h2a" : "h2b");
+    /* metade das vezes puxa do banco do Simulador (nas etapas que existem lá) */
+    if(etapa !== "trabalho" && etapa !== "avaliacao" && Math.random() < 0.5){
+      const pool = simBancoFiltrado(etapa, prog, vagaId);
+      if(pool.length) q = Object.assign({}, pool[Math.floor(Math.random() * pool.length)]);
+    }
+    if(!q){
+      const banco = CARR_VOCAB[vagaId] || CARR_VOCAB.geral;
+      const voc = banco[Math.floor(Math.random() * banco.length)];
+      const poolTier = CARR_TEMPLATES[etapa][tier] || CARR_TEMPLATES[etapa][1];
+      const tpl = poolTier[Math.floor(Math.random() * poolTier.length)];
+      q = tpl(voc, c.emp, c.cid);
+    }
     q.etapa = etapa;
     q.abertura = CARR_ABERTURAS[etapa][Math.floor(Math.random() * CARR_ABERTURAS[etapa].length)];
-    q.followup = (tier >= 2 && Math.random() < 0.4) ? CARR_FOLLOWUPS[Math.floor(Math.random() * CARR_FOLLOWUPS.length)] : null;
+    q.followup = (tier >= 2 && Math.random() < 0.35) ? CARR_FOLLOWUPS[Math.floor(Math.random() * CARR_FOLLOWUPS.length)] : null;
     tentativas++;
-  } while(CARR_ULTIMAS.includes(q.en) && tentativas < 6);
+  } while(CARR_ULTIMAS.includes(q.en) && tentativas < 8);
   CARR_ULTIMAS.push(q.en);
-  if(CARR_ULTIMAS.length > 4) CARR_ULTIMAS.shift();
+  if(CARR_ULTIMAS.length > 6) CARR_ULTIMAS.shift();
   return q;
 }
 
@@ -6307,26 +6354,63 @@ function simGravar(){
   try{ r.start(); }catch(err){ soltar(); }
 }
 /* ==================================================================
-   🧗 MODO CARREIRA — motor de UI (progressão infinita, dificuldade
-   crescente, XP mais alto de todo o app). Diferente da Escalada:
-   aqui NÃO existe "voltar nível" — é a jornada base do FalaFina,
-   sempre avançando. Usa CARR_* (motor combinatório, veja acima).
+   🧗 MODO CARREIRA 2.0 — sua história nos EUA em TEMPORADAS.
+   Cada temporada é a jornada real do H-2B/H-2A em 6 capítulos:
+   📞 Agência → 🤝 Vaga → 🏛️ Visto → 🛬 Chegada → 👷 Trabalho → 🏆 Fim.
+   Empresa e cidade são SUAS na temporada inteira (como na vida real).
+   Pra fechar um capítulo é preciso DOMINAR as respostas: resposta
+   fraca/errada volta pra fila até sair forte. Fechou os 6 =
+   temporada concluída ("salário": XP alto + girassóis) e a próxima
+   começa mais difícil. Progresso nunca reseta.
    ================================================================== */
+const CARR_CAPITULOS = [
+  { id:"recrutador", ic:"📞", nome:"A Agência",          meta:3, hist: c => `📞 <b>A agência aprovou você!</b> Ela te indicou pra uma vaga no <b>${esc(c.emp)}</b>, em <b>${esc(c.cid[0])}</b>. Agora é convencer o empregador. 🤝` },
+  { id:"empregador", ic:"🤝", nome:"A Vaga",             meta:4, hist: c => `🎉 <b>CONTRATADO!</b> O ${esc(c.emp)} escolheu você. Falta o visto — prepare-se pro consulado. 🏛️` },
+  { id:"consulado",  ic:"🏛️", nome:"O Visto",            meta:3, hist: c => `🛂 <b>VISTO APROVADO!</b> Pode arrumar as malas: seu voo pra ${esc(c.cid[0])} está marcado. ✈️` },
+  { id:"chegada",    ic:"🛬", nome:"A Chegada nos EUA",  meta:3, hist: c => `🇺🇸 <b>Você passou pela imigração!</b> Bem-vindo à temporada no ${esc(c.emp)}. Agora mostre seu valor no dia a dia. 👷` },
+  { id:"trabalho",   ic:"👷", nome:"A Temporada de Trabalho", meta:5, hist: c => `⭐ <b>Você mandou bem a temporada inteira!</b> Seu chefe quer conversar sobre o seu futuro... 🏆` },
+  { id:"avaliacao",  ic:"🏆", nome:"Fim de Temporada",   meta:3, hist: null }
+];
+const CARR_META_TOTAL = CARR_CAPITULOS.reduce((s, cp) => s + cp.meta, 0);
 function carrDados(){
   const p = Progresso.dados;
   if(!p.carreira) p.carreira = { nivel:1, acertos:0, respondidas:0 };
-  if(!p.carreira.nivel) p.carreira.nivel = 1;
-  return p.carreira;
+  const c = p.carreira;
+  if(!c.nivel) c.nivel = 1;
+  /* migração do modelo antigo (só nível): quem já jogava não perde nada */
+  if(c.temporada == null){
+    c.temporada = Math.max(1, Math.floor((c.nivel - 1) / CARR_META_TOTAL) + 1);
+    c.cap = 0; c.capOk = 0;
+    c.temporadasFeitas = c.temporada - 1;
+  }
+  if(c.cap == null || c.cap < 0 || c.cap >= CARR_CAPITULOS.length) c.cap = 0;
+  if(!c.capOk || c.capOk < 0) c.capOk = 0;
+  if(!c.emp || !c.cid){
+    c.emp = CARR_EMPRESAS[Math.floor(Math.random() * CARR_EMPRESAS.length)];
+    c.cid = CARR_CIDADES[Math.floor(Math.random() * CARR_CIDADES.length)];
+  }
+  return c;
 }
 function carrXpDoNivel(nivel){ return Math.min(500, Math.round(12 + nivel * 1.2)); }
-function carrTituloTier(tier){ return tier === 1 ? "🌱 Iniciante" : (tier === 2 ? "🔥 Intermediário" : "👑 Avançado"); }
+function carrTier(c){ return Math.min(3, c.temporada); }
+function carrCapAtual(c){ return CARR_CAPITULOS[c.cap] || CARR_CAPITULOS[0]; }
+function carrResumo(){
+  const c = carrDados(), cap = carrCapAtual(c);
+  return `Temporada ${c.temporada} · Capítulo ${c.cap + 1}/6: ${cap.ic} ${cap.nome}`;
+}
 let carreiraEstado = null;
 function iniciarCarreira(){
   const c = carrDados();
-  carreiraEstado = { atual:null, respondidas:0, xpGanho:0, girassoisGanho:0 };
+  carreiraEstado = { atual:null, respondidas:0, xpGanho:0, girassoisGanho:0, fila:[], desdeRetry:0 };
   $("#carrChat").innerHTML = "";
-  const nome = (Contas.atual() || { nome:"amigo" }).nome;
-  carrBolha(`<div class="quem">🦜 FALAFINA</div><div class="en" style="color:var(--tinta)">Bem-vindo ao <b>Modo Carreira</b>, ${esc(nome)}! Você está no nível <b>${c.nivel}</b>. Cada resposta certa te leva pro próximo nível — pra sempre. Quanto mais alto, mais difícil. Vamos! 🚀</div>`, "oficial");
+  const nome = ((Contas.atual() || { nome:"amigo" }).nome || "amigo").split(" ")[0];
+  const cap = carrCapAtual(c);
+  const mapa = CARR_CAPITULOS.map((cp, i) =>
+    i < c.cap ? "✅" : (i === c.cap ? `<b>${cp.ic}</b>` : `<span style="opacity:.35">${cp.ic}</span>`)).join(" → ");
+  carrBolha(`<div class="quem">🦜 FALAFINA</div><div class="en" style="color:var(--tinta)">
+    ${esc(nome)}, esta é a sua <b>Temporada ${c.temporada}</b>${carrTier(c) >= 3 ? " 👑" : ""} — sua vaga é no <b>${esc(c.emp)}</b>, em <b>${esc(c.cid[0])}</b>.<br>
+    <span style="font-size:1.05rem">${mapa}</span><br>
+    Capítulo de agora: <b>${cap.ic} ${esc(cap.nome)}</b> — mande bem em <b>${cap.meta} respostas</b> pra avançar. Resposta fraca volta pra fila até sair forte. 💪</div>`, "oficial");
   irPara("tela-carreira");
   carrProxima();
 }
@@ -6339,28 +6423,33 @@ function carrBolha(html, classe){
   return div;
 }
 function carrAtualizarTopo(){
-  const c = carrDados();
-  const tier = carrTierPorNivel(c.nivel);
-  const pctTier = tier === 1 ? (c.nivel / 10) * 100 : (tier === 2 ? ((c.nivel - 10) / 20) * 100 : 100);
-  $("#carrBarraNivel").style.width = Math.max(4, Math.min(100, pctTier)) + "%";
-  $("#carrCont").textContent = `Nível ${c.nivel} · ${carrTituloTier(tier)} · ⭐ ${carreiraEstado ? carreiraEstado.xpGanho : 0} XP nesta sessão`;
+  const c = carrDados(), cap = carrCapAtual(c);
+  $("#carrBarraNivel").style.width = Math.max(4, Math.min(100, (c.capOk / cap.meta) * 100)) + "%";
+  $("#carrCont").textContent = `T${c.temporada} · ${cap.ic} ${cap.nome} · ${c.capOk}/${cap.meta} · ⭐ ${carreiraEstado ? carreiraEstado.xpGanho : 0} XP`;
 }
 function carrProxima(){
   const c = carrDados();
   carrAtualizarTopo();
-  const q = gerarPerguntaCarreira(c.nivel);
-  carreiraEstado.atual = q;
-  const modoMC = c.nivel < CARR_NIVEL_MC;
-  const tier = carrTierPorNivel(c.nivel);
-  /* 👂 Variação de listening: às vezes a pergunta chega SÓ POR ÁUDIO
-     (texto escondido) — treina o ouvido dentro da própria Carreira. */
-  const soAudio = !modoMC && tier >= 2 && Math.random() < 0.3;
+  const e = carreiraEstado;
+  /* fila de domínio: o que saiu fraco volta depois de ~2 perguntas */
+  let q;
+  if(e.fila.length && (e.desdeRetry >= 2 || CARR_ULTIMAS.length === 0)){
+    q = e.fila.shift(); q._retry = true; e.desdeRetry = 0;
+  } else {
+    q = gerarPerguntaCarreira(c); e.desdeRetry++;
+  }
+  e.atual = q;
+  const tier = carrTier(c);
+  /* Temporada 1, capítulos 1-2: fase de APRENDER (múltipla escolha) */
+  const modoMC = c.temporada === 1 && c.cap <= 1;
+  /* 👂 Da temporada 2 em diante, às vezes a pergunta chega SÓ POR ÁUDIO */
+  const soAudio = !modoMC && tier >= 2 && Math.random() < 0.25;
   const esconder = !modoMC && (tier >= 3 || soAudio);
   const dicaPrevia = modoMC ? `<div class="carr-ensina">
       <div class="rot">💡 Pra responder bem, sua fala precisa ter:</div>
       <ul>${q.ps.map(p => `<li>${esc(p.pt)}</li>`).join("")}</ul>
     </div>` : "";
-  carrBolha(`<div class="quem">${q.abertura}${soAudio ? " · 👂 SÓ DE OUVIDO" : ""}</div>
+  carrBolha(`<div class="quem">${q._retry ? "🔁 DE NOVO — agora você sabe! · " : ""}${q.abertura}${soAudio ? " · 👂 SÓ DE OUVIDO" : ""}</div>
     ${soAudio ? `<div class="en">🔊 Ouça a pergunta <button class="btn-som" data-falar="${esc(q.en)}" aria-label="Ouvir pergunta">🔊</button></div>` : `<div class="en">${esc(q.en)} <button class="btn-som" data-falar="${esc(q.en)}" aria-label="Ouvir pergunta">🔊</button></div>`}
     ${esconder ? `<button class="btn-link carrAjuda" style="padding:4px 0;font-size:.85rem">👁️ Não entendi — mostrar ajuda</button><div class="carrOculto" style="display:none">` : ""}
     ${soAudio ? `<div class="en" style="margin-top:4px">${esc(q.en)}</div>` : ""}
@@ -6375,10 +6464,19 @@ function carrProxima(){
   if(aj) aj.addEventListener("click", () => { ultima.querySelector(".carrOculto").style.display = "block"; aj.style.display = "none"; });
   q._soAudio = soAudio;
   if(modoMC){
-    /* Nível iniciante: reconhecer a resposta certa entre opções — ensina antes de exigir produção livre */
+    /* Distratores PLAUSÍVEIS: respostas-modelo de OUTRAS perguntas do
+       mesmo capítulo — pra acertar, precisa entender a pergunta de
+       verdade (e não só eliminar frase absurda). */
     $("#carrEntrada").style.display = "none";
-    const distratores = embaralhar(CARR_DISTRATORES).slice(0, 2);
-    const opcoes = embaralhar([{ en:q.mo.en, pt:q.mo.pt, ok:true }, ...distratores.map(d => Object.assign({}, d, { ok:false }))]);
+    const distratores = [];
+    let guarda = 0;
+    while(distratores.length < 2 && guarda < 10){
+      const outra = gerarPerguntaCarreira(c);
+      if(outra.mo.en !== q.mo.en && !distratores.some(d => d.en === outra.mo.en)) distratores.push({ en:outra.mo.en, pt:outra.mo.pt });
+      guarda++;
+    }
+    while(distratores.length < 2) distratores.push(CARR_DISTRATORES[Math.floor(Math.random() * CARR_DISTRATORES.length)]);
+    const opcoes = embaralhar([{ en:q.mo.en, pt:q.mo.pt, ok:true }, ...distratores.map(d => ({ en:d.en, pt:d.pt, ok:false }))]);
     const cont = ultima.querySelector("#carrOpcoesMC");
     cont.innerHTML = opcoes.map((o, i) => `<button class="carr-opcao" data-i="${i}">${esc(o.en)}<br><small>🇧🇷 ${esc(o.pt)}</small></button>`).join("");
     cont.querySelectorAll("[data-i]").forEach(b => b.addEventListener("click", () => {
@@ -6394,23 +6492,74 @@ function carrProxima(){
   }
   Fala.dizer(q.en);
 }
+/* Resposta FORTE: conta pro capítulo, sobe o nível (contador de fortes) */
+function carrForte(q){
+  const c = carrDados(), e = carreiraEstado;
+  c.nivel++; c.acertos = (c.acertos || 0) + 1; c.capOk++;
+  const xp = carrXpDoNivel(c.nivel - 1);
+  const sem = Math.round(xp / 3);
+  e.xpGanho += xp; e.girassoisGanho += sem;
+  registrarAtividade(xp);
+  COSM.ganhar(sem, null);
+}
+/* Resposta fraca/errada: volta pra fila (até 2 reapresentações) */
+function carrRefila(q){
+  q._tent = (q._tent || 0) + 1;
+  if(q._tent <= 2) carreiraEstado.fila.push(q);
+}
+/* Depois do feedback: fecha capítulo/temporada se a meta foi batida */
+function carrAvancar(){
+  const c = carrDados();
+  const cap = carrCapAtual(c);
+  if(c.capOk >= cap.meta){
+    c.capOk = 0;
+    carreiraEstado.fila = [];
+    const bonusSem = 5 + c.temporada * 2;
+    carreiraEstado.girassoisGanho += bonusSem;
+    COSM.ganhar(bonusSem, null);
+    if(c.cap >= CARR_CAPITULOS.length - 1){
+      /* 🏆 TEMPORADA CONCLUÍDA — recebe o "salário" e a próxima começa */
+      const salario = Math.min(600, 100 + c.temporada * 50);
+      const semT = 25 + c.temporada * 5;
+      carreiraEstado.xpGanho += salario;
+      carreiraEstado.girassoisGanho += semT;
+      registrarAtividade(salario);
+      COSM.ganhar(semT, null);
+      const empVelha = c.emp, cidVelha = c.cid[0];
+      c.temporadasFeitas = (c.temporadasFeitas || 0) + 1;
+      c.temporada++; c.cap = 0;
+      c.emp = CARR_EMPRESAS[Math.floor(Math.random() * CARR_EMPRESAS.length)];
+      c.cid = CARR_CIDADES[Math.floor(Math.random() * CARR_CIDADES.length)];
+      carrBolha(`<div class="quem">🏆 TEMPORADA ${c.temporada - 1} CONCLUÍDA!</div>
+        <div class="en" style="color:var(--tinta)">Você fechou a temporada no <b>${esc(empVelha)}</b> (${esc(cidVelha)}) e voltou pro Brasil de cabeça erguida. 🇧🇷<br>
+        💰 Salário da temporada: <b>+⭐ ${salario} XP</b> e <b>🌻 ${semT}</b>!<br>
+        E olha só: chegou um convite novo — <b>Temporada ${c.temporada}</b>, no <b>${esc(c.emp)}</b> em <b>${esc(c.cid[0])}</b>${carrTier(c) >= 3 ? ", nível 👑 AVANÇADO: perguntas difíceis e de ouvido" : ", agora mais difícil"}. Bora? 🚀</div>`, "fb otima");
+    } else {
+      const hist = cap.hist ? cap.hist(c) : "";
+      c.cap++;
+      const prox = carrCapAtual(c);
+      carrBolha(`<div class="quem">${cap.ic} CAPÍTULO CONCLUÍDO! +🌻 ${bonusSem}</div>
+        <div class="en" style="color:var(--tinta)">${hist}<br>
+        Próximo capítulo: <b>${prox.ic} ${esc(prox.nome)}</b> — ${prox.meta} respostas fortes. 💪</div>`, "fb otima");
+    }
+    Progresso.salvar();
+  }
+  carrProxima();
+}
 function carrAvaliarMC(acertou, textoEscolhido, q){
   const e = carreiraEstado;
   if(!e) return;
   ENGINE.registrar("grammar", acertou);
   carrBolha(esc(textoEscolhido), "voce");
   const c = carrDados();
+  const cap = carrCapAtual(c);
   let classe, titulo, subiu = false;
   if(acertou){
-    classe = "otima"; titulo = "🌟 Isso mesmo! Você reconheceu a resposta certa — SUBIU de nível.";
-    c.nivel++; c.acertos = (c.acertos || 0) + 1; subiu = true;
-    const xp = carrXpDoNivel(c.nivel - 1);
-    const sem = Math.round(xp / 3);
-    e.xpGanho += xp; e.girassoisGanho += sem;
-    registrarAtividade(xp);
-    COSM.ganhar(sem, null);
+    classe = "otima"; titulo = `🌟 Isso mesmo! Resposta forte ${c.capOk + 1}/${cap.meta} do capítulo ${cap.ic} ${cap.nome}.`;
+    carrForte(q); subiu = true;
   } else {
-    classe = "aprender"; titulo = "📚 Quase — essa não era a resposta certa. Olha o modelo (o nível continua o mesmo, sem punição):";
+    classe = "aprender"; titulo = "📚 Quase — essa resposta era de OUTRA pergunta. Olha o modelo; essa volta pra fila daqui a pouco:";
+    carrRefila(q);
   }
   e.respondidas++;
   c.respondidas = (c.respondidas || 0) + 1;
@@ -6432,29 +6581,28 @@ function carrAvaliar(){
   }
   e.respondidas++;
   const c = carrDados();
+  const cap = carrCapAtual(c);
   let classe, titulo, subiu = false;
   ENGINE.registrar("grammar", ok.length && !falta.length);
   if(q._soAudio) ENGINE.registrar("listening", ok.length && !falta.length);
   const palavrasResp = bruto.split(/\s+/).filter(Boolean).length;
   if(ok.length && !falta.length && palavrasResp < 3){
     /* Cobriu o ponto-chave mas com 1-2 palavras: entrevista real exige frase completa */
-    classe = "parcial"; titulo = "👍 Certo — mas numa entrevista de verdade, responda com uma FRASE completa (olha o modelo). Monte a frase inteira na próxima!";
+    classe = "parcial"; titulo = "👍 Certo — mas numa entrevista de verdade, responda com uma FRASE completa (olha o modelo). Essa volta pra fila: na próxima, monte a frase inteira!";
     const xpP = Math.round(carrXpDoNivel(c.nivel) / 4);
     e.xpGanho += xpP; registrarAtividade(xpP);
+    carrRefila(q);
   } else if(ok.length && !falta.length){
-    classe = "otima"; titulo = "🌟 Resposta forte! Você SUBIU de nível.";
-    c.nivel++; c.acertos = (c.acertos || 0) + 1; subiu = true;
-    const xp = carrXpDoNivel(c.nivel - 1);
-    const sem = Math.round(xp / 3);
-    e.xpGanho += xp; e.girassoisGanho += sem;
-    registrarAtividade(xp);
-    COSM.ganhar(sem, null);
+    classe = "otima"; titulo = `🌟 Resposta forte ${c.capOk + 1}/${cap.meta} do capítulo ${cap.ic} ${cap.nome}!${q._retry ? " Errou antes e dominou agora — é assim que se aprende. 🔁✅" : ""}`;
+    carrForte(q); subiu = true;
   } else if(ok.length){
-    classe = "parcial"; titulo = "👍 Boa — mas ainda não é o suficiente pra subir de nível. Tente a próxima!";
+    classe = "parcial"; titulo = "👍 Boa — cobriu uma parte, mas faltou o resto. Olha o modelo: essa volta pra fila até sair forte!";
     const xp = Math.round(carrXpDoNivel(c.nivel) / 4);
     e.xpGanho += xp; registrarAtividade(xp);
+    carrRefila(q);
   } else {
-    classe = "aprender"; titulo = "📚 Ainda não — vamos aprender essa juntos (o nível continua o mesmo, sem punição):";
+    classe = "aprender"; titulo = "📚 Ainda não — estuda o modelo, porque essa pergunta VOLTA daqui a pouco (sem punição, é treino):";
+    carrRefila(q);
   }
   c.respondidas = (c.respondidas || 0) + 1;
   Progresso.salvar();
@@ -6467,8 +6615,9 @@ function carrEnsinar(){
   if(!q) return;
   e.respondidas++;
   e.atual = null;
+  carrRefila(q);
   Progresso.salvar();
-  carrFeedback("aprender", "📚 Sem problema — aprender é o que importa:", [], q.ps, q, false);
+  carrFeedback("aprender", "📚 Sem problema — estuda o modelo, que essa volta daqui a pouco pra você mostrar que aprendeu:", [], q.ps, q, false);
   carrAtualizarTopo();
 }
 function carrFeedback(classe, titulo, ok, falta, q, subiu){
@@ -6496,7 +6645,7 @@ function carrFeedback(classe, titulo, ok, falta, q, subiu){
       $("#carrResposta").focus({ preventScroll:true });
       carreiraEstado.atual = { ps:[{ pt:"resposta livre", w:["i","the","and","because","work"] }], mo:{en:"Great — follow-up questions like this show up in real interviews. Keep answering naturally.", som:"grêit — fólou-âp quéschons láik dhis chôu âp in ríal íntervius. quíp éns-uerin nétchurali.", pt:"Ótimo — perguntas de follow-up como essa aparecem em entrevistas de verdade. Continue respondendo naturalmente."}, dk:"Follow-up é bônus — qualquer resposta coerente em inglês já vale a experiência.", followup:null };
     } else {
-      carrProxima();
+      carrAvancar();
     }
   });
 }
@@ -6504,10 +6653,11 @@ function carrEncerrar(){
   const e = carreiraEstado;
   if(!e) return;
   const c = carrDados();
+  const cap = carrCapAtual(c);
   $("#concluTitulo").textContent = "🧗 Sessão de Carreira encerrada!";
   $("#concluTexto").textContent = e.respondidas
-    ? `Você respondeu ${e.respondidas} pergunta(s) e está agora no NÍVEL ${c.nivel} da sua carreira — esse progresso nunca é perdido, só cresce. Ganhou ⭐ ${e.xpGanho} XP e 🌻 ${e.girassoisGanho} girassóis nesta sessão.`
-    : "Sessão rápida! Seu nível continua exatamente onde você parou — volte quando quiser.";
+    ? `Você está na Temporada ${c.temporada}, capítulo ${cap.ic} ${cap.nome} (${c.capOk}/${cap.meta} respostas fortes)${c.temporadasFeitas ? ` — e já concluiu ${c.temporadasFeitas} temporada${c.temporadasFeitas === 1 ? "" : "s"}` : ""}. Esse progresso nunca se perde. Nesta sessão: ⭐ ${e.xpGanho} XP e 🌻 ${e.girassoisGanho} girassóis.`
+    : "Sessão rápida! Sua temporada continua exatamente onde você parou — volte quando quiser.";
   $("#concluXP").textContent = String(e.xpGanho);
   $("#btnProximoModulo").style.display = "none";
   carreiraEstado = null;
@@ -6777,7 +6927,7 @@ function renderHome(){
     </div>
     <div class="cardb" style="margin-top:14px;border:2.5px solid var(--sol);background:linear-gradient(135deg,#FFF8E7,#FFF3D1)">
       <div class="secao-t" style="margin-bottom:6px">🧗 Modo Carreira <span style="font-size:.68rem;background:var(--sol);color:#5C4400;padding:2px 8px;border-radius:99px;font-weight:800">★ PRINCIPAL</span></div>
-      <p style="font-weight:700;color:var(--tinta-suave);font-size:.86rem;margin-bottom:10px">Sua jornada infinita de entrevistas H-2B/H-2A — nunca reseta, sempre fica mais difícil. Você está no <b>nível ${carrDados().nivel}</b>.</p>
+      <p style="font-weight:700;color:var(--tinta-suave);font-size:.86rem;margin-bottom:10px">Sua história nos EUA em temporadas: agência → vaga → visto → chegada → trabalho. Agora: <b>${carrResumo()}</b>.</p>
       <button class="btn-principal" id="homeCarreira" style="max-width:340px">🚀 Continuar carreira ▶</button>
     </div>
     <div class="cardb" style="margin-top:14px">
@@ -7590,7 +7740,7 @@ function ditadoFim(){
    ❌ Caça aos Erros = só o que você errou (pontos fracos)
    ================================================================== */
 const JOGOS_LISTA = [
-  { id:"carreira",  ic:"🧗", nome:"Modo Carreira",    skill:"grammar",   cor:"#FFF3D1", desc:"Entrevistas de trabalho H-2B/H-2A sem fim: responda em inglês e suba de nível pra sempre." },
+  { id:"carreira",  ic:"🧗", nome:"Modo Carreira",    skill:"grammar",   cor:"#FFF3D1", desc:"Sua história nos EUA em temporadas: agência → vaga → visto → chegada → trabalho. Feche capítulos, conclua temporadas." },
   { id:"entrevista",ic:"🎙️", nome:"Simulador de Entrevista", skill:"speaking", cor:"#E4EDFA", desc:"Ensaie a entrevista real do visto: agência, empregador, consulado e chegada nos EUA." },
   { id:"ditado",    ic:"👂", nome:"Ditado Relâmpago", skill:"listening", cor:"#E1F3EA", desc:"Treine o OUVIDO: escute a frase em inglês e escreva o que ouviu. 3 vidas." },
   { id:"jardim",    ic:"🌻", nome:"Jardim de Palavras", skill:"vocab", cor:"#FFF3D1", desc:"Aprenda palavra por palavra: ler, ouvir, escrever e FALAR até florescer." },
@@ -7606,10 +7756,10 @@ const JOGOS_LISTA = [
    ================================================================== */
 const JOGOS_TUTORIAL = {
   carreira: { ic:"🧗", nome:"Modo Carreira", passos:[
-    ["🎯","É a sua jornada H-2B/H-2A infinita: perguntas de recrutador, empregador, consulado, imigração e do dia a dia no trabalho."],
-    ["📈","Cada resposta forte SOBE seu nível pra sempre — nunca desce, nunca reseta. Quanto mais alto, mais difícil."],
-    ["🌱","Níveis 1-5: você aprende ANTES de responder (múltipla escolha). Do 6 em diante: resposta livre. Do 10 em diante: sem ajuda visível. Às vezes a pergunta vem SÓ por áudio 👂."],
-    ["⭐","É o jogo que dá MAIS XP do app — e girassóis junto. Responda com frases completas: 1 palavra não sobe de nível."]
+    ["🎬","É a sua HISTÓRIA nos EUA: cada temporada tem 6 capítulos, na ordem real do H-2B/H-2A — 📞 agência, 🤝 vaga, 🏛️ visto, 🛬 chegada, 👷 trabalho e 🏆 fim de temporada. Empresa e cidade são suas a temporada inteira."],
+    ["💪","Pra fechar um capítulo, DOMINE as respostas dele. Resposta fraca ou errada VOLTA pra fila e aparece de novo — até você acertar forte. É assim que fixa de verdade."],
+    ["📈","Temporada 1 ensina (múltipla escolha nos primeiros capítulos). Da Temporada 2 em diante: resposta livre, perguntas só de ouvido 👂 e nível cada vez mais alto."],
+    ["🏆","Fechou os 6 capítulos = temporada concluída: você recebe o \"salário\" (XP alto + girassóis) e um convite pra próxima temporada, mais difícil. Sua carreira nunca reseta. Responda sempre com frases completas!"]
   ]},
   entrevista: { ic:"🎙️", nome:"Simulador de Entrevista", passos:[
     ["🎬","Simulação da entrevista real: escolha programa, etapa e vaga — o entrevistador pergunta em inglês, você responde falando 🎤 ou digitando."],
@@ -7730,8 +7880,8 @@ function renderPratica(){
   <div class="hub-hero" id="hubCarreira">
     <div class="hub-hero-txt">
       <span class="hub-tag">★ JOGO PRINCIPAL</span>
-      <b>🧗 Modo Carreira — nível ${c.nivel}</b>
-      <p>Sua jornada H-2B/H-2A infinita. Nunca reseta, só avança — e cada nível fica mais difícil.</p>
+      <b>🧗 Modo Carreira — Temporada ${c.temporada}</b>
+      <p>${carrResumo()} · feche os 6 capítulos (agência → vaga → visto → chegada → trabalho → fim) pra concluir a temporada.</p>
     </div>
     <button class="btn-principal" style="width:auto">Continuar ▶</button>
     <span class="hub-ajuda" data-tut="carreira" role="button" aria-label="Como jogar Modo Carreira">?</span>
@@ -7948,7 +8098,7 @@ const AREAS_GUIA = {
   home: { ic:"🏠", nome:"Início", resumo:"Seu painel do dia: o próximo passo, as missões de hoje e atalhos pra tudo.", passos:[
     ["🧭","O Início é o seu ponto de partida todo dia. O FalaFina olha seu progresso e já mostra o SEU PRÓXIMO PASSO — você nunca fica perdido pensando \"o que eu estudo agora?\"."],
     ["📋","Logo abaixo ficam as missões de hoje (aula, exercícios e pronúncia). Completar as 3 mantém sua sequência 🔥 acesa."],
-    ["🚀","O card amarelo é o Modo Carreira — o treino principal de entrevista H-2B/H-2A. Um pouco dele todo dia te deixa pronto pra entrevista de verdade."],
+    ["🚀","O card amarelo é o Modo Carreira — sua história nos EUA em temporadas (agência → vaga → visto → chegada → trabalho). Um capítulo por dia te deixa pronto pra jornada de verdade."],
     ["❓","Em qualquer tela, toque no ? verde do topo pra entender onde você está e o que está treinando."]
   ]},
   aulas: { ic:"📚", nome:"Aulas · Trilha de Estudos", resumo:"Lições passo a passo, do zero até o inglês do trabalho — cada palavra em português, inglês e COMO SOA.", passos:[

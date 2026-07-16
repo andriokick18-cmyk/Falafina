@@ -161,12 +161,26 @@ function mesclarProgresso(a, b) {
     }
   };
   r.medalhasPagas = Object.assign({}, a.medalhasPagas || {}, b.medalhasPagas || {});
-  /* Modo Carreira: progressão BASE que nunca reseta — o nível é sempre o maior dos dois lados */
+  /* Modo Carreira: progressão BASE que nunca reseta. Contadores = maior
+     dos dois lados; posição na história (temporada/capítulo) = a do lado
+     mais avançado (comparação temporada → capítulo → respostas fortes). */
   const carA = a.carreira || {}, carB = b.carreira || {};
+  const posDe = x => [x.temporada || 1, x.cap || 0, x.capOk || 0];
+  const pa = posDe(carA), pb = posDe(carB);
+  let lider = carA;
+  for(let i = 0; i < 3; i++){
+    if(pa[i] !== pb[i]){ lider = pa[i] > pb[i] ? carA : carB; break; }
+  }
   r.carreira = {
     nivel: Math.max(carA.nivel || 1, carB.nivel || 1),
     acertos: Math.max(carA.acertos || 0, carB.acertos || 0),
-    respondidas: Math.max(carA.respondidas || 0, carB.respondidas || 0)
+    respondidas: Math.max(carA.respondidas || 0, carB.respondidas || 0),
+    temporada: lider.temporada || 1,
+    cap: lider.cap || 0,
+    capOk: lider.capOk || 0,
+    temporadasFeitas: Math.max(carA.temporadasFeitas || 0, carB.temporadasFeitas || 0),
+    emp: lider.emp || carA.emp || carB.emp || null,
+    cid: lider.cid || carA.cid || carB.cid || null
   };
   /* Learning Engine: contadores por habilidade e uso de jogos — só crescem */
   const habA = a.habilidades || {}, habB = b.habilidades || {};
