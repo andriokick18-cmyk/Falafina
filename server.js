@@ -338,9 +338,36 @@ async function tratarApi(req, res, rota, ip) {
       perfil: limparPerfil(corpo.perfil),
       progresso: (corpo.progresso && typeof corpo.progresso === "object") ? corpo.progresso : null
     };
+    /* 📣 INDICAÇÃO PREMIADA: quem convidou ganha 🌻100 + 🎁2 baús;
+       quem chegou ganha 🌻50 + 🎁1 baú. A carteira é monotônica
+       (ganhas/comprados só crescem), então o crédito sobrevive a
+       qualquer sincronização. Teto de 100 indicações por conta. */
+    let indicacao = null;
+    const indicadoPor = String(corpo.indicadoPor || "").trim().toLowerCase();
+    if (indicadoPor && indicadoPor !== email && RE_EMAIL.test(indicadoPor) && CONTAS[indicadoPor]) {
+      const padrinho = CONTAS[indicadoPor];
+      padrinho.indicacoes = (padrinho.indicacoes || 0) + 1;
+      if (padrinho.indicacoes <= 100) {
+        const carteira = conta => {
+          if (!conta.progresso) conta.progresso = { xp: 0 };
+          if (!conta.progresso.cosmeticos) conta.progresso.cosmeticos = { tem: {}, usando: {}, ganhas: 0, gastas: 0 };
+          if (!conta.progresso.cosmeticos.baus) conta.progresso.cosmeticos.baus = { comprados: 0, abertos: 0, ultimoGratis: null };
+          return conta.progresso.cosmeticos;
+        };
+        const cp = carteira(padrinho);
+        cp.ganhas = (cp.ganhas || 0) + 100;
+        cp.baus.comprados = (cp.baus.comprados || 0) + 2;
+        const cn = carteira(CONTAS[email]);
+        cn.ganhas = (cn.ganhas || 0) + 50;
+        cn.baus.comprados = (cn.baus.comprados || 0) + 1;
+        CONTAS[email].indicadoPor = indicadoPor;
+        indicacao = { padrinho: indicadoPor };
+        log("📣 Indicação: " + email + " chegou por " + indicadoPor + " (" + padrinho.indicacoes + "ª dele)");
+      }
+    }
     persistir();
     log("✨ Conta criada: " + email + " (total: " + Object.keys(CONTAS).length + ")");
-    return responder(res, 200, { ok: true, conta: contaPublica(CONTAS[email]) });
+    return responder(res, 200, { ok: true, conta: contaPublica(CONTAS[email]), indicacao });
   }
 
   // Entrar
@@ -471,7 +498,9 @@ process.on("SIGINT", desligar);
         trialInicio: p.trialInicio || null,
         temporada: (p.carreira && p.carreira.temporada) || 1,
         aulas: Object.keys(p.modulosFeitos || {}).length,
-        bausComprados: ((p.cosmeticos || {}).baus || {}).comprados || 0
+        bausComprados: ((p.cosmeticos || {}).baus || {}).comprados || 0,
+        indicacoes: c.indicacoes || 0,
+        indicadoPor: c.indicadoPor || null
       };
     });
     return responder(res, 200, { ok: true, agora: Date.now(), trialDias: 7, contas });
@@ -557,7 +586,7 @@ function statusDe(c) {
 function cartaoAluno(c, st) {
   const sync = c.ultimaSync ? new Date(c.ultimaSync).toLocaleDateString("pt-BR") : "nunca";
   return '<div class="aluno"><div class="top"><div><b>' + esc(c.nome || "(sem nome)") + '</b><div class="mail">' + esc(c.email) + '</div></div><span class="tag ' + st.cls + '">' + st.rot + "</span></div>" +
-    '<div class="meta">⭐ ' + c.xp + " XP · 🔥 melhor " + c.melhorSeq + "d · 📚 " + c.aulas + " aulas · 🧗 T" + c.temporada + " · última visita: " + sync + "</div>" +
+    '<div class="meta">⭐ ' + c.xp + " XP · 🔥 melhor " + c.melhorSeq + "d · 📚 " + c.aulas + " aulas · 🧗 T" + c.temporada + (c.indicacoes ? " · 📣 " + c.indicacoes + " indicou" : "") + " · última visita: " + sync + "</div>" +
     '<div class="acoes">' +
     '<button onclick="premium(\\'' + c.email + '\\',30)">👑 +30 dias</button>' +
     '<button onclick="premium(\\'' + c.email + '\\',90)">👑 +90</button>' +

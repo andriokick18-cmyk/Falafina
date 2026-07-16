@@ -237,7 +237,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--azul);outline-offse
 .exemplo .som-frase{font-style:italic;font-weight:800;color:#6B4E00;font-size:1.08rem;margin-top:4px;background:var(--sol-claro);border-radius:8px;padding:4px 10px;display:inline-block}
 .exemplo .pt-frase{font-weight:600;color:var(--verde-escuro);font-size:.95rem;margin-top:2px}
 .rodape-licao{
-  position:fixed;left:0;right:0;bottom:0;z-index:40;
+  position:fixed;left:0;right:0;bottom:0;z-index:70; /* ACIMA da tabbar (60) e do banner PWA */
   background:linear-gradient(to top,var(--papel) 65%,transparent);
   padding:14px 16px calc(14px + env(safe-area-inset-bottom));
   display:none;justify-content:center;
@@ -467,6 +467,11 @@ body{ background:var(--fundo); }
 .tb-item .ic{ font-size:1.3rem; }
 .tb-item.ativo{ color:var(--verde); background:var(--verde-claro); }
 @media (max-width:979px){ .sidebar{ display:none; } .tabbar{ display:flex; } }
+/* No celular, o botão "Fazer o desafio" sobe pra CIMA da tabbar —
+   senão a barra de menu engole o botão e a aula não tem como concluir */
+@media (max-width:979px){ body.logado:not(.sem-shell) .rodape-licao{ bottom:calc(58px + env(safe-area-inset-bottom)); padding-bottom:10px; } }
+/* Banner "Baixar o app" nunca durante a aula (cobria o botão do desafio) */
+.pwa-flutuante.fora-da-licao{ display:none !important; }
 @media (min-width:980px){ body.logado #btnVoltar{ display:none !important; } }
 body.sem-shell .sidebar, body.sem-shell .tabbar, body.sem-shell .pill-grupo{ display:none !important; }
 body.sem-shell .topo .titulo-pagina{ visibility:hidden; }
@@ -816,6 +821,8 @@ body.sem-shell .btn-info-topo{display:none}
     <label class="campo"><span>E-mail</span><input type="email" id="cadEmail" autocomplete="email" placeholder="voce@email.com"></label>
     <label class="campo"><span>Senha</span><input type="password" id="cadSenha" autocomplete="new-password" placeholder="mínimo 4 caracteres"></label>
     <label class="campo"><span>Confirmar senha</span><input type="password" id="cadSenha2" autocomplete="new-password" placeholder="repita a senha"></label>
+    <label class="campo"><span>📣 Quem te indicou? (e-mail — opcional)</span><input type="email" id="cadIndicado" autocomplete="off" placeholder="e-mail do amigo que te chamou"></label>
+    <p style="font-weight:700;font-size:.78rem;color:var(--tinta-suave);margin:-6px 0 6px">Se um amigo te chamou, escreve o e-mail dele: <b>vocês DOIS ganham</b> — você 🎁 1 baú + 🌻 50, ele 🎁 2 baús + 🌻 100.</p>
     <div class="form-erro" id="cadErro"></div>
     <button class="btn-principal" id="btnCadastrar">Criar conta ✔</button>
     <button class="btn-link" id="linkParaLogin">Já tenho conta → Entrar</button>
@@ -1233,7 +1240,8 @@ const Nuvem = (() => {
   async function registrar(conta){
     return chamar("POST", "/api/registrar", {
       nome: conta.nome, email: conta.email, senhaHash: conta.senhaHash,
-      perfil: conta.perfil, progresso: conta.progresso
+      perfil: conta.perfil, progresso: conta.progresso,
+      indicadoPor: conta.indicadoPor || ""
     });
   }
   async function entrar(email, senhaHash){
@@ -3990,6 +3998,8 @@ function irPara(tela){
   telaAtual = tela;
   $("#btnVoltar").style.display = (tela === "tela-onboarding") ? "none" : "flex";
   $("#rodapeLicao").classList.toggle("visivel", tela === "tela-licao");
+  const pwaFl = $("#pwaFlutuante");
+  if(pwaFl) pwaFl.classList.toggle("fora-da-licao", tela === "tela-licao" || tela === "tela-quiz");
   if(typeof ffAposIrPara === "function") try{ ffAposIrPara(tela); }catch(e){}
   window.scrollTo(0,0);
 }
@@ -5353,18 +5363,22 @@ async function fazerCadastro(){
   if(contas[email]) return mostrarErro("#cadErro", "Já existe conta com esse e-mail neste aparelho. Use \"Entrar\".");
   const btn = $("#btnCadastrar");
   btn.disabled = true; btn.textContent = "Criando sua conta…";
-  const conta = { nome, email, senhaHash: await hashSenha(s1), criadaEm: new Date().toISOString(), perfil: null, progresso: null, pendenteSync: true };
+  const indicadoPor = ($("#cadIndicado").value || "").trim().toLowerCase();
+  const conta = { nome, email, senhaHash: await hashSenha(s1), criadaEm: new Date().toISOString(), perfil: null, progresso: null, pendenteSync: true, indicadoPor: (indicadoPor && indicadoPor !== email) ? indicadoPor : "" };
   const r = await Nuvem.registrar(conta);
   btn.disabled = false; btn.textContent = "Criar conta ✔";
   if(r.status === 409) return mostrarErro("#cadErro", "Esse e-mail já tem conta na nuvem ☁️ Use \"Entrar\" com a sua senha.");
   if(r.ok) conta.pendenteSync = false;
+  /* bônus de indicação já vem no progresso do servidor — adota na hora */
+  if(r.ok && r.dados && r.dados.conta && r.dados.conta.progresso) conta.progresso = r.dados.conta.progresso;
   contas[email] = conta;
   Contas.salvarTodas(contas);
   Contas.logar(email);
   Progresso.carregar();
   Progresso.salvar();
+  const ganhouIndicacao = !!(r.ok && r.dados && r.dados.indicacao);
   mostrarToast(r.ok
-    ? `Bem-vindo(a), ${nome}! 🦜 Conta salva na nuvem ☁️`
+    ? (ganhouIndicacao ? `Bem-vindo(a), ${nome}! 🦜 Presente de indicação: 🎁 1 baú + 🌻 50 — e seu amigo também ganhou!` : `Bem-vindo(a), ${nome}! 🦜 Conta salva na nuvem ☁️`)
     : `Bem-vindo(a), ${nome}! 🦜 Sem internet agora — sua conta sobe pra nuvem assim que conectar.`);
   abrirPerfil();
 }
@@ -6798,8 +6812,10 @@ function textoConvite(){
   if((p.melhorSeq || 0) >= 3) partes.push("estudei " + p.melhorSeq + " dias seguidos");
   if(c.temporada >= 2) partes.push("estou na Temporada " + c.temporada + " da carreira H-2B");
   const conquista = partes.length ? "Eu " + partes.slice(0, 2).join(" e ") + " por lá! " : "";
+  const eu = Contas.sessao();
+  const indicacao = eu ? ` 📣 No cadastro, escreve meu e-mail em "Quem te indicou" (${eu}) que NÓS DOIS ganhamos baús e girassóis!` : "";
   return "🦜 Estou aprendendo inglês no FalaFina — do zero, com a pronúncia escrita do nosso jeito (water = \"uórer\") e treino de entrevista H-2B/H-2A falando no microfone. " +
-    conquista + "Vem estudar comigo, é grátis pra começar: " + FF_URL_APP;
+    conquista + "Vem estudar comigo, é grátis pra começar: " + FF_URL_APP + indicacao;
 }
 function convidarAmigo(){
   const texto = textoConvite();
@@ -8123,7 +8139,7 @@ function renderComunidade(){
       <p style="font-weight:700;color:var(--tinta-suave);max-width:460px;margin:0 auto">Brasileiros aprendendo inglês e se ajudando no caminho H-2B/H-2A: dúvidas, dicas de entrevista, vagas e aquela força nos dias difíceis.</p>
       <button class="btn-principal" style="max-width:320px;margin:16px auto 0" id="comGrupo">💬 Entrar no grupo do WhatsApp</button>
       <button class="btn-principal azul" style="max-width:320px;margin:10px auto 0" id="comConvidar">📣 Convidar um amigo pro FalaFina</button>
-      <p style="font-weight:700;font-size:.8rem;color:var(--tinta-suave);margin-top:10px">Quanto mais gente estudando junto, mais longe todo mundo chega. 💚</p>
+      <p style="font-weight:700;font-size:.8rem;color:var(--tinta-suave);margin-top:10px">📣 <b>Indicação Premiada:</b> seu amigo escreve o SEU e-mail no cadastro e vocês DOIS ganham — ele 🎁 1 baú + 🌻 50, você 🎁 2 baús + 🌻 100. Sem limite de amigos!</p>
     </div>
   </div>
   <div class="lateral">
