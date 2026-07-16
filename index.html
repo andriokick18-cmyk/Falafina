@@ -6892,6 +6892,7 @@ function renderTrilha(){
     aulasEstado === "novas" ? (!i.feito && !i.travado && i.prog === 0) : i.travado);
   const feitosN = itens.filter(i => i.feito).length;
   const html = `
+  ${faixaArea("aulas")}
   <div class="grid-2">
     <div>
       <div class="chips-tab">${cats.map(c => `<button class="chip-tab ${aulasFiltro === c.id ? "ativo" : ""}" data-f="${c.id}">${c.nome}</button>`).join("")}</div>
@@ -7046,21 +7047,22 @@ function listaDesafios(){
   const s = estatDia();
   const p = Progresso.dados;
   const streak = (p.ultimoDiaAtivo === hojeStr() || p.ultimoDiaAtivo === hojeStr(-86400000)) ? (p.diasSeguidos || 0) : 0;
+  /* "vai": pra onde o botão Treinar leva quem ainda não bateu a meta */
   const diarios = [
-    { id:"d1", ic:"📗", nome:"Complete 1 aula", desc:"Conclua um módulo hoje.", tem:s.aulas, meta:1, xp:150, periodo:"dia" },
-    { id:"d2", ic:"🎯", nome:"Faça 10 exercícios", desc:"Responda 10 perguntas hoje.", tem:s.ex, meta:10, xp:100, periodo:"dia" },
-    { id:"d3", ic:"🎤", nome:"Pratique pronúncia 3x", desc:"Use o microfone 3 vezes hoje.", tem:s.pron, meta:3, xp:80, periodo:"dia" }
+    { id:"d1", ic:"📗", nome:"Complete 1 aula", desc:"Conclua um módulo hoje.", tem:s.aulas, meta:1, xp:150, periodo:"dia", vai:"aula" },
+    { id:"d2", ic:"🎯", nome:"Faça 10 exercícios", desc:"Responda 10 perguntas hoje.", tem:s.ex, meta:10, xp:100, periodo:"dia", vai:"exercicios" },
+    { id:"d3", ic:"🎤", nome:"Pratique pronúncia 3x", desc:"Use o microfone 3 vezes hoje.", tem:s.pron, meta:3, xp:80, periodo:"dia", vai:"pronuncia" }
   ];
   const destaque = [
-    { id:"f1", ic:"🔥", nome:"Sequência de Fogo", desc:"Estude 7 dias seguidos.", tem:streak, meta:7, xp:300, periodo:"semana" },
-    { id:"f2", ic:"🧠", nome:"Mestre da Gramática", desc:"Acerte 20 exercícios de gramática.", tem:somaStats("gramC"), meta:20, xp:250, periodo:"unico" },
-    { id:"f3", ic:"🎧", nome:"Ouvido Atento", desc:"Acerte 15 perguntas de escuta.", tem:somaStats("escC"), meta:15, xp:200, periodo:"unico" },
-    { id:"f4", ic:"🎙️", nome:"Pronto pra Entrevista", desc:"Domine 10 respostas no Simulador.", tem:Object.keys((p.sim || {}).dominadas || {}).length, meta:10, xp:300, periodo:"unico" }
+    { id:"f1", ic:"🔥", nome:"Sequência de Fogo", desc:"Estude 7 dias seguidos.", tem:streak, meta:7, xp:300, periodo:"semana", vai:"aula" },
+    { id:"f2", ic:"🧠", nome:"Mestre da Gramática", desc:"Acerte 20 exercícios de gramática.", tem:somaStats("gramC"), meta:20, xp:250, periodo:"unico", vai:"carreira" },
+    { id:"f3", ic:"🎧", nome:"Ouvido Atento", desc:"Acerte 15 perguntas de escuta.", tem:somaStats("escC"), meta:15, xp:200, periodo:"unico", vai:"ditado" },
+    { id:"f4", ic:"🎙️", nome:"Pronto pra Entrevista", desc:"Domine 10 respostas no Simulador.", tem:Object.keys((p.sim || {}).dominadas || {}).length, meta:10, xp:300, periodo:"unico", vai:"simulador" }
   ];
   const mais = [
-    { id:"m1", ic:"⏱️", nome:"Corrida contra o tempo", desc:"Responda 15 perguntas num dia só.", tem:s.ex, meta:15, xp:180, periodo:"dia" },
-    { id:"m2", ic:"🗣️", nome:"FalaFina Fluente", desc:"Tenha 5 frases reconhecidas no microfone.", tem:somaStats("pronOk"), meta:5, xp:220, periodo:"unico" },
-    { id:"m3", ic:"🎁", nome:"Desafio Surpresa", desc:"Complete os 3 desafios diários de hoje.", tem:diarios.filter(d => d.tem >= d.meta).length, meta:3, xp:300, periodo:"dia" }
+    { id:"m1", ic:"⏱️", nome:"Corrida contra o tempo", desc:"Responda 15 perguntas num dia só.", tem:s.ex, meta:15, xp:180, periodo:"dia", vai:"exercicios" },
+    { id:"m2", ic:"🗣️", nome:"FalaFina Fluente", desc:"Tenha 5 frases reconhecidas no microfone.", tem:somaStats("pronOk"), meta:5, xp:220, periodo:"unico", vai:"pronuncia" },
+    { id:"m3", ic:"🎁", nome:"Desafio Surpresa", desc:"Complete os 3 desafios diários de hoje.", tem:diarios.filter(d => d.tem >= d.meta).length, meta:3, xp:300, periodo:"dia", vai:"aula" }
   ];
   return { diarios, destaque, mais };
 }
@@ -7073,11 +7075,15 @@ function renderDesafios(){
     const pct = Math.min(Math.round(d.tem / d.meta * 100), 100);
     const feito = d.tem >= d.meta;
     const resgatado = !!p.resgates[chaveResgate(d)];
+    /* Meta batida → Resgatar. Meta em aberto → o botão LEVA pro treino certo. */
+    const botao = resgatado ? `<button class="btn-resg feito" disabled>Concluído! 🔥</button>`
+      : feito ? `<button class="btn-resg" data-resg="${d.id}">Resgatar 🎁</button>`
+      : `<button class="btn-resg" data-vai="${d.vai}" style="background:var(--azul);box-shadow:0 3px 0 var(--azul-escuro)">Treinar agora ▶</button>`;
     return `<div class="des-card">
       <div class="top"><span class="ic">${d.ic}</span><div><b>${d.nome}</b><p>${d.desc}</p></div></div>
       <div class="aula-est"><div class="mini-barra" style="max-width:none"><i style="width:${pct}%"></i></div><small style="font-weight:800">${Math.min(d.tem,d.meta)}/${d.meta}</small></div>
       <div class="des-rec"><span>Recompensa: <b style="color:var(--verde-escuro)">+${d.xp} XP</b></span></div>
-      <button class="btn-resg ${resgatado ? "feito" : ""}" data-resg="${d.id}" ${(!feito || resgatado) ? "disabled" : ""}>${resgatado ? "Concluído! 🔥" : (feito ? "Resgatar 🎁" : "Continuar")}</button>
+      ${botao}
     </div>`;
   };
   const concl = [...diarios, ...destaque, ...mais].filter(d => p.resgates[chaveResgate(d)]).length;
@@ -7102,6 +7108,15 @@ function renderDesafios(){
       </div>
     </div>
   </div>`;
+  $("#desafiosConteudo").querySelectorAll("[data-vai]").forEach(b => b.addEventListener("click", () => {
+    const v = b.dataset.vai;
+    if(v === "aula") abrirModulo(proximoModulo().id);
+    else if(v === "exercicios"){ revTab = "inteligente"; navPara("revisao"); }
+    else if(v === "pronuncia"){ revTab = "palavras"; navPara("revisao"); mostrarToast("Use o 🎤 nos cards pra praticar!"); }
+    else if(v === "carreira") navPara("carreira");
+    else if(v === "ditado") abrirJogo("ditado");
+    else if(v === "simulador"){ renderSimConfig(); irPara("tela-simulador"); }
+  }));
   $("#desafiosConteudo").querySelectorAll("[data-resg]").forEach(b => b.addEventListener("click", () => {
     const todos = [...diarios, ...destaque, ...mais];
     const d = todos.find(x => x.id === b.dataset.resg);
