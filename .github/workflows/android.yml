@@ -1,0 +1,57 @@
+name: 📲 Compilar APK Android
+
+on:
+  push:
+    branches: [main]
+    paths: ['android-app/**', '.github/workflows/android.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: '8.7'
+
+      - name: Compilar APK
+        run: gradle -p android-app assembleDebug
+
+      - name: Renomear APK
+        run: cp android-app/app/build/outputs/apk/debug/app-debug.apk FalaFina.apk
+
+      - name: Guardar artefato
+        uses: actions/upload-artifact@v4
+        with:
+          name: FalaFina-APK
+          path: FalaFina.apk
+
+      - name: Publicar release com o APK
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: apk
+          name: "📲 FalaFina — App Android (APK)"
+          body: |
+            ## Como instalar
+            1. Baixe o **FalaFina.apk** aqui embaixo (no celular Android)
+            2. Toque no arquivo baixado → o Android vai pedir permissão para "instalar apps desconhecidos" → permita
+            3. Abra o FalaFina 🦜 → toque em **🔛 ATIVAR AGORA** → conceda a permissão "Sobrepor a outros apps"
+            4. Bloqueie o celular e acenda a tela: **a palavra de inglês aparece!** Cada acendida = palavra nova 📌
+
+            *Para atualizar para uma versão nova: desinstale a anterior e instale o APK novo.*
+          files: FalaFina.apk

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <uses-permission android:name="android.permission.INTERNET"/>
+  <!-- Mostrar o cartão da palavra SOBRE a tela de bloqueio -->
+  <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE"/>
+  <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+  <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+
+  <application
+    android:label="@string/app_name"
+    android:icon="@mipmap/ic_launcher"
+    android:allowBackup="true"
+    android:theme="@android:style/Theme.Material.Light.NoActionBar">
+
+    <!-- Portão: 1ª vez mostra a configuração; depois vai direto pro FalaFina -->
+    <activity android:name=".PortaoActivity" android:exported="true">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN"/>
+        <category android:name="android.intent.category.LAUNCHER"/>
+      </intent-filter>
+    </activity>
+
+    <!-- O FalaFina completo, rodando no motor do Chrome -->
+    <activity
+      android:name="com.google.androidbrowserhelper.trusted.LauncherActivity"
+      android:exported="false">
+      <meta-data
+        android:name="android.support.customtabs.trusted.DEFAULT_URL"
+        android:value="https://falafina.onrender.com"/>
+    </activity>
+
+    <!-- O cartão da palavra que aparece quando a tela acende -->
+    <activity
+      android:name=".PalavraActivity"
+      android:exported="false"
+      android:excludeFromRecents="true"
+      android:showWhenLocked="true"
+      android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
+
+    <!-- Serviço que escuta a tela acender -->
+    <service
+      android:name=".PalavraService"
+      android:exported="false"
+      android:foregroundServiceType="specialUse">
+      <property
+        android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+        android:value="Mostra uma palavra de inglês quando a tela do celular acende"/>
+    </service>
+
+    <!-- Religa o serviço quando o celular reinicia -->
+    <receiver android:name=".BootReceiver" android:exported="true">
+      <intent-filter>
+        <action android:name="android.intent.action.BOOT_COMPLETED"/>
+      </intent-filter>
+    </receiver>
+
+  </application>
+</manifest>
