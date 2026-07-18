@@ -752,6 +752,10 @@ body.sem-shell .topo .titulo-pagina{ visibility:hidden; }
 body.sem-shell .btn-info-topo{display:none}
 .acao b{font-family:var(--f-display);font-weight:600;font-size:.84rem;line-height:1.2}
 .acao small{font-weight:700;color:var(--tinta-suave);font-size:.68rem;line-height:1.25}
+/* 📲 Botão-aba de instalar o app (barra esquerda) */
+.sb-baixar{background:var(--azul) !important;color:#fff !important;font-weight:800;margin-top:12px;border-radius:14px;box-shadow:0 3px 0 var(--azul-escuro);justify-content:center}
+.sb-baixar .ic{filter:none}
+.sb-baixar:active{transform:translateY(2px);box-shadow:none}
 /* 🏆 PÓDIO RPG do Ranking — a vitrine dos itens da Loja */
 .podio{display:flex;gap:10px;align-items:flex-end;justify-content:center;margin-bottom:16px}
 .podio .pd{flex:1;max-width:150px;text-align:center;background:var(--branco);border:2px solid rgba(33,49,58,.14);border-radius:18px;padding:12px 8px 10px;cursor:pointer;transition:transform .12s}
@@ -778,6 +782,7 @@ body.sem-shell .btn-info-topo{display:none}
     <button class="sb-item" data-rota="pratica"><span class="ic">🎮</span>Jogos</button>
     <button class="sb-item" data-rota="ranking"><span class="ic">🏆</span>Ranking</button>
     <button class="sb-item" data-rota="progresso"><span class="ic">🪪</span>Perfil</button>
+    <button class="sb-item sb-baixar" id="sbBaixarApp"><span class="ic">📲</span>Baixar App Android</button>
   </nav>
   <div class="sb-extras">
     <button class="sb-item" data-rota="loja"><span class="ic">🛍️</span>Loja</button>
@@ -5598,6 +5603,26 @@ function renderRanking(){
 /* ---------- BOTÃO FLUTUANTE: instalar o aplicativo (PWA) ---------- */
 let pwaPrompt = null;
 window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); pwaPrompt = e; });
+/* Instalação num lugar só — botão da barra, banner flutuante e Configurações */
+async function instalarApp(){
+  if(window.matchMedia && window.matchMedia("(display-mode: standalone)").matches){
+    mostrarToast("📲 Você JÁ está no aplicativo instalado! 🎉");
+    return;
+  }
+  if(pwaPrompt){
+    pwaPrompt.prompt();
+    try{
+      const r = await pwaPrompt.userChoice;
+      if(r.outcome === "accepted"){
+        mostrarToast("📲 Aplicativo instalado! Procure o ícone do FalaFina na sua tela 🦜");
+        const f = $("#pwaFlutuante"); if(f) f.style.display = "none";
+      }
+    }catch(e){}
+    pwaPrompt = null;
+  } else {
+    alert("📲 Para instalar o FalaFina:\n\nAndroid (Chrome): menu ⋮ → \"Instalar aplicativo\" (ou \"Adicionar à tela inicial\")\niPhone (Safari): botão compartilhar → \"Adicionar à Tela de Início\"\n\nVira um aplicativo de verdade: ícone, tela cheia, funciona offline e recebe a 📌 Palavra do Dia na tela de bloqueio!");
+  }
+}
 function iniciarPWA(){
   /* registro extra do SW (idempotente) — garante push/offline também
      em localhost e no modo instalado */
@@ -5609,17 +5634,10 @@ function iniciarPWA(){
     $("#pwaFlutuante").style.display = "none";
     Store.set("ff_pwa_fechado", true);
   });
-  $("#pwaBaixar").addEventListener("click", async () => {
-    if(pwaPrompt){
-      pwaPrompt.prompt();
-      const r = await pwaPrompt.userChoice;
-      if(r.outcome === "accepted"){ $("#pwaFlutuante").style.display = "none"; mostrarToast("📲 Aplicativo instalado!"); }
-      pwaPrompt = null;
-    } else {
-      alert("📲 Para instalar o FalaFina:\n\nAndroid (Chrome): menu ⋮ → \"Adicionar à tela inicial\"\niPhone (Safari): botão compartilhar → \"Adicionar à Tela de Início\"\n\nVira um aplicativo de verdade, com ícone e tudo!");
-    }
-  });
+  $("#pwaBaixar").addEventListener("click", instalarApp);
 }
+const sbBaixarBtn = $("#sbBaixarApp");
+if(sbBaixarBtn) sbBaixarBtn.addEventListener("click", instalarApp);
 if("serviceWorker" in navigator && location.protocol === "https:"){
   navigator.serviceWorker.register("sw.js").catch(() => {});
 }
@@ -8353,7 +8371,7 @@ function renderConfig(){
   <p style="font-weight:700;color:var(--tinta-suave);font-size:.82rem;margin-top:12px;text-align:center">FalaFina · Inglês para Brasileiros 💚 Seus dados ficam salvos neste aparelho.</p>`;
   $("#cfgPush").addEventListener("click", async () => { await PushDia.ativar(); renderConfig(); });
   $("#cfgVoz").addEventListener("change", e => { p.cfg.vozAuto = e.target.checked; simCfg.voz = e.target.checked; const cb = $("#simVoz"); if(cb) cb.checked = e.target.checked; Progresso.salvar(); });
-  $("#cfgPwa").addEventListener("click", () => { if(pwaPrompt){ pwaPrompt.prompt(); } else mostrarToast("No menu do navegador: 'Adicionar à tela inicial' 😉"); });
+  $("#cfgPwa").addEventListener("click", instalarApp);
   $("#cfgPerfil").addEventListener("click", () => { if(typeof abrirPerfil === "function") abrirPerfil(); else irPara("tela-perfil"); });
   $("#cfgZap").addEventListener("click", () => abrirZap("Olá! Preciso de ajuda com o FalaFina 😊"));
   $("#cfgSair").addEventListener("click", () => { if(confirm("Sair da conta? Seu progresso fica salvo.")){ Contas.sair(); document.body.classList.add("sem-shell"); irPara("tela-inicio"); } });
