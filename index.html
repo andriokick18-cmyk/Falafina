@@ -7188,7 +7188,7 @@ const PushDia = {
       if(jr.ok){
         Progresso.dados.pushAtivo = true;
         Progresso.salvar();
-        mostrarToast("🔔 Pronto! Todo dia às 9h a Palavra do Dia aparece na sua tela 🎉");
+        mostrarToast("🔔 Pronto! A Palavra da Vez vai trocar na sua tela de bloqueio ao longo do dia 🎉");
         renderHome();
         return true;
       }
@@ -7207,17 +7207,27 @@ function pushB64(base64String){
   for(let i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i);
   return arr;
 }
+/* Palavra da VEZ: mesma fatia de 2h da notificação (app e tela de
+   bloqueio sincronizados) + troca IMEDIATA quando a pessoa guarda o
+   celular e volta ("muda sempre, a todo momento" — Andrio). */
 let palavraDiaExtra = 0;
 function palavraDoDia(){
-  const d = hojeStr();
-  let h = 0;
-  for(let i = 0; i < d.length; i++) h = (h * 31 + d.charCodeAt(i)) >>> 0;
-  return PALAVRA_DIA_POOL[(h + palavraDiaExtra) % PALAVRA_DIA_POOL.length];
+  const fatia = Math.floor((Date.now() - 3 * 3600e3) / (2 * 3600e3));
+  const n = PALAVRA_DIA_POOL.length;
+  return PALAVRA_DIA_POOL[(((fatia + palavraDiaExtra) % n) + n) % n];
 }
+/* saiu do app e voltou → outra palavra na hora */
+document.addEventListener("visibilitychange", () => {
+  if(document.hidden) return;
+  palavraDiaExtra++;
+  if(telaAtual === "tela-home" && typeof renderHome === "function" && Contas.atual()){
+    try{ renderHome(); }catch(e){}
+  }
+});
 function cardPalavraDoDia(){
   const w = palavraDoDia();
   return `<div class="cardb" style="margin-top:14px;border:2.5px solid var(--azul);background:linear-gradient(135deg,#F4F8FF,#E4EDFA)">
-    <div class="secao-t" style="margin-bottom:2px">📌 Palavra do Dia <span style="font-size:.7rem;background:var(--azul);color:#fff;padding:2px 8px;border-radius:99px;font-weight:800">NOVA TODO DIA</span></div>
+    <div class="secao-t" style="margin-bottom:2px">📌 Palavra da Vez <span style="font-size:.7rem;background:var(--azul);color:#fff;padding:2px 8px;border-radius:99px;font-weight:800">MUDA O DIA TODO</span></div>
     <p style="font-family:var(--f-display);font-weight:700;font-size:1.9rem;color:var(--azul-escuro);line-height:1.1;margin-top:6px">${esc(w.en)} <button class="btn-som" data-falar="${esc(w.en)}" aria-label="Ouvir">🔊</button></p>
     <p style="font-weight:800;color:#8A6400;font-size:.95rem">🗣️ ${esc(w.som)} · <span style="color:var(--verde-escuro)">🇧🇷 ${esc(w.pt)}</span></p>
     <div style="background:rgba(255,255,255,.75);border-radius:12px;padding:10px 12px;margin-top:8px">
@@ -7228,7 +7238,7 @@ function cardPalavraDoDia(){
       <button class="btn-link" id="pdOutra" style="padding:4px 8px">🔀 Ver outra</button>
       <button class="btn-link" id="pdCompartilhar" style="padding:4px 8px">📣 Mandar pro grupo</button>
     </div>
-    ${(!PushDia.ativo() && PushDia.suportado()) ? `<button class="btn-principal azul" id="pdAtivarPush" style="margin-top:10px;max-width:360px;font-size:.9rem">🔔 Receber todo dia na tela de bloqueio</button>` : (PushDia.ativo() ? `<p style="font-weight:700;font-size:.78rem;color:var(--verde-escuro);margin-top:8px">🔔 Ativado — chega todo dia às 9h ✔</p>` : "")}
+    ${(!PushDia.ativo() && PushDia.suportado()) ? `<button class="btn-principal azul" id="pdAtivarPush" style="margin-top:10px;max-width:360px;font-size:.9rem">🔔 Palavras na tela de bloqueio (muda o dia todo)</button>` : (PushDia.ativo() ? `<p style="font-weight:700;font-size:.78rem;color:var(--verde-escuro);margin-top:8px">🔔 Ativado — a palavra troca na sua tela ao longo do dia ✔</p>` : "")}
   </div>`;
 }
 function renderHome(){
@@ -7343,7 +7353,7 @@ function renderHome(){
   const pdCompBtn = $("#pdCompartilhar");
   if(pdCompBtn) pdCompBtn.addEventListener("click", () => {
     const w = palavraDoDia();
-    const texto = `📌 Palavra do dia no FalaFina: ${w.en.toUpperCase()} (soa "${w.som}") = ${w.pt}.\n"${w.fEn}" — ${w.fPt}\n🦜 Aprende uma nova todo dia, grátis: ${FF_URL_APP}`;
+    const texto = `📌 Palavra da vez no FalaFina: ${w.en.toUpperCase()} (soa "${w.som}") = ${w.pt}.\n"${w.fEn}" — ${w.fPt}\n🦜 As palavras trocam o dia todo — aprende grátis: ${FF_URL_APP}`;
     if(navigator.share){ navigator.share({ title:"Palavra do Dia · FalaFina", text:texto }).catch(() => {}); }
     else window.open("https://wa.me/?text=" + encodeURIComponent(texto), "_blank");
   });
@@ -8360,7 +8370,7 @@ function renderConfig(){
   $("#configConteudo").innerHTML = `
   ${faixaArea("config")}
   <div class="cardb">
-    <div class="cfg-linha"><span>🔔 Palavra do Dia na tela de bloqueio (9h)</span><button class="btn-resg" style="width:auto;padding:8px 14px" id="cfgPush">${PushDia.ativo() ? "Ativado ✔" : "Ativar"}</button></div>
+    <div class="cfg-linha"><span>🔔 Palavras na tela de bloqueio (trocam o dia todo)</span><button class="btn-resg" style="width:auto;padding:8px 14px" id="cfgPush">${PushDia.ativo() ? "Ativado ✔" : "Ativar"}</button></div>
     <div class="cfg-linha"><span>🔊 Ler perguntas do Simulador em voz alta</span><input type="checkbox" id="cfgVoz" ${p.cfg.vozAuto !== false ? "checked" : ""} style="width:22px;height:22px;accent-color:var(--verde)"></div>
     <div class="cfg-linha"><span>📲 Instalar o FalaFina no celular</span><button class="btn-resg" style="width:auto;padding:8px 14px" id="cfgPwa">Instalar</button></div>
     <div class="cfg-linha"><span>🪪 Editar meu perfil (foto, idade, focos)</span><button class="btn-resg" style="width:auto;padding:8px 14px" id="cfgPerfil">Editar</button></div>

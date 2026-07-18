@@ -297,21 +297,23 @@ try {
   if (mPool) PUSH_POOL = eval(mPool[1]);
   log("📌 Pool da Palavra do Dia: " + PUSH_POOL.length + " palavras");
 } catch (e) { log("⚠️ Pool da Palavra do Dia não carregou: " + e.message); }
-function palavraDoDiaSrv() {
+/* PALAVRA DA VEZ (pedido do Andrio: "muda sempre, a todo momento"):
+   a palavra troca por FATIA DE 2 HORAS. A notificação usa a MESMA tag,
+   então cada envio SUBSTITUI a anterior em silêncio — a pessoa pega o
+   celular e a palavra na tela é outra, sem buzinar toda hora. */
+const PUSH_FATIA_MS = 2 * 3600e3;
+function palavraDaVezSrv() {
   if (!PUSH_POOL.length) return null;
-  const agoraBr = new Date(Date.now() - 3 * 3600e3); // Brasília ~UTC-3
-  const d = agoraBr.toISOString().slice(0, 10);
-  let h = 0;
-  for (let i = 0; i < d.length; i++) h = (h * 31 + d.charCodeAt(i)) >>> 0;
-  return PUSH_POOL[h % PUSH_POOL.length];
+  const fatia = Math.floor((Date.now() - 3 * 3600e3) / PUSH_FATIA_MS);
+  return PUSH_POOL[((fatia % PUSH_POOL.length) + PUSH_POOL.length) % PUSH_POOL.length];
 }
-async function enviarPalavraDoDia() {
+async function enviarPalavraDaVez() {
   if (!webpush) return { erro: "web-push não instalado no servidor" };
-  const w = palavraDoDiaSrv();
+  const w = palavraDaVezSrv();
   if (!w) return { erro: "pool vazio" };
   const payload = JSON.stringify({
-    t: "📌 Palavra do Dia: " + w.en.toUpperCase(),
-    b: "🗣️ " + w.som + " = " + w.pt + "\n\"" + w.fEn + "\"\n" + w.fPt
+    t: "📌 " + w.en.toUpperCase() + " — " + w.pt,
+    b: "🗣️ " + w.som + "\n\"" + w.fEn + "\"\n" + w.fPt
   });
   let enviadas = 0, falhas = 0;
   for (const c of Object.values(CONTAS)) {
@@ -323,18 +325,22 @@ async function enviarPalavraDoDia() {
     }
   }
   persistir();
-  log("🔔 Push Palavra do Dia (" + w.en + "): " + enviadas + " enviadas, " + falhas + " falhas");
+  log("🔔 Push Palavra da Vez (" + w.en + "): " + enviadas + " enviadas, " + falhas + " falhas");
   return { ok: true, palavra: w.en, enviadas, falhas };
 }
-let ultimoEnvioPush = null;
+/* A cada fatia de 2h, das 8h às 22h de Brasília, a palavra da tela troca */
+let ultimaFatiaPush = null;
 setInterval(() => {
   const agoraBr = new Date(Date.now() - 3 * 3600e3);
-  const dia = agoraBr.toISOString().slice(0, 10);
-  if (agoraBr.getUTCHours() === 9 && ultimoEnvioPush !== dia) {
-    ultimoEnvioPush = dia;
-    enviarPalavraDoDia();
+  const hora = agoraBr.getUTCHours();
+  const fatia = Math.floor((Date.now() - 3 * 3600e3) / PUSH_FATIA_MS);
+  if (hora >= 8 && hora < 22 && ultimaFatiaPush !== fatia) {
+    ultimaFatiaPush = fatia;
+    enviarPalavraDaVez();
   }
 }, 5 * 60 * 1000);
+/* compat: nome antigo usado pela rota de teste */
+const enviarPalavraDoDia = enviarPalavraDaVez;
 
 /* ---------- API ---------- */
 async function tratarApi(req, res, rota, ip) {
