@@ -5574,6 +5574,9 @@ function renderRanking(){
 let pwaPrompt = null;
 window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); pwaPrompt = e; });
 function iniciarPWA(){
+  /* registro extra do SW (idempotente) — garante push/offline também
+     em localhost e no modo instalado */
+  if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
   if(Store.get("ff_pwa_fechado", false)) return;
   if(window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) return; // já instalado
   $("#pwaFlutuante").style.display = "flex";
@@ -7121,6 +7124,46 @@ const PALAVRA_DIA_POOL = [
   { en:"resilient", som:"rizíliente", pt:"resiliente", fEn:"Workers like you are resilient.", fPt:"Trabalhadores como você são resilientes." },
   { en:"breakthrough", som:"brêik-thru", pt:"grande avanço", fEn:"Speaking without fear was my breakthrough.", fPt:"Falar sem medo foi meu grande avanço." }
 ];
+/* 🔔 Assinatura do push da Palavra do Dia (aparece na tela de bloqueio).
+   Falha SEMPRE com mensagem amigável — nunca quebra nada. */
+const PushDia = {
+  suportado(){ return !!(("serviceWorker" in navigator) && window.PushManager && window.Notification); },
+  ativo(){ return !!Progresso.dados.pushAtivo; },
+  async ativar(){
+    if(!this.suportado()){ mostrarToast("🔔 Seu navegador não suporta — no iPhone, instale o app primeiro (Compartilhar → Tela de Início)"); return false; }
+    try{
+      const perm = await Notification.requestPermission();
+      if(perm !== "granted"){ mostrarToast("🔔 Você negou a permissão — dá pra mudar nas configurações do navegador"); return false; }
+      const reg = await navigator.serviceWorker.ready;
+      const r = await fetch("/api/push/chave");
+      const j = await r.json();
+      if(!j.ok){ mostrarToast("🔔 O servidor ainda não tem o push ligado — avisa o Andrio 😉"); return false; }
+      const sub = await reg.pushManager.subscribe({ userVisibleOnly:true, applicationServerKey: pushB64(j.publicKey) });
+      const conta = Contas.atual();
+      const res = await fetch("/api/push/assinar", { method:"POST", headers:{ "Content-Type":"application/json" }, body: JSON.stringify({ email: conta.email, senhaHash: conta.senhaHash, sub: sub.toJSON() }) });
+      const jr = await res.json();
+      if(jr.ok){
+        Progresso.dados.pushAtivo = true;
+        Progresso.salvar();
+        mostrarToast("🔔 Pronto! Todo dia às 9h a Palavra do Dia aparece na sua tela 🎉");
+        renderHome();
+        return true;
+      }
+      mostrarToast("🔔 Não deu: " + (jr.erro || "tente de novo"));
+    }catch(e){
+      mostrarToast("🔔 Não consegui ativar aqui — tente pelo Chrome (Android) ou instale o app (iPhone)");
+    }
+    return false;
+  }
+};
+function pushB64(base64String){
+  const padding = "=".repeat((4 - base64String.length % 4) % 4);
+  const b64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
+  const raw = atob(b64);
+  const arr = new Uint8Array(raw.length);
+  for(let i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i);
+  return arr;
+}
 let palavraDiaExtra = 0;
 function palavraDoDia(){
   const d = hojeStr();
@@ -7142,6 +7185,7 @@ function cardPalavraDoDia(){
       <button class="btn-link" id="pdOutra" style="padding:4px 8px">🔀 Ver outra</button>
       <button class="btn-link" id="pdCompartilhar" style="padding:4px 8px">📣 Mandar pro grupo</button>
     </div>
+    ${(!PushDia.ativo() && PushDia.suportado()) ? `<button class="btn-principal azul" id="pdAtivarPush" style="margin-top:10px;max-width:360px;font-size:.9rem">🔔 Receber todo dia na tela de bloqueio</button>` : (PushDia.ativo() ? `<p style="font-weight:700;font-size:.78rem;color:var(--verde-escuro);margin-top:8px">🔔 Ativado — chega todo dia às 9h ✔</p>` : "")}
   </div>`;
 }
 function renderHome(){
@@ -7251,6 +7295,8 @@ function renderHome(){
   $("#homeConteudo").querySelectorAll("[data-falar]").forEach(bt => bt.addEventListener("click", () => Fala.dizer(bt.dataset.falar, bt)));
   const pdOutraBtn = $("#pdOutra");
   if(pdOutraBtn) pdOutraBtn.addEventListener("click", () => { palavraDiaExtra++; renderHome(); });
+  const pdPushBtn = $("#pdAtivarPush");
+  if(pdPushBtn) pdPushBtn.addEventListener("click", () => PushDia.ativar());
   const pdCompBtn = $("#pdCompartilhar");
   if(pdCompBtn) pdCompBtn.addEventListener("click", () => {
     const w = palavraDoDia();
@@ -8271,6 +8317,7 @@ function renderConfig(){
   $("#configConteudo").innerHTML = `
   ${faixaArea("config")}
   <div class="cardb">
+    <div class="cfg-linha"><span>🔔 Palavra do Dia na tela de bloqueio (9h)</span><button class="btn-resg" style="width:auto;padding:8px 14px" id="cfgPush">${PushDia.ativo() ? "Ativado ✔" : "Ativar"}</button></div>
     <div class="cfg-linha"><span>🔊 Ler perguntas do Simulador em voz alta</span><input type="checkbox" id="cfgVoz" ${p.cfg.vozAuto !== false ? "checked" : ""} style="width:22px;height:22px;accent-color:var(--verde)"></div>
     <div class="cfg-linha"><span>📲 Instalar o FalaFina no celular</span><button class="btn-resg" style="width:auto;padding:8px 14px" id="cfgPwa">Instalar</button></div>
     <div class="cfg-linha"><span>🪪 Editar meu perfil (foto, idade, focos)</span><button class="btn-resg" style="width:auto;padding:8px 14px" id="cfgPerfil">Editar</button></div>
@@ -8279,6 +8326,7 @@ function renderConfig(){
     <div class="cfg-linha" style="border-bottom:none"><span>🗑️ Apagar todo o meu progresso</span><button class="btn-resg" style="width:auto;padding:8px 14px;background:var(--coral);box-shadow:0 3px 0 #B23A17" id="cfgApagar">Apagar</button></div>
   </div>
   <p style="font-weight:700;color:var(--tinta-suave);font-size:.82rem;margin-top:12px;text-align:center">FalaFina · Inglês para Brasileiros 💚 Seus dados ficam salvos neste aparelho.</p>`;
+  $("#cfgPush").addEventListener("click", async () => { await PushDia.ativar(); renderConfig(); });
   $("#cfgVoz").addEventListener("change", e => { p.cfg.vozAuto = e.target.checked; simCfg.voz = e.target.checked; const cb = $("#simVoz"); if(cb) cb.checked = e.target.checked; Progresso.salvar(); });
   $("#cfgPwa").addEventListener("click", () => { if(pwaPrompt){ pwaPrompt.prompt(); } else mostrarToast("No menu do navegador: 'Adicionar à tela inicial' 😉"); });
   $("#cfgPerfil").addEventListener("click", () => { if(typeof abrirPerfil === "function") abrirPerfil(); else irPara("tela-perfil"); });

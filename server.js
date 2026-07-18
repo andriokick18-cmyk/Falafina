@@ -264,6 +264,78 @@ function marcarTentativa(ip) {
 }
 setInterval(() => { const ag = Date.now(); for (const ip in tentativas) if (ag > tentativas[ip].ate) delete tentativas[ip]; }, 5 * 60 * 1000);
 
+/* ==================================================================
+   🔔 PUSH — Palavra do Dia na TELA DE BLOQUEIO (ideia do Andrio).
+   - web-push carregado com tolerância: sem a dependência instalada o
+     servidor NÃO quebra, só desativa o push e loga a instrução
+     (no Render: Build Command precisa ser "npm install").
+   - Chaves VAPID auto-geradas no 1º boot e salvas em /data (zero
+     configuração pro Andrio).
+   - Envio diário ~9h de Brasília; rota admin /api/push/testar pra
+     testar na hora no próprio celular.
+   ================================================================== */
+let webpush = null;
+try { webpush = require("web-push"); }
+catch (e) { log("🔕 web-push não instalado — push desativado. No Render, confira o Build Command: npm install"); }
+const ARQ_VAPID = path.join(DATA_DIR, "vapid.json");
+let VAPID = null;
+if (webpush) {
+  try { VAPID = JSON.parse(fs.readFileSync(ARQ_VAPID, "utf8")); }
+  catch (e) {
+    VAPID = webpush.generateVAPIDKeys();
+    try { fs.writeFileSync(ARQ_VAPID, JSON.stringify(VAPID)); } catch (e2) {}
+    log("🔑 Chaves VAPID do push geradas e salvas");
+  }
+  try { webpush.setVapidDetails("mailto:ndrkick.3@gmail.com", VAPID.publicKey, VAPID.privateKey); }
+  catch (e) { webpush = null; log("🔕 VAPID inválido — push desativado: " + e.message); }
+}
+/* Pool da Palavra do Dia: lido DIRETO do index.html (fonte única, sem duplicação) */
+let PUSH_POOL = [];
+try {
+  const htmlApp = fs.readFileSync(path.join(PUBLICO, "index.html"), "utf8");
+  const mPool = htmlApp.match(/const PALAVRA_DIA_POOL = (\[[\s\S]*?\n\]);/);
+  if (mPool) PUSH_POOL = eval(mPool[1]);
+  log("📌 Pool da Palavra do Dia: " + PUSH_POOL.length + " palavras");
+} catch (e) { log("⚠️ Pool da Palavra do Dia não carregou: " + e.message); }
+function palavraDoDiaSrv() {
+  if (!PUSH_POOL.length) return null;
+  const agoraBr = new Date(Date.now() - 3 * 3600e3); // Brasília ~UTC-3
+  const d = agoraBr.toISOString().slice(0, 10);
+  let h = 0;
+  for (let i = 0; i < d.length; i++) h = (h * 31 + d.charCodeAt(i)) >>> 0;
+  return PUSH_POOL[h % PUSH_POOL.length];
+}
+async function enviarPalavraDoDia() {
+  if (!webpush) return { erro: "web-push não instalado no servidor" };
+  const w = palavraDoDiaSrv();
+  if (!w) return { erro: "pool vazio" };
+  const payload = JSON.stringify({
+    t: "📌 Palavra do Dia: " + w.en.toUpperCase(),
+    b: "🗣️ " + w.som + " = " + w.pt + "\n\"" + w.fEn + "\"\n" + w.fPt
+  });
+  let enviadas = 0, falhas = 0;
+  for (const c of Object.values(CONTAS)) {
+    if (!c.push) continue;
+    try { await webpush.sendNotification(c.push, payload); enviadas++; }
+    catch (e) {
+      falhas++;
+      if (e.statusCode === 404 || e.statusCode === 410) delete c.push; // assinatura morta: limpa
+    }
+  }
+  persistir();
+  log("🔔 Push Palavra do Dia (" + w.en + "): " + enviadas + " enviadas, " + falhas + " falhas");
+  return { ok: true, palavra: w.en, enviadas, falhas };
+}
+let ultimoEnvioPush = null;
+setInterval(() => {
+  const agoraBr = new Date(Date.now() - 3 * 3600e3);
+  const dia = agoraBr.toISOString().slice(0, 10);
+  if (agoraBr.getUTCHours() === 9 && ultimoEnvioPush !== dia) {
+    ultimoEnvioPush = dia;
+    enviarPalavraDoDia();
+  }
+}, 5 * 60 * 1000);
+
 /* ---------- API ---------- */
 async function tratarApi(req, res, rota, ip) {
   // Saúde do servidor
@@ -318,6 +390,19 @@ async function tratarApi(req, res, rota, ip) {
   if (rota.startsWith("/api/creditar-baus") && req.method === "GET") return creditarBaus(req, res);
   // Dados do Painel do Dono (protegido pela ADMIN_CHAVE)
   if (rota.startsWith("/api/admin/dados") && req.method === "GET") return adminDados(req, res);
+  // 🔔 Push: chave pública (pro navegador assinar)
+  if (rota.startsWith("/api/push/chave") && req.method === "GET") {
+    if (!webpush || !VAPID) return responder(res, 503, { erro: "Push indisponível no servidor (web-push não instalado — Build Command: npm install)" });
+    return responder(res, 200, { ok: true, publicKey: VAPID.publicKey });
+  }
+  // 🔔 Push: teste imediato (admin) — abre no celular e vê a notificação chegar
+  if (rota.startsWith("/api/push/testar") && req.method === "GET") {
+    const u = new URL(req.url, "http://x");
+    const ADMIN = process.env.ADMIN_CHAVE || "";
+    if (!ADMIN || (u.searchParams.get("chave") || "") !== ADMIN) return responder(res, 403, { erro: "Chave errada." });
+    const r = await enviarPalavraDoDia();
+    return responder(res, r.ok ? 200 : 503, r);
+  }
   if (req.method !== "POST") return responder(res, 405, { erro: "Método não permitido" });
   const corpo = await lerCorpo(req);
   if (!corpo) return responder(res, 400, { erro: "Corpo inválido ou grande demais" });
@@ -399,6 +484,26 @@ async function tratarApi(req, res, rota, ip) {
     c.ultimaSync = new Date().toISOString();
     persistir();
     return responder(res, 200, { ok: true, conta: contaPublica(c) });
+  }
+
+  // 🔔 Push: assinar / cancelar (autenticado — a assinatura fica na conta)
+  if (rota === "/api/push/assinar") {
+    const c = CONTAS[email];
+    if (!c) return responder(res, 404, { erro: "Conta não encontrada" });
+    if (c.senhaServidor !== hashServidor(senhaHash)) return responder(res, 401, { erro: "Senha errada" });
+    if (!corpo.sub || typeof corpo.sub !== "object" || !corpo.sub.endpoint) return responder(res, 400, { erro: "Assinatura inválida" });
+    c.push = corpo.sub;
+    persistir();
+    log("🔔 Push assinado: " + email);
+    return responder(res, 200, { ok: true });
+  }
+  if (rota === "/api/push/sair") {
+    const c = CONTAS[email];
+    if (!c) return responder(res, 404, { erro: "Conta não encontrada" });
+    if (c.senhaServidor !== hashServidor(senhaHash)) return responder(res, 401, { erro: "Senha errada" });
+    delete c.push;
+    persistir();
+    return responder(res, 200, { ok: true });
   }
 
   return responder(res, 404, { erro: "Rota não existe" });

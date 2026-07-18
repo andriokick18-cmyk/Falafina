@@ -1,4 +1,5 @@
 // FalaFina Service Worker — app instalável e funcionando offline
+// v28: 🔔 PUSH DA PALAVRA DO DIA — notificação diária (9h) que aparece na TELA DE BLOQUEIO
 // v27: 📌 PALAVRA DO DIA — ideia do Andrio: palavra de impacto diária com frase EN+PT, trocar e compartilhar
 // v26: ✂️ JOGOS ENXUTOS — lista compacta de treinos (1 linha por jogo), sem missões duplicadas
 // v25: ✂️ GRANDE SIMPLIFICAÇÃO — menu 11→4 abas (Início/Aulas/Jogos/Progresso), Home enxuta, zero clique morto
@@ -14,13 +15,31 @@
 // v15: faixa-guia nas Aulas + desafios com botão "Treinar agora" que leva pro treino certo
 // v14: Guia de Áreas (Mapa do FalaFina, "?" em toda tela, nomes claros)
 // v8: ícones com nome correto (minúsculo) + NUNCA cacheia /api/ (dados da nuvem sempre frescos)
-const CACHE = "falafina-v27";
+const CACHE = "falafina-v28";
 const ARQUIVOS = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png", "./mascote.png"];
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ARQUIVOS)).then(() => self.skipWaiting()));
 });
 self.addEventListener("activate", e => {
   e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim()));
+});
+/* 🔔 Palavra do Dia por push — aparece na tela de bloqueio do celular */
+self.addEventListener("push", e => {
+  let d = { t: "FalaFina 🦜", b: "Sua palavra do dia chegou — vem ver!" };
+  try { d = e.data.json(); } catch (err) {}
+  e.waitUntil(self.registration.showNotification(d.t, {
+    body: d.b,
+    icon: "./icon-192.png",
+    badge: "./icon-192.png",
+    tag: "palavra-dia"
+  }));
+});
+self.addEventListener("notificationclick", e => {
+  e.notification.close();
+  e.waitUntil(clients.matchAll({ type: "window", includeUncontrolled: true }).then(lista => {
+    for (const c of lista) { if ("focus" in c) return c.focus(); }
+    return clients.openWindow("./");
+  }));
 });
 self.addEventListener("fetch", e => {
   const url = new URL(e.request.url);
