@@ -7063,6 +7063,87 @@ function cardPrimeirosPassos(){
     <div class="lista-limpa">${linhas}</div>
   </div>`;
 }
+/* ==================================================================
+   📌 PALAVRA DO DIA — ideia do Andrio (inspirada no print do lock
+   screen): uma palavra DE IMPACTO por dia (nada de hi/yes), com como
+   soa, significado e frase EN+PT. Mesma palavra pra todo mundo no
+   mesmo dia (assunto pro grupo!) + botão 🔀 pra ver outra na hora.
+   Futuro: notificação push diária (aparece na tela de bloqueio) e
+   widget no app nativo.
+   ================================================================== */
+const PALAVRA_DIA_POOL = [
+  { en:"reliable", som:"riláiabol", pt:"confiável", fEn:"He is a very reliable worker.", fPt:"Ele é um trabalhador muito confiável." },
+  { en:"opportunity", som:"oportúniti", pt:"oportunidade", fEn:"This job is a great opportunity.", fPt:"Este trabalho é uma grande oportunidade." },
+  { en:"achievement", som:"atchívment", pt:"conquista", fEn:"Finishing the season was a big achievement.", fPt:"Terminar a temporada foi uma grande conquista." },
+  { en:"hardworking", som:"rárd-uôrkin", pt:"trabalhador / esforçado", fEn:"She is the most hardworking person here.", fPt:"Ela é a pessoa mais esforçada daqui." },
+  { en:"trustworthy", som:"trâst-uôrdhi", pt:"digno de confiança", fEn:"A trustworthy person keeps their word.", fPt:"Uma pessoa de confiança cumpre a palavra." },
+  { en:"knowledge", som:"nóledj", pt:"conhecimento", fEn:"Knowledge opens many doors.", fPt:"O conhecimento abre muitas portas." },
+  { en:"courage", som:"kâredj", pt:"coragem", fEn:"It takes courage to work far from home.", fPt:"É preciso coragem pra trabalhar longe de casa." },
+  { en:"challenge", som:"tchélendj", pt:"desafio", fEn:"Every new job is a challenge.", fPt:"Todo trabalho novo é um desafio." },
+  { en:"success", som:"sâksés", pt:"sucesso", fEn:"Success comes from daily effort.", fPt:"O sucesso vem do esforço diário." },
+  { en:"growth", som:"grôuth", pt:"crescimento", fEn:"I see real growth in my English.", fPt:"Vejo um crescimento real no meu inglês." },
+  { en:"purpose", som:"pêrpos", pt:"propósito", fEn:"My family is my purpose.", fPt:"Minha família é meu propósito." },
+  { en:"patience", som:"pêichens", pt:"paciência", fEn:"Learning a language takes patience.", fPt:"Aprender uma língua exige paciência." },
+  { en:"discipline", som:"dísiplin", pt:"disciplina", fEn:"Discipline beats talent.", fPt:"Disciplina vence talento." },
+  { en:"freedom", som:"frídom", pt:"liberdade", fEn:"Speaking English gives you freedom.", fPt:"Falar inglês te dá liberdade." },
+  { en:"journey", som:"djêrni", pt:"jornada", fEn:"Enjoy the journey, not just the arrival.", fPt:"Aproveite a jornada, não só a chegada." },
+  { en:"responsible", som:"rispônsibol", pt:"responsável", fEn:"I am responsible for my results.", fPt:"Eu sou responsável pelos meus resultados." },
+  { en:"efficient", som:"efíchent", pt:"eficiente", fEn:"She found a more efficient way to work.", fPt:"Ela achou um jeito mais eficiente de trabalhar." },
+  { en:"punctual", som:"pânktchual", pt:"pontual", fEn:"Being punctual shows respect.", fPt:"Ser pontual demonstra respeito." },
+  { en:"motivated", som:"môutivêited", pt:"motivado", fEn:"I stay motivated by thinking of my goals.", fPt:"Fico motivado pensando nas minhas metas." },
+  { en:"dedicated", som:"dédikêited", pt:"dedicado", fEn:"He is dedicated to his family.", fPt:"Ele é dedicado à família." },
+  { en:"available", som:"avêilabol", pt:"disponível", fEn:"I am available to start immediately.", fPt:"Estou disponível pra começar imediatamente." },
+  { en:"flexible", som:"fléksibol", pt:"flexível", fEn:"I am flexible with my schedule.", fPt:"Sou flexível com meus horários." },
+  { en:"experienced", som:"ekspíriensd", pt:"experiente", fEn:"We need an experienced cook.", fPt:"Precisamos de um cozinheiro experiente." },
+  { en:"committed", som:"comíted", pt:"comprometido", fEn:"I am committed to finishing the contract.", fPt:"Estou comprometido em terminar o contrato." },
+  { en:"determined", som:"ditêrmind", pt:"determinado", fEn:"She is determined to learn English.", fPt:"Ela está determinada a aprender inglês." },
+  { en:"accomplish", som:"acômplich", pt:"realizar / alcançar", fEn:"You can accomplish anything with effort.", fPt:"Você pode alcançar qualquer coisa com esforço." },
+  { en:"overcome", som:"ôuvercâm", pt:"superar", fEn:"I overcame my fear of speaking.", fPt:"Eu superei meu medo de falar." },
+  { en:"provide", som:"prováid", pt:"prover / sustentar", fEn:"I work hard to provide for my family.", fPt:"Trabalho duro pra sustentar minha família." },
+  { en:"deserve", som:"dizêrv", pt:"merecer", fEn:"You deserve this opportunity.", fPt:"Você merece esta oportunidade." },
+  { en:"encourage", som:"encâredj", pt:"incentivar", fEn:"Good leaders encourage their team.", fPt:"Bons líderes incentivam a equipe." },
+  { en:"appreciate", som:"aprí-chiêit", pt:"agradecer / valorizar", fEn:"I appreciate your help.", fPt:"Agradeço muito a sua ajuda." },
+  { en:"recommend", som:"recoménd", pt:"recomendar", fEn:"My boss recommended me for the job.", fPt:"Meu chefe me recomendou pra vaga." },
+  { en:"improve", som:"imprúv", pt:"melhorar", fEn:"I improve a little every day.", fPt:"Eu melhoro um pouco a cada dia." },
+  { en:"strength", som:"strénth", pt:"força", fEn:"My strength comes from my family.", fPt:"Minha força vem da minha família." },
+  { en:"wisdom", som:"uízdom", pt:"sabedoria", fEn:"Experience brings wisdom.", fPt:"A experiência traz sabedoria." },
+  { en:"honesty", som:"ónesti", pt:"honestidade", fEn:"Honesty builds trust.", fPt:"A honestidade constrói confiança." },
+  { en:"gratitude", som:"grétitúd", pt:"gratidão", fEn:"I feel gratitude for this chance.", fPt:"Sinto gratidão por esta chance." },
+  { en:"effort", som:"éfort", pt:"esforço", fEn:"Great results demand great effort.", fPt:"Grandes resultados exigem grande esforço." },
+  { en:"confidence", som:"cónfidens", pt:"confiança (em si)", fEn:"Practice gives you confidence.", fPt:"A prática te dá confiança." },
+  { en:"respect", som:"rispékt", pt:"respeito", fEn:"Treat everyone with respect.", fPt:"Trate todos com respeito." },
+  { en:"progress", som:"prógres", pt:"progresso", fEn:"Small progress is still progress.", fPt:"Progresso pequeno ainda é progresso." },
+  { en:"dedication", som:"dedikêichon", pt:"dedicação", fEn:"Dedication turns dreams into plans.", fPt:"A dedicação transforma sonhos em planos." },
+  { en:"ambition", som:"embíchon", pt:"ambição", fEn:"Ambition without action is just a dream.", fPt:"Ambição sem ação é só um sonho." },
+  { en:"perseverance", som:"pêrsevírans", pt:"perseverança", fEn:"Perseverance wins where talent gives up.", fPt:"A perseverança vence onde o talento desiste." },
+  { en:"opportunity cost", som:"oportúniti cóst", pt:"custo de oportunidade", fEn:"Wasted time is an opportunity cost.", fPt:"Tempo desperdiçado é custo de oportunidade." },
+  { en:"teamwork", som:"tím-uôrk", pt:"trabalho em equipe", fEn:"Teamwork makes the dream work.", fPt:"O trabalho em equipe faz o sonho funcionar." },
+  { en:"resilient", som:"rizíliente", pt:"resiliente", fEn:"Workers like you are resilient.", fPt:"Trabalhadores como você são resilientes." },
+  { en:"breakthrough", som:"brêik-thru", pt:"grande avanço", fEn:"Speaking without fear was my breakthrough.", fPt:"Falar sem medo foi meu grande avanço." }
+];
+let palavraDiaExtra = 0;
+function palavraDoDia(){
+  const d = hojeStr();
+  let h = 0;
+  for(let i = 0; i < d.length; i++) h = (h * 31 + d.charCodeAt(i)) >>> 0;
+  return PALAVRA_DIA_POOL[(h + palavraDiaExtra) % PALAVRA_DIA_POOL.length];
+}
+function cardPalavraDoDia(){
+  const w = palavraDoDia();
+  return `<div class="cardb" style="margin-top:14px;border:2.5px solid var(--azul);background:linear-gradient(135deg,#F4F8FF,#E4EDFA)">
+    <div class="secao-t" style="margin-bottom:2px">📌 Palavra do Dia <span style="font-size:.7rem;background:var(--azul);color:#fff;padding:2px 8px;border-radius:99px;font-weight:800">NOVA TODO DIA</span></div>
+    <p style="font-family:var(--f-display);font-weight:700;font-size:1.9rem;color:var(--azul-escuro);line-height:1.1;margin-top:6px">${esc(w.en)} <button class="btn-som" data-falar="${esc(w.en)}" aria-label="Ouvir">🔊</button></p>
+    <p style="font-weight:800;color:#8A6400;font-size:.95rem">🗣️ ${esc(w.som)} · <span style="color:var(--verde-escuro)">🇧🇷 ${esc(w.pt)}</span></p>
+    <div style="background:rgba(255,255,255,.75);border-radius:12px;padding:10px 12px;margin-top:8px">
+      <p style="font-weight:700;font-size:.92rem">${esc(w.fEn)} <button class="btn-som" data-falar="${esc(w.fEn)}" aria-label="Ouvir frase">🔊</button></p>
+      <p style="font-weight:700;font-size:.85rem;color:var(--tinta-suave)">${esc(w.fPt)}</p>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+      <button class="btn-link" id="pdOutra" style="padding:4px 8px">🔀 Ver outra</button>
+      <button class="btn-link" id="pdCompartilhar" style="padding:4px 8px">📣 Mandar pro grupo</button>
+    </div>
+  </div>`;
+}
 function renderHome(){
   const p = Progresso.dados;
   const c = Contas.atual() || { nome:"Aluno" };
@@ -7098,6 +7179,7 @@ function renderHome(){
       </div>
       <div class="semana" style="justify-content:center;margin-top:16px">${semana}</div>
     </div>
+    ${cardPalavraDoDia()}
     ${!window.speechSynthesis ? `<div class="cardb" style="margin-top:14px;background:var(--sol-claro);border:2px solid var(--sol)">
       <b>🔇 Seu navegador está sem o áudio de voz</b>
       <p style="font-weight:700;font-size:.85rem;color:var(--tinta-suave);margin-top:4px">Dá pra estudar assim mesmo (as missões se adaptam), mas pra OUVIR o inglês falado abra o FalaFina no <b>Chrome</b> (Android) ou <b>Safari</b> (iPhone). Se você abriu pelo WhatsApp, toque no menu ⋮ e escolha <b>"Abrir no navegador"</b>.</p>
@@ -7166,6 +7248,16 @@ function renderHome(){
   if(homeCarreiraBtn) homeCarreiraBtn.addEventListener("click", () => navPara("carreira"));
   const homeGrupoBtn = $("#homeGrupo");
   if(homeGrupoBtn) homeGrupoBtn.addEventListener("click", () => window.open(FF_CONTATO.grupo, "_blank"));
+  $("#homeConteudo").querySelectorAll("[data-falar]").forEach(bt => bt.addEventListener("click", () => Fala.dizer(bt.dataset.falar, bt)));
+  const pdOutraBtn = $("#pdOutra");
+  if(pdOutraBtn) pdOutraBtn.addEventListener("click", () => { palavraDiaExtra++; renderHome(); });
+  const pdCompBtn = $("#pdCompartilhar");
+  if(pdCompBtn) pdCompBtn.addEventListener("click", () => {
+    const w = palavraDoDia();
+    const texto = `📌 Palavra do dia no FalaFina: ${w.en.toUpperCase()} (soa "${w.som}") = ${w.pt}.\n"${w.fEn}" — ${w.fPt}\n🦜 Aprende uma nova todo dia, grátis: ${FF_URL_APP}`;
+    if(navigator.share){ navigator.share({ title:"Palavra do Dia · FalaFina", text:texto }).catch(() => {}); }
+    else window.open("https://wa.me/?text=" + encodeURIComponent(texto), "_blank");
+  });
   const homeBauFaixa = $("#homeBauFaixa");
   if(homeBauFaixa) homeBauFaixa.addEventListener("click", () => {
     if(typeof BAU !== "undefined" && BAU.podeAbrirGratis()) abrirBauGratisModal();
