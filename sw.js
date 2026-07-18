@@ -1,4 +1,5 @@
 // FalaFina Service Worker — app instalável e funcionando offline
+// v29: 🏆 RANKING DE VOLTA AO MENU + PÓDIO RPG — a vitrine dos itens da Loja (pedido do Andrio)
 // v28: 🔔 PUSH DA PALAVRA DO DIA — notificação diária (9h) que aparece na TELA DE BLOQUEIO
 // v27: 📌 PALAVRA DO DIA — ideia do Andrio: palavra de impacto diária com frase EN+PT, trocar e compartilhar
 // v26: ✂️ JOGOS ENXUTOS — lista compacta de treinos (1 linha por jogo), sem missões duplicadas
@@ -15,7 +16,7 @@
 // v15: faixa-guia nas Aulas + desafios com botão "Treinar agora" que leva pro treino certo
 // v14: Guia de Áreas (Mapa do FalaFina, "?" em toda tela, nomes claros)
 // v8: ícones com nome correto (minúsculo) + NUNCA cacheia /api/ (dados da nuvem sempre frescos)
-const CACHE = "falafina-v28";
+const CACHE = "falafina-v29";
 const ARQUIVOS = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png", "./mascote.png"];
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ARQUIVOS)).then(() => self.skipWaiting()));

@@ -752,6 +752,15 @@ body.sem-shell .topo .titulo-pagina{ visibility:hidden; }
 body.sem-shell .btn-info-topo{display:none}
 .acao b{font-family:var(--f-display);font-weight:600;font-size:.84rem;line-height:1.2}
 .acao small{font-weight:700;color:var(--tinta-suave);font-size:.68rem;line-height:1.25}
+/* 🏆 PÓDIO RPG do Ranking — a vitrine dos itens da Loja */
+.podio{display:flex;gap:10px;align-items:flex-end;justify-content:center;margin-bottom:16px}
+.podio .pd{flex:1;max-width:150px;text-align:center;background:var(--branco);border:2px solid rgba(33,49,58,.14);border-radius:18px;padding:12px 8px 10px;cursor:pointer;transition:transform .12s}
+.podio .pd:active{transform:translateY(2px)}
+.podio .pd.p1{border-color:var(--sol);background:linear-gradient(180deg,#FFF8E7,#FFF);padding-top:16px;padding-bottom:16px}
+.podio .pd .coroa{font-size:1.5rem;line-height:1;display:block;margin-bottom:2px}
+.podio .pd b{font-family:var(--f-display);font-size:.85rem;display:block;margin-top:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.podio .pd small{font-weight:700;color:var(--tinta-suave);font-size:.68rem;display:block;line-height:1.3}
+.podio .pd .avwrap{display:flex;justify-content:center}
 .mapa-item{display:flex;gap:12px;align-items:flex-start;text-align:left;background:var(--branco);border:1.5px solid var(--borda,rgba(33,49,58,.12));border-radius:14px;padding:10px 12px;margin-bottom:8px}
 .mapa-item .ic{font-size:1.4rem;flex-shrink:0;margin-top:2px}
 .mapa-item b{font-family:var(--f-display);font-size:.92rem;display:block}
@@ -767,7 +776,8 @@ body.sem-shell .btn-info-topo{display:none}
     <button class="sb-item" data-rota="home"><span class="ic">🏠</span>Início</button>
     <button class="sb-item" data-rota="aulas"><span class="ic">📚</span>Aulas</button>
     <button class="sb-item" data-rota="pratica"><span class="ic">🎮</span>Jogos</button>
-    <button class="sb-item" data-rota="progresso"><span class="ic">📊</span>Progresso</button>
+    <button class="sb-item" data-rota="ranking"><span class="ic">🏆</span>Ranking</button>
+    <button class="sb-item" data-rota="progresso"><span class="ic">🪪</span>Perfil</button>
   </nav>
   <div class="sb-extras">
     <button class="sb-item" data-rota="loja"><span class="ic">🛍️</span>Loja</button>
@@ -1105,7 +1115,8 @@ body.sem-shell .btn-info-topo{display:none}
   <button class="tb-item" data-rota="home"><span class="ic">🏠</span>Início</button>
   <button class="tb-item" data-rota="aulas"><span class="ic">📚</span>Aulas</button>
   <button class="tb-item" data-rota="pratica"><span class="ic">🎮</span>Jogos</button>
-  <button class="tb-item" data-rota="progresso"><span class="ic">📊</span>Progresso</button>
+  <button class="tb-item" data-rota="ranking"><span class="ic">🏆</span>Ranking</button>
+  <button class="tb-item" data-rota="progresso"><span class="ic">🪪</span>Perfil</button>
 </nav>
 <div class="toast" id="toast"></div>
 <div class="bau-overlay" id="bauOverlay"><div class="bau-caixa" id="bauCaixaConteudo"></div></div>
@@ -5518,15 +5529,29 @@ function renderRanking(){
     const selo = mundial
       ? '<p style="font-weight:800;color:var(--verde);font-size:.85rem;margin:0 0 8px">🌎 Ranking mundial — atualizado agora</p>'
       : '<p style="font-weight:800;color:var(--tinta-suave);font-size:.85rem;margin:0 0 8px">📴 Sem internet — mostrando só os perfis deste aparelho</p>';
+    /* 🏆 PÓDIO RPG: top 3 em destaque — a vitrine das bordas/pets/efeitos */
+    const temPodio = ordenada.length >= 3;
+    const cartaoPodio = (c, pos) => {
+      const p1 = pos === 0;
+      return `<div class="pd ${p1 ? "p1" : ""} ${c.efeito ? "fx-" + c.efeito : ""}" data-perfil="${pos}">
+        <span class="coroa">${p1 ? "👑" : medalha[pos]}</span>
+        <div class="avwrap">${bordaWrap(`<div class="avatar-mini" style="width:${p1 ? 68 : 52}px;height:${p1 ? 68 : 52}px;font-size:${p1 ? 1.9 : 1.4}rem">${c.foto ? `<img src="${c.foto}" alt="">` : "👤"}</div>`, c.borda)}</div>
+        <b>${esc(c.nome)}${c.voce ? " ⭐" : ""} ${petHTML(c.pet, 20)}</b>
+        <small>${tituloPorXP(c.xp || 0)}</small>
+        <small style="color:var(--verde-escuro);font-weight:800">${aba.valor(c)}</small>
+      </div>`;
+    };
+    const podioHtml = temPodio ? `<div class="podio">${cartaoPodio(ordenada[1], 1)}${cartaoPodio(ordenada[0], 0)}${cartaoPodio(ordenada[2], 2)}</div>` : "";
+    const resto = temPodio ? ordenada.slice(3) : ordenada;
     alvo.innerHTML = `<div class="loja-abas" style="margin-top:0">${ABAS.map(a => `<button class="loja-aba ${a.id === rankAba ? "ativa" : ""}" data-raba="${a.id}">${a.nome}</button>`).join("")}
       <button class="loja-aba" id="rkLoja" style="margin-left:auto;border-color:#E8B84C;background:#FFF3D6">🛍️ Loja</button></div>`
-      + selo + (ordenada.length ? ordenada.map((c, i) => `
-    <div class="rank-item clicavel ${c.voce ? "eu" : ""} ${c.efeito ? "fx-" + c.efeito : ""}" data-perfil="${i}">
-      <div class="rank-pos">${medalha[i] || (i + 1) + "º"}</div>
+      + selo + podioHtml + (resto.length ? resto.map((c, i) => { const pos = temPodio ? i + 3 : i; return `
+    <div class="rank-item clicavel ${c.voce ? "eu" : ""} ${c.efeito ? "fx-" + c.efeito : ""}" data-perfil="${pos}">
+      <div class="rank-pos">${medalha[pos] || (pos + 1) + "º"}</div>
       ${bordaWrap(`<div class="avatar-mini">${c.foto ? `<img src="${c.foto}" alt="">` : "👤"}</div>`, c.borda)}
       <div style="min-width:0"><b style="display:flex;align-items:center;gap:6px">${esc(c.nome)}${c.voce ? " (você)" : ""} ${petHTML(c.pet, 22)}</b><small>${tituloPorXP(c.xp || 0)} · 🔥 ${c.diasSeguidos || 0} dias · 🗼 nv ${c.recorde || 1}</small></div>
       <div class="rank-xp" style="margin-left:auto">${aba.valor(c)}</div>
-    </div>`).join("") : '<p style="font-weight:700;color:var(--tinta-suave)">Ninguém neste placar ainda — seja o primeiro! 😏</p>');
+    </div>`; }).join("") : (temPodio ? "" : '<p style="font-weight:700;color:var(--tinta-suave)">Ninguém neste placar ainda — seja o primeiro! 😏</p>'));
     alvo.querySelectorAll("[data-raba]").forEach(b => b.addEventListener("click", () => { rankAba = b.dataset.raba; renderRanking(); }));
     const rl = alvo.querySelector("#rkLoja"); if(rl) rl.addEventListener("click", () => navPara("loja"));
     alvo.querySelectorAll("[data-perfil]").forEach(el => el.addEventListener("click", () => abrirPerfilPublico(ordenada[Number(el.dataset.perfil)])));
@@ -8647,7 +8672,7 @@ function ffAposIrPara(tela){
   document.body.classList.toggle("logado", !!Contas.atual());
   try{ atualizarSeloTrial(); }catch(e){}
   const mapa = { "tela-home":"home", "tela-trilha":"aulas", "tela-pratica":"pratica", "tela-desafios":"home",
-    "tela-revisao":"home", "tela-conquistas":"progresso", "tela-ranking":"progresso", "tela-comunidade":"home",
+    "tela-revisao":"home", "tela-conquistas":"progresso", "tela-ranking":"ranking", "tela-comunidade":"home",
     "tela-meuperfil":"progresso", "tela-config":"progresso", "tela-simulador":"pratica", "tela-entrevista":"pratica",
     "tela-licao":"aulas", "tela-quiz":"aulas", "tela-escalada":"pratica", "tela-conclusao":"aulas", "tela-carreira":"pratica", "tela-ditado":"pratica", "tela-jardim":"pratica", "tela-loja":"loja" };
   const ativa = mapa[tela] || "";
