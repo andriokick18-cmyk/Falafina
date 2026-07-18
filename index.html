@@ -721,6 +721,15 @@ body.sem-shell .topo .titulo-pagina{ visibility:hidden; }
 .hub-jogo .ic{font-size:1.9rem}
 .hub-jogo b{font-family:var(--f-display);font-size:1rem}
 .hub-jogo small{font-weight:700;color:var(--tinta-suave);font-size:.78rem}
+/* Lista compacta de treinos (V838): 1 linha por jogo, zero poluição */
+.jogo-linha{position:relative;display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:2px solid rgba(33,49,58,.12);border-radius:16px;padding:10px 14px;margin-bottom:10px;cursor:pointer;transition:transform .12s}
+.jogo-linha:active{transform:translateY(2px)}
+.jogo-linha .ic{font-size:1.7rem;flex-shrink:0}
+.jogo-linha .tx{flex:1;min-width:0}
+.jogo-linha b{font-family:var(--f-display);font-size:.98rem;display:block}
+.jogo-linha small{font-weight:700;color:var(--tinta-suave);font-size:.74rem;line-height:1.3;display:block}
+.jogo-linha .hub-skill{flex-shrink:0;margin-top:0}
+.jogo-linha .hub-ajuda{position:static;flex-shrink:0}
 .hub-skill{font-size:.7rem;font-weight:800;background:rgba(255,255,255,.75);border-radius:99px;padding:3px 8px;align-self:flex-start;margin-top:4px}
 .skill-linha{display:flex;align-items:center;gap:10px;font-weight:700;font-size:.85rem;margin-bottom:6px}
 .skill-linha span{width:130px;flex:none}
@@ -8096,14 +8105,6 @@ function renderPratica(){
   const skillInfo = ENGINE.SKILLS[fraco.skill];
   const ultimoId = p.jogosUltimo && p.jogosUltimo !== "carreira" ? p.jogosUltimo : null;
   const ultimo = ultimoId ? JOGOS_LISTA.find(j => j.id === ultimoId) : null;
-  const s = estatDia();
-  const missoes = [
-    { ok:s.aulas >= 1, txt:"Concluir 1 aula", prog:`${Math.min(s.aulas,1)}/1` },
-    { ok:s.ex >= 10, txt:"Fazer 10 exercícios", prog:`${Math.min(s.ex,10)}/10` },
-    Fala.temMic
-      ? { ok:s.pron >= 3, txt:"Praticar pronúncia 3x", prog:`${Math.min(s.pron,3)}/3` }
-      : { ok:(s.audio || 0) >= 5, txt:"Ouvir 5 áudios no 🔊", prog:`${Math.min(s.audio || 0,5)}/5` }
-  ];
   const barraSkill = sk => {
     const pct = ENGINE.dominio(sk);
     return `<div class="skill-linha" title="${ENGINE.SKILLS[sk].en}: ${ENGINE.SKILLS[sk].desc}"><span>${ENGINE.SKILLS[sk].ic} ${ENGINE.SKILLS[sk].nome}</span>
@@ -8121,28 +8122,19 @@ function renderPratica(){
     <button class="btn-principal" style="width:auto">Continuar ▶</button>
     <span class="hub-ajuda" data-tut="carreira" role="button" aria-label="Como jogar Modo Carreira">?</span>
   </div>
-  <div class="hub-duplo">
-    <div class="cardb hub-rec" id="hubRec">
-      <div class="secao-t" style="margin-bottom:4px">🦜 Fininho recomenda</div>
-      <p style="font-weight:700;font-size:.88rem">Sua habilidade de <b>${skillInfo.ic} ${skillInfo.nome}</b> ${fraco.pct !== null ? `está em <b>${fraco.pct}%</b> e` : ""} ${fraco.motivo}. Bora jogar <b>${jogoRec.ic} ${jogoRec.nome}</b>?</p>
-      <button class="btn-principal azul" style="margin-top:8px">Jogar agora ▶</button>
-    </div>
-    <div class="cardb">
-      <div class="secao-t" style="margin-bottom:6px">📋 Missões de hoje</div>
-      ${missoes.map(m => `<div class="linha-cat" style="background:${m.ok ? "var(--verde-claro)" : "var(--branco)"};border:1.5px solid var(--borda);margin-bottom:6px"><span>${m.ok ? "✅" : "⬜"} ${m.txt}</span><b>${m.prog}</b></div>`).join("")}
-    </div>
+  <div class="cardb hub-rec" id="hubRec">
+    <div class="secao-t" style="margin-bottom:4px">🦜 Fininho recomenda</div>
+    <p style="font-weight:700;font-size:.88rem">Sua habilidade de <b>${skillInfo.ic} ${skillInfo.nome}</b> ${fraco.pct !== null ? `está em <b>${fraco.pct}%</b> e` : ""} ${fraco.motivo}. Bora jogar <b>${jogoRec.ic} ${jogoRec.nome}</b>?</p>
+    <button class="btn-principal azul" style="margin-top:8px;max-width:300px">Jogar agora ▶</button>
   </div>
-  <div class="secao-t" style="margin:16px 0 10px">🎮 Todos os jogos</div>
-  <div class="hub-grid">
-    ${JOGOS_LISTA.filter(j => j.id !== "carreira" && !(crianca && j.id === "entrevista")).map(j => `
-      <button class="hub-jogo" data-jogo="${j.id}" style="background:${j.cor}">
-        <span class="hub-ajuda" data-tut="${j.id}" role="button" aria-label="Como jogar ${j.nome}">?</span>
-        <span class="ic">${j.ic}</span>
-        <b>${j.nome}</b>
-        <small>${j.desc}</small>
-        <span class="hub-skill">${ENGINE.SKILLS[j.skill].ic} treina ${ENGINE.SKILLS[j.skill].nome}${p.jogosUso[j.id] ? ` · jogado ${p.jogosUso[j.id]}x` : ""}</span>
-      </button>`).join("")}
-  </div>
+  <div class="secao-t" style="margin:16px 0 10px">🎮 Escolha seu treino</div>
+  ${JOGOS_LISTA.filter(j => j.id !== "carreira" && !(crianca && j.id === "entrevista")).map(j => `
+    <button class="jogo-linha" data-jogo="${j.id}" style="background:${j.cor}">
+      <span class="ic">${j.ic}</span>
+      <span class="tx"><b>${j.nome}</b><small>${j.desc}</small></span>
+      <span class="hub-skill">${ENGINE.SKILLS[j.skill].ic} ${ENGINE.SKILLS[j.skill].nome}</span>
+      <span class="hub-ajuda" data-tut="${j.id}" role="button" aria-label="Como jogar ${j.nome}">?</span>
+    </button>`).join("")}
   <div class="cardb" style="margin-top:16px">
     <div class="secao-t" style="margin-bottom:8px">📊 Suas habilidades</div>
     ${Object.keys(ENGINE.SKILLS).map(barraSkill).join("")}
