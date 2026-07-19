@@ -4171,6 +4171,14 @@ function atualizarXP(){
 function registrarAtividade(xp){
   const p = Progresso.dados;
   const hoje = hojeStr();
+  /* Modo Grátis Limitado: pouco XP por dia (mesmo fazendo tarefas) */
+  if(typeof emModoGratisLimitado === "function" && emModoGratisLimitado()){
+    const d = limiteGratisDados();
+    const jaGanho = d.xpGanho || 0;
+    const permitido = Math.max(0, LIMITE_GRATIS_XP_DIA - jaGanho);
+    xp = Math.min(xp, permitido);
+    d.xpGanho = jaGanho + xp;
+  }
   if(p.dataXpHoje !== hoje){ p.dataXpHoje = hoje; p.xpHoje = 0; }
   p.xpHoje += xp;
   p.xp += xp;
@@ -4542,6 +4550,7 @@ function bancoGlobal(){
   return b;
 }
 function iniciarInfinito(){
+  if(!podeIniciarTarefaGratis()) return;
   const banco = bancoGlobal();
   moduloAberto = null;
   quizEstado = {
@@ -4618,6 +4627,7 @@ function iniciarTreino(){
    pergunta VOLTA para o fim da fila. Só conclui com 100%. ---------- */
 function iniciarQuiz(){
   if(!moduloAberto || !moduloAberto.quiz.length) return;
+  if(!podeIniciarTarefaGratis()) return;
   const geradas = embaralhar(gerarBanco(moduloAberto)).slice(0, 4); // 4 surpresas novas a cada tentativa
   let perguntas = moduloAberto.quiz.concat(geradas);
   /* navegador sem voz (ex.: WhatsApp): perguntas de escuta viram armadilha
@@ -5504,6 +5514,7 @@ function gerarDesafioEscalada(n){
   return { regras: r, perguntas: comTexto.concat(semTexto) };
 }
 function iniciarEscalada(alvo, ehPulo){
+  if(!podeIniciarTarefaGratis()) return;
   const d = gerarDesafioEscalada(alvo);
   moduloAberto = null;
   quizEstado = {
@@ -5944,6 +5955,25 @@ $("#fotoInput").addEventListener("change", e => {
   img.addEventListener("error", soltarUrl, { once:true });
   img.src = urlTmp;
 });
+/* Compressão do print do comprovante Pix: mantém retângulo (não corta
+   quadrado como a foto de perfil) — precisa continuar legível. */
+function comprimirComprovante(arq, cb){
+  const img = new Image();
+  img.onload = () => {
+    const cv = document.createElement("canvas");
+    const maxLado = 1000;
+    const fator = Math.min(1, maxLado / Math.max(img.width, img.height));
+    cv.width = Math.max(1, Math.round(img.width * fator));
+    cv.height = Math.max(1, Math.round(img.height * fator));
+    cv.getContext("2d").drawImage(img, 0, 0, cv.width, cv.height);
+    cb(cv.toDataURL("image/jpeg", 0.72));
+  };
+  const urlTmp = URL.createObjectURL(arq);
+  const soltarUrl = () => URL.revokeObjectURL(urlTmp);
+  img.addEventListener("load", soltarUrl, { once:true });
+  img.addEventListener("error", soltarUrl, { once:true });
+  img.src = urlTmp;
+}
 $("#btnIrQuiz").addEventListener("click", iniciarQuiz);
 $("#btnVoltarTrilha").addEventListener("click", () => { renderTrilha(); irPara("tela-trilha"); });
 $("#btnProximoModulo").addEventListener("click", (e) => {
@@ -6377,6 +6407,7 @@ function renderSimConfig(){
   $("#simContagem").textContent = `${n} perguntas neste filtro · ${nDom} já dominadas por você`;
 }
 function iniciarSim(){
+  if(!podeIniciarTarefaGratis()) return;
   const fila = simMontarFila();
   if(!fila.some(i => i.q)){ mostrarToast("Nenhuma pergunta neste filtro ainda 😕"); return; }
   simEstado = {
@@ -6626,6 +6657,7 @@ function carrResumo(){
 }
 let carreiraEstado = null;
 function iniciarCarreira(){
+  if(!podeIniciarTarefaGratis()) return;
   const c = carrDados();
   carreiraEstado = { atual:null, respondidas:0, xpGanho:0, girassoisGanho:0, fila:[], desdeRetry:0 };
   $("#carrChat").innerHTML = "";
@@ -6933,6 +6965,13 @@ const FF_CONTATO = {
   grupo: "https://chat.whatsapp.com/DTZES3nXSe6DVZwsaAXVmW"   // Grupo FALAFINA
 };
 function abrirZap(msg){ window.open("https://wa.me/" + FF_CONTATO.whatsapp + "?text=" + encodeURIComponent(msg), "_blank"); }
+/* >>>> EDITE AQUI, ANDRIO: sua chave Pix e seus planos/preços <<<< */
+const FF_PIX = { chave: "53981453496", nome: "Andrio Kickhofel" };
+const FF_PLANOS_VIP = [
+  { id:"mensal", nome:"1 mês", dias:30, preco:"R$ 29,90" },
+  { id:"trimestral", nome:"3 meses", dias:90, preco:"R$ 74,90" },
+  { id:"anual", nome:"1 ano", dias:365, preco:"R$ 199,90" }
+];
 
 /* ---------- 📣 CONVIDAR AMIGOS: cada aluno é um canal de crescimento.
    Mensagem pronta com o progresso REAL da pessoa (orgulho compartilha).
@@ -6992,49 +7031,142 @@ function diasTrialRestantes(){
   return Math.max(0, FF_TRIAL_DIAS - passados);
 }
 function acessoLiberado(){ return ehPremium() || diasTrialRestantes() > 0; }
-const FF_TELAS_LIVRES = ["tela-onboarding","tela-inicio","tela-cadastro","tela-login","tela-paywall","tela-config","tela-perfil"];
+/* Nunca mais bloqueia navegação — quem perdeu o grátis ainda ENTRA no
+   app inteiro. O limite fica no MODO GRÁTIS LIMITADO (poucas tarefas
+   e pouco XP por dia — ver mais abaixo), nunca numa parede de tela. */
 function ffGate(tela){
-  if(!Contas.atual()) return tela;
-  garantirTrial();
-  if(acessoLiberado() || FF_TELAS_LIVRES.includes(tela)) return tela;
-  try{ renderPaywall(); }catch(e){}
-  return "tela-paywall";
+  if(Contas.atual()) garantirTrial();
+  return tela;
 }
-function renderPaywall(){
+
+/* ==================================================================
+   🎁 MODO GRÁTIS LIMITADO — quando a semana grátis acaba (e a conta
+   não é Premium), o aluno continua ENTRANDO no app normalmente, só
+   que com uma cota bem pequena de tarefas por dia (e pouco XP). Sem
+   Premium, sem parede: é assim que ninguém fica "preso lá fora".
+   ================================================================== */
+const LIMITE_GRATIS_TAREFAS = 5;   // poucas tarefas por dia (aula, jogo, revisão, carreira, simulador...)
+const LIMITE_GRATIS_XP_DIA = 40;   // pouco XP por dia nesse modo
+function emModoGratisLimitado(){ return !!Contas.atual() && !ehPremium() && diasTrialRestantes() <= 0; }
+function limiteGratisDados(){
+  const p = Progresso.dados;
+  const hoje = hojeStr();
+  if(!p.limiteGratis || p.limiteGratis.data !== hoje) p.limiteGratis = { data:hoje, usado:0 };
+  return p.limiteGratis;
+}
+function tarefasGratisRestantes(){ return Math.max(0, LIMITE_GRATIS_TAREFAS - limiteGratisDados().usado); }
+/* Chame no INÍCIO de toda função que começa uma tarefa (aula, jogo,
+   revisão, carreira, simulador). Se não tiver mais cota, avisa e
+   devolve false — quem chamou deve abortar (return) sem começar nada. */
+function podeIniciarTarefaGratis(){
+  if(!emModoGratisLimitado()) return true;
+  const d = limiteGratisDados();
+  if(d.usado >= LIMITE_GRATIS_TAREFAS){
+    mostrarToast(`🎁 Suas ${LIMITE_GRATIS_TAREFAS} tarefas grátis de hoje acabaram. Volte amanhã ou ative o VIP pra ilimitado 👑`);
+    if(typeof abrirComprarVIP === "function") setTimeout(abrirComprarVIP, 900);
+    return false;
+  }
+  d.usado++;
+  Progresso.salvar();
+  return true;
+}
+let comprovanteTemp = null;
+let planoEscolhido = FF_PLANOS_VIP[0].id;
+function abrirComprarVIP(){
+  if(!Contas.atual()){ irPara("tela-inicio"); return; }
+  renderComprarVIP();
+  irPara("tela-paywall");
+}
+function renderComprarVIP(){
   const p = Progresso.dados;
   const conta = Contas.atual() || { nome:"" };
   const nome = (conta.nome || "").split(" ")[0];
   const car = carrDados();
+  comprovanteTemp = null;
+  planoEscolhido = FF_PLANOS_VIP[0].id;
+  const restantes = tarefasGratisRestantes();
   $("#paywallConteudo").innerHTML = `
   <div class="cardb" style="max-width:520px;margin:24px auto;text-align:center;padding:30px 22px">
     <img src="mascote.png" style="width:96px" alt="">
-    <h2 style="font-family:var(--f-display);margin:12px 0 6px">${nome ? esc(nome) + ", não" : "Não"} pare agora! 💚</h2>
-    <p style="font-weight:700;color:var(--tinta-suave)">Sua semana grátis terminou — e olha só o que você já construiu:</p>
+    <h2 style="font-family:var(--f-display);margin:12px 0 6px">${nome ? esc(nome) + ", vire" : "Vire"} VIP 👑</h2>
+    <p style="font-weight:700;color:var(--tinta-suave)">${emModoGratisLimitado() ? `Sua semana grátis terminou. Você ainda pode entrar e fazer ${restantes} tarefa${restantes === 1 ? "" : "s"} hoje — mas com o VIP é tudo sem limite.` : "Olha só o que você já construiu:"}</p>
     <div class="stat-grid" style="margin:14px 0">
       <div class="stat-mini"><b>⭐ ${p.xp || 0}</b><small>XP TOTAL</small></div>
       <div class="stat-mini"><b>🔥 ${p.melhorSeq || 0}</b><small>DIAS SEGUIDOS</small></div>
       <div class="stat-mini"><b>🔤 ${palavrasAprendidas()}</b><small>PALAVRAS</small></div>
       <div class="stat-mini"><b>🧗 T${car.temporada}</b><small>CARREIRA</small></div>
     </div>
-    <p style="font-weight:700;color:var(--tinta-suave);font-size:.9rem">Está tudo <b>guardado na nuvem</b> — nada se perde. Com o Premium você continua exatamente de onde parou:</p>
     <div style="text-align:left;margin:12px auto;max-width:400px;font-weight:700;font-size:.9rem;display:flex;flex-direction:column;gap:6px">
       <span>✅ Todas as aulas, jogos e o Modo Carreira sem limites</span>
+      <span>✅ XP sem teto — sobe de nível no seu ritmo</span>
       <span>✅ Revisão inteligente que não deixa você esquecer</span>
       <span>✅ Simulador de Entrevista H-2B/H-2A completo</span>
       <span>✅ Suporte direto com a equipe no WhatsApp</span>
-      <span>✅ Novidades toda semana — o app não para de crescer</span>
     </div>
-    <button class="btn-principal" style="margin-top:12px;background:var(--sol);color:#5C4400;box-shadow:0 4px 0 #C89A20" id="pwZap">👑 Quero ativar meu Premium (WhatsApp)</button>
-    <p style="font-weight:700;font-size:.78rem;color:var(--tinta-suave);margin-top:6px">Ativação na hora, direto com o Andrio — sem burocracia, sem cartão em site.</p>
-    <button class="btn-principal azul" style="margin-top:10px" id="pwVerificar">🔄 Já paguei — verificar agora</button>
+    <div class="secao-t" style="margin-top:18px">1. Escolha seu plano</div>
+    <div id="pwPlanos" style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:8px">
+      ${FF_PLANOS_VIP.map(pl => `<button class="fchip pwplano ${pl.id === planoEscolhido ? "ativo" : ""}" data-pl="${pl.id}">${esc(pl.nome)}<br><b>${esc(pl.preco)}</b></button>`).join("")}
+    </div>
+    <div class="secao-t" style="margin-top:18px">2. Pague no Pix</div>
+    <div style="background:var(--verde-claro);border-radius:14px;padding:14px;margin-top:8px">
+      <p style="font-weight:700;font-size:.85rem">Chave Pix (celular):</p>
+      <p style="font-family:var(--f-display);font-size:1.2rem;font-weight:700;margin:4px 0" id="pwChavePix">${esc(FF_PIX.chave)}</p>
+      <p style="font-weight:700;font-size:.85rem;color:var(--tinta-suave)">Nome: ${esc(FF_PIX.nome)}</p>
+      <button class="btn-principal azul" style="margin-top:8px;max-width:220px" id="pwCopiarPix">📋 Copiar chave Pix</button>
+    </div>
+    <div class="secao-t" style="margin-top:18px">3. Envie o print do comprovante</div>
+    <p style="font-weight:700;font-size:.82rem;color:var(--tinta-suave);margin-top:4px">Tire um print da tela de "pagamento realizado" e envie aqui. O Andrio confere na hora e ativa seu VIP.</p>
+    <input type="file" id="pwComprovanteInput" accept="image/*" style="margin-top:10px">
+    <div id="pwComprovantePreview" style="margin-top:8px"></div>
+    <button class="btn-principal" style="margin-top:14px;background:var(--sol);color:#5C4400;box-shadow:0 4px 0 #C89A20" id="pwEnviar">👑 Enviar comprovante e ativar VIP</button>
+    <p style="font-weight:700;font-size:.78rem;color:var(--tinta-suave);margin-top:6px">Prefere combinar direto? <button class="btn-link" id="pwZap" style="font-size:.78rem">Falar com o Andrio no WhatsApp</button></p>
+    <button class="btn-principal azul" style="margin-top:10px" id="pwVerificar">🔄 Já confirmou meu VIP? Verificar agora</button>
     <button class="btn-link" id="pwSair" style="margin-top:8px">Sair da conta</button>
   </div>`;
-  $("#pwZap").addEventListener("click", () => abrirZap("Olá Andrio! Minha semana grátis do FalaFina acabou e quero ativar o Premium 👑 Meu e-mail de cadastro: " + (Contas.sessao() || "")));
+  $("#paywallConteudo").querySelectorAll(".pwplano").forEach(b => b.addEventListener("click", () => {
+    planoEscolhido = b.dataset.pl;
+    $("#paywallConteudo").querySelectorAll(".pwplano").forEach(x => x.classList.remove("ativo"));
+    b.classList.add("ativo");
+  }));
+  $("#pwCopiarPix").addEventListener("click", async () => {
+    try{ await navigator.clipboard.writeText(FF_PIX.chave); mostrarToast("📋 Chave Pix copiada!"); }
+    catch(e){ mostrarToast("Chave: " + FF_PIX.chave); }
+  });
+  $("#pwComprovanteInput").addEventListener("change", e => {
+    const arq = e.target.files && e.target.files[0];
+    if(!arq) return;
+    comprimirComprovante(arq, dataUrl => {
+      comprovanteTemp = dataUrl;
+      $("#pwComprovantePreview").innerHTML = `<img src="${dataUrl}" style="max-width:220px;border-radius:10px;border:2px solid var(--borda)" alt="comprovante">`;
+    });
+  });
+  $("#pwEnviar").addEventListener("click", async () => {
+    if(!comprovanteTemp){ mostrarToast("📎 Anexe o print do comprovante primeiro"); return; }
+    const c = Contas.atual();
+    if(!c){ return; }
+    const plano = FF_PLANOS_VIP.find(pl => pl.id === planoEscolhido) || FF_PLANOS_VIP[0];
+    mostrarToast("☁️ Enviando comprovante…");
+    try{
+      const r = await fetch("/api/pedidos/criar", {
+        method:"POST", headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({ email:c.email, senhaHash:c.senhaHash, nome:c.nome, plano:plano.id, planoNome:plano.nome, dias:plano.dias, valor:plano.preco, comprovante:comprovanteTemp })
+      });
+      const j = await r.json();
+      if(j && j.ok){
+        mostrarToast("✅ Comprovante enviado! O Andrio confere e ativa seu VIP em breve 👑");
+        comprovanteTemp = null;
+        renderHome(); irPara("tela-home");
+      } else {
+        mostrarToast("❌ " + ((j && j.erro) || "Não deu pra enviar. Tenta de novo ou fala no WhatsApp."));
+      }
+    }catch(e){ mostrarToast("❌ Sem conexão. Tenta de novo ou fala no WhatsApp."); }
+  });
+  $("#pwZap").addEventListener("click", () => abrirZap("Olá Andrio! Quero ativar o VIP do FalaFina 👑 Meu e-mail de cadastro: " + (Contas.sessao() || "")));
   $("#pwVerificar").addEventListener("click", async () => {
     mostrarToast("☁️ Verificando com o servidor…");
     try{ await Nuvem.sincronizar(); }catch(e){}
-    if(ehPremium()){ mostrarToast("👑 Premium ativo! Bem-vindo de volta!"); renderHome(); irPara("tela-home"); }
-    else mostrarToast("Ainda não consta ativado. Fale com o Andrio no WhatsApp 😊");
+    if(ehPremium()){ mostrarToast("👑 VIP ativo! Bem-vindo de volta!"); renderHome(); irPara("tela-home"); }
+    else mostrarToast("Ainda não consta ativado. O Andrio confere os comprovantes manualmente 😊");
   });
   $("#pwSair").addEventListener("click", () => { Contas.sair(); document.body.classList.add("sem-shell"); irPara("tela-inicio"); });
 }
@@ -7329,8 +7461,9 @@ function renderHome(){
     ${(!ehPremium() && dias > 0 && dias <= 2) ? `<div class="cardb" style="margin-top:14px;background:linear-gradient(135deg,#FFF8E7,#FFE9AE);border:2.5px solid var(--sol)">
       <b>⏳ ${dias === 1 ? "ÚLTIMO DIA da sua semana grátis!" : `Faltam só ${dias} dias da sua semana grátis`}</b>
       <p style="font-weight:700;font-size:.85rem;color:var(--tinta-suave);margin:4px 0 10px">Seu progresso (⭐ ${p.xp || 0} XP, 🔥 ${p.melhorSeq || 0} dias) fica guardado na nuvem — ative o Premium agora e não pare no meio do caminho.</p>
-      <button class="btn-principal" id="homeTrialZap" style="max-width:340px;background:var(--sol);color:#5C4400;box-shadow:0 4px 0 #C89A20">👑 Garantir meu Premium ▶</button>
+      <button class="btn-principal" id="homeTrialZap" style="max-width:340px;background:var(--sol);color:#5C4400;box-shadow:0 4px 0 #C89A20">👑 Garantir meu VIP ▶</button>
     </div>` : ""}
+    ${!ehPremium() ? `<button class="btn-principal" id="homeComprarVip" style="margin-top:14px;background:var(--sol);color:#5C4400;box-shadow:0 4px 0 #C89A20;font-size:1.05rem">👑 QUERO SER VIP ▶</button>` : ""}
     ${primeirosPassosPendentes() ? cardPrimeirosPassos() : ""}
     <div class="cardb" style="margin-top:14px">
       <div class="secao-t">Hoje no FalaFina <button class="btn-link" style="padding:0;font-size:.85rem" data-ir="desafios">Desafios completos →</button></div>
@@ -7366,7 +7499,9 @@ function renderHome(){
   const homeConvidarBtn = $("#homeConvidar");
   if(homeConvidarBtn) homeConvidarBtn.addEventListener("click", convidarAmigo);
   const homeTrialZapBtn = $("#homeTrialZap");
-  if(homeTrialZapBtn) homeTrialZapBtn.addEventListener("click", () => abrirZap("Olá Andrio! Minha semana grátis do FalaFina está acabando e quero ativar o Premium 👑 Meu e-mail de cadastro: " + (Contas.sessao() || "")));
+  if(homeTrialZapBtn) homeTrialZapBtn.addEventListener("click", abrirComprarVIP);
+  const homeComprarVipBtn = $("#homeComprarVip");
+  if(homeComprarVipBtn) homeComprarVipBtn.addEventListener("click", abrirComprarVIP);
   $("#homeConteudo").querySelectorAll("[data-pp]").forEach(b => b.addEventListener("click", () => {
     const item = listaPrimeirosPassos().find(x => x.id === b.dataset.pp);
     if(!item || !item.ok) return;
@@ -7984,6 +8119,7 @@ const LEX = {
 };
 let jardimEstado = null;
 function iniciarJardim(){
+  if(!podeIniciarTarefaGratis()) return;
   const fila = LEX.montarSessao(8);
   if(!fila.length){ mostrarToast("🌻 Nada vencendo agora — seu jardim está regado! Volte mais tarde."); renderJardim(); irPara("tela-jardim"); return; }
   ENGINE.jogou("jardim");
@@ -8130,6 +8266,7 @@ function iniciarDitado(){
     mostrarToast("👂 O Ditado precisa de áudio e seu navegador não tem. Abra o FalaFina no Chrome que funciona! 😊");
     return;
   }
+  if(!podeIniciarTarefaGratis()) return;
   const banco = ditadoBanco();
   if(!banco.length){ mostrarToast("Conclua sua primeira aula pra desbloquear o Ditado 😊"); return; }
   ENGINE.jogou("ditado");
@@ -8407,7 +8544,7 @@ function renderComunidade(){
   </div></div>`;
   $("#comGrupo").addEventListener("click", () => window.open(FF_CONTATO.grupo, "_blank"));
   $("#comConvidar").addEventListener("click", convidarAmigo);
-  $("#comPremium").addEventListener("click", () => abrirZap("Olá! Quero ser Premium do FalaFina 👑"));
+  $("#comPremium").addEventListener("click", abrirComprarVIP);
 }
 /* ---------- CONFIGURAÇÕES ---------- */
 function renderConfig(){
@@ -8735,7 +8872,7 @@ const FF_TITULOS = {
   "tela-ranking":"📊 Ranking", "tela-comunidade":"👥 Comunidade", "tela-meuperfil":"🪪 Meu Perfil",
   "tela-config":"⚙️ Configurações", "tela-simulador":"🎙️ Simulador de Entrevista",
   "tela-entrevista":"🎙️ Entrevista ao vivo", "tela-licao":"📖 Aula", "tela-quiz":"📝 Exercícios",
-  "tela-conclusao":"🎉 Parabéns!", "tela-escalada":"🗼 Escalada", "tela-perfil":"🪪 Perfil", "tela-paywall":"👑 FalaFina Premium", "tela-loja":"🛍️ Loja",
+  "tela-conclusao":"🎉 Parabéns!", "tela-escalada":"🗼 Escalada", "tela-perfil":"🪪 Perfil", "tela-paywall":"👑 Comprar VIP", "tela-loja":"🛍️ Loja",
   "tela-carreira":"🧗 Modo Carreira", "tela-ditado":"👂 Ditado Relâmpago", "tela-jardim":"🌻 Jardim de Palavras"
 };
 const FF_SEM_SHELL = ["tela-onboarding","tela-inicio","tela-cadastro","tela-login","tela-paywall"];
@@ -8772,7 +8909,7 @@ if(ditRespArea) ditRespArea.addEventListener("keydown", e => { if(e.key === "Ent
 const sbGrupoWppBtn = $("#sbGrupoWpp");
 if(sbGrupoWppBtn) sbGrupoWppBtn.addEventListener("click", () => window.open(FF_CONTATO.grupo, "_blank"));
 const sbPrem = $("#sbPremium");
-if(sbPrem) sbPrem.addEventListener("click", () => abrirZap("Olá! Quero ser Premium do FalaFina 👑"));
+if(sbPrem) sbPrem.addEventListener("click", abrirComprarVIP);
 
 /* ---------- BOOT ---------- */
 Progresso.carregar();

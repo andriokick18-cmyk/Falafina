@@ -18,8 +18,9 @@ const PORT = process.env.PORT || 3000;
 const PUBLICO = __dirname; // site na mesma pasta do servidor (sem subpastas)
 // Arquivos que o navegador PODE baixar — todo o resto é bloqueado
 const ARQUIVOS_PUBLICOS = new Set(["/index.html", "/sw.js", "/manifest.json", "/icon-192.png", "/icon-512.png", "/mascote.png"]);
-const LIMITE_CORPO = 400 * 1024;      // 400 KB por requisição
+const LIMITE_CORPO = 900 * 1024;      // 900 KB por requisição (comprovante Pix precisa de mais espaço)
 const LIMITE_FOTO = 80 * 1024;        // foto de perfil (data URL 128px ≈ 10-20 KB)
+const LIMITE_COMPROVANTE = 700 * 1024; // print do comprovante Pix (1000px de lado ≈ 100-300 KB)
 
 /* ---------- DISCO PERSISTENTE ----------
    No Render, monte um Disk em /data. Se não existir (teste local),
@@ -34,6 +35,7 @@ try {
   console.warn("[FalaFina] ⚠️ /data indisponível — usando ./data (SEM disco persistente os dados somem a cada deploy!)");
 }
 const ARQ_CONTAS = path.join(DATA_DIR, "ff_contas.json");
+const ARQ_PEDIDOS = path.join(DATA_DIR, "ff_pedidos.json");
 const DIR_BACKUPS = path.join(DATA_DIR, "backups");
 fs.mkdirSync(DIR_BACKUPS, { recursive: true });
 
@@ -73,6 +75,28 @@ function persistir() {
       fs.writeFileSync(tmp, JSON.stringify(CONTAS));
       fs.renameSync(tmp, ARQ_CONTAS);
     } catch (e) { log("❌ ERRO ao salvar contas: " + e.message); }
+  }, 300);
+}
+
+/* ---------- PEDIDOS DE COMPRA (Pix manual + comprovante) ----------
+   Ideia do Andrio: a pessoa manda o print do comprovante Pix direto
+   no app, cria um pedido, e SÓ ELE vê isso no /admin pra aprovar. */
+let PEDIDOS = [];
+try {
+  if (fs.existsSync(ARQ_PEDIDOS)) {
+    PEDIDOS = JSON.parse(fs.readFileSync(ARQ_PEDIDOS, "utf8"));
+    log("Pedidos carregados: " + PEDIDOS.length);
+  }
+} catch (e) { log("⚠️ ff_pedidos.json corrompido: " + e.message); PEDIDOS = []; }
+let salvandoPedidosAgendado = null;
+function persistirPedidos() {
+  clearTimeout(salvandoPedidosAgendado);
+  salvandoPedidosAgendado = setTimeout(() => {
+    try {
+      const tmp = ARQ_PEDIDOS + ".tmp";
+      fs.writeFileSync(tmp, JSON.stringify(PEDIDOS));
+      fs.renameSync(tmp, ARQ_PEDIDOS);
+    } catch (e) { log("❌ ERRO ao salvar pedidos: " + e.message); }
   }, 300);
 }
 
@@ -396,6 +420,10 @@ async function tratarApi(req, res, rota, ip) {
   if (rota.startsWith("/api/creditar-baus") && req.method === "GET") return creditarBaus(req, res);
   // Dados do Painel do Dono (protegido pela ADMIN_CHAVE)
   if (rota.startsWith("/api/admin/dados") && req.method === "GET") return adminDados(req, res);
+  // 💳 Pedidos de compra Pix — listar / aprovar / rejeitar (só o Andrio, via ADMIN_CHAVE)
+  if (rota.startsWith("/api/admin/pedidos/aprovar") && req.method === "GET") return aprovarPedido(req, res);
+  if (rota.startsWith("/api/admin/pedidos/rejeitar") && req.method === "GET") return rejeitarPedido(req, res);
+  if (rota.startsWith("/api/admin/pedidos") && req.method === "GET") return listarPedidos(req, res);
   // 🔔 Push: chave pública (pro navegador assinar)
   if (rota.startsWith("/api/push/chave") && req.method === "GET") {
     if (!webpush || !VAPID) return responder(res, 503, { erro: "Push indisponível no servidor (web-push não instalado — Build Command: npm install)" });
@@ -490,6 +518,33 @@ async function tratarApi(req, res, rota, ip) {
     c.ultimaSync = new Date().toISOString();
     persistir();
     return responder(res, 200, { ok: true, conta: contaPublica(c) });
+  }
+
+  // 💳 Criar pedido de compra (Pix + print do comprovante) — autenticado
+  if (rota === "/api/pedidos/criar") {
+    const c = CONTAS[email];
+    if (!c) return responder(res, 404, { erro: "Conta não encontrada" });
+    if (c.senhaServidor !== hashServidor(senhaHash)) return responder(res, 401, { erro: "Senha errada" });
+    const comprovante = corpo.comprovante;
+    if (typeof comprovante !== "string" || !comprovante.startsWith("data:image") || comprovante.length > LIMITE_COMPROVANTE) {
+      return responder(res, 400, { erro: "Comprovante inválido ou grande demais" });
+    }
+    const dias = Math.max(1, Math.min(3650, parseInt(corpo.dias, 10) || 30));
+    const pedido = {
+      id: crypto.randomBytes(8).toString("hex"),
+      email, nome: String(corpo.nome || c.nome || "").slice(0, 30),
+      plano: String(corpo.plano || "").slice(0, 30),
+      planoNome: String(corpo.planoNome || "").slice(0, 30),
+      dias,
+      valor: String(corpo.valor || "").slice(0, 20),
+      comprovante,
+      status: "pendente",
+      criadoEm: new Date().toISOString()
+    };
+    PEDIDOS.unshift(pedido);
+    persistirPedidos();
+    log("💳 Novo pedido de compra: " + email + " (" + pedido.planoNome + ")");
+    return responder(res, 200, { ok: true, id: pedido.id });
   }
 
   // 🔔 Push: assinar / cancelar (autenticado — a assinatura fica na conta)
@@ -591,6 +646,53 @@ process.on("SIGINT", desligar);
     return responder(res, 200, { ok: true, email, qtd, totalComprados: c.progresso.cosmeticos.baus.comprados });
   }
 
+  /* ---------- ADMIN: pedidos de compra Pix ----------
+     Listar / aprovar / rejeitar. O comprovante (imagem) só é visível
+     aqui, protegido pela ADMIN_CHAVE — ninguém mais vê. */
+  function checarAdmin(req, res) {
+    const u = new URL(req.url, "http://x");
+    const ADMIN = process.env.ADMIN_CHAVE || "";
+    if (!ADMIN) { responder(res, 403, { erro: "Defina ADMIN_CHAVE nas variáveis do Render para usar esta rota." }); return null; }
+    if ((u.searchParams.get("chave") || "") !== ADMIN) { responder(res, 403, { erro: "Chave errada." }); return null; }
+    return u;
+  }
+  function listarPedidos(req, res) {
+    const u = checarAdmin(req, res);
+    if (!u) return;
+    return responder(res, 200, { ok: true, pedidos: PEDIDOS.slice(0, 300) });
+  }
+  function aprovarPedido(req, res) {
+    const u = checarAdmin(req, res);
+    if (!u) return;
+    const id = u.searchParams.get("id") || "";
+    const pedido = PEDIDOS.find(p => p.id === id);
+    if (!pedido) return responder(res, 404, { erro: "Pedido não encontrado" });
+    const c = CONTAS[pedido.email];
+    if (!c) return responder(res, 404, { erro: "Conta do pedido não existe mais: " + pedido.email });
+    const dias = Math.max(1, Math.min(36500, parseInt(u.searchParams.get("dias") || pedido.dias || 30, 10) || 30));
+    const base = (c.premiumAte && c.premiumAte > Date.now()) ? c.premiumAte : Date.now();
+    c.premiumAte = base + dias * 86400000;
+    pedido.status = "aprovado";
+    pedido.aprovadoEm = new Date().toISOString();
+    pedido.diasConcedidos = dias;
+    persistir();
+    persistirPedidos();
+    log("💳✅ Pedido aprovado: " + pedido.email + " +" + dias + " dias VIP");
+    return responder(res, 200, { ok: true, email: pedido.email, premiumAte: c.premiumAte });
+  }
+  function rejeitarPedido(req, res) {
+    const u = checarAdmin(req, res);
+    if (!u) return;
+    const id = u.searchParams.get("id") || "";
+    const pedido = PEDIDOS.find(p => p.id === id);
+    if (!pedido) return responder(res, 404, { erro: "Pedido não encontrado" });
+    pedido.status = "rejeitado";
+    pedido.rejeitadoEm = new Date().toISOString();
+    persistirPedidos();
+    log("💳❌ Pedido rejeitado: " + pedido.email);
+    return responder(res, 200, { ok: true });
+  }
+
   /* ---------- ADMIN: dados do Painel do Dono ----------
      Nunca expõe senha (nem hash). Só métricas de negócio. */
   function adminDados(req, res) {
@@ -650,7 +752,11 @@ h1{font-size:1.25rem;margin-bottom:4px}
 .meta{font-size:.78rem;color:var(--suave);font-weight:700;margin-top:4px}
 .acoes{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
 .acoes button{border:none;border-radius:9px;padding:7px 10px;font-weight:800;font-size:.78rem;cursor:pointer;color:#fff;background:var(--verde)}
-.acoes button.azul{background:var(--azul)} .acoes button.cinza{background:var(--suave)}
+.acoes button.azul{background:var(--azul)} .acoes button.cinza{background:var(--suave)} .acoes button.coral{background:var(--coral)} .acoes button.sol{background:var(--sol);color:#5C4400}
+.pedido{background:#fff;border:2px solid var(--coral);border-radius:12px;padding:10px 12px;margin-bottom:8px;display:flex;gap:12px;flex-wrap:wrap}
+.pedido img{width:110px;border-radius:8px;cursor:pointer;object-fit:cover}
+.pedido .info{flex:1;min-width:180px}
+.pedido.feito{border-color:rgba(33,49,58,.12)}
 input,select{font-family:inherit;font-weight:700;padding:10px;border:2px solid rgba(33,49,58,.2);border-radius:10px;font-size:.9rem}
 #busca{width:100%;margin-bottom:10px}
 #entrar{display:flex;gap:8px;margin:20px 0}
@@ -663,6 +769,8 @@ input,select{font-family:inherit;font-weight:700;padding:10px;border:2px solid r
 <div id="msg"></div>
 <div id="painel" style="display:none">
   <div class="cards" id="stats"></div>
+  <div class="secao">💳 Pedidos de compra Pix <span id="qtdPedidos" style="color:var(--suave)"></span></div>
+  <div id="pedidos"></div>
   <div class="secao">🎯 Quem chamar HOJE (trial acabando ou recém-expirado)</div>
   <div id="chamar"></div>
   <div class="secao">👥 Todos os alunos <span id="qtd" style="color:var(--suave)"></span></div>
@@ -673,6 +781,7 @@ input,select{font-family:inherit;font-weight:700;padding:10px;border:2px solid r
 "use strict";
 let CHAVE = localStorage.getItem("ff_admin_chave") || "";
 let DADOS = null;
+let PEDIDOS = [];
 const $ = s => document.querySelector(s);
 if (CHAVE) { $("#chave").value = CHAVE; entrar(); }
 async function entrar() {
@@ -685,7 +794,45 @@ async function entrar() {
     localStorage.setItem("ff_admin_chave", CHAVE);
     DADOS = j; $("#msg").textContent = ""; $("#painel").style.display = "block"; $("#entrar").style.display = "none";
     desenhar();
+    carregarPedidos();
   } catch (e) { $("#msg").textContent = "❌ Sem conexão com o servidor"; }
+}
+async function carregarPedidos() {
+  try {
+    const r = await fetch("/api/admin/pedidos?chave=" + encodeURIComponent(CHAVE));
+    const j = await r.json();
+    if (j.ok) { PEDIDOS = j.pedidos; desenharPedidos(); }
+  } catch (e) {}
+}
+function desenharPedidos() {
+  const pend = PEDIDOS.filter(p => p.status === "pendente");
+  const feitos = PEDIDOS.filter(p => p.status !== "pendente").slice(0, 15);
+  $("#qtdPedidos").textContent = pend.length ? "(" + pend.length + " pendente" + (pend.length === 1 ? "" : "s") + ")" : "";
+  const cartaoPed = (p, ativo) => {
+    const acoes = ativo
+      ? '<div class="acoes"><button class="btn-aprovar" data-id="' + p.id + '" data-dias="' + p.dias + '">✅ Aprovar (' + p.dias + 'd)</button><button class="coral btn-rejeitar" data-id="' + p.id + '">❌ Rejeitar</button></div>'
+      : '<div class="meta">' + (p.status === "aprovado" ? "✅ aprovado" : "❌ rejeitado") + '</div>';
+    return '<div class="pedido' + (ativo ? "" : " feito") + '"><img class="img-abrir" data-src="' + p.comprovante + '" src="' + p.comprovante + '" alt="comprovante"><div class="info">' +
+      '<b>' + esc(p.nome || p.email) + '</b><div class="mail">' + esc(p.email) + '</div>' +
+      '<div class="meta">' + esc(p.planoNome || p.plano || "") + (p.valor ? " · " + esc(p.valor) : "") + " · " + new Date(p.criadoEm).toLocaleString("pt-BR") + "</div>" +
+      acoes + "</div></div>";
+  };
+  $("#pedidos").innerHTML = pend.map(p => cartaoPed(p, true)).join("") + feitos.map(p => cartaoPed(p, false)).join("") || '<p class="vazio">Nenhum pedido ainda.</p>';
+  $("#pedidos").querySelectorAll(".img-abrir").forEach(img => img.addEventListener("click", () => window.open(img.dataset.src)));
+  $("#pedidos").querySelectorAll(".btn-aprovar").forEach(b => b.addEventListener("click", () => aprovarPed(b.dataset.id, b.dataset.dias)));
+  $("#pedidos").querySelectorAll(".btn-rejeitar").forEach(b => b.addEventListener("click", () => rejeitarPed(b.dataset.id)));
+}
+async function aprovarPed(id, dias) {
+  if (!confirm("Aprovar este pagamento e ativar " + dias + " dias de VIP?")) return;
+  const r = await fetch("/api/admin/pedidos/aprovar?chave=" + encodeURIComponent(CHAVE) + "&id=" + encodeURIComponent(id) + "&dias=" + encodeURIComponent(dias));
+  const j = await r.json();
+  if (j.ok) { alert("👑 VIP ativado!"); carregarPedidos(); entrar(); } else alert("❌ " + (j.erro || "Erro"));
+}
+async function rejeitarPed(id) {
+  if (!confirm("Rejeitar este pedido?")) return;
+  const r = await fetch("/api/admin/pedidos/rejeitar?chave=" + encodeURIComponent(CHAVE) + "&id=" + encodeURIComponent(id));
+  const j = await r.json();
+  if (j.ok) carregarPedidos(); else alert("❌ " + (j.erro || "Erro"));
 }
 function statusDe(c) {
   const ag = DADOS.agora;
@@ -705,6 +852,7 @@ function cartaoAluno(c, st) {
     '<button onclick="premium(\\'' + c.email + '\\',30)">👑 +30 dias</button>' +
     '<button onclick="premium(\\'' + c.email + '\\',90)">👑 +90</button>' +
     '<button onclick="premium(\\'' + c.email + '\\',365)">👑 +1 ano</button>' +
+    '<button class="sol" onclick="premium(\\'' + c.email + '\\',36500)">👑 VIP pra sempre</button>' +
     '<button class="azul" onclick="baus(\\'' + c.email + '\\')">🎁 Baús</button>' +
     '<button class="cinza" onclick="copiar(\\'' + c.email + '\\')">📋 copiar e-mail</button>' +
     "</div></div>";
@@ -759,7 +907,7 @@ function copiar(t) { navigator.clipboard && navigator.clipboard.writeText(t); }
     if (!ADMIN) return responder(res, 403, { erro: "Defina ADMIN_CHAVE nas variáveis do Render para usar esta rota." });
     if ((u.searchParams.get("chave") || "") !== ADMIN) return responder(res, 403, { erro: "Chave errada." });
     const email = (u.searchParams.get("email") || "").trim().toLowerCase();
-    const dias = Math.max(1, Math.min(3650, parseInt(u.searchParams.get("dias") || "30", 10) || 30));
+    const dias = Math.max(1, Math.min(36500, parseInt(u.searchParams.get("dias") || "30", 10) || 30));
     const c = CONTAS[email];
     if (!c) return responder(res, 404, { erro: "Conta não encontrada: " + email });
     const base = (c.premiumAte && c.premiumAte > Date.now()) ? c.premiumAte : Date.now();
