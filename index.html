@@ -3892,6 +3892,216 @@ const NIVEIS = [
       ]
     }
   ]
+},
+{
+  id:"h2b", nome:"Jornada H-2B", tag:"H-2B/H-2A", cor:"#E8952E", livre:true,
+  descricao:"A jornada real de quem vai trabalhar nos EUA: documentos e consulado, chegada, primeira semana. Sempre aberta — é o coração do FalaFina.",
+  modulos:[
+  {
+    id:"h2bm1", temas:["h2x","entrevista","trabalho"], titulo:"Documentos e Consulado", icone:"📄", corIco:"#FFF3D1",
+    intro:"O inglês que decide seu visto: os nomes dos documentos e as frases da entrevista. O oficial decide em ~3 minutos — quem sabe essas palavras não trava na hora H.",
+    xp:90,
+    cards:[
+      { figura:"🛂", pt:"Passaporte", en:"passport", som:"pés-port",
+        quando:"O documento nº 1 da jornada. No consulado e no aeroporto, sempre pedem: \"Your passport, please.\"",
+        dica:"Confira a validade: precisa valer por TODO o período do contrato.",
+        exEn:"Here is my passport.", exSom:"ríer iz mái pés-port.", exPt:"Aqui está meu passaporte." },
+      { figura:"📑", pt:"Visto (de trabalho)", en:"visa", som:"ví-za",
+        quando:"O carimbo/adesivo no passaporte que autoriza você a trabalhar. H-2B = trabalho temporário fora da agricultura; H-2A = agrícola.",
+        exEn:"I have a temporary work visa.", exSom:"ái rév a tém-porári uôrk ví-za.", exPt:"Eu tenho um visto de trabalho temporário." },
+      { figura:"📝", pt:"Formulário / inscrição", en:"application form", som:"epli-quêi-chon fórm",
+        quando:"O DS-160 é o \"application form\" do visto — preenchido online antes da entrevista. Qualquer vaga também tem \"application\".",
+        dica:"Preencha o DS-160 com a MESMA informação que você vai falar na entrevista. Diferença entre papel e fala = suspeita.",
+        exEn:"I filled out the application form online.", exSom:"ái fíld áut dhi epli-quêi-chon fórm on-láin.", exPt:"Eu preenchi o formulário de inscrição online." },
+      { figura:"🗓️", pt:"Agendamento / hora marcada", en:"appointment", som:"a-póint-ment",
+        quando:"Sua entrevista no consulado é um \"appointment\". Chegue cedo: \"I have an appointment at 9\".",
+        exEn:"I have an appointment at the consulate.", exSom:"ái rév an a-póint-ment ét dhi cón-siu-lét.", exPt:"Eu tenho um agendamento no consulado." },
+      { figura:"🏛️", pt:"Consulado / embaixada", en:"consulate / embassy", som:"cón-siu-lét / ém-bassi",
+        quando:"Onde acontece a entrevista do visto. No Brasil: consulados dos EUA (SP, RJ, Recife, Porto Alegre) e embaixada (Brasília).",
+        exEn:"My interview is at the U.S. consulate.", exSom:"mái ín-terviu iz ét dhi iú-és cón-siu-lét.", exPt:"Minha entrevista é no consulado americano." },
+      { figura:"🖐️", pt:"Digitais", en:"fingerprints", som:"fín-guer-prints",
+        quando:"Antes da entrevista, coletam suas digitais: \"Put your four fingers here\" (põe os quatro dedos aqui).",
+        exEn:"They took my fingerprints before the interview.", exSom:"dhêi túk mái fín-guer-prints bi-fór dhi ín-terviu.", exPt:"Colheram minhas digitais antes da entrevista." },
+      { figura:"🤝", pt:"Empregador / patrocinador", en:"employer / sponsor", som:"em-plói-er / spón-sor",
+        quando:"O oficial SEMPRE pergunta quem é seu empregador. Decore: nome da empresa, cidade e estado.",
+        dica:"Não saber o nome do próprio empregador é motivo clássico de negativa.",
+        exEn:"My employer is Green Valley Resort, in Colorado.", exSom:"mái em-plói-er iz grín véli ri-zórt, in colo-rádo.", exPt:"Meu empregador é o Green Valley Resort, no Colorado." },
+      { figura:"✅", pt:"Aprovado", en:"approved", som:"a-prúvd",
+        quando:"A palavra que você quer ouvir: \"Your visa is approved.\" Responda: \"Thank you so much!\"",
+        exEn:"Congratulations, your visa is approved.", exSom:"con-gretiu-lêi-chons, iór ví-za iz a-prúvd.", exPt:"Parabéns, seu visto foi aprovado." },
+      { figura:"❌", pt:"Negado", en:"denied", som:"di-náid",
+        quando:"Se acontecer, mantenha a calma: \"May I ask why?\" (posso perguntar por quê?). Dá pra tentar de novo na próxima temporada.",
+        exEn:"The visa was denied this time.", exSom:"dhi ví-za uóz di-náid dhis táim.", exPt:"O visto foi negado desta vez." },
+      { figura:"🇧🇷", pt:"Vínculos (com o Brasil)", en:"ties", som:"táis",
+        quando:"A palavra-chave da entrevista: \"strong ties to Brazil\" = família, casa, trabalho te esperando. É o que prova que você VOLTA.",
+        dica:"Monte sua frase de vínculos antes da entrevista e treine em voz alta.",
+        exEn:"I have strong ties to Brazil: my family and my house.", exSom:"ái rév stróng táis tu bra-zíl: mái fé-mili énd mái ráus.", exPt:"Tenho fortes vínculos com o Brasil: minha família e minha casa." }
+    ],
+    dialogo:[
+      { quem:"eles", en:"Good morning. What is the purpose of your trip?", som:"gúd mór-nin. uót iz dhi pêr-pos óv iór tríp?", pt:"Bom dia. Qual é o propósito da sua viagem?" },
+      { quem:"voce", en:"Seasonal work. I have a job offer from Green Valley Resort.", som:"sí-zonal uôrk. ái rév a djób ófer fróm grín véli ri-zórt.", pt:"Trabalho sazonal. Tenho uma oferta de emprego do Green Valley Resort." },
+      { quem:"eles", en:"Will you come back to Brazil?", som:"uíl iú câm bék tu bra-zíl?", pt:"Você vai voltar pro Brasil?" },
+      { quem:"voce", en:"Yes, of course. My family and my house are in Brazil.", som:"iés, óv córs. mái fé-mili énd mái ráus ar in bra-zíl.", pt:"Sim, claro. Minha família e minha casa estão no Brasil." },
+      { quem:"eles", en:"Your visa is approved. Good luck!", som:"iór ví-za iz a-prúvd. gúd lâk!", pt:"Seu visto foi aprovado. Boa sorte!" },
+      { quem:"voce", en:"Thank you so much!", som:"thênk iú sôu mâtch!", pt:"Muito obrigado!" }
+    ],
+    quiz:[
+      { pergunta:"O oficial pede \"Your passport, please\". O que ele quer?", falar:"Your passport, please",
+        opcoes:["Seu formulário","Seu passaporte","Sua passagem","Sua foto"], correta:1,
+        dica:"Passport (pés-port) = passaporte. O documento nº 1 da viagem." },
+      { pergunta:"Como se chama o FORMULÁRIO do visto preenchido online?", falar:null,
+        opcoes:["appointment","application form","fingerprints","paycheck"], correta:1,
+        dica:"Application form = formulário de inscrição (o famoso DS-160)." },
+      { pergunta:"\"I have an appointment at 9\" significa...", falar:"I have an appointment at 9",
+        opcoes:["Tenho 9 documentos","Tenho hora marcada às 9","Moro no número 9","Trabalho 9 horas"], correta:1,
+        dica:"Appointment = hora marcada / agendamento. Sua entrevista é um appointment." },
+      { pergunta:"Qual é a palavra-chave que prova que você VOLTA pro Brasil?", falar:null,
+        opcoes:["visa","ties","sponsor","denied"], correta:1,
+        dica:"Ties (táis) = vínculos. \"Strong ties to Brazil\" = família, casa, trabalho te esperando." },
+      { pergunta:"O oficial diz: \"Your visa is approved\". O que aconteceu?", falar:"Your visa is approved",
+        opcoes:["O visto foi negado","Falta um documento","O visto foi APROVADO","A entrevista foi adiada"], correta:2,
+        dica:"Approved (a-prúvd) = aprovado. Responda: \"Thank you so much!\"" },
+      { pergunta:"Quem é o seu \"employer\"?", falar:"employer",
+        opcoes:["Seu advogado","Seu empregador (a empresa)","Seu tradutor","Seu vizinho"], correta:1,
+        dica:"Employer = empregador. Decore o nome da empresa, cidade e estado antes da entrevista!" }
+    ]
+  },
+  {
+    id:"h2bm2", temas:["h2x","viagem","trabalho"], titulo:"Chegada nos EUA", icone:"🛬", corIco:"#E4EDFA",
+    intro:"Desceu do avião: imigração (CBP), mala, e os primeiros dias — Social Security, moradia, mercado. O inglês desta aula é o que você usa na primeira semana em solo americano.",
+    xp:90,
+    cards:[
+      { figura:"🛃", pt:"Imigração / alfândega", en:"immigration / customs", som:"imi-grêi-chon / câs-toms",
+        quando:"O guichê do oficial (CBP) no aeroporto. Ele confirma quem você é, pra onde vai e por quanto tempo.",
+        dica:"Tenha na mão: passaporte, contrato e o endereço do trabalho. Responda curto e calmo.",
+        exEn:"Please go to the immigration line.", exSom:"plíz gôu tu dhi imi-grêi-chon láin.", exPt:"Por favor, vá para a fila da imigração." },
+      { figura:"🧳", pt:"Bagagem / mala", en:"luggage / baggage", som:"lâ-guedj / bé-guedj",
+        quando:"\"Baggage claim\" é onde você pega a mala. \"Did you pack your own luggage?\" = você mesmo fez sua mala?",
+        exEn:"I packed my own luggage.", exSom:"ái pékt mái ôun lâ-guedj.", exPt:"Eu mesmo fiz minha mala." },
+      { figura:"✈️", pt:"Voo de conexão", en:"connecting flight", som:"co-néc-tin fláit",
+        quando:"Quase sempre tem conexão até a cidade do trabalho. \"Where is my connecting flight?\" salva vidas em aeroporto grande.",
+        exEn:"Excuse me, where is my connecting flight to Denver?", exSom:"eks-kiúz mi, uér iz mái co-néc-tin fláit tu dén-ver?", exPt:"Com licença, onde é meu voo de conexão pra Denver?" },
+      { figura:"🪪", pt:"Social Security (número de trabalho)", en:"Social Security number", som:"sôu-chal se-kiú-riti nâm-ber",
+        quando:"O \"SSN\" é o número que você tira nos primeiros dias pra poder ser pago. O chefe vai perguntar: \"Do you have your Social Security number yet?\"",
+        dica:"Guarde o cartão num lugar seguro e NUNCA poste foto dele.",
+        exEn:"I need to apply for my Social Security number.", exSom:"ái níd tu a-plái fór mái sôu-chal se-kiú-riti nâm-ber.", exPt:"Preciso solicitar meu número do Social Security." },
+      { figura:"🏠", pt:"Moradia (do trabalho)", en:"housing", som:"ráu-zin",
+        quando:"No H-2A a moradia é do patrão; no H-2B depende do contrato. \"Employee housing\" = moradia dos funcionários.",
+        exEn:"The company provides housing near the hotel.", exSom:"dhi câm-pani pro-váids ráu-zin níer dhi rôu-tél.", exPt:"A empresa fornece moradia perto do hotel." },
+      { figura:"🛏️", pt:"Colega de quarto", en:"roommate", som:"rúm-mêit",
+        quando:"Na moradia da temporada quase sempre se divide o quarto. Bom começo: \"Hi, I'm your new roommate!\"",
+        exEn:"Nice to meet you, I'm your new roommate.", exSom:"náis tu mít iú, áim iór niú rúm-mêit.", exPt:"Prazer, sou seu novo colega de quarto." },
+      { figura:"💵", pt:"Depósito / caução", en:"deposit", som:"di-pó-zit",
+        quando:"Alugou algo? Pagam-se \"deposit\" (caução) e \"rent\" (aluguel). \"Is there a deposit?\" = tem caução?",
+        exEn:"Is there a deposit for the room?", exSom:"iz dhér a di-pó-zit fór dhi rúm?", exPt:"Tem caução pelo quarto?" },
+      { figura:"🛒", pt:"Mercado (compras da semana)", en:"grocery store", som:"grôu-ceri stór",
+        quando:"Onde você faz a compra do mês: Walmart, Aldi, Kroger... \"Where is the nearest grocery store?\"",
+        exEn:"Where is the nearest grocery store?", exSom:"uér iz dhi ní-rest grôu-ceri stór?", exPt:"Onde é o mercado mais perto?" },
+      { figura:"📱", pt:"Chip / plano de celular", en:"SIM card / phone plan", som:"sím card / fôun plén",
+        quando:"Um dos primeiros passos: chip americano pra falar com a família e com o chefe. \"I need a SIM card, please.\"",
+        exEn:"I need a SIM card with internet, please.", exSom:"ái níd a sím card uíth ín-ter-nét, plíz.", exPt:"Preciso de um chip com internet, por favor." },
+      { figura:"🚌", pt:"Carona / transporte pro trabalho", en:"ride", som:"ráid",
+        quando:"\"Can I get a ride?\" = me dá uma carona? Na temporada, combinar ride com colegas é rotina.",
+        exEn:"Can I get a ride to work tomorrow?", exSom:"quén ái guét a ráid tu uôrk tu-mó-rou?", exPt:"Consigo uma carona pro trabalho amanhã?" }
+    ],
+    dialogo:[
+      { quem:"eles", en:"Welcome. What is the purpose of your trip?", som:"uél-com. uót iz dhi pêr-pos óv iór tríp?", pt:"Bem-vindo. Qual é o propósito da sua viagem?" },
+      { quem:"voce", en:"Seasonal work. Here is my contract.", som:"sí-zonal uôrk. ríer iz mái cón-tract.", pt:"Trabalho sazonal. Aqui está meu contrato." },
+      { quem:"eles", en:"How long will you stay?", som:"ráu lóng uíl iú stêi?", pt:"Quanto tempo você vai ficar?" },
+      { quem:"voce", en:"About eight months, until the end of my contract.", som:"a-báut êit mãnths, an-tíl dhi énd óv mái cón-tract.", pt:"Uns oito meses, até o fim do meu contrato." },
+      { quem:"eles", en:"Enjoy your stay. Next!", som:"en-djói iór stêi. nékst!", pt:"Boa estadia. Próximo!" },
+      { quem:"voce", en:"Thank you!", som:"thênk iú!", pt:"Obrigado!" }
+    ],
+    quiz:[
+      { pergunta:"Onde você pega sua mala no aeroporto?", falar:null,
+        opcoes:["immigration","baggage claim","housing","grocery store"], correta:1,
+        dica:"Baggage claim = esteira de bagagem. Immigration é o guichê do oficial." },
+      { pergunta:"\"Did you pack your own luggage?\" — o oficial quer saber se...", falar:"Did you pack your own luggage?",
+        opcoes:["Você comprou mala nova","VOCÊ MESMO fez sua mala","Sua mala é pesada","Você perdeu a mala"], correta:1,
+        dica:"Pergunta de segurança padrão. Resposta: \"Yes, I packed my own luggage.\"" },
+      { pergunta:"Que número você precisa tirar nos primeiros dias pra ser PAGO?", falar:null,
+        opcoes:["SIM card","Social Security number","deposit","ride"], correta:1,
+        dica:"Social Security number (SSN) = o número de trabalho americano." },
+      { pergunta:"O que é \"housing\"?", falar:"housing",
+        opcoes:["Aluguel de carro","Moradia","Hora extra","Documento"], correta:1,
+        dica:"Housing (ráu-zin) = moradia. \"Employee housing\" = moradia dos funcionários." },
+      { pergunta:"\"Can I get a ride?\" significa...", falar:"Can I get a ride?",
+        opcoes:["Posso descansar?","Me dá uma carona?","Posso pagar depois?","Cadê meu quarto?"], correta:1,
+        dica:"Ride (ráid) = carona. Frase de todo dia na temporada." },
+      { pergunta:"Você quer saber se tem CAUÇÃO pelo quarto. O que pergunta?", falar:null,
+        opcoes:["Is there a deposit?","Where is my flight?","Are you my roommate?","Is this the customs?"], correta:0,
+        dica:"Deposit = caução/depósito. \"Is there a deposit for the room?\"" }
+    ]
+  },
+  {
+    id:"h2bm3", temas:["h2x","trabalho","entrevista"], titulo:"Primeira Semana de Trabalho", icone:"💼", corIco:"#E1F3EA",
+    intro:"O inglês dos primeiros dias no emprego: crachá, ponto, treinamento, instruções do chefe — e a frase mais importante de todas: pedir pra repetir SEM medo.",
+    xp:90,
+    cards:[
+      { figura:"🎓", pt:"Treinamento / integração", en:"orientation / training", som:"orien-têi-chon / trêi-nin",
+        quando:"Seu primeiro dia geralmente é \"orientation\": regras, segurança, uniformes. Preste atenção nas palavras de segurança!",
+        exEn:"Orientation starts at 8 a.m. on Monday.", exSom:"orien-têi-chon stárts ét êit êi-ém on mân-dei.", exPt:"O treinamento começa às 8h na segunda." },
+      { figura:"🪪", pt:"Crachá", en:"badge", som:"bédj",
+        quando:"Seu cartão de identificação no trabalho. \"Don't forget your badge!\" = não esquece o crachá!",
+        exEn:"You need your badge to enter the building.", exSom:"iú níd iór bédj tu én-ter dhi bíl-din.", exPt:"Você precisa do crachá pra entrar no prédio." },
+      { figura:"⏰", pt:"Bater o ponto", en:"clock in / clock out", som:"clók ín / clók áut",
+        quando:"Clock in = registrar a ENTRADA; clock out = a SAÍDA. Esquecer de bater o ponto = dor de cabeça no pagamento.",
+        dica:"Chegou, bateu. Saiu, bateu. Vira reflexo.",
+        exEn:"Don't forget to clock in when you arrive.", exSom:"dôunt for-guét tu clók ín uén iú a-ráiv.", exPt:"Não esqueça de bater o ponto quando chegar." },
+      { figura:"📅", pt:"Escala / horário", en:"schedule", som:"squé-diul",
+        quando:"Sua escala da semana. \"Check the schedule\" = confere a escala. Ela muda — olhe TODA semana.",
+        exEn:"The new schedule is on the wall.", exSom:"dhi niú squé-diul iz on dhi uól.", exPt:"A escala nova está na parede." },
+      { figura:"💰", pt:"Contracheque / pagamento", en:"paycheck", som:"pêi-tchék",
+        quando:"Seu pagamento (geralmente quinzenal). \"When is payday?\" = quando é o dia do pagamento?",
+        exEn:"When do we get our paycheck?", exSom:"uén du uí guét áuer pêi-tchék?", exPt:"Quando recebemos nosso pagamento?" },
+      { figura:"🏦", pt:"Depósito em conta", en:"direct deposit", som:"di-réct di-pó-zit",
+        quando:"O salário cai direto na sua conta do banco americano. O RH pergunta: \"Do you want direct deposit?\" — resposta: YES.",
+        dica:"Abra a conta no banco na primeira semana — muitos não cobram mensalidade de quem recebe salário.",
+        exEn:"I want to set up direct deposit.", exSom:"ái uónt tu sét âp di-réct di-pó-zit.", exPt:"Quero configurar o depósito em conta." },
+      { figura:"⏱️", pt:"Hora extra", en:"overtime", som:"ôu-ver-táim",
+        quando:"Horas além das 40 semanais — pagas a 1,5x na maioria dos casos. \"Is there overtime this week?\"",
+        exEn:"Is there overtime available this week?", exSom:"iz dhér ôu-ver-táim a-vêi-labol dhis uík?", exPt:"Tem hora extra disponível essa semana?" },
+      { figura:"🙋", pt:"Pedir pra repetir (SEM medo)", en:"Can you repeat that, please?", som:"quén iú ri-pít dhét, plíz?",
+        quando:"A frase MAIS importante da primeira semana. Americano fala rápido — pedir pra repetir é sinal de profissionalismo, não de fraqueza.",
+        dica:"Variações: \"Slower, please\" (mais devagar) e \"Can you show me?\" (pode me mostrar?).",
+        exEn:"Sorry, can you repeat that, please?", exSom:"sóri, quén iú ri-pít dhét, plíz?", exPt:"Desculpa, pode repetir, por favor?" },
+      { figura:"👍", pt:"Entendi / deixa comigo", en:"Got it!", som:"gát ít!",
+        quando:"Resposta curta que o supervisor AMA ouvir depois de uma instrução. \"Clean room 12 first.\" — \"Got it!\"",
+        exEn:"Got it! I'll do it right now.", exSom:"gát ít! áil du ít ráit náu.", exPt:"Entendi! Vou fazer agora mesmo." },
+      { figura:"🤝", pt:"Precisa de ajuda?", en:"Do you need a hand?", som:"du iú níd a rénd?",
+        quando:"Oferecer ajuda ao colega = a fama de bom companheiro que faz o chefe te chamar de volta ano que vem.",
+        exEn:"Do you need a hand with those boxes?", exSom:"du iú níd a rénd uíth dhôuz bók-siz?", exPt:"Precisa de ajuda com essas caixas?" }
+    ],
+    dialogo:[
+      { quem:"eles", en:"Good morning! First day? I'm Mike, your supervisor.", som:"gúd mór-nin! fêrst dêi? áim máik, iór sú-per-vai-zor.", pt:"Bom dia! Primeiro dia? Sou o Mike, seu supervisor." },
+      { quem:"voce", en:"Good morning, Mike! Yes, I'm excited to start.", som:"gúd mór-nin, máik! iés, áim ek-sái-ted tu stárt.", pt:"Bom dia, Mike! Sim, estou animado pra começar." },
+      { quem:"eles", en:"Great. Clock in over there, then meet me in the kitchen.", som:"grêit. clók ín ôu-ver dhér, dhén mít mi in dhi kí-tchen.", pt:"Ótimo. Bate o ponto ali, depois me encontra na cozinha." },
+      { quem:"voce", en:"Sorry, can you repeat that, please?", som:"sóri, quén iú ri-pít dhét, plíz?", pt:"Desculpa, pode repetir, por favor?" },
+      { quem:"eles", en:"Sure! Clock in first. Then come to the kitchen.", som:"chúr! clók ín fêrst. dhén câm tu dhi kí-tchen.", pt:"Claro! Bate o ponto primeiro. Depois vem pra cozinha." },
+      { quem:"voce", en:"Got it! Thank you, Mike.", som:"gát ít! thênk iú, máik.", pt:"Entendi! Obrigado, Mike." }
+    ],
+    quiz:[
+      { pergunta:"O que é \"clock in\"?", falar:"clock in",
+        opcoes:["Sair mais cedo","Bater o ponto na ENTRADA","Pedir hora extra","Olhar o relógio"], correta:1,
+        dica:"Clock in = registrar a entrada. Clock out = registrar a saída." },
+      { pergunta:"O supervisor falou rápido e você não entendeu. Qual é a frase certa?", falar:null,
+        opcoes:["Goodbye!","Can you repeat that, please?","I quit!","Where is my paycheck?"], correta:1,
+        dica:"Pedir pra repetir é profissionalismo. \"Can you repeat that, please?\"" },
+      { pergunta:"\"When is payday?\" pergunta sobre...", falar:"When is payday?",
+        opcoes:["O dia de folga","O dia do PAGAMENTO","O primeiro dia","O feriado"], correta:1,
+        dica:"Payday = dia do pagamento. Paycheck = o contracheque em si." },
+      { pergunta:"O RH pergunta \"Do you want direct deposit?\". Isso é...", falar:"Do you want direct deposit?",
+        opcoes:["Pagar caução","Receber o salário direto na conta do banco","Trabalhar de madrugada","Dividir o quarto"], correta:1,
+        dica:"Direct deposit = salário caindo direto na sua conta. Resposta: YES!" },
+      { pergunta:"O chefe deu uma instrução e você entendeu. Resposta perfeita:", falar:null,
+        opcoes:["Got it!","Denied!","Deposit!","Overtime!"], correta:0,
+        dica:"Got it! (gát ít) = entendi / deixa comigo. Supervisor adora." },
+      { pergunta:"Hora ALÉM das 40 semanais, paga mais caro, é...", falar:null,
+        opcoes:["schedule","orientation","overtime","badge"], correta:2,
+        dica:"Overtime = hora extra (geralmente 1,5x o valor). \"Is there overtime this week?\"" }
+    ]
+  }
+  ]
 }
 ];
 
@@ -4055,6 +4265,8 @@ function embaralhar(arr){
 function moduloDesbloqueado(nivel, idx){
   const mod = nivel.modulos[idx];
   if(mod.bloqueadoDev) return false;
+  /* nível "livre" (Jornada H-2B): 1ª aula sempre aberta — é o coração do app */
+  if(nivel.livre && idx === 0) return true;
   if(idx > 0) return Progresso.moduloFeito(nivel.modulos[idx-1].id);
   // 1º módulo do nível: aberto se a pessoa escolheu começar deste nível (ou acima),
   // ou se concluiu o nível anterior inteiro. Cada um começa de onde quiser.
@@ -5940,13 +6152,14 @@ const BANCO_SIM = [
 {t:["empregador"],pr:["h2a"],v:["irrigacao"],en:"You find a broken pipe flooding part of the field. What do you do?",som:"iú fáind a brôu-ken páip flâ-ding párt óv dhi fíld. uót du iú du?",pt:"Você encontra um cano quebrado alagando parte do campo. O que faz?",ps:[{pt:"fechar a água e reportar",w:["close","shut","valve","turn off","water","report","supervisor","fix"]}],mo:{en:"I shut off the valve to stop the water, then I report it and help fix the pipe.",som:"ái shât óf dhi vélv tu stóp dhi uórer, dhén ái ripórt it énd rélp fíks dhi páip.",pt:"Fecho o registro pra parar a água, depois reporto e ajudo a consertar o cano."},dk:"\"Shut off\" = fechar/desligar. Primeiro estancar o prejuízo, depois comunicar — ordem que vale pra tudo na fazenda."}
 ];
 /* ==================================================================
-   🧗 MODO CARREIRA — motor combinatório de perguntas infinitas.
-   NÃO usa IA externa (sem custo, funciona 100% offline): centenas de
-   pedaços (vocabulário por vaga, aberturas de cenário, perguntas-base,
-   perguntas-bônus) se combinam de milhares de jeitos diferentes, e a
-   dificuldade sobe de verdade conforme o nível avança. É uma progressão
-   BASE — nunca reseta, só avança (diferente da Escalada, que tem o
-   modo "pulo" com risco de queda).
+   🧗 MODO CARREIRA — motor de VOCABULÁRIO por capítulo.
+   Reescrito do zero (pedido direto do Andrio, dono do produto): SEM
+   perguntas de entrevista, SEM resposta pessoal, SEM "por que isso
+   importa pra você". Cada capítulo é um pacote de PALAVRAS reais da
+   jornada H-2B/H-2A (documentos, chegada, primeira semana...) + o
+   vocabulário da vaga da pessoa. 3 jeitos de treinar cada palavra —
+   ler, ouvir, escrever — sempre objetivo: múltipla escolha ou digitar
+   a palavra certa. Zero custo, 100% offline, zero IA externa.
    ================================================================== */
 const CARR_VOCAB = {
   geral:        [["the work tools","as ferramentas de trabalho","dhi uôrk túls"],["the daily tasks","as tarefas diárias","dhi dêili tésks"],["the safety equipment","o equipamento de segurança","dhi séifti ikuípment"],["the basic equipment","o equipamento básico","dhi bêisic ikuípment"]],
@@ -5974,207 +6187,63 @@ const CARR_VOCAB = {
 };
 const CARR_EMPRESAS = ["Green Valley Resort","Mountain View Hotel","Sunrise Farms","Blue Lake Lodge","Coastal Landscaping Co.","Golden State Orchards","Pine Ridge Resort","Harbor Bay Restaurant"];
 const CARR_CIDADES = [["Colorado","cólorádo"],["Texas","téksas"],["Florida","flórida"],["Vermont","vermónt"],["Michigan","míchigan"],["Oregon","óregon"],["Maine","mêin"]];
-/* Aberturas de cenário — dão contexto variado à mesma pergunta-base */
-const CARR_ABERTURAS = {
-  recrutador: ["📞 Ligação da agência de recrutamento:","💻 Videochamada rápida com o recrutador:","📋 Na feira de empregos, o recrutador pergunta:"],
-  empregador: ["🤝 Entrevista por vídeo com o gerente:","🏢 No escritório da empresa, o empregador pergunta:","📞 Ligação de confirmação antes da temporada:"],
-  consulado:  ["🏛️ No guichê do consulado, o oficial pergunta:","🛂 Entrevista de visto, direto ao ponto:"],
-  chegada:    ["🛬 No balcão de imigração (CBP), o oficial pergunta:","🧳 Na alfândega, depois do voo:"],
-  trabalho:   ["👷 No meio do turno, seu supervisor pergunta:","☎️ Seu colega de trabalho te pergunta:","📋 Reunião rápida antes do turno:"],
-  avaliacao:  ["🏆 Conversa de fim de temporada com seu chefe:","📋 Avaliação final, no escritório do gerente:","🤝 Último dia de trabalho, o chefe te chama:"]
-};
-/* Perguntas-base por etapa e nível de dificuldade (tier 1=iniciante, 2=intermediário, 3=avançado).
-   Cada função recebe (voc, emp, cidade) e devolve {en,som,pt,ps,mo,dk}. */
-const CARR_TEMPLATES = {
-  recrutador: {
-    1: [
-      (voc,emp,cid) => ({
-        en:`Do you have experience with ${voc[0]}?`, som:`du iú rév ekspíriens uíth ${voc[2]}?`,
-        pt:`Você tem experiência com ${voc[1]}?`,
-        ps:[{pt:"confirmar com sim",w:["yes","experience","years"]}],
-        mo:{en:`Yes, I have experience with ${voc[0]}.`, som:`iés, ái rév ekspíriens uíth ${voc[2]}.`, pt:`Sim, tenho experiência com ${voc[1]}.`},
-        dk:"Resposta curta e confiante conta mais do que uma explicação longa nessa etapa."}),
-      (voc,emp,cid) => ({
-        en:"Are you available for the full season?", som:"ar iú avêilebol fór dhi fúl sízon?",
-        pt:"Você está disponível pra temporada inteira?",
-        ps:[{pt:"confirmar disponibilidade total",w:["yes","full","available","whole","entire"]}],
-        mo:{en:"Yes, I'm available for the entire season, start to finish.", som:"iés, áim avêilebol fór dhi entáier sízon, stárt tu fínich.", pt:"Sim, estou disponível pra temporada inteira, do início ao fim."},
-        dk:"Disponibilidade total é o que o recrutador mais quer ouvir — deixe isso claro."})
-    ],
-    2: [
-      (voc,emp,cid) => ({
-        en:`If the company asked you to work with ${voc[0]} on your first week, would that be a problem?`, som:`if dhi câmpani éskt iú tu uôrk uíth ${voc[2]} ón iór férst uík, úud dhét bí a próblem?`,
-        pt:`Se a empresa pedisse pra você trabalhar com ${voc[1]} na primeira semana, isso seria um problema?`,
-        ps:[{pt:"dizer que não é problema",w:["no","not a problem","fine","ready","no problem"]}],
-        mo:{en:`No, that wouldn't be a problem at all. I'm ready to start with ${voc[0]} right away.`, som:`nôu, dhét úudent bí a próblem ét ól. áim rédi tu stárt uíth ${voc[2]} ráit auêi.`, pt:`Não, isso não seria problema nenhum. Estou pronto pra começar com ${voc[1]} logo de cara.`},
-        dk:"Pergunta com IF é comum na etapa de recrutamento — mostre flexibilidade sem hesitar."})
-    ],
-    3: [
-      (voc,emp,cid) => ({
-        en:`Some workers quit early when they realize how demanding the job with ${voc[0]} really is. What makes you different?`, som:`sâm uôrkers quít érli uén dhêi ríalaiz ráu dimándin dhi djób uíth ${voc[2]} ríali iz. uót mêiks iú díferent?`,
-        pt:`Alguns trabalhadores desistem cedo quando percebem o quanto o trabalho com ${voc[1]} é exigente. O que te diferencia?`,
-        ps:[{pt:"mostrar compromisso e motivo pessoal",w:["commitment","family","finish","never quit","determined","responsible"]}],
-        mo:{en:"I'm working for my family's future, so I don't quit when things get hard. I finish what I start.", som:"áim uôrkin fór mái fémilis fiútchur, sôu ái dôunt quít uén thíngs guét rárd. ái fínich uót ái stárt.", pt:"Estou trabalhando pelo futuro da minha família, então não desisto quando fica difícil. Termino o que começo."},
-        dk:"Pergunta de nível avançado: uma frase condicional/comparativa embutida. Responda com convicção pessoal, não genérica."})
-    ]
-  },
-  empregador: {
-    1: [
-      (voc,emp,cid) => ({
-        en:`Tell me about your experience with ${voc[0]}.`, som:`tél mi abáut iór ekspíriens uíth ${voc[2]}.`,
-        pt:`Me fale sobre sua experiência com ${voc[1]}.`,
-        ps:[{pt:"anos de experiência",w:["years","experience","worked"]},{pt:"tarefa concreta",w:["clean","use","operate","handle","work"]}],
-        mo:{en:`I have solid experience with ${voc[0]}. I worked with it every day in my last job.`, som:`ái rév sólid ekspíriens uíth ${voc[2]}. ái uôrkt uíth it évri dêi in mái lést djób.`, pt:`Tenho bastante experiência com ${voc[1]}. Trabalhei com isso todo dia no meu último emprego.`},
-        dk:"Fórmula de ouro: anos/tempo de experiência + tarefa concreta. Concreto convence, genérico não."}),
-      (voc,emp,cid) => ({
-        en:"Can you work weekends and holidays?", som:"quén iú uôrk uíquénds énd rólidêis?",
-        pt:"Você pode trabalhar fins de semana e feriados?",
-        ps:[{pt:"confirmar disponibilidade",w:["yes","no problem","available","sure"]}],
-        mo:{en:"Yes, no problem at all. I know weekends are usually the busiest days.", som:"iés, nôu próblem ét ól. ái nôu uíquénds ar iújuali dhi bíziest dêis.", pt:"Sim, sem problema nenhum. Sei que fim de semana costuma ser o período mais movimentado."},
-        dk:"Turismo e hotelaria não param no domingo — disponibilidade total é o que fecha a vaga."})
-    ],
-    2: [
-      (voc,emp,cid) => ({
-        en:`Imagine you're using ${voc[0]} and it suddenly breaks in the middle of a busy shift. What do you do?`, som:`imédjin iúr iúzin ${voc[2]} énd it sâdenli brêiks in dhi mídol óv a bízi chift. uót du iú du?`,
-        pt:`Imagine que você está usando ${voc[1]} e de repente quebra no meio de um turno cheio. O que você faz?`,
-        ps:[{pt:"avisar o supervisor",w:["tell","supervisor","report","stop","safety"]},{pt:"não arriscar/continuar sem segurança",w:["safe","careful","not risk","danger"]}],
-        mo:{en:`I would stop immediately, tell my supervisor, and wait for instructions instead of risking an accident with ${voc[0]}.`, som:`ái úud stóp imídietli, tél mái súpervaizor, énd uêit fór instrâkchons instéd óv rísquin en éksident uíth ${voc[2]}.`, pt:`Eu pararia imediatamente, avisaria meu supervisor e esperaria instruções em vez de arriscar um acidente com ${voc[1]}.`},
-        dk:"Pergunta de cenário (\"imagine...\") é clássica em nível intermediário — mostre que segurança vem antes de pressa."})
-    ],
-    3: [
-      (voc,emp,cid) => ({
-        en:`If you had already worked here before and knew everything about ${voc[0]}, would you expect a higher starting pay this season?`, som:`if iú red olrédi uôrkt rír bifór énd niú évrithing abáut ${voc[2]}, úud iú ekspékt a ráier stártin pêi dhis sízon?`,
-        pt:`Se você já tivesse trabalhado aqui antes e soubesse tudo sobre ${voc[1]}, você esperaria um salário inicial maior nesta temporada?`,
-        ps:[{pt:"resposta equilibrada, respeitosa",w:["fair","discuss","understand","appreciate","open"]}],
-        mo:{en:"I'd be open to discussing it fairly, but I understand pay depends on the company's policy, not just my past experience.", som:"áid bi ôupen tu diskâsin it férli, bât ái ândersténd pêi dipénds ón dhi câmpanis pólisi, nót djâst mái pést ekspíriens.", pt:"Estaria aberto a discutir isso com justiça, mas entendo que o salário depende da política da empresa, não só da minha experiência passada."},
-        dk:"Terceiro condicional + pergunta delicada sobre salário: mostre maturidade e abertura ao diálogo, sem exigir nada."})
-    ]
-  },
-  consulado: {
-    1: [
-      (voc,emp,cid) => ({
-        en:`Who is your employer in the United States?`, som:`rú iz iór emplóier in dhi iunáited stêits?`,
-        pt:"Quem é seu empregador nos Estados Unidos?",
-        ps:[{pt:"dizer o nome da empresa",w:["company","employer","name","my employer is"]},{pt:"dizer o estado",w:[cid[0].toLowerCase()]}],
-        mo:{en:`My employer is ${emp}, in ${cid[0]}.`, som:`mái emplóier iz ${emp}, in ${cid[1]}.`, pt:`Meu empregador é o ${emp}, em ${cid[0]}.`},
-        dk:"Decore o nome exato da empresa e o estado. Não saber isso pode custar o visto na hora."})
-    ],
-    2: [
-      (voc,emp,cid) => ({
-        en:"How can you prove that you will return to Brazil after the season?", som:"ráu quén iú prúv dhét iú uíl ritôrn tu brazíl áfter dhi sízon?",
-        pt:"Como você pode provar que vai voltar pro Brasil depois da temporada?",
-        ps:[{pt:"citar vínculos (família/casa/trabalho)",w:["family","house","home","job","ties","brazil","return"]}],
-        mo:{en:"I have strong ties to Brazil — my family, my home, and a job waiting for me when I return.", som:"ái rév stróng táis tu brazíl — mái fémili, mái rôum, énd a djób uêitin fór mi uén ái ritôrn.", pt:"Tenho fortes vínculos com o Brasil — minha família, minha casa e um trabalho me esperando quando eu voltar."},
-        dk:"\"Ties\" (vínculos) é a palavra-chave que o oficial do consulado quer ouvir."})
-    ],
-    3: [
-      (voc,emp,cid) => ({
-        en:"If your contract were extended unexpectedly, would you stay longer than planned?", som:"if iór cóntract uér eksténded ânekspéktedli, úud iú stêi lónguer dhén plénd?",
-        pt:"Se seu contrato fosse estendido inesperadamente, você ficaria mais tempo do que o planejado?",
-        ps:[{pt:"resposta cautelosa, respeitando o visto",w:["no","only","as long as visa","legal","allowed"]}],
-        mo:{en:"No, I would only stay as long as my visa legally allows, never longer than that.", som:"nôu, ái úud ôunli stêi éz lóng éz mái víza lígali aláus, néver lónguer dhén dhét.", pt:"Não, eu só ficaria pelo tempo que meu visto permite legalmente, nunca mais que isso."},
-        dk:"Pergunta armadilha clássica em nível avançado — a resposta certa é SEMPRE respeitar o limite legal do visto."})
-    ]
-  },
-  chegada: {
-    1: [
-      (voc,emp,cid) => ({
-        en:"What is the purpose of your trip?", som:"uót iz dhi pérpos óv iór tríp?",
-        pt:"Qual é o propósito da sua viagem?",
-        ps:[{pt:"dizer que é trabalho temporário",w:["work","job","temporary","seasonal"]}],
-        mo:{en:"I'm here for seasonal work. I have a temporary work visa.", som:"áim rír fór sízonal uôrk. ái rév a témporári uôrk víza.", pt:"Estou aqui pra trabalho sazonal. Tenho um visto de trabalho temporário."},
-        dk:"Resposta curta e direta — o oficial da imigração não quer uma história longa."})
-    ],
-    2: [
-      (voc,emp,cid) => ({
-        en:`How long do you plan to stay, and where exactly will you be working in ${cid[0]}?`, som:`ráu lóng du iú plén tu stêi, énd uér egzáktli uíl iú bi uôrquin in ${cid[1]}?`,
-        pt:`Quanto tempo você planeja ficar, e onde exatamente você vai trabalhar em ${cid[0]}?`,
-        ps:[{pt:"duração + local específico",w:["months","weeks","company","employer","address"]}],
-        mo:{en:`I'll be here for about eight months, working at ${emp}, in ${cid[0]}.`, som:`áil bi rír fór abáut êit mãnths, uôrquin ét ${emp}, in ${cid[1]}.`, pt:`Vou ficar uns oito meses, trabalhando no ${emp}, em ${cid[0]}.`},
-        dk:"Pergunta composta (duas partes numa só) — responda as duas partes, na ordem que foram perguntadas."})
-    ],
-    3: [
-      (voc,emp,cid) => ({
-        en:"Has anyone else packed your bags, or given you anything to carry that you haven't checked yourself?", som:"réz éni-uân éls pékt iór bégs, ór guíven iú éni-thing tu quéri dhét iú révent tchékt iórsélf?",
-        pt:"Alguém mais fez sua mala, ou te deu algo pra carregar que você mesmo não conferiu?",
-        ps:[{pt:"negar claramente",w:["no","myself","packed my own","nothing"]}],
-        mo:{en:"No, I packed everything myself and I know exactly what's in my bags.", som:"nôu, ái pékt évrithing máisélf énd ái nôu egzáktli uóts in mái bégs.", pt:"Não, eu mesmo fiz minha mala e sei exatamente o que tem nela."},
-        dk:"Pergunta de segurança padrão da imigração americana — a resposta certa é sempre NÃO, com firmeza."})
-    ]
-  },
-  trabalho: {
-    1: [
-      (voc,emp,cid) => ({
-        en:`Can you show me how you use ${voc[0]}?`, som:`quén iú chôu mi ráu iú iúz ${voc[2]}?`,
-        pt:`Você pode me mostrar como usa ${voc[1]}?`,
-        ps:[{pt:"confirmar e demonstrar disposição",w:["yes","sure","show","of course"]}],
-        mo:{en:`Sure, I'll show you right now how I use ${voc[0]}.`, som:`chúr, áil chôu iú ráit náu ráu ái iúz ${voc[2]}.`, pt:`Claro, vou te mostrar agora mesmo como uso ${voc[1]}.`},
-        dk:"No trabalho, disposição em mostrar/aprender na hora vale mais que explicar teoricamente."})
-    ],
-    2: [
-      (voc,emp,cid) => ({
-        en:`You notice a coworker is struggling with ${voc[0]} and falling behind. What do you do?`, som:`iú nôutis a côuuôrker iz strâglin uíth ${voc[2]} énd fólin bihaind. uót du iú du?`,
-        pt:`Você percebe que um colega está com dificuldade em ${voc[1]} e ficando pra trás. O que você faz?`,
-        ps:[{pt:"oferecer ajuda ao colega",w:["help","offer","team","assist"]}],
-        mo:{en:`I'd offer to help them with ${voc[0]} — we're a team, and everyone's success matters.`, som:`áid ófer tu rélp dhém uíth ${voc[2]} — uír a tím, énd évriuâns sâksés méters.`, pt:`Eu me ofereceria pra ajudar com ${voc[1]} — somos uma equipe, e o sucesso de todos importa.`},
-        dk:"Trabalho em equipe é um dos valores mais testados em perguntas do dia a dia no trabalho."})
-    ],
-    3: [
-      (voc,emp,cid) => ({
-        en:`Looking back, what would you have done differently in your first week working with ${voc[0]}, knowing what you know now?`, som:`lúquin bék, uót úud iú rev dân díferentli in iór férst uík uôrquin uíth ${voc[2]}, nôuin uót iú nôu náu?`,
-        pt:`Olhando pra trás, o que você teria feito diferente na sua primeira semana trabalhando com ${voc[1]}, sabendo o que sabe agora?`,
-        ps:[{pt:"reflexão madura, aprendizado",w:["ask questions","earlier","learn","careful","mistake"]}],
-        mo:{en:`I would have asked more questions earlier instead of guessing how to handle ${voc[0]} on my own.`, som:`ái úud rev éskt mór quéschons érlier instéd óv guésin ráu tu réndol ${voc[2]} ón mái ôun.`, pt:`Eu teria feito mais perguntas mais cedo em vez de tentar adivinhar como lidar com ${voc[1]} sozinho.`},
-        dk:"Terceiro condicional puro — pergunta de reflexão/maturidade, típica de avaliação de desempenho avançada."})
-    ]
-  },
-  avaliacao: {
-    1: [
-      (voc,emp,cid) => ({
-        en:"The season is ending. Would you like to come back next year?", som:"dhi sízon iz éndin. úud iú láik tu câm bék nékst íer?",
-        pt:"A temporada está acabando. Você gostaria de voltar no ano que vem?",
-        ps:[{pt:"dizer que sim, com vontade",w:["yes","love","come back","return","next"]},{pt:"agradecer a oportunidade",w:["thank","opportunity","grateful"]}],
-        mo:{en:"Yes, I'd love to come back next season. Thank you for the opportunity.", som:"iés, áid lâv tu câm bék nékst sízon. thénk iú fór dhi oportúniti.", pt:"Sim, adoraria voltar na próxima temporada. Obrigado pela oportunidade."},
-        dk:"Trabalhador convidado a voltar (returning worker) tem visto MUITO mais fácil no ano seguinte — essa resposta vale ouro."}),
-      (voc,emp,cid) => ({
-        en:`What did you learn this season working with ${voc[0]}?`, som:`uót did iú lérn dhis sízon uôrquin uíth ${voc[2]}?`,
-        pt:`O que você aprendeu nesta temporada trabalhando com ${voc[1]}?`,
-        ps:[{pt:"citar um aprendizado concreto",w:["learned","english","skills","better","faster","team"]}],
-        mo:{en:`I learned a lot — my English got better and I became faster with ${voc[0]}.`, som:`ái lérnd a lót — mái ínglich gót béter énd ái bikêim féster uíth ${voc[2]}.`, pt:`Aprendi muito — meu inglês melhorou e fiquei mais rápido com ${voc[1]}.`},
-        dk:"Avaliação final: cite crescimento concreto (inglês, velocidade, equipe). Chefe gosta de quem evolui."}),
-      (voc,emp,cid) => ({
-        en:"What was the hardest part of the season for you?", som:"uót uóz dhi rárdest párt óv dhi sízon fór iú?",
-        pt:"Qual foi a parte mais difícil da temporada pra você?",
-        ps:[{pt:"ser honesto sobre a dificuldade",w:["hard","difficult","first","beginning","weather","hours"]},{pt:"mostrar que superou",w:["but","learned","got used","better","adapted"]}],
-        mo:{en:"The first weeks were hard, but I got used to the pace and finished strong.", som:"dhi férst uíks uér rárd, bât ái gót iúzd tu dhi pêis énd fínicht stróng.", pt:"As primeiras semanas foram difíceis, mas me acostumei com o ritmo e terminei bem."},
-        dk:"Fórmula: dificuldade honesta + superação. Nunca diga que nada foi difícil — soa falso."}),
-      (voc,emp,cid) => ({
-        en:"We might need a crew leader next season. Would you be interested?", som:"uí máit níd a crú líder nékst sízon. úud iú bi íntrested?",
-        pt:"Talvez a gente precise de um líder de equipe na próxima temporada. Você teria interesse?",
-        ps:[{pt:"demonstrar interesse",w:["yes","interested","like","ready","happy"]},{pt:"mostrar responsabilidade",w:["responsibility","team","help","lead","learn"]}],
-        mo:{en:"Yes, I'd be very interested. I like helping the team and I'm ready for more responsibility.", som:"iés, áid bi véri íntrested. ái láik rélpin dhi tím énd áim rédi fór mór rispônsibiliti.", pt:"Sim, teria muito interesse. Gosto de ajudar a equipe e estou pronto pra mais responsabilidade."},
-        dk:"Promoção a crew leader = salário maior na próxima temporada. Interesse + humildade é a resposta certa."})
-    ]
-  }
-};
-/* Distratores genéricos pra modo múltipla escolha (níveis iniciantes) */
-const CARR_DISTRATORES = [
-  { en:"I don't understand the question.", pt:"Eu não entendo a pergunta." },
-  { en:"Maybe, I'm not sure yet.", pt:"Talvez, ainda não tenho certeza." },
-  { en:"I don't want to answer that.", pt:"Eu não quero responder isso." },
-  { en:"That's not important right now.", pt:"Isso não é importante agora." },
-  { en:"I have no experience at all.", pt:"Eu não tenho experiência nenhuma." },
-  { en:"That is a secret, I cannot say.", pt:"Isso é segredo, não posso dizer." },
-  { en:"I need to think about it later.", pt:"Eu preciso pensar sobre isso depois." }
+/* Vocabulário genérico de trabalho — soma força aos capítulos
+   "A Vaga" e "A Temporada de Trabalho" mesmo quando a lista da vaga
+   específica é curta. */
+const CARR_TRABALHO_GERAL = [
+  {en:"contract",pt:"contrato",som:"cóntract"},{en:"wage",pt:"salário por hora",som:"uêidj"},
+  {en:"shift",pt:"turno",som:"chíft"},{en:"supervisor",pt:"supervisor",som:"súpervaizor"},
+  {en:"coworker",pt:"colega de trabalho",som:"côu-uôrker"},{en:"uniform",pt:"uniforme",som:"iúniform"},
+  {en:"break time",pt:"intervalo",som:"brêik táim"},{en:"teamwork",pt:"trabalho em equipe",som:"tímuôrk"},
+  {en:"task",pt:"tarefa",som:"tésk"},{en:"rule",pt:"regra",som:"rúl"}
 ];
-/* Na Temporada 1 (capítulos Agência e Vaga), o Modo Carreira ENSINA
-   primeiro: mostra o que a resposta precisa ter e pede reconhecimento
-   por múltipla escolha — só depois vira produção livre (digitar/falar). */
-const CARR_FOLLOWUPS = [
-  {en:"And why does that matter to you personally?", som:"énd uái dâz dhét méter tu iú pérsonali?", pt:"E por que isso importa pra você pessoalmente?"},
-  {en:"Can you give me a specific example?", som:"quén iú guív mi a spesífic egzémpol?", pt:"Você pode me dar um exemplo específico?"},
-  {en:"How would you handle it differently next time?", som:"ráu úud iú réndol it díferentli nékst táim?", pt:"Como você lidaria com isso diferente da próxima vez?"}
-];
+/* Vocabulário temático de cada capítulo da jornada H-2B/H-2A (o mesmo
+   ensinado na aula "Jornada H-2B" — aqui é onde ele vira TREINO). */
+const CARR_CAP_VOCAB = {
+  recrutador: [
+    {en:"reliable",pt:"confiável",som:"riláiabol"},{en:"experience",pt:"experiência",som:"ekspíriens"},
+    {en:"available",pt:"disponível",som:"avêilabol"},{en:"hardworking",pt:"esforçado",som:"rárd-uôrkin"},
+    {en:"apply",pt:"se candidatar",som:"aplái"},{en:"resume",pt:"currículo",som:"rézumê"},
+    {en:"full season",pt:"temporada inteira",som:"fúl sízon"},{en:"schedule",pt:"horário / escala",som:"squédiul"},
+    {en:"opportunity",pt:"oportunidade",som:"oportúniti"},{en:"recommend",pt:"recomendar",som:"recoménd"}
+  ],
+  consulado: [
+    {en:"passport",pt:"passaporte",som:"pésport",exEn:"Here is my passport.",exPt:"Aqui está meu passaporte."},
+    {en:"visa",pt:"visto",som:"víza",exEn:"I have a temporary work visa.",exPt:"Tenho um visto de trabalho temporário."},
+    {en:"application form",pt:"formulário",som:"epli-quêichon fórm",exEn:"I filled out the application form.",exPt:"Preenchi o formulário."},
+    {en:"appointment",pt:"agendamento",som:"apóintment",exEn:"I have an appointment at the consulate.",exPt:"Tenho um agendamento no consulado."},
+    {en:"consulate",pt:"consulado",som:"cónsiulét",exEn:"My interview is at the consulate.",exPt:"Minha entrevista é no consulado."},
+    {en:"fingerprints",pt:"digitais",som:"fínguerprints",exEn:"They took my fingerprints.",exPt:"Colheram minhas digitais."},
+    {en:"employer",pt:"empregador",som:"emplóier",exEn:"My employer is in Colorado.",exPt:"Meu empregador é no Colorado."},
+    {en:"approved",pt:"aprovado",som:"aprúvd",exEn:"Your visa is approved.",exPt:"Seu visto foi aprovado."},
+    {en:"denied",pt:"negado",som:"dináid",exEn:"The visa was denied.",exPt:"O visto foi negado."},
+    {en:"ties",pt:"vínculos (com o Brasil)",som:"táis",exEn:"I have strong ties to Brazil.",exPt:"Tenho fortes vínculos com o Brasil."}
+  ],
+  chegada: [
+    {en:"immigration",pt:"imigração",som:"imigrêichon",exEn:"Go to the immigration line.",exPt:"Vá para a fila da imigração."},
+    {en:"luggage",pt:"bagagem",som:"lâguedj",exEn:"I packed my own luggage.",exPt:"Eu mesmo fiz minha mala."},
+    {en:"connecting flight",pt:"voo de conexão",som:"conéctin fláit",exEn:"Where is my connecting flight?",exPt:"Onde é meu voo de conexão?"},
+    {en:"Social Security number",pt:"número do Social Security",som:"sôuchal sekiúriti nâmber",exEn:"I need my Social Security number.",exPt:"Preciso do meu número do Social Security."},
+    {en:"housing",pt:"moradia",som:"ráuzin",exEn:"The company provides housing.",exPt:"A empresa fornece moradia."},
+    {en:"roommate",pt:"colega de quarto",som:"rúmmêit",exEn:"I'm your new roommate.",exPt:"Sou seu novo colega de quarto."},
+    {en:"deposit",pt:"caução",som:"dipózit",exEn:"Is there a deposit for the room?",exPt:"Tem caução pelo quarto?"},
+    {en:"grocery store",pt:"mercado",som:"grôuceri stór",exEn:"Where is the grocery store?",exPt:"Onde é o mercado?"},
+    {en:"SIM card",pt:"chip de celular",som:"sím card",exEn:"I need a SIM card, please.",exPt:"Preciso de um chip, por favor."},
+    {en:"ride",pt:"carona",som:"ráid",exEn:"Can I get a ride to work?",exPt:"Consigo uma carona pro trabalho?"}
+  ],
+  trabalho: [
+    {en:"orientation",pt:"treinamento",som:"orientêichon",exEn:"Orientation starts at 8.",exPt:"O treinamento começa às 8h."},
+    {en:"badge",pt:"crachá",som:"bédj",exEn:"Don't forget your badge.",exPt:"Não esqueça o crachá."},
+    {en:"clock in",pt:"bater ponto (entrada)",som:"clók ín",exEn:"Clock in when you arrive.",exPt:"Bate o ponto quando chegar."},
+    {en:"paycheck",pt:"contracheque",som:"pêitchék",exEn:"When is payday?",exPt:"Quando é o dia do pagamento?"},
+    {en:"direct deposit",pt:"depósito em conta",som:"diréct dipózit",exEn:"I want direct deposit.",exPt:"Quero depósito em conta."},
+    {en:"overtime",pt:"hora extra",som:"ôuvertáim",exEn:"Is there overtime this week?",exPt:"Tem hora extra essa semana?"},
+    {en:"Can you repeat that?",pt:"pode repetir?",som:"quén iú ripít dhét",exEn:"Sorry, can you repeat that, please?",exPt:"Desculpa, pode repetir?"},
+    {en:"Got it!",pt:"entendi!",som:"gát ít",exEn:"Got it! I'll do it now.",exPt:"Entendi! Vou fazer agora."},
+    {en:"Do you need a hand?",pt:"precisa de ajuda?",som:"du iú níd a rénd",exEn:"Do you need a hand with that?",exPt:"Precisa de ajuda com isso?"},
+    {en:"schedule",pt:"escala",som:"squédiul",exEn:"Check the new schedule.",exPt:"Confere a escala nova."}
+  ]
+};
 function carrVagaDoPerfil(){
   const p = perfilAtual();
   if(p && p.h2bProfile && CARR_VOCAB[p.h2bProfile]) return p.h2bProfile;
@@ -6183,41 +6252,56 @@ function carrVagaDoPerfil(){
   const chaves = Object.keys(CARR_VOCAB).filter(k => k !== "geral");
   return Math.random() < 0.35 ? "geral" : chaves[Math.floor(Math.random() * chaves.length)];
 }
-/* Gera 1 pergunta do CAPÍTULO ATUAL da temporada. Duas fontes:
-   os templates combinatórios (CARR_TEMPLATES, com a empresa/cidade DA
-   SUA temporada injetadas) e o banco grande do Simulador (BANCO_SIM,
-   128 itens) — variedade real, sem repetir as últimas 6. */
+/* Junta o banco de uma vaga (formato [en,pt,som]) num shape único
+   {en,pt,som,exEn,exPt} — mesma forma usada pelo resto do motor. */
+function carrVagaNorm(vagaId){
+  return (CARR_VOCAB[vagaId] || []).map(v => ({ en:v[0], pt:v[1], som:v[2] }));
+}
+/* Pool de vocabulário do capítulo atual: cada capítulo tem seu tema
+   fixo (documentos, chegada, primeira semana...); "A Vaga" e "Fim de
+   Temporada" somam o vocabulário DA VAGA da pessoa / palavras de
+   impacto (reaproveita o pool da Palavra da Vez — mesma fonte). */
+function carrPoolCapitulo(capId, vagaId){
+  if(capId === "empregador") return carrVagaNorm(vagaId).concat(CARR_TRABALHO_GERAL, carrVagaNorm("geral"));
+  if(capId === "trabalho") return CARR_CAP_VOCAB.trabalho.concat(carrVagaNorm(vagaId));
+  if(capId === "avaliacao"){
+    return (typeof PALAVRA_DIA_POOL !== "undefined" ? PALAVRA_DIA_POOL : [])
+      .map(w => ({ en:w.en, pt:w.pt, som:w.som, exEn:w.fEn, exPt:w.fPt }));
+  }
+  return CARR_CAP_VOCAB[capId] || CARR_CAP_VOCAB.recrutador;
+}
+/* Sorteia N distratores (significados errados) diferentes do alvo,
+   sem repetir tradução — pra não ter duas opções "certas" na tela. */
+function carrDistratores(pool, alvoEn, n){
+  const escolhidos = [];
+  for(const w of embaralhar(pool.filter(x => x.en !== alvoEn))){
+    if(escolhidos.length >= n) break;
+    if(!escolhidos.some(x => x.pt === w.pt)) escolhidos.push(w);
+  }
+  return escolhidos;
+}
+/* Gera 1 exercício de VOCABULÁRIO do capítulo atual. 3 modos:
+   "l" ler (vê o EN, escolhe o PT) · "o" ouvir (só áudio, escolhe o PT)
+   · "e" escrever (vê o PT, digita o EN). Tier 1 = só "l" (ensina antes
+   de cobrar); tier 2 soma "o"; tier 3+ soma "e". Sem repetir a última
+   palavra usada. */
 let CARR_ULTIMAS = [];
-function gerarPerguntaCarreira(c){
-  const etapa = carrCapAtual(c).id;
+function gerarExercicioCarreira(c){
+  const cap = carrCapAtual(c);
+  const vagaId = carrVagaDoPerfil();
+  const pool = carrPoolCapitulo(cap.id, vagaId);
   const tier = carrTier(c);
-  let q = null, tentativas = 0;
-  do{
-    q = null;
-    const vagaId = carrVagaDoPerfil();
-    const prog = vagaId === "geral"
-      ? (Math.random() < 0.5 ? "h2a" : "h2b")
-      : (SIM_VAGAS.h2a.some(v => v.id === vagaId) ? "h2a" : "h2b");
-    /* metade das vezes puxa do banco do Simulador (nas etapas que existem lá) */
-    if(etapa !== "trabalho" && etapa !== "avaliacao" && Math.random() < 0.5){
-      const pool = simBancoFiltrado(etapa, prog, vagaId);
-      if(pool.length) q = Object.assign({}, pool[Math.floor(Math.random() * pool.length)]);
-    }
-    if(!q){
-      const banco = CARR_VOCAB[vagaId] || CARR_VOCAB.geral;
-      const voc = banco[Math.floor(Math.random() * banco.length)];
-      const poolTier = CARR_TEMPLATES[etapa][tier] || CARR_TEMPLATES[etapa][1];
-      const tpl = poolTier[Math.floor(Math.random() * poolTier.length)];
-      q = tpl(voc, c.emp, c.cid);
-    }
-    q.etapa = etapa;
-    q.abertura = CARR_ABERTURAS[etapa][Math.floor(Math.random() * CARR_ABERTURAS[etapa].length)];
-    q.followup = (tier >= 2 && Math.random() < 0.35) ? CARR_FOLLOWUPS[Math.floor(Math.random() * CARR_FOLLOWUPS.length)] : null;
-    tentativas++;
-  } while(CARR_ULTIMAS.includes(q.en) && tentativas < 8);
-  CARR_ULTIMAS.push(q.en);
+  const modos = ["l"];
+  if(tier >= 2) modos.push("o");
+  if(tier >= 3) modos.push("e");
+  let modo = modos[Math.floor(Math.random() * modos.length)];
+  if(modo === "o" && !window.speechSynthesis) modo = "l";
+  let w, tentativas = 0;
+  do{ w = pool[Math.floor(Math.random() * pool.length)]; tentativas++; }
+  while(CARR_ULTIMAS.includes(w.en) && tentativas < 8 && pool.length > 3);
+  CARR_ULTIMAS.push(w.en);
   if(CARR_ULTIMAS.length > 6) CARR_ULTIMAS.shift();
-  return q;
+  return { w, modo, pool };
 }
 
 /* ---------- ANALISADOR DE CURRÍCULO (offline) ---------- */
@@ -6495,14 +6579,15 @@ function simGravar(){
   try{ r.start(); }catch(err){ soltar(); }
 }
 /* ==================================================================
-   🧗 MODO CARREIRA 2.0 — sua história nos EUA em TEMPORADAS.
-   Cada temporada é a jornada real do H-2B/H-2A em 6 capítulos:
-   📞 Agência → 🤝 Vaga → 🏛️ Visto → 🛬 Chegada → 👷 Trabalho → 🏆 Fim.
-   Empresa e cidade são SUAS na temporada inteira (como na vida real).
-   Pra fechar um capítulo é preciso DOMINAR as respostas: resposta
-   fraca/errada volta pra fila até sair forte. Fechou os 6 =
+   🧗 MODO CARREIRA — sua história nos EUA em TEMPORADAS, treinando
+   VOCABULÁRIO (não entrevista de resposta pessoal — ver comentário
+   acima, no motor de exercícios). Cada temporada é a jornada real do
+   H-2B/H-2A em 6 capítulos: 📞 Agência → 🤝 Vaga → 🏛️ Visto →
+   🛬 Chegada → 👷 Trabalho → 🏆 Fim. Empresa e cidade são SUAS na
+   temporada inteira. Pra fechar um capítulo é preciso DOMINAR as
+   palavras: errou, ela volta pra fila até sair forte. Fechou os 6 =
    temporada concluída ("salário": XP alto + girassóis) e a próxima
-   começa mais difícil. Progresso nunca reseta.
+   começa com palavras novas e mais difíceis. Progresso nunca reseta.
    ================================================================== */
 const CARR_CAPITULOS = [
   { id:"recrutador", ic:"📞", nome:"A Agência",          meta:3, hist: c => `📞 <b>A agência aprovou você!</b> Ela te indicou pra uma vaga no <b>${esc(c.emp)}</b>, em <b>${esc(c.cid[0])}</b>. Agora é convencer o empregador. 🤝` },
@@ -6551,7 +6636,7 @@ function iniciarCarreira(){
   carrBolha(`<div class="quem">🦜 FALAFINA</div><div class="en" style="color:var(--tinta)">
     ${esc(nome)}, esta é a sua <b>Temporada ${c.temporada}</b>${carrTier(c) >= 3 ? " 👑" : ""} — sua vaga é no <b>${esc(c.emp)}</b>, em <b>${esc(c.cid[0])}</b>.<br>
     <span style="font-size:1.05rem">${mapa}</span><br>
-    Capítulo de agora: <b>${cap.ic} ${esc(cap.nome)}</b> — mande bem em <b>${cap.meta} respostas</b> pra avançar. Resposta fraca volta pra fila até sair forte. 💪</div>`, "oficial");
+    Capítulo de agora: <b>${cap.ic} ${esc(cap.nome)}</b> — domine <b>${cap.meta} palavras</b> pra avançar. Palavra errada volta pra fila até sair forte. 💪</div>`, "oficial");
   irPara("tela-carreira");
   carrProxima();
 }
@@ -6568,73 +6653,59 @@ function carrAtualizarTopo(){
   $("#carrBarraNivel").style.width = Math.max(4, Math.min(100, (c.capOk / cap.meta) * 100)) + "%";
   $("#carrCont").textContent = `T${c.temporada} · ${cap.ic} ${cap.nome} · ${c.capOk}/${cap.meta} · ⭐ ${carreiraEstado ? carreiraEstado.xpGanho : 0} XP`;
 }
+const CARR_MODO_ROTULO = { l:"👁️ LEIA e escolha o sentido", o:"👂 OUÇA e escolha o sentido", e:"✍️ ESCREVA em inglês" };
 function carrProxima(){
   const c = carrDados();
   carrAtualizarTopo();
   const e = carreiraEstado;
-  /* fila de domínio: o que saiu fraco volta depois de ~2 perguntas */
-  let q;
+  /* fila de domínio: o que saiu fraco volta depois de ~2 exercícios */
+  let ex;
   if(e.fila.length && (e.desdeRetry >= 2 || CARR_ULTIMAS.length === 0)){
-    q = e.fila.shift(); q._retry = true; e.desdeRetry = 0;
+    ex = e.fila.shift(); ex._retry = true; e.desdeRetry = 0;
   } else {
-    q = gerarPerguntaCarreira(c); e.desdeRetry++;
+    ex = gerarExercicioCarreira(c); e.desdeRetry++;
   }
-  e.atual = q;
-  const tier = carrTier(c);
-  /* Temporada 1, capítulos 1-2: fase de APRENDER (múltipla escolha) */
-  const modoMC = c.temporada === 1 && c.cap <= 1;
-  /* 👂 Da temporada 2 em diante, às vezes a pergunta chega SÓ POR ÁUDIO */
-  const soAudio = !modoMC && tier >= 2 && Math.random() < 0.25;
-  const esconder = !modoMC && (tier >= 3 || soAudio);
-  const dicaPrevia = modoMC ? `<div class="carr-ensina">
-      <div class="rot">💡 Pra responder bem, sua fala precisa ter:</div>
-      <ul>${q.ps.map(p => `<li>${esc(p.pt)}</li>`).join("")}</ul>
-    </div>` : "";
-  carrBolha(`<div class="quem">${q._retry ? "🔁 DE NOVO — agora você sabe! · " : ""}${q.abertura}${soAudio ? " · 👂 SÓ DE OUVIDO" : ""}</div>
-    ${soAudio ? `<div class="en">🔊 Ouça a pergunta <button class="btn-som" data-falar="${esc(q.en)}" aria-label="Ouvir pergunta">🔊</button></div>` : `<div class="en">${esc(q.en)} <button class="btn-som" data-falar="${esc(q.en)}" aria-label="Ouvir pergunta">🔊</button></div>`}
-    ${esconder ? `<button class="btn-link carrAjuda" style="padding:4px 0;font-size:.85rem">👁️ Não entendi — mostrar ajuda</button><div class="carrOculto" style="display:none">` : ""}
-    ${soAudio ? `<div class="en" style="margin-top:4px">${esc(q.en)}</div>` : ""}
-    <div class="som">🗣️ ${esc(q.som)}</div>
-    <div class="pt">🇧🇷 ${esc(q.pt)}</div>
-    ${esconder ? "</div>" : ""}
-    ${dicaPrevia}
-    ${modoMC ? `<div class="carr-opcoes" id="carrOpcoesMC"></div>` : ""}`, "oficial");
+  e.atual = ex;
+  const { w, modo, pool } = ex;
+  const cap = carrCapAtual(c);
+  let corpo = `<div class="quem">${ex._retry ? "🔁 DE NOVO — agora você sabe! · " : ""}${cap.ic} ${esc(cap.nome)}</div>
+    <p class="jar-modo" style="margin:6px 0">${CARR_MODO_ROTULO[modo]}</p>`;
+  if(modo === "l"){
+    corpo += `<p class="jar-alvo" style="font-size:1.5rem;font-weight:800">${esc(w.en)} <button class="btn-som" data-falar="${esc(w.en)}" aria-label="Ouvir">🔊</button></p>`;
+  } else if(modo === "o"){
+    corpo += `<button class="btn-som" id="carrOuvir" style="font-size:1.8rem;width:58px;height:58px;border-radius:50%">🔊</button>`;
+  } else {
+    corpo += `<p class="jar-alvo" style="font-size:1.2rem;font-weight:800">🇧🇷 ${esc(w.pt)}</p>`;
+  }
+  if(modo === "l" || modo === "o"){
+    const distratores = carrDistratores(pool, w.en, 3);
+    const opcoes = embaralhar([{ pt:w.pt, ok:true }, ...distratores.map(d => ({ pt:d.pt, ok:false }))]);
+    corpo += `<div class="carr-opcoes" id="carrOpcoesMC">${opcoes.map((o,i) => `<button class="carr-opcao" data-i="${i}">${esc(o.pt)}</button>`).join("")}</div>`;
+    ex._opcoes = opcoes;
+  }
+  carrBolha(corpo, "oficial");
   const ultima = $("#carrChat").lastElementChild;
   ultima.querySelectorAll("[data-falar]").forEach(b => b.addEventListener("click", () => Fala.dizer(b.dataset.falar, b)));
-  const aj = ultima.querySelector(".carrAjuda");
-  if(aj) aj.addEventListener("click", () => { ultima.querySelector(".carrOculto").style.display = "block"; aj.style.display = "none"; });
-  q._soAudio = soAudio;
-  if(modoMC){
-    /* Distratores PLAUSÍVEIS: respostas-modelo de OUTRAS perguntas do
-       mesmo capítulo — pra acertar, precisa entender a pergunta de
-       verdade (e não só eliminar frase absurda). */
+  const btOuvir = ultima.querySelector("#carrOuvir");
+  if(btOuvir) btOuvir.addEventListener("click", () => Fala.dizer(w.en, btOuvir));
+  if(modo === "l" || modo === "o"){
     $("#carrEntrada").style.display = "none";
-    const distratores = [];
-    let guarda = 0;
-    while(distratores.length < 2 && guarda < 10){
-      const outra = gerarPerguntaCarreira(c);
-      if(outra.mo.en !== q.mo.en && !distratores.some(d => d.en === outra.mo.en)) distratores.push({ en:outra.mo.en, pt:outra.mo.pt });
-      guarda++;
-    }
-    while(distratores.length < 2) distratores.push(CARR_DISTRATORES[Math.floor(Math.random() * CARR_DISTRATORES.length)]);
-    const opcoes = embaralhar([{ en:q.mo.en, pt:q.mo.pt, ok:true }, ...distratores.map(d => ({ en:d.en, pt:d.pt, ok:false }))]);
     const cont = ultima.querySelector("#carrOpcoesMC");
-    cont.innerHTML = opcoes.map((o, i) => `<button class="carr-opcao" data-i="${i}">${esc(o.en)}<br><small>🇧🇷 ${esc(o.pt)}</small></button>`).join("");
     cont.querySelectorAll("[data-i]").forEach(b => b.addEventListener("click", () => {
       cont.querySelectorAll("[data-i]").forEach(x => x.disabled = true);
-      const escolhida = opcoes[Number(b.dataset.i)];
+      const escolhida = ex._opcoes[Number(b.dataset.i)];
       b.classList.add(escolhida.ok ? "certa" : "errada");
-      carrAvaliarMC(escolhida.ok, escolhida.en, q);
+      carrAvaliarMC(escolhida.ok);
     }));
   } else {
     $("#carrEntrada").style.display = "";
     $("#carrResposta").value = "";
     $("#carrResposta").focus({ preventScroll:true });
   }
-  Fala.dizer(q.en);
+  if(modo === "o") Fala.dizer(w.en);
 }
 /* Resposta FORTE: conta pro capítulo, sobe o nível (contador de fortes) */
-function carrForte(q){
+function carrForte(){
   const c = carrDados(), e = carreiraEstado;
   c.nivel++; c.acertos = (c.acertos || 0) + 1; c.capOk++;
   const xp = carrXpDoNivel(c.nivel - 1);
@@ -6643,10 +6714,10 @@ function carrForte(q){
   registrarAtividade(xp);
   COSM.ganhar(sem, null);
 }
-/* Resposta fraca/errada: volta pra fila (até 2 reapresentações) */
-function carrRefila(q){
-  q._tent = (q._tent || 0) + 1;
-  if(q._tent <= 2) carreiraEstado.fila.push(q);
+/* Palavra errada: volta pra fila (até 2 reapresentações) */
+function carrRefila(ex){
+  ex._tent = (ex._tent || 0) + 1;
+  if(ex._tent <= 2) carreiraEstado.fila.push(ex);
 }
 /* Depois do feedback: fecha capítulo/temporada se a meta foi batida */
 function carrAvancar(){
@@ -6674,7 +6745,7 @@ function carrAvancar(){
       const bolhaT = carrBolha(`<div class="quem">🏆 TEMPORADA ${c.temporada - 1} CONCLUÍDA!</div>
         <div class="en" style="color:var(--tinta)">Você fechou a temporada no <b>${esc(empVelha)}</b> (${esc(cidVelha)}) e voltou pro Brasil de cabeça erguida. 🇧🇷<br>
         💰 Salário da temporada: <b>+⭐ ${salario} XP</b> e <b>🌻 ${semT}</b>!<br>
-        E olha só: chegou um convite novo — <b>Temporada ${c.temporada}</b>, no <b>${esc(c.emp)}</b> em <b>${esc(c.cid[0])}</b>${carrTier(c) >= 3 ? ", nível 👑 AVANÇADO: perguntas difíceis e de ouvido" : ", agora mais difícil"}. Bora? 🚀<br>
+        E olha só: chegou um convite novo — <b>Temporada ${c.temporada}</b>, no <b>${esc(c.emp)}</b> em <b>${esc(c.cid[0])}</b>${carrTier(c) >= 3 ? ", nível 👑 AVANÇADO: palavras novas e de ouvido" : ", com palavras novas"}. Bora? 🚀<br>
         <button class="btn-principal azul carrCompart" style="margin-top:10px;width:auto;padding:10px 16px;font-size:.9rem">📣 Contar essa vitória pros amigos</button></div>`, "fb otima");
       const btCompart = bolhaT.querySelector(".carrCompart");
       if(btCompart) btCompart.addEventListener("click", convidarAmigo);
@@ -6684,114 +6755,88 @@ function carrAvancar(){
       const prox = carrCapAtual(c);
       carrBolha(`<div class="quem">${cap.ic} CAPÍTULO CONCLUÍDO! +🌻 ${bonusSem}</div>
         <div class="en" style="color:var(--tinta)">${hist}<br>
-        Próximo capítulo: <b>${prox.ic} ${esc(prox.nome)}</b> — ${prox.meta} respostas fortes. 💪</div>`, "fb otima");
+        Próximo capítulo: <b>${prox.ic} ${esc(prox.nome)}</b> — ${prox.meta} palavras dominadas. 💪</div>`, "fb otima");
     }
     Progresso.salvar();
   }
   carrProxima();
 }
-function carrAvaliarMC(acertou, textoEscolhido, q){
-  const e = carreiraEstado;
-  if(!e) return;
-  ENGINE.registrar("grammar", acertou);
-  carrBolha(esc(textoEscolhido), "voce");
+/* Avalia exercício de MÚLTIPLA ESCOLHA (modos "l" e "o") */
+function carrAvaliarMC(acertou){
+  const e = carreiraEstado, ex = e && e.atual;
+  if(!ex) return;
+  const { w, modo } = ex;
+  ENGINE.registrar("vocab", acertou);
+  if(modo === "o") ENGINE.registrar("listening", acertou);
   const c = carrDados();
   const cap = carrCapAtual(c);
-  let classe, titulo, subiu = false;
+  let classe, titulo;
   if(acertou){
-    classe = "otima"; titulo = `🌟 Isso mesmo! Resposta forte ${c.capOk + 1}/${cap.meta} do capítulo ${cap.ic} ${cap.nome}.`;
-    carrForte(q); subiu = true;
+    classe = "otima"; titulo = `🌟 Isso mesmo! Palavra ${c.capOk + 1}/${cap.meta} do capítulo ${cap.ic} ${cap.nome}.`;
+    carrForte();
   } else {
-    classe = "aprender"; titulo = "📚 Quase — essa resposta era de OUTRA pergunta. Olha o modelo; essa volta pra fila daqui a pouco:";
-    carrRefila(q);
+    classe = "aprender"; titulo = "📚 Quase — essa não era a palavra certa. Olha abaixo; ela volta pra fila daqui a pouco:";
+    carrRefila(ex);
   }
   e.respondidas++;
   c.respondidas = (c.respondidas || 0) + 1;
   Progresso.salvar();
   e.atual = null;
-  carrFeedback(classe, titulo, acertou ? q.ps : [], acertou ? [] : q.ps, q, subiu);
+  carrFeedback(classe, titulo, w);
   carrAtualizarTopo();
 }
+function carrNormalizarPalavra(s){ return String(s || "").toLowerCase().trim().replace(/[^a-z ]/g, ""); }
+/* Avalia exercício de ESCREVER (modo "e"): digitar a palavra em inglês */
 function carrAvaliar(){
-  const e = carreiraEstado, q = e && e.atual;
-  if(!q) return;
+  const e = carreiraEstado, ex = e && e.atual;
+  if(!ex || ex.modo !== "e") return;
   const bruto = $("#carrResposta").value.trim();
-  if(!bruto){ mostrarToast("Escreva ou fale sua resposta primeiro 😉"); return; }
-  const norm = simNormalizar(bruto);
+  if(!bruto){ mostrarToast("Digite a palavra em inglês primeiro 😉"); return; }
+  const { w } = ex;
   carrBolha(esc(bruto), "voce");
-  const ok = [], falta = [];
-  for(const p of q.ps){
-    if(p.w.some(w => norm.includes(" " + w + " "))) ok.push(p); else falta.push(p);
-  }
+  const acertou = carrNormalizarPalavra(bruto) === carrNormalizarPalavra(w.en);
   e.respondidas++;
   const c = carrDados();
   const cap = carrCapAtual(c);
-  let classe, titulo, subiu = false;
-  ENGINE.registrar("grammar", ok.length && !falta.length);
-  if(q._soAudio) ENGINE.registrar("listening", ok.length && !falta.length);
-  const palavrasResp = bruto.split(/\s+/).filter(Boolean).length;
-  if(ok.length && !falta.length && palavrasResp < 3){
-    /* Cobriu o ponto-chave mas com 1-2 palavras: entrevista real exige frase completa */
-    classe = "parcial"; titulo = "👍 Certo — mas numa entrevista de verdade, responda com uma FRASE completa (olha o modelo). Essa volta pra fila: na próxima, monte a frase inteira!";
-    const xpP = Math.round(carrXpDoNivel(c.nivel) / 4);
-    e.xpGanho += xpP; registrarAtividade(xpP);
-    carrRefila(q);
-  } else if(ok.length && !falta.length){
-    classe = "otima"; titulo = `🌟 Resposta forte ${c.capOk + 1}/${cap.meta} do capítulo ${cap.ic} ${cap.nome}!${q._retry ? " Errou antes e dominou agora — é assim que se aprende. 🔁✅" : ""}`;
-    carrForte(q); subiu = true;
-  } else if(ok.length){
-    classe = "parcial"; titulo = "👍 Boa — cobriu uma parte, mas faltou o resto. Olha o modelo: essa volta pra fila até sair forte!";
-    const xp = Math.round(carrXpDoNivel(c.nivel) / 4);
-    e.xpGanho += xp; registrarAtividade(xp);
-    carrRefila(q);
+  ENGINE.registrar("vocab", acertou);
+  ENGINE.registrar("grammar", acertou);
+  let classe, titulo;
+  if(acertou){
+    classe = "otima"; titulo = `🌟 Isso mesmo! Palavra ${c.capOk + 1}/${cap.meta} do capítulo ${cap.ic} ${cap.nome}!${ex._retry ? " Errou antes e acertou agora — é assim que se aprende. 🔁✅" : ""}`;
+    carrForte();
   } else {
-    classe = "aprender"; titulo = "📚 Ainda não — estuda o modelo, porque essa pergunta VOLTA daqui a pouco (sem punição, é treino):";
-    carrRefila(q);
+    classe = "aprender"; titulo = "📚 Ainda não — olha como se escreve; essa palavra VOLTA daqui a pouco (sem punição, é treino):";
+    carrRefila(ex);
   }
   c.respondidas = (c.respondidas || 0) + 1;
   Progresso.salvar();
   e.atual = null;
-  carrFeedback(classe, titulo, ok, falta, q, subiu);
+  carrFeedback(classe, titulo, w);
   carrAtualizarTopo();
 }
 function carrEnsinar(){
-  const e = carreiraEstado, q = e && e.atual;
-  if(!q) return;
+  const e = carreiraEstado, ex = e && e.atual;
+  if(!ex) return;
   e.respondidas++;
   e.atual = null;
-  carrRefila(q);
+  carrRefila(ex);
   Progresso.salvar();
-  carrFeedback("aprender", "📚 Sem problema — estuda o modelo, que essa volta daqui a pouco pra você mostrar que aprendeu:", [], q.ps, q, false);
+  carrFeedback("aprender", "📚 Sem problema — olha a palavra; ela volta daqui a pouco pra você mostrar que aprendeu:", ex.w);
   carrAtualizarTopo();
 }
-function carrFeedback(classe, titulo, ok, falta, q, subiu){
-  let html = `<div class="titulo">${titulo}</div>`;
-  if(ok.length) html += `<div style="font-weight:700;font-size:.9rem">✅ Você já disse: ${ok.map(p => esc(p.pt)).join(" · ")}</div>`;
-  if(falta.length) html += `<div style="font-weight:700;font-size:.9rem;color:#8C3212">🧩 Faltou: </div><ul>${falta.map(p => `<li>${esc(p.pt)}</li>`).join("")}</ul>`;
-  if(q.followup && subiu) html += `<div style="margin-top:6px;font-weight:700;font-size:.85rem;color:var(--verde-escuro)">🔥 Bônus da próxima pergunta: pode vir um follow-up de verdade, tipo entrevista real.</div>`;
-  html += `<div class="sim-modelo">
-    <div class="rot">💬 RESPOSTA MODELO</div>
-    <div class="en">${esc(q.mo.en)} <button class="btn-som" data-falar="${esc(q.mo.en)}">🔊</button></div>
-    <div class="som" style="margin-top:6px">🗣️ ${esc(q.mo.som)}</div>
-    <div class="pt">🇧🇷 ${esc(q.mo.pt)}</div>
+function carrFeedback(classe, titulo, w){
+  let html = `<div class="titulo">${titulo}</div>
+  <div class="sim-modelo">
+    <div class="rot">💬 PALAVRA</div>
+    <div class="en">${esc(w.en)} <button class="btn-som" data-falar="${esc(w.en)}">🔊</button></div>
+    <div class="som" style="margin-top:6px">🗣️ ${esc(w.som)}</div>
+    <div class="pt">🇧🇷 ${esc(w.pt)}</div>
+    ${w.exEn ? `<div style="margin-top:8px;font-weight:700">${esc(w.exEn)}</div><div style="font-weight:700;color:var(--tinta-suave);font-size:.88rem">${esc(w.exPt || "")}</div>` : ""}
   </div>
-  <div style="margin-top:8px;font-weight:600;font-size:.9rem">💡 ${esc(q.dk)}</div>
-  <div class="sim-acoes-fb"><button class="carrContinuar">➡️ Próxima pergunta</button></div>`;
+  <div class="sim-acoes-fb"><button class="carrContinuar">➡️ Próxima palavra</button></div>`;
   const div = carrBolha(html, "fb " + classe);
   div.querySelectorAll("[data-falar]").forEach(b => b.addEventListener("click", () => Fala.dizer(b.dataset.falar, b)));
-  div.querySelector(".carrContinuar").addEventListener("click", () => {
-    if(q.followup && subiu){
-      carrBolha(`<div class="quem">🧑‍💼 ENTREVISTADOR (follow-up)</div><div class="en">${esc(q.followup.en)} <button class="btn-som" data-falar="${esc(q.followup.en)}">🔊</button></div><div class="som">🗣️ ${esc(q.followup.som)}</div><div class="pt">🇧🇷 ${esc(q.followup.pt)}</div>`, "oficial");
-      const ult = $("#carrChat").lastElementChild;
-      ult.querySelectorAll("[data-falar]").forEach(b => b.addEventListener("click", () => Fala.dizer(b.dataset.falar, b)));
-      Fala.dizer(q.followup.en);
-      $("#carrResposta").value = "";
-      $("#carrResposta").focus({ preventScroll:true });
-      carreiraEstado.atual = { ps:[{ pt:"resposta livre", w:["i","the","and","because","work"] }], mo:{en:"Great — follow-up questions like this show up in real interviews. Keep answering naturally.", som:"grêit — fólou-âp quéschons láik dhis chôu âp in ríal íntervius. quíp éns-uerin nétchurali.", pt:"Ótimo — perguntas de follow-up como essa aparecem em entrevistas de verdade. Continue respondendo naturalmente."}, dk:"Follow-up é bônus — qualquer resposta coerente em inglês já vale a experiência.", followup:null };
-    } else {
-      carrAvancar();
-    }
-  });
+  div.querySelector(".carrContinuar").addEventListener("click", carrAvancar);
 }
 function carrEncerrar(){
   const e = carreiraEstado;
@@ -6800,7 +6845,7 @@ function carrEncerrar(){
   const cap = carrCapAtual(c);
   $("#concluTitulo").textContent = "🧗 Sessão de Carreira encerrada!";
   $("#concluTexto").textContent = e.respondidas
-    ? `Você está na Temporada ${c.temporada}, capítulo ${cap.ic} ${cap.nome} (${c.capOk}/${cap.meta} respostas fortes)${c.temporadasFeitas ? ` — e já concluiu ${c.temporadasFeitas} temporada${c.temporadasFeitas === 1 ? "" : "s"}` : ""}. Esse progresso nunca se perde. Nesta sessão: ⭐ ${e.xpGanho} XP e 🌻 ${e.girassoisGanho} girassóis.`
+    ? `Você está na Temporada ${c.temporada}, capítulo ${cap.ic} ${cap.nome} (${c.capOk}/${cap.meta} palavras dominadas)${c.temporadasFeitas ? ` — e já concluiu ${c.temporadasFeitas} temporada${c.temporadasFeitas === 1 ? "" : "s"}` : ""}. Esse progresso nunca se perde. Nesta sessão: ⭐ ${e.xpGanho} XP e 🌻 ${e.girassoisGanho} girassóis.`
     : "Sessão rápida! Sua temporada continua exatamente onde você parou — volte quando quiser.";
   $("#concluXP").textContent = String(e.xpGanho);
   $("#btnProximoModulo").style.display = "none";
@@ -6809,7 +6854,7 @@ function carrEncerrar(){
 }
 function carrGravar(){
   const Rec = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if(!Rec){ mostrarToast("🎤 Seu navegador não tem reconhecimento de voz — digite a resposta"); return; }
+  if(!Rec){ mostrarToast("🎤 Seu navegador não tem reconhecimento de voz — digite a palavra"); return; }
   let r;
   try{ r = new Rec(); }catch(err){ mostrarToast("🎤 Microfone indisponível"); return; }
   r.lang = "en-US"; r.interimResults = false; r.maxAlternatives = 1;
@@ -8164,7 +8209,7 @@ function ditadoFim(){
    ❌ Caça aos Erros = só o que você errou (pontos fracos)
    ================================================================== */
 const JOGOS_LISTA = [
-  { id:"carreira",  ic:"🧗", nome:"Modo Carreira",    skill:"grammar",   cor:"#FFF3D1", desc:"Sua história nos EUA em temporadas: agência → vaga → visto → chegada → trabalho. Feche capítulos, conclua temporadas." },
+  { id:"carreira",  ic:"🧗", nome:"Modo Carreira",    skill:"vocab",   cor:"#FFF3D1", desc:"Sua história nos EUA em temporadas: domine o VOCABULÁRIO de cada etapa — agência, vaga, visto, chegada, trabalho." },
   { id:"entrevista",ic:"🎙️", nome:"Simulador de Entrevista", skill:"speaking", cor:"#E4EDFA", desc:"Ensaie a entrevista real do visto: agência, empregador, consulado e chegada nos EUA." },
   { id:"ditado",    ic:"👂", nome:"Ditado Relâmpago", skill:"listening", cor:"#E1F3EA", desc:"Treine o OUVIDO: escute a frase em inglês e escreva o que ouviu. 3 vidas." },
   { id:"jardim",    ic:"🌻", nome:"Jardim de Palavras", skill:"vocab", cor:"#FFF3D1", desc:"Aprenda palavra por palavra: ler, ouvir, escrever e FALAR até florescer." },
@@ -8181,9 +8226,10 @@ const JOGOS_LISTA = [
 const JOGOS_TUTORIAL = {
   carreira: { ic:"🧗", nome:"Modo Carreira", passos:[
     ["🎬","É a sua HISTÓRIA nos EUA: cada temporada tem 6 capítulos, na ordem real do H-2B/H-2A — 📞 agência, 🤝 vaga, 🏛️ visto, 🛬 chegada, 👷 trabalho e 🏆 fim de temporada. Empresa e cidade são suas a temporada inteira."],
-    ["💪","Pra fechar um capítulo, DOMINE as respostas dele. Resposta fraca ou errada VOLTA pra fila e aparece de novo — até você acertar forte. É assim que fixa de verdade."],
-    ["📈","Temporada 1 ensina (múltipla escolha nos primeiros capítulos). Da Temporada 2 em diante: resposta livre, perguntas só de ouvido 👂 e nível cada vez mais alto."],
-    ["🏆","Fechou os 6 capítulos = temporada concluída: você recebe o \"salário\" (XP alto + girassóis) e um convite pra próxima temporada, mais difícil. Sua carreira nunca reseta. Responda sempre com frases completas!"]
+    ["🔤","Cada capítulo é um pacote de PALAVRAS daquela etapa (documentos, chegada, primeira semana...) + o vocabulário da SUA vaga. Sem entrevista, sem resposta pessoal — é treino de vocabulário mesmo: ler, ouvir e escrever."],
+    ["💪","Pra fechar um capítulo, DOMINE as palavras dele. Errou? Ela VOLTA pra fila e aparece de novo — até você acertar forte. É assim que fixa de verdade."],
+    ["📈","Temporada 1 só pede reconhecimento (múltipla escolha). Temporada 2 soma o OUVIDO 👂. Temporada 3 em diante soma ESCREVER a palavra — nível cada vez mais alto."],
+    ["🏆","Fechou os 6 capítulos = temporada concluída: você recebe o \"salário\" (XP alto + girassóis) e um convite pra próxima, com palavras novas. Sua carreira nunca reseta."]
   ]},
   entrevista: { ic:"🎙️", nome:"Simulador de Entrevista", passos:[
     ["🎬","Simulação da entrevista real: escolha programa, etapa e vaga — o entrevistador pergunta em inglês, você responde falando 🎤 ou digitando."],
