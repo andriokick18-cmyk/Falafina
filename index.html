@@ -565,8 +565,8 @@ body.sem-shell .topo .titulo-pagina{ visibility:hidden; }
 /* ---------- BORDAS DE AVATAR (anel animado ao redor da foto) ---------- */
 .avb{display:inline-flex;padding:3px;border-radius:50%;background:transparent;flex:none;position:relative}
 .avb::before{content:"";position:absolute;inset:-4px;border-radius:50%;z-index:-1;opacity:0}
-.avb-madeira{background:linear-gradient(135deg,#8B5A2B,#5C3A1A,#A0703C)}
-.avb-bronze{background:linear-gradient(135deg,#CD7F32,#8C5A20,#E8A85C)}
+.avb-madeira{background:linear-gradient(135deg,#8B5A2B,#5C3A1A,#A0703C,#8B5A2B);background-size:250% 250%;animation:avbBrilhoSuave 3.2s ease-in-out infinite,avbDegradeSuave 6s ease-in-out infinite}
+.avb-bronze{background:linear-gradient(135deg,#CD7F32,#8C5A20,#E8A85C,#CD7F32);background-size:250% 250%;box-shadow:0 0 5px rgba(205,127,50,.45);animation:avbBrilhoSuave 2.8s ease-in-out infinite,avbDegradeSuave 5s ease-in-out infinite}
 .avb-prata{background:linear-gradient(135deg,#C0C0C0,#8E9BA6,#F2F5F7);animation:avbBrilhoSuave 2.4s ease-in-out infinite}
 .avb-ouro{background:linear-gradient(135deg,#FFD700,#B8860B,#FFF3B0);box-shadow:0 0 8px rgba(255,215,0,.55);animation:avbBrilhoSuave 2s ease-in-out infinite}
 /* Bordas giratórias: o próprio gradiente conic gira (rotate), e um brilho pulsante por fora dá profundidade — as duas animações rodam juntas, sem uma cancelar a outra. */
@@ -586,6 +586,7 @@ body.sem-shell .topo .titulo-pagina{ visibility:hidden; }
 @keyframes avbGira{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 @keyframes avbPulsaFora{from{opacity:.35;filter:blur(2px)}to{opacity:.85;filter:blur(5px)}}
 @keyframes avbBrilhoSuave{0%,100%{filter:brightness(1)}50%{filter:brightness(1.28)}}
+@keyframes avbDegradeSuave{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
 @keyframes avbPulsa{from{box-shadow:0 0 6px rgba(255,200,0,.6)}to{box-shadow:0 0 18px rgba(255,215,0,1)}}
 @keyframes avbHue{0%{filter:hue-rotate(0deg) brightness(1)}50%{filter:hue-rotate(25deg) brightness(1.25)}100%{filter:hue-rotate(0deg) brightness(1)}}
 .avb>*{margin:0 !important}
@@ -760,7 +761,30 @@ body.sem-shell .btn-info-topo{display:none}
 .podio{display:flex;gap:10px;align-items:flex-end;justify-content:center;margin-bottom:16px}
 .podio .pd{flex:1;max-width:150px;text-align:center;background:var(--branco);border:2px solid rgba(33,49,58,.14);border-radius:18px;padding:12px 8px 10px;cursor:pointer;transition:transform .12s}
 .podio .pd:active{transform:translateY(2px)}
-.podio .pd.p1{border-color:var(--sol);background:linear-gradient(180deg,#FFF8E7,#FFF);padding-top:16px;padding-bottom:16px}
+.podio .pd.p1{border-color:var(--sol);background:linear-gradient(180deg,#FFF8E7,#FFF);padding-top:22px;padding-bottom:14px;position:relative;overflow:visible;z-index:1;box-shadow:0 0 0 3px #FFD700,0 8px 20px rgba(255,190,0,.35);animation:reiPulsaBorda 2.4s ease-in-out infinite}
+.podio .pd.p1::before{content:"";position:absolute;inset:-16px;border-radius:50%;z-index:-1;opacity:.9;
+  background:conic-gradient(from 0deg,transparent 0 10deg,rgba(255,215,0,.55) 14deg,transparent 18deg,transparent 70deg,rgba(255,215,0,.55) 74deg,transparent 78deg,transparent 130deg,rgba(255,215,0,.55) 134deg,transparent 138deg,transparent 190deg,rgba(255,215,0,.55) 194deg,transparent 198deg,transparent 250deg,rgba(255,215,0,.55) 254deg,transparent 258deg,transparent 310deg,rgba(255,215,0,.55) 314deg,transparent 318deg,transparent 360deg);
+  animation:reiRaios 7s linear infinite}
+.podio .pd.p1::after{content:"✨";position:absolute;font-size:.85rem;color:#FFD700;top:8px;left:12px;animation:fxPisca 1.3s ease-in-out infinite}
+.podio .pd.p1 .avwrap{animation:reiAvatarPulsa 2.2s ease-in-out infinite}
+.podio .pd.p1 .coroa{font-size:2.3rem;filter:drop-shadow(0 2px 4px rgba(184,134,11,.6));animation:reiCoroaFlutua 1.6s ease-in-out infinite,reiCoroaGlow 1.6s ease-in-out infinite}
+@keyframes reiRaios{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes reiPulsaBorda{0%,100%{box-shadow:0 0 0 3px #FFD700,0 8px 18px rgba(255,200,0,.3)}50%{box-shadow:0 0 0 5px #FFEA80,0 10px 28px rgba(255,200,0,.55)}}
+@keyframes reiCoroaFlutua{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-5px) rotate(4deg)}}
+@keyframes reiCoroaGlow{0%,100%{filter:drop-shadow(0 0 3px gold)}50%{filter:drop-shadow(0 0 10px gold)}}
+@keyframes reiAvatarPulsa{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+/* ---------- BANNER DO PERFIL PÚBLICO (modal aberto pelo ranking) ---------- */
+.perfil-banner{position:relative;overflow:visible;border-radius:20px;padding:18px 16px 14px;text-align:center;background:linear-gradient(180deg,var(--verde-claro),#fff);border:2px solid rgba(33,49,58,.12);margin-bottom:4px}
+.perfil-banner>*{position:relative;z-index:1}
+.perfil-banner.tier-rei{background:linear-gradient(180deg,#FFF3D0,#FFF);border-color:#FFD700;box-shadow:0 0 0 3px #FFD700,0 8px 20px rgba(255,190,0,.3)}
+.perfil-banner.tier-rei::before{content:"";position:absolute;inset:-30px;z-index:0;opacity:.5;border-radius:50%;
+  background:conic-gradient(from 0deg,transparent 0 10deg,rgba(255,215,0,.4) 14deg,transparent 18deg,transparent 70deg,rgba(255,215,0,.4) 74deg,transparent 78deg,transparent 130deg,rgba(255,215,0,.4) 134deg,transparent 138deg,transparent 190deg,rgba(255,215,0,.4) 194deg,transparent 198deg,transparent 250deg,rgba(255,215,0,.4) 254deg,transparent 258deg,transparent 310deg,rgba(255,215,0,.4) 314deg,transparent 318deg,transparent 360deg);
+  animation:reiRaios 9s linear infinite}
+.perfil-banner.tier-prata{background:linear-gradient(180deg,#F0F0F3,#fff);border-color:#C0C0C0}
+.perfil-banner.tier-bronze{background:linear-gradient(180deg,#F5E3D0,#fff);border-color:#CD7F32}
+.perfil-selo-pos{display:inline-block;font-weight:900;font-size:.76rem;background:rgba(33,49,58,.07);border-radius:99px;padding:4px 12px}
+.perfil-nome-modal{font-family:var(--f-display);font-size:1.2rem;font-weight:700;margin-top:10px}
+.perfil-titulo-modal{font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:2px}
 .podio .pd .coroa{font-size:1.5rem;line-height:1;display:block;margin-bottom:2px}
 .podio .pd b{font-family:var(--f-display);font-size:.85rem;display:block;margin-top:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .podio .pd small{font-weight:700;color:var(--tinta-suave);font-size:.68rem;display:block;line-height:1.3}
@@ -787,6 +811,7 @@ body.sem-shell .btn-info-topo{display:none}
   <div class="sb-extras">
     <button class="sb-item" data-rota="loja"><span class="ic">🛍️</span>Loja</button>
     <button class="sb-item sb-wpp" id="sbGrupoWpp"><span class="ic">💬</span>Grupo do WhatsApp</button>
+    <button class="sb-item" data-rota="admin" style="opacity:.7"><span class="ic">🔑</span>Admin</button>
   </div>
   <div class="sb-premium">
     <b>👑 Seja Premium</b>
@@ -1113,6 +1138,7 @@ body.sem-shell .btn-info-topo{display:none}
 <!-- ================= TELA: FIM DA SEMANA GRÁTIS ================= -->
 <main class="tela" id="tela-paywall"><div id="paywallConteudo"></div></main>
 <main class="tela" id="tela-loja"><div id="lojaConteudo"></div></main>
+<main class="tela" id="tela-admin"><div id="adminConteudo"></div></main>
 </div><!-- /conteudo -->
 </div><!-- /principal -->
 </div><!-- /app -->
@@ -5146,16 +5172,21 @@ function fecharBauModal(){ $("#bauOverlay").classList.remove("aberto"); }
 $("#bauOverlay") && $("#bauOverlay").addEventListener("click", e => { if(e.target.id === "bauOverlay") fecharBauModal(); });
 
 /* ---------- PERFIL PÚBLICO (clique no nome no ranking) ---------- */
-function abrirPerfilPublico(c){
+function abrirPerfilPublico(c, pos){
   if(!c) return;
   const resumo = c.resumo || null;
   const todas = listaConquistas(resumo);
   const medalhas = todas.filter(m => m.ok);
   const alvo = $("#bauCaixaConteudo");
+  const tierClass = pos === 0 ? "tier-rei" : pos === 1 ? "tier-prata" : pos === 2 ? "tier-bronze" : "";
+  const posBadge = (pos != null) ? `<span class="perfil-selo-pos">${pos === 0 ? "👑 1º lugar — Rei do Ranking" : (pos + 1) + "º lugar no ranking"}</span>` : "";
   alvo.innerHTML = `
-    <p class="bau-titulo">🪪 Perfil de ${esc(c.nome)}</p>
-    <div style="display:flex;justify-content:center;margin:10px 0">${bordaWrap(`<div class="avatar-g">${c.foto ? `<img src="${c.foto}" alt="">` : "👤"}</div>`, c.borda)}</div>
-    <p style="text-align:center;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px">${tituloPorXP(c.xp || 0)} ${petHTML(c.pet, 26)}</p>
+    <div class="perfil-banner ${tierClass} ${c.efeito ? "fx-" + c.efeito : ""}">
+      ${posBadge}
+      <div style="display:flex;justify-content:center;margin-top:8px">${bordaWrap(`<div class="avatar-g" style="width:104px;height:104px;font-size:2.8rem">${c.foto ? `<img src="${c.foto}" alt="">` : "👤"}</div>`, c.borda)}</div>
+      <p class="perfil-nome-modal">${esc(c.nome)}</p>
+      <p class="perfil-titulo-modal">${tituloPorXP(c.xp || 0)} ${petHTML(c.pet, 26)}</p>
+    </div>
     <div class="stat-grid" style="margin-top:10px">
       <div class="stat-mini"><b>⭐ ${(c.xp || 0).toLocaleString("pt-BR")}</b><small>XP total</small></div>
       <div class="stat-mini"><b>🔥 ${c.diasSeguidos || 0}</b><small>dias seguidos</small></div>
@@ -5164,7 +5195,6 @@ function abrirPerfilPublico(c){
       <div class="stat-mini"><b>🎯 ${c.desafios || 0}</b><small>desafios</small></div>
       <div class="stat-mini"><b>🏅 ${medalhas.length}/${todas.length}</b><small>conquistas</small></div>
     </div>
-    ${c.efeito ? `<div class="rank-item fx-${c.efeito}" style="margin-top:12px;font-weight:800;justify-content:center">✨ efeito de ranking equipado</div>` : ""}
     <div class="secao-t" style="margin-top:14px">🏅 Medalhas conquistadas</div>
     <div class="conq-grid">${medalhas.length ? medalhas.slice(0, 12).map(m => `<div class="conq medal-${m.metal}"><span class="ic">${m.ic}</span><b style="font-size:.78rem">${esc(m.nome)}</b></div>`).join("") : '<p style="font-weight:700;color:var(--tinta-suave)">Ainda sem medalhas — começando agora!</p>'}</div>
     ${medalhas.length > 12 ? `<p style="text-align:center;font-weight:700;color:var(--tinta-suave);font-size:.82rem;margin-top:8px">+ ${medalhas.length - 12} medalha(s) a mais</p>` : ""}
@@ -5782,7 +5812,7 @@ function renderRanking(){
     </div>`; }).join("") : (temPodio ? "" : '<p style="font-weight:700;color:var(--tinta-suave)">Ninguém neste placar ainda — seja o primeiro! 😏</p>'));
     alvo.querySelectorAll("[data-raba]").forEach(b => b.addEventListener("click", () => { rankAba = b.dataset.raba; renderRanking(); }));
     const rl = alvo.querySelector("#rkLoja"); if(rl) rl.addEventListener("click", () => navPara("loja"));
-    alvo.querySelectorAll("[data-perfil]").forEach(el => el.addEventListener("click", () => abrirPerfilPublico(ordenada[Number(el.dataset.perfil)])));
+    alvo.querySelectorAll("[data-perfil]").forEach(el => el.addEventListener("click", () => { const pp = Number(el.dataset.perfil); abrirPerfilPublico(ordenada[pp], pp); }));
   };
   const meusCosm = slot => { const u = COSM.usando(slot); return u ? u.id : null; };
   const eu = Contas.sessao();
@@ -8715,6 +8745,146 @@ function renderLoja(){
   }));
 }
 /* ==================================================================
+   🔑 PAINEL ADMIN (dentro do app) — só quem tem a ADMIN_CHAVE do
+   Render entra de verdade (mesma trava do /admin isolado). Pedido do
+   Andrio: uma aba normal no menu, sem precisar digitar uma URL.
+   ================================================================== */
+let ADMIN_APP = { chave: localStorage.getItem("ff_admin_chave") || "", dados: null, pedidos: [] };
+async function renderAdminApp(){
+  if(!ADMIN_APP.chave){ renderAdminLogin(); return; }
+  await adminAppCarregar();
+}
+function renderAdminLogin(msg){
+  $("#adminConteudo").innerHTML = `
+  <div class="cardb" style="max-width:420px;margin:24px auto;text-align:center;padding:26px 20px">
+    <div style="font-size:2.4rem">🔑</div>
+    <h2 style="font-family:var(--f-display);margin:8px 0">Painel Admin</h2>
+    <p style="font-weight:700;color:var(--tinta-suave);font-size:.88rem">Só o Andrio entra aqui — cole a ADMIN_CHAVE configurada no Render.</p>
+    ${msg ? `<p style="font-weight:800;color:var(--coral);margin-top:8px">${esc(msg)}</p>` : ""}
+    <input type="password" id="adminChaveInput" placeholder="Sua ADMIN_CHAVE" style="width:100%;margin-top:12px;padding:12px;border:2px solid var(--borda);border-radius:12px;font-weight:700">
+    <button class="btn-principal" id="adminEntrarBtn" style="margin-top:12px">Entrar</button>
+  </div>`;
+  $("#adminEntrarBtn").addEventListener("click", async () => {
+    const v = $("#adminChaveInput").value.trim();
+    if(!v) return;
+    ADMIN_APP.chave = v;
+    localStorage.setItem("ff_admin_chave", v);
+    await adminAppCarregar();
+  });
+}
+async function adminAppCarregar(){
+  try{
+    const r = await fetch("/api/admin/dados?chave=" + encodeURIComponent(ADMIN_APP.chave));
+    const j = await r.json();
+    if(!j.ok){ ADMIN_APP.chave = ""; localStorage.removeItem("ff_admin_chave"); renderAdminLogin(j.erro || "Chave errada"); return; }
+    ADMIN_APP.dados = j;
+    const rp = await fetch("/api/admin/pedidos?chave=" + encodeURIComponent(ADMIN_APP.chave));
+    const jp = await rp.json();
+    ADMIN_APP.pedidos = (jp && jp.ok) ? jp.pedidos : [];
+    adminAppDesenhar();
+  }catch(e){ renderAdminLogin("Sem conexão com o servidor"); }
+}
+function adminAppStatusDe(c){
+  const ag = ADMIN_APP.dados.agora;
+  if(c.premiumAte && c.premiumAte > ag) return { rot:"👑 Premium até " + new Date(c.premiumAte).toLocaleDateString("pt-BR"), cor:"var(--verde-escuro)" };
+  if(!c.trialInicio) return { rot:"✨ Novo (trial não começou)", cor:"var(--azul)" };
+  const passados = Math.floor((ag - new Date(c.trialInicio + "T00:00:00").getTime()) / 86400000);
+  const resta = ADMIN_APP.dados.trialDias - passados;
+  if(resta > 1) return { rot:"🎁 Trial: " + resta + " dias", cor:"#7A5A00" };
+  if(resta === 1 || resta === 0) return { rot: resta === 1 ? "⏳ ÚLTIMO DIA de trial" : "🔴 Trial ACABA HOJE", cor:"var(--coral)" };
+  return { rot:"🔒 Expirou há " + (-resta) + " dia" + (resta === -1 ? "" : "s"), cor:"var(--tinta-suave)" };
+}
+function adminAppDesenhar(){
+  const d = ADMIN_APP.dados;
+  const pend = ADMIN_APP.pedidos.filter(p => p.status === "pendente");
+  const feitos = ADMIN_APP.pedidos.filter(p => p.status !== "pendente").slice(0, 10);
+  const prem = d.contas.filter(c => c.premiumAte && c.premiumAte > d.agora).length;
+  const cartaoPedido = (p, ativo) => `<div class="cardb" style="display:flex;gap:12px;flex-wrap:wrap;margin-top:10px;${ativo ? "border-color:var(--coral)" : ""}">
+    <img class="admin-img-abrir" data-src="${p.comprovante}" src="${p.comprovante}" alt="comprovante" style="width:100px;border-radius:10px;cursor:pointer;object-fit:cover">
+    <div style="flex:1;min-width:160px">
+      <b>${esc(p.nome || p.email)}</b><br><small style="font-weight:700;color:var(--tinta-suave)">${esc(p.email)}</small>
+      <p style="font-weight:700;font-size:.85rem;margin-top:4px">${esc(p.planoNome || p.plano || "")} ${p.valor ? "· " + esc(p.valor) : ""} · ${new Date(p.criadoEm).toLocaleString("pt-BR")}</p>
+      ${ativo ? `<div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+        <button class="btn-principal admin-aprovar" style="width:auto;padding:8px 14px" data-id="${p.id}" data-dias="${p.dias}">✅ Aprovar (${p.dias}d)</button>
+        <button class="btn-principal" style="width:auto;padding:8px 14px;background:var(--coral)" data-idrej="${p.id}">❌ Rejeitar</button>
+      </div>` : `<p style="font-weight:800;margin-top:6px">${p.status === "aprovado" ? "✅ aprovado" : "❌ rejeitado"}</p>`}
+    </div>
+  </div>`;
+  const cartaoAluno = c => {
+    const st = adminAppStatusDe(c);
+    return `<div class="cardb" style="margin-top:10px">
+      <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center">
+        <div><b>${esc(c.nome || "(sem nome)")}</b><br><small style="font-weight:700;color:var(--tinta-suave);word-break:break-all">${esc(c.email)}</small></div>
+        <span style="font-weight:800;font-size:.75rem;color:${st.cor}">${st.rot}</span>
+      </div>
+      <p style="font-weight:700;font-size:.8rem;color:var(--tinta-suave);margin-top:4px">⭐ ${c.xp} XP · 🔥 melhor ${c.melhorSeq}d · 📚 ${c.aulas} aulas · 🧗 T${c.temporada}</p>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
+        <button class="btn-link admin-prem" data-email="${c.email}" data-dias="30">👑 +30 dias</button>
+        <button class="btn-link admin-prem" data-email="${c.email}" data-dias="90">👑 +90</button>
+        <button class="btn-link admin-prem" data-email="${c.email}" data-dias="365">👑 +1 ano</button>
+        <button class="btn-link admin-prem" data-email="${c.email}" data-dias="36500" style="color:var(--sol-escuro,#7A5A00)">👑 VIP pra sempre</button>
+        <button class="btn-link admin-baus" data-email="${c.email}">🎁 Baús</button>
+      </div>
+    </div>`;
+  };
+  $("#adminConteudo").innerHTML = `
+  <div class="cardb" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+    <b style="font-family:var(--f-display)">🔑 Painel Admin</b>
+    <button class="btn-link" id="adminSairBtn">Sair do painel</button>
+  </div>
+  <div class="stat-grid" style="margin-top:12px">
+    <div class="stat-mini"><b>${d.contas.length}</b><small>CONTAS</small></div>
+    <div class="stat-mini"><b>👑 ${prem}</b><small>PREMIUM</small></div>
+    <div class="stat-mini"><b>${pend.length}</b><small>PEDIDOS PENDENTES</small></div>
+  </div>
+  <div class="secao-t" style="margin-top:16px">💳 Pedidos de compra Pix ${pend.length ? "(" + pend.length + ")" : ""}</div>
+  ${pend.map(p => cartaoPedido(p, true)).join("") || '<p style="font-weight:700;color:var(--tinta-suave);margin-top:8px">Nenhum pedido pendente 😎</p>'}
+  ${feitos.length ? `<div class="secao-t" style="margin-top:16px">Últimos processados</div>${feitos.map(p => cartaoPedido(p, false)).join("")}` : ""}
+  <div class="secao-t" style="margin-top:20px">👥 Alunos</div>
+  <input id="adminBusca" placeholder="Buscar por nome ou e-mail..." style="width:100%;margin-top:6px;padding:10px;border:2px solid var(--borda);border-radius:12px;font-weight:700">
+  <div id="adminListaAlunos">${d.contas.slice(0, 60).map(cartaoAluno).join("")}</div>`;
+  $("#adminSairBtn").addEventListener("click", () => { ADMIN_APP.chave = ""; localStorage.removeItem("ff_admin_chave"); renderAdminLogin(); });
+  $("#adminConteudo").querySelectorAll(".admin-img-abrir").forEach(img => img.addEventListener("click", () => window.open(img.dataset.src)));
+  $("#adminConteudo").querySelectorAll(".admin-aprovar").forEach(b => b.addEventListener("click", () => adminAppAprovar(b.dataset.id, b.dataset.dias)));
+  $("#adminConteudo").querySelectorAll("[data-idrej]").forEach(b => b.addEventListener("click", () => adminAppRejeitar(b.dataset.idrej)));
+  $("#adminConteudo").querySelectorAll(".admin-prem").forEach(b => b.addEventListener("click", () => adminAppPremium(b.dataset.email, b.dataset.dias)));
+  $("#adminConteudo").querySelectorAll(".admin-baus").forEach(b => b.addEventListener("click", () => adminAppBaus(b.dataset.email)));
+  $("#adminBusca").addEventListener("input", () => {
+    const q = $("#adminBusca").value.trim().toLowerCase();
+    const filtradas = ADMIN_APP.dados.contas.filter(c => !q || (c.nome || "").toLowerCase().includes(q) || c.email.includes(q));
+    $("#adminListaAlunos").innerHTML = filtradas.slice(0, 60).map(cartaoAluno).join("") || '<p style="font-weight:700;color:var(--tinta-suave)">Nenhum aluno encontrado.</p>';
+    $("#adminListaAlunos").querySelectorAll(".admin-prem").forEach(b => b.addEventListener("click", () => adminAppPremium(b.dataset.email, b.dataset.dias)));
+    $("#adminListaAlunos").querySelectorAll(".admin-baus").forEach(b => b.addEventListener("click", () => adminAppBaus(b.dataset.email)));
+  });
+}
+async function adminAppAprovar(id, dias){
+  if(!confirm("Aprovar este pagamento e ativar " + dias + " dias de VIP?")) return;
+  const r = await fetch("/api/admin/pedidos/aprovar?chave=" + encodeURIComponent(ADMIN_APP.chave) + "&id=" + encodeURIComponent(id) + "&dias=" + encodeURIComponent(dias));
+  const j = await r.json();
+  if(j.ok){ mostrarToast("👑 VIP ativado para " + j.email); adminAppCarregar(); } else mostrarToast("❌ " + (j.erro || "Erro"));
+}
+async function adminAppRejeitar(id){
+  if(!confirm("Rejeitar este pedido?")) return;
+  const r = await fetch("/api/admin/pedidos/rejeitar?chave=" + encodeURIComponent(ADMIN_APP.chave) + "&id=" + encodeURIComponent(id));
+  const j = await r.json();
+  if(j.ok) adminAppCarregar(); else mostrarToast("❌ " + (j.erro || "Erro"));
+}
+async function adminAppPremium(email, dias){
+  if(!confirm("Ativar Premium por " + dias + " dias para\n" + email + "?")) return;
+  const r = await fetch("/api/premium?chave=" + encodeURIComponent(ADMIN_APP.chave) + "&email=" + encodeURIComponent(email) + "&dias=" + encodeURIComponent(dias));
+  const j = await r.json();
+  if(j.ok){ mostrarToast("👑 Premium ativado até " + new Date(j.premiumAte).toLocaleDateString("pt-BR")); adminAppCarregar(); }
+  else mostrarToast("❌ " + (j.erro || "Erro"));
+}
+async function adminAppBaus(email){
+  const qtd = parseInt(prompt("Quantos baús creditar pra " + email + "?", "50") || "0", 10);
+  if(!qtd || qtd < 1) return;
+  const r = await fetch("/api/creditar-baus?chave=" + encodeURIComponent(ADMIN_APP.chave) + "&email=" + encodeURIComponent(email) + "&qtd=" + qtd);
+  const j = await r.json();
+  if(j.ok){ mostrarToast("🎁 +" + qtd + " baús pra " + email); adminAppCarregar(); }
+  else mostrarToast("❌ " + (j.erro || "Erro"));
+}
+/* ==================================================================
    🗺️ GUIA DE ÁREAS — cada área do FalaFina explica O QUE ela é,
    O QUE você treina nela e COMO ela ajuda no caminho H-2B/H-2A.
    Aparece: na faixa verde no topo de cada área, no "?" do cabeçalho
@@ -8865,6 +9035,7 @@ const FF_ROTAS = {
   progresso: { tela:"tela-meuperfil", titulo:"📊 Meu Progresso", render: renderMeuPerfil },
   config:    { tela:"tela-config", titulo:"⚙️ Configurações", render: renderConfig },
   loja:      { tela:"tela-loja", titulo:"🛍️ Loja", render: renderLoja },
+  admin:     { tela:"tela-admin", titulo:"🔑 Painel Admin", render: renderAdminApp },
   simulador: { tela:"tela-simulador", titulo:"🎙️ Simulador de Entrevista", render: () => renderSimConfig() },
   carreira:  { tela:"tela-carreira", titulo:"🧗 Modo Carreira", render: iniciarCarreira }
 };
@@ -8881,7 +9052,8 @@ const FF_TITULOS = {
   "tela-config":"⚙️ Configurações", "tela-simulador":"🎙️ Simulador de Entrevista",
   "tela-entrevista":"🎙️ Entrevista ao vivo", "tela-licao":"📖 Aula", "tela-quiz":"📝 Exercícios",
   "tela-conclusao":"🎉 Parabéns!", "tela-escalada":"🗼 Escalada", "tela-perfil":"🪪 Perfil", "tela-paywall":"👑 Comprar VIP", "tela-loja":"🛍️ Loja",
-  "tela-carreira":"🧗 Modo Carreira", "tela-ditado":"👂 Ditado Relâmpago", "tela-jardim":"🌻 Jardim de Palavras"
+  "tela-carreira":"🧗 Modo Carreira", "tela-ditado":"👂 Ditado Relâmpago", "tela-jardim":"🌻 Jardim de Palavras",
+  "tela-admin":"🔑 Painel Admin"
 };
 const FF_SEM_SHELL = ["tela-onboarding","tela-inicio","tela-cadastro","tela-login","tela-paywall"];
 function ffAposIrPara(tela){
@@ -8893,7 +9065,7 @@ function ffAposIrPara(tela){
   const mapa = { "tela-home":"home", "tela-trilha":"aulas", "tela-pratica":"pratica", "tela-desafios":"home",
     "tela-revisao":"home", "tela-conquistas":"progresso", "tela-ranking":"ranking", "tela-comunidade":"home",
     "tela-meuperfil":"progresso", "tela-config":"progresso", "tela-simulador":"pratica", "tela-entrevista":"pratica",
-    "tela-licao":"aulas", "tela-quiz":"aulas", "tela-escalada":"pratica", "tela-conclusao":"aulas", "tela-carreira":"pratica", "tela-ditado":"pratica", "tela-jardim":"pratica", "tela-loja":"loja" };
+    "tela-licao":"aulas", "tela-quiz":"aulas", "tela-escalada":"pratica", "tela-conclusao":"aulas", "tela-carreira":"pratica", "tela-ditado":"pratica", "tela-jardim":"pratica", "tela-loja":"loja", "tela-admin":"admin" };
   const ativa = mapa[tela] || "";
   areaAtualRota = ativa || "home";
   document.querySelectorAll(".sb-item").forEach(b => b.classList.toggle("ativo", b.dataset.rota === ativa));
