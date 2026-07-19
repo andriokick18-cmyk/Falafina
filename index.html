@@ -6968,9 +6968,8 @@ function abrirZap(msg){ window.open("https://wa.me/" + FF_CONTATO.whatsapp + "?t
 /* >>>> EDITE AQUI, ANDRIO: sua chave Pix e seus planos/preços <<<< */
 const FF_PIX = { chave: "53981453496", nome: "Andrio Kickhofel" };
 const FF_PLANOS_VIP = [
-  { id:"mensal", nome:"1 mês", dias:30, preco:"R$ 29,90" },
-  { id:"trimestral", nome:"3 meses", dias:90, preco:"R$ 74,90" },
-  { id:"anual", nome:"1 ano", dias:365, preco:"R$ 199,90" }
+  { id:"vip30", nome:"30 dias", dias:30, preco:"R$ 30" },
+  { id:"vip60", nome:"60 dias", dias:60, preco:"R$ 50" }
 ];
 
 /* ---------- 📣 CONVIDAR AMIGOS: cada aluno é um canal de crescimento.
@@ -7072,18 +7071,18 @@ function podeIniciarTarefaGratis(){
 }
 let comprovanteTemp = null;
 let planoEscolhido = FF_PLANOS_VIP[0].id;
-function abrirComprarVIP(){
+function abrirComprarVIP(planoId){
   if(!Contas.atual()){ irPara("tela-inicio"); return; }
-  renderComprarVIP();
+  renderComprarVIP(planoId);
   irPara("tela-paywall");
 }
-function renderComprarVIP(){
+function renderComprarVIP(planoPreSelecionado){
   const p = Progresso.dados;
   const conta = Contas.atual() || { nome:"" };
   const nome = (conta.nome || "").split(" ")[0];
   const car = carrDados();
   comprovanteTemp = null;
-  planoEscolhido = FF_PLANOS_VIP[0].id;
+  planoEscolhido = (planoPreSelecionado && FF_PLANOS_VIP.some(pl => pl.id === planoPreSelecionado)) ? planoPreSelecionado : FF_PLANOS_VIP[0].id;
   const restantes = tarefasGratisRestantes();
   $("#paywallConteudo").innerHTML = `
   <div class="cardb" style="max-width:520px;margin:24px auto;text-align:center;padding:30px 22px">
@@ -7499,9 +7498,9 @@ function renderHome(){
   const homeConvidarBtn = $("#homeConvidar");
   if(homeConvidarBtn) homeConvidarBtn.addEventListener("click", convidarAmigo);
   const homeTrialZapBtn = $("#homeTrialZap");
-  if(homeTrialZapBtn) homeTrialZapBtn.addEventListener("click", abrirComprarVIP);
+  if(homeTrialZapBtn) homeTrialZapBtn.addEventListener("click", () => abrirComprarVIP());
   const homeComprarVipBtn = $("#homeComprarVip");
-  if(homeComprarVipBtn) homeComprarVipBtn.addEventListener("click", abrirComprarVIP);
+  if(homeComprarVipBtn) homeComprarVipBtn.addEventListener("click", () => abrirComprarVIP());
   $("#homeConteudo").querySelectorAll("[data-pp]").forEach(b => b.addEventListener("click", () => {
     const item = listaPrimeirosPassos().find(x => x.id === b.dataset.pp);
     if(!item || !item.ok) return;
@@ -8544,7 +8543,7 @@ function renderComunidade(){
   </div></div>`;
   $("#comGrupo").addEventListener("click", () => window.open(FF_CONTATO.grupo, "_blank"));
   $("#comConvidar").addEventListener("click", convidarAmigo);
-  $("#comPremium").addEventListener("click", abrirComprarVIP);
+  $("#comPremium").addEventListener("click", () => abrirComprarVIP());
 }
 /* ---------- CONFIGURAÇÕES ---------- */
 function renderConfig(){
@@ -8640,6 +8639,13 @@ function renderLoja(){
   let corpo;
   if(catalogo){
     corpo = `<div class="loja-grid">${catalogo.map(cartao).join("")}</div>`;
+  } else if(lojaAba === "vip"){
+    corpo = `<div class="cardb" style="text-align:center;padding:20px 18px;margin-bottom:12px">
+      <div style="font-size:2.6rem">👑</div>
+      <b style="font-family:var(--f-display);font-size:1.15rem">Vire VIP e estude sem limites</b>
+      <p style="font-weight:700;color:var(--tinta-suave);font-size:.88rem;margin-top:6px">Todas as aulas, jogos e o Modo Carreira liberados, sem teto de XP. Pagamento por Pix, comprovante confirmado pelo Andrio.</p>
+    </div>
+    <div class="loja-grid">${FF_PLANOS_VIP.map(pl => `<div class="loja-item"><div style="font-size:2rem">👑</div><b>${esc(pl.nome)} de VIP</b><span class="preco">${esc(pl.preco)}</span><button data-vipplano="${pl.id}">Comprar</button></div>`).join("")}</div>`;
   } else if(lojaAba === "protetor"){
     const ps = PROTETOR.saldo();
     corpo = `<div class="cardb" style="text-align:center;padding:24px 18px">
@@ -8682,6 +8688,7 @@ function renderLoja(){
     <small style="font-weight:800;color:var(--tinta-suave)">Seu recorde: 🗼 nível ${rec} — itens lendários exigem níveis altos</small>
   </div>
   <div class="loja-abas">
+    <button class="loja-aba ${lojaAba === "vip" ? "ativa" : ""}" data-laba="vip" style="border-color:var(--sol);background:${lojaAba === "vip" ? "" : "#FFF3D6"}">👑 VIP</button>
     <button class="loja-aba ${lojaAba === "borda" ? "ativa" : ""}" data-laba="borda">🖼️ Bordas</button>
     <button class="loja-aba ${lojaAba === "pet" ? "ativa" : ""}" data-laba="pet">🐾 Pets</button>
     <button class="loja-aba ${lojaAba === "efeito" ? "ativa" : ""}" data-laba="efeito">✨ Efeitos</button>
@@ -8693,6 +8700,7 @@ function renderLoja(){
   $("#lojaConteudo").querySelectorAll("[data-laba]").forEach(b => b.addEventListener("click", () => { lojaAba = b.dataset.laba; renderLoja(); }));
   $("#lojaConteudo").querySelectorAll("[data-buy]").forEach(b => b.addEventListener("click", () => { const [s, id] = b.dataset.buy.split(":"); COSM.comprar(s, id); }));
   $("#lojaConteudo").querySelectorAll("[data-eq]").forEach(b => b.addEventListener("click", () => { const [s, id] = b.dataset.eq.split(":"); COSM.equipar(s, id); }));
+  $("#lojaConteudo").querySelectorAll("[data-vipplano]").forEach(b => b.addEventListener("click", () => abrirComprarVIP(b.dataset.vipplano)));
   const btAbrirEstoque = $("#btAbrirEstoque");
   if(btAbrirEstoque) btAbrirEstoque.addEventListener("click", () => abrirLoteBauModal(Math.min(10, BAU.estoque())));
   const btBauGratisLoja = $("#btBauGratisLoja");
@@ -8909,7 +8917,7 @@ if(ditRespArea) ditRespArea.addEventListener("keydown", e => { if(e.key === "Ent
 const sbGrupoWppBtn = $("#sbGrupoWpp");
 if(sbGrupoWppBtn) sbGrupoWppBtn.addEventListener("click", () => window.open(FF_CONTATO.grupo, "_blank"));
 const sbPrem = $("#sbPremium");
-if(sbPrem) sbPrem.addEventListener("click", abrirComprarVIP);
+if(sbPrem) sbPrem.addEventListener("click", () => abrirComprarVIP());
 
 /* ---------- BOOT ---------- */
 Progresso.carregar();

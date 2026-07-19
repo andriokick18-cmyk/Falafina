@@ -1,4 +1,5 @@
 // FalaFina Service Worker — app instalável e funcionando offline
+// v34: 👑 ABA VIP NA LOJA — 30 dias por R$30, 60 dias por R$50, direto pro checkout
 // v33: 🎁 MODO GRÁTIS LIMITADO (nunca mais bloqueia) + 👑 COMPRAR VIP com Pix + comprovante + painel de aprovação
 // v32: 🧗 MODO CARREIRA REFEITO (vocabulário puro, sem entrevista/resposta pessoal) + 📄 Jornada H-2B (3 aulas novas)
 // v31: 📌 PALAVRA DA VEZ — troca de 2 em 2h na tela de bloqueio (substitui em silêncio) e a cada volta ao app
@@ -20,7 +21,7 @@
 // v15: faixa-guia nas Aulas + desafios com botão "Treinar agora" que leva pro treino certo
 // v14: Guia de Áreas (Mapa do FalaFina, "?" em toda tela, nomes claros)
 // v8: ícones com nome correto (minúsculo) + NUNCA cacheia /api/ (dados da nuvem sempre frescos)
-const CACHE = "falafina-v33";
+const CACHE = "falafina-v34";
 const ARQUIVOS = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png", "./mascote.png"];
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ARQUIVOS)).then(() => self.skipWaiting()));
