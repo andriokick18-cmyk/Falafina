@@ -811,7 +811,7 @@ body.sem-shell .btn-info-topo{display:none}
   <div class="sb-extras">
     <button class="sb-item" data-rota="loja"><span class="ic">🛍️</span>Loja</button>
     <button class="sb-item sb-wpp" id="sbGrupoWpp"><span class="ic">💬</span>Grupo do WhatsApp</button>
-    <button class="sb-item" data-rota="admin" style="opacity:.7"><span class="ic">🔑</span>Admin</button>
+    <button class="sb-item" data-rota="admin" id="sbAdminItem" style="opacity:.7;display:none"><span class="ic">🔑</span>Admin</button>
   </div>
   <div class="sb-premium">
     <b>👑 Seja Premium</b>
@@ -1321,6 +1321,7 @@ const Nuvem = (() => {
           c.progresso = mesclarProgresso(c.progresso, r.dados.conta.progresso);
           if(r.dados.conta.perfil && !c.perfil) c.perfil = r.dados.conta.perfil;
           if(r.dados.conta.premiumAte) c.premiumAte = r.dados.conta.premiumAte;
+          c.admin = !!r.dados.conta.admin;
           c.pendenteSync = false;
           Contas.salvarAtual(c);
           if(Progresso && c.progresso) Progresso.dados = c.progresso;
@@ -7101,6 +7102,38 @@ function podeIniciarTarefaGratis(){
 }
 let comprovanteTemp = null;
 let planoEscolhido = FF_PLANOS_VIP[0].id;
+/* Depois de enviar o comprovante, fica de olho por ~2 min: se a
+   verificação automática aprovar, o VIP acende NA HORA na tela. */
+async function aguardarVerificacaoPedido(idPedido){
+  const c = Contas.atual();
+  if(!c) return;
+  for(let tentativa = 0; tentativa < 20; tentativa++){
+    await new Promise(r => setTimeout(r, 6000));
+    const atual = Contas.atual();
+    if(!atual || atual.email !== c.email) return; // trocou de conta no meio
+    try{
+      const r = await fetch("/api/pedidos/status", {
+        method:"POST", headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({ email:c.email, senhaHash:c.senhaHash, id:idPedido })
+      });
+      const j = await r.json();
+      if(!j || !j.ok) return;
+      if(j.pedido.status === "aprovado"){
+        if(j.premiumAte) atual.premiumAte = j.premiumAte;
+        Contas.salvarAtual(atual);
+        mostrarToast("👑 Comprovante conferido — seu VIP está ATIVO! Bom estudo!");
+        atualizarSeloTrial();
+        renderHome();
+        return;
+      }
+      if(j.pedido.status === "rejeitado") return;
+      if(j.pedido.verificacao && j.pedido.verificacao.status === "manual"){
+        mostrarToast("🕐 Não deu pra confirmar sozinho — o Andrio confere seu comprovante e ativa em breve 👑");
+        return;
+      }
+    }catch(e){ return; }
+  }
+}
 function abrirComprarVIP(planoId){
   if(!Contas.atual()){ irPara("tela-inicio"); return; }
   renderComprarVIP(planoId);
@@ -7132,6 +7165,16 @@ function renderComprarVIP(planoPreSelecionado){
       <span>✅ Simulador de Entrevista H-2B/H-2A completo</span>
       <span>✅ Suporte direto com a equipe no WhatsApp</span>
     </div>
+    <div style="display:flex;gap:8px;margin-top:14px;text-align:left">
+      <div style="flex:1;background:rgba(33,49,58,.06);border-radius:12px;padding:10px 12px">
+        <b style="font-size:.82rem">🎁 Grátis</b>
+        <p style="font-weight:700;font-size:.75rem;color:var(--tinta-suave);margin-top:4px">Entra todo dia, mas só ${LIMITE_GRATIS_TAREFAS} tarefas e ${LIMITE_GRATIS_XP_DIA} XP por dia</p>
+      </div>
+      <div style="flex:1;background:var(--verde-claro);border-radius:12px;padding:10px 12px;border:2px solid var(--verde)">
+        <b style="font-size:.82rem">👑 VIP</b>
+        <p style="font-weight:700;font-size:.75rem;color:var(--tinta-suave);margin-top:4px">Tudo ilimitado: aulas, jogos, XP, revisão e simulador</p>
+      </div>
+    </div>
     <div class="secao-t" style="margin-top:18px">1. Escolha seu plano</div>
     <div id="pwPlanos" style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:8px">
       ${FF_PLANOS_VIP.map(pl => `<button class="fchip pwplano ${pl.id === planoEscolhido ? "ativo" : ""}" data-pl="${pl.id}">${esc(pl.nome)}<br><b>${esc(pl.preco)}</b></button>`).join("")}
@@ -7144,7 +7187,7 @@ function renderComprarVIP(planoPreSelecionado){
       <button class="btn-principal azul" style="margin-top:8px;max-width:220px" id="pwCopiarPix">📋 Copiar chave Pix</button>
     </div>
     <div class="secao-t" style="margin-top:18px">3. Envie o print do comprovante</div>
-    <p style="font-weight:700;font-size:.82rem;color:var(--tinta-suave);margin-top:4px">Tire um print da tela de "pagamento realizado" e envie aqui. O Andrio confere na hora e ativa seu VIP.</p>
+    <p style="font-weight:700;font-size:.82rem;color:var(--tinta-suave);margin-top:4px">Tire um print da tela de "pagamento realizado" e envie aqui. O FalaFina confere o valor e a data sozinho — batendo tudo, seu VIP ativa NA HORA. Se não der pra ler, o Andrio confere manualmente.</p>
     <input type="file" id="pwComprovanteInput" accept="image/*" style="margin-top:10px">
     <div id="pwComprovantePreview" style="margin-top:8px"></div>
     <button class="btn-principal" style="margin-top:14px;background:var(--sol);color:#5C4400;box-shadow:0 4px 0 #C89A20" id="pwEnviar">👑 Enviar comprovante e ativar VIP</button>
@@ -7182,9 +7225,14 @@ function renderComprarVIP(planoPreSelecionado){
       });
       const j = await r.json();
       if(j && j.ok){
-        mostrarToast("✅ Comprovante enviado! O Andrio confere e ativa seu VIP em breve 👑");
         comprovanteTemp = null;
         renderHome(); irPara("tela-home");
+        if(j.verificando){
+          mostrarToast("🔎 Comprovante enviado! Conferindo valor e data automaticamente…");
+          aguardarVerificacaoPedido(j.id);
+        } else {
+          mostrarToast("✅ Comprovante enviado! O Andrio confere e ativa seu VIP em breve 👑");
+        }
       } else {
         mostrarToast("❌ " + ((j && j.erro) || "Não deu pra enviar. Tenta de novo ou fala no WhatsApp."));
       }
@@ -7199,7 +7247,18 @@ function renderComprarVIP(planoPreSelecionado){
   });
   $("#pwSair").addEventListener("click", () => { Contas.sair(); document.body.classList.add("sem-shell"); irPara("tela-inicio"); });
 }
+/* 🔑 A conta do dono (andrio.kick18@gmail.com) vê a aba Admin; ninguém mais */
+const FF_ADMIN_EMAIL = "andrio.kick18@gmail.com";
+function contaEhAdmin(){
+  const c = Contas.atual();
+  return !!(c && (c.admin || c.email === FF_ADMIN_EMAIL));
+}
+function atualizarBotaoAdmin(){
+  const b = $("#sbAdminItem");
+  if(b) b.style.display = contaEhAdmin() ? "" : "none";
+}
 function atualizarSeloTrial(){
+  atualizarBotaoAdmin();
   const pill = $("#trialPill"), txt = $("#sbPremiumTexto");
   if(!Contas.atual()){ if(pill) pill.style.display = "none"; return; }
   garantirTrial();
@@ -8673,7 +8732,7 @@ function renderLoja(){
     corpo = `<div class="cardb" style="text-align:center;padding:20px 18px;margin-bottom:12px">
       <div style="font-size:2.6rem">👑</div>
       <b style="font-family:var(--f-display);font-size:1.15rem">Vire VIP e estude sem limites</b>
-      <p style="font-weight:700;color:var(--tinta-suave);font-size:.88rem;margin-top:6px">Todas as aulas, jogos e o Modo Carreira liberados, sem teto de XP. Pagamento por Pix, comprovante confirmado pelo Andrio.</p>
+      <p style="font-weight:700;color:var(--tinta-suave);font-size:.88rem;margin-top:6px">Todas as aulas, jogos e o Modo Carreira liberados, sem teto de XP. Pagamento por Pix — o comprovante é conferido na hora e o VIP ativa sozinho.</p>
     </div>
     <div class="loja-grid">${FF_PLANOS_VIP.map(pl => `<div class="loja-item"><div style="font-size:2rem">👑</div><b>${esc(pl.nome)} de VIP</b><span class="preco">${esc(pl.preco)}</span><button data-vipplano="${pl.id}">Comprar</button></div>`).join("")}</div>`;
   } else if(lojaAba === "protetor"){
@@ -8751,6 +8810,9 @@ function renderLoja(){
    ================================================================== */
 let ADMIN_APP = { chave: localStorage.getItem("ff_admin_chave") || "", dados: null, pedidos: [] };
 async function renderAdminApp(){
+  // Logado com a conta do dono? A aba entra SOZINHA (a própria senha da conta é a chave)
+  const c = Contas.atual();
+  if(!ADMIN_APP.chave && c && c.senhaHash && contaEhAdmin()) ADMIN_APP.chave = c.senhaHash;
   if(!ADMIN_APP.chave){ renderAdminLogin(); return; }
   await adminAppCarregar();
 }
@@ -8759,7 +8821,7 @@ function renderAdminLogin(msg){
   <div class="cardb" style="max-width:420px;margin:24px auto;text-align:center;padding:26px 20px">
     <div style="font-size:2.4rem">🔑</div>
     <h2 style="font-family:var(--f-display);margin:8px 0">Painel Admin</h2>
-    <p style="font-weight:700;color:var(--tinta-suave);font-size:.88rem">Só o Andrio entra aqui — cole a ADMIN_CHAVE configurada no Render.</p>
+    <p style="font-weight:700;color:var(--tinta-suave);font-size:.88rem">Só o Andrio entra aqui. Logue no app com a conta admin (entra sozinho) ou cole a ADMIN_CHAVE.</p>
     ${msg ? `<p style="font-weight:800;color:var(--coral);margin-top:8px">${esc(msg)}</p>` : ""}
     <input type="password" id="adminChaveInput" placeholder="Sua ADMIN_CHAVE" style="width:100%;margin-top:12px;padding:12px;border:2px solid var(--borda);border-radius:12px;font-weight:700">
     <button class="btn-principal" id="adminEntrarBtn" style="margin-top:12px">Entrar</button>
@@ -8797,17 +8859,31 @@ function adminAppStatusDe(c){
 function adminAppDesenhar(){
   const d = ADMIN_APP.dados;
   const pend = ADMIN_APP.pedidos.filter(p => p.status === "pendente");
-  const feitos = ADMIN_APP.pedidos.filter(p => p.status !== "pendente").slice(0, 10);
+  const autos = ADMIN_APP.pedidos.filter(p => p.status === "aprovado" && p.autoAprovado && !p.conferido);
+  const feitos = ADMIN_APP.pedidos.filter(p => p.status !== "pendente" && !(p.autoAprovado && !p.conferido)).slice(0, 10);
   const prem = d.contas.filter(c => c.premiumAte && c.premiumAte > d.agora).length;
-  const cartaoPedido = (p, ativo) => `<div class="cardb" style="display:flex;gap:12px;flex-wrap:wrap;margin-top:10px;${ativo ? "border-color:var(--coral)" : ""}">
+  const infoVerif = p => {
+    if(!p.verificacao) return "";
+    if(p.verificacao.status === "analisando") return `<p style="font-weight:700;font-size:.78rem;color:var(--tinta-suave)">🔎 lendo o comprovante automaticamente…</p>`;
+    if(p.verificacao.status === "aprovado-auto") return `<p style="font-weight:800;font-size:.78rem;color:var(--verde-escuro)">🤖 ${esc(p.verificacao.motivo || "valor e data conferidos")}</p>`;
+    if(p.verificacao.motivo) return `<p style="font-weight:700;font-size:.78rem;color:var(--coral)">🔎 análise automática: ${esc(p.verificacao.motivo)}</p>`;
+    return "";
+  };
+  const cartaoPedido = (p, tipo) => `<div class="cardb" style="display:flex;gap:12px;flex-wrap:wrap;margin-top:10px;${tipo === "pend" ? "border-color:var(--coral)" : tipo === "auto" ? "border-color:var(--sol)" : ""}">
     <img class="admin-img-abrir" data-src="${p.comprovante}" src="${p.comprovante}" alt="comprovante" style="width:100px;border-radius:10px;cursor:pointer;object-fit:cover">
     <div style="flex:1;min-width:160px">
+      ${tipo === "auto" ? `<p style="font-weight:800;font-size:.78rem;color:#7A5A00">🔔 VIP JÁ ATIVADO SOZINHO — confira o comprovante</p>` : ""}
       <b>${esc(p.nome || p.email)}</b><br><small style="font-weight:700;color:var(--tinta-suave)">${esc(p.email)}</small>
       <p style="font-weight:700;font-size:.85rem;margin-top:4px">${esc(p.planoNome || p.plano || "")} ${p.valor ? "· " + esc(p.valor) : ""} · ${new Date(p.criadoEm).toLocaleString("pt-BR")}</p>
-      ${ativo ? `<div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+      ${infoVerif(p)}
+      ${tipo === "pend" ? `<div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
         <button class="btn-principal admin-aprovar" style="width:auto;padding:8px 14px" data-id="${p.id}" data-dias="${p.dias}">✅ Aprovar (${p.dias}d)</button>
         <button class="btn-principal" style="width:auto;padding:8px 14px;background:var(--coral)" data-idrej="${p.id}">❌ Rejeitar</button>
-      </div>` : `<p style="font-weight:800;margin-top:6px">${p.status === "aprovado" ? "✅ aprovado" : "❌ rejeitado"}</p>`}
+      </div>` : tipo === "auto" ? `<div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+        <button class="btn-principal admin-conferir" style="width:auto;padding:8px 14px" data-id="${p.id}">👍 Conferi, tudo certo</button>
+        <button class="btn-principal admin-revogar" style="width:auto;padding:8px 14px;background:var(--coral)" data-id="${p.id}">🚫 Falso — revogar VIP</button>
+      </div>` : `<p style="font-weight:800;margin-top:6px">${p.status === "aprovado" ? "✅ aprovado" + (p.autoAprovado ? " (🤖 automático)" : "") : p.status === "revogado" ? "🚫 revogado" : "❌ rejeitado"}</p>
+      ${p.status === "aprovado" ? `<div style="margin-top:6px"><button class="btn-link admin-revogar" data-id="${p.id}" style="color:var(--coral)">🚫 Revogar VIP deste pedido</button></div>` : ""}`}
     </div>
   </div>`;
   const cartaoAluno = c => {
@@ -8835,11 +8911,12 @@ function adminAppDesenhar(){
   <div class="stat-grid" style="margin-top:12px">
     <div class="stat-mini"><b>${d.contas.length}</b><small>CONTAS</small></div>
     <div class="stat-mini"><b>👑 ${prem}</b><small>PREMIUM</small></div>
-    <div class="stat-mini"><b>${pend.length}</b><small>PEDIDOS PENDENTES</small></div>
+    <div class="stat-mini"><b>${pend.length + autos.length}</b><small>PEDIDOS PRA VER</small></div>
   </div>
+  ${autos.length ? `<div class="secao-t" style="margin-top:16px">🔔 Ativados automaticamente — confira (${autos.length})</div>${autos.map(p => cartaoPedido(p, "auto")).join("")}` : ""}
   <div class="secao-t" style="margin-top:16px">💳 Pedidos de compra Pix ${pend.length ? "(" + pend.length + ")" : ""}</div>
-  ${pend.map(p => cartaoPedido(p, true)).join("") || '<p style="font-weight:700;color:var(--tinta-suave);margin-top:8px">Nenhum pedido pendente 😎</p>'}
-  ${feitos.length ? `<div class="secao-t" style="margin-top:16px">Últimos processados</div>${feitos.map(p => cartaoPedido(p, false)).join("")}` : ""}
+  ${pend.map(p => cartaoPedido(p, "pend")).join("") || '<p style="font-weight:700;color:var(--tinta-suave);margin-top:8px">Nenhum pedido pendente 😎</p>'}
+  ${feitos.length ? `<div class="secao-t" style="margin-top:16px">Últimos processados</div>${feitos.map(p => cartaoPedido(p, "feito")).join("")}` : ""}
   <div class="secao-t" style="margin-top:20px">👥 Alunos</div>
   <input id="adminBusca" placeholder="Buscar por nome ou e-mail..." style="width:100%;margin-top:6px;padding:10px;border:2px solid var(--borda);border-radius:12px;font-weight:700">
   <div id="adminListaAlunos">${d.contas.slice(0, 60).map(cartaoAluno).join("")}</div>`;
@@ -8847,6 +8924,8 @@ function adminAppDesenhar(){
   $("#adminConteudo").querySelectorAll(".admin-img-abrir").forEach(img => img.addEventListener("click", () => window.open(img.dataset.src)));
   $("#adminConteudo").querySelectorAll(".admin-aprovar").forEach(b => b.addEventListener("click", () => adminAppAprovar(b.dataset.id, b.dataset.dias)));
   $("#adminConteudo").querySelectorAll("[data-idrej]").forEach(b => b.addEventListener("click", () => adminAppRejeitar(b.dataset.idrej)));
+  $("#adminConteudo").querySelectorAll(".admin-revogar").forEach(b => b.addEventListener("click", () => adminAppRevogar(b.dataset.id)));
+  $("#adminConteudo").querySelectorAll(".admin-conferir").forEach(b => b.addEventListener("click", () => adminAppConferir(b.dataset.id)));
   $("#adminConteudo").querySelectorAll(".admin-prem").forEach(b => b.addEventListener("click", () => adminAppPremium(b.dataset.email, b.dataset.dias)));
   $("#adminConteudo").querySelectorAll(".admin-baus").forEach(b => b.addEventListener("click", () => adminAppBaus(b.dataset.email)));
   $("#adminBusca").addEventListener("input", () => {
@@ -8868,6 +8947,17 @@ async function adminAppRejeitar(id){
   const r = await fetch("/api/admin/pedidos/rejeitar?chave=" + encodeURIComponent(ADMIN_APP.chave) + "&id=" + encodeURIComponent(id));
   const j = await r.json();
   if(j.ok) adminAppCarregar(); else mostrarToast("❌ " + (j.erro || "Erro"));
+}
+async function adminAppRevogar(id){
+  if(!confirm("Comprovante falso? Isso REMOVE os dias de VIP dados por este pedido.")) return;
+  const r = await fetch("/api/admin/pedidos/revogar?chave=" + encodeURIComponent(ADMIN_APP.chave) + "&id=" + encodeURIComponent(id));
+  const j = await r.json();
+  if(j.ok){ mostrarToast("🚫 VIP revogado de " + j.email); adminAppCarregar(); } else mostrarToast("❌ " + (j.erro || "Erro"));
+}
+async function adminAppConferir(id){
+  const r = await fetch("/api/admin/pedidos/conferir?chave=" + encodeURIComponent(ADMIN_APP.chave) + "&id=" + encodeURIComponent(id));
+  const j = await r.json();
+  if(j.ok){ mostrarToast("👍 Pedido conferido"); adminAppCarregar(); } else mostrarToast("❌ " + (j.erro || "Erro"));
 }
 async function adminAppPremium(email, dias){
   if(!confirm("Ativar Premium por " + dias + " dias para\n" + email + "?")) return;

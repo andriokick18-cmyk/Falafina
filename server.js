@@ -124,6 +124,42 @@ function hashServidor(senhaHash) {
 }
 const RE_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+/* ---------- CONTA DO DONO (ADMIN) ----------
+   Pedido do Andrio: "adicione minha conta adm — sempre vou logar usando
+   isso". A conta é criada/consertada em TODO boot: mesmo que o arquivo
+   de contas suma, o login do dono volta a funcionar sozinho.
+   ⚠️ Senha fixa por enquanto (o próprio Andrio pediu assim); depois
+   colocamos mais segurança. */
+const ADMIN_EMAIL = "andrio.kick18@gmail.com";
+const ADMIN_SENHA = "8480054";
+// Mesmo hash que o navegador calcula antes de enviar (SHA-256 de "falafina:" + senha)
+const ADMIN_SENHA_HASH = crypto.createHash("sha256").update("falafina:" + ADMIN_SENHA).digest("hex");
+function garantirContaAdmin() {
+  const c = CONTAS[ADMIN_EMAIL] || { nome: "Andrio", email: ADMIN_EMAIL, criadaEm: new Date().toISOString(), perfil: null, progresso: null };
+  c.senhaServidor = hashServidor(ADMIN_SENHA_HASH);
+  c.admin = true;
+  const eterno = Date.now() + 36500 * 86400000; // "adm tem vip pra sempre"
+  if (!c.premiumAte || c.premiumAte < eterno) c.premiumAte = eterno;
+  CONTAS[ADMIN_EMAIL] = c;
+  persistir();
+  log("🔑 Conta admin garantida: " + ADMIN_EMAIL);
+}
+garantirContaAdmin();
+
+/* A chave de admin aceita DUAS formas:
+   1. a ADMIN_CHAVE do Render (se configurada) — como sempre foi;
+   2. o senhaHash da conta do dono — é o que o app usa sozinho quando
+      o Andrio loga com a conta dele (zero digitação de chave). */
+function chaveAdminValida(chave) {
+  chave = String(chave || "");
+  if (!chave) return false;
+  const ENV = process.env.ADMIN_CHAVE || "";
+  if (ENV && chave === ENV) return true;
+  if (chave === ADMIN_SENHA) return true; // a senha do dono também abre o /admin
+  const c = CONTAS[ADMIN_EMAIL];
+  return !!(c && c.senhaServidor === hashServidor(chave));
+}
+
 function limparPerfil(p) {
   if (!p || typeof p !== "object") return null;
   const foto = (typeof p.foto === "string" && p.foto.startsWith("data:image") && p.foto.length <= LIMITE_FOTO) ? p.foto : null;
@@ -248,7 +284,7 @@ function mesclarProgresso(a, b) {
 }
 
 function contaPublica(c) {
-  return { nome: c.nome, email: c.email, criadaEm: c.criadaEm, premiumAte: c.premiumAte || 0, perfil: c.perfil || null, progresso: c.progresso || null };
+  return { nome: c.nome, email: c.email, criadaEm: c.criadaEm, premiumAte: c.premiumAte || 0, admin: !!c.admin, perfil: c.perfil || null, progresso: c.progresso || null };
 }
 
 /* ---------- LEITURA DO CORPO (com limite) ---------- */
@@ -366,6 +402,166 @@ setInterval(() => {
 /* compat: nome antigo usado pela rota de teste */
 const enviarPalavraDoDia = enviarPalavraDaVez;
 
+/* ==================================================================
+   🔎 VERIFICAÇÃO AUTOMÁTICA DO COMPROVANTE (ideia do Andrio):
+   o próprio programa LÊ o print do comprovante Pix (OCR), confere se
+   o VALOR bate com o plano e se a DATA é recente. Bateu tudo → ativa
+   o VIP sozinho e avisa o Andrio (push + destaque no painel). Não
+   bateu (ou OCR indisponível) → fica PENDENTE pra aprovação manual,
+   exatamente como antes. Se for comprovante falso que passou, o
+   Andrio revoga com 1 clique no painel.
+   - tesseract.js carregado com tolerância (mesmo padrão do web-push):
+     sem a dependência o servidor NÃO quebra, só desativa o automático.
+   ================================================================== */
+let Tesseract = null;
+try { Tesseract = require("tesseract.js"); }
+catch (e) { log("🔎 tesseract.js não instalado — verificação automática de comprovante DESATIVADA (aprovação manual no painel). No Render: Build Command npm install"); }
+/* Dados do idioma português vêm JUNTO no npm install (pacote
+   @tesseract.js-data/por) — zero dependência de CDN em produção.
+   Se o pacote não estiver instalado, cai pro download padrão. */
+let OCR_LANG_PATH = null;
+try { OCR_LANG_PATH = path.dirname(require.resolve("@tesseract.js-data/por/4.0.0_best_int/por.traineddata.gz")); }
+catch (e) { /* sem o pacote local: o tesseract baixa do CDN e guarda em DATA_DIR */ }
+let ocrWorker = null;        // worker reutilizado (criar é caro)
+let filaOcr = Promise.resolve(); // OCR roda 1 por vez (fila), sem derrubar o servidor
+async function obterOcrWorker() {
+  if (!Tesseract) return null;
+  if (!ocrWorker) {
+    // "por" lê comprovantes em português (datas tipo "25 JUL 2026" e valores "R$ 30,00").
+    // errorHandler é OBRIGATÓRIO: sem ele, erro do worker DERRUBA o servidor inteiro.
+    ocrWorker = await Tesseract.createWorker("por", 1, {
+      cachePath: DATA_DIR,
+      langPath: OCR_LANG_PATH || undefined,
+      errorHandler: e => log("🔎 OCR worker avisou erro: " + (e && e.message || e))
+    });
+  }
+  return ocrWorker;
+}
+function lerTextoComprovante(dataUrl) {
+  // Entra na fila e tem teto de 90s — OCR travado nunca segura o servidor
+  const trabalho = filaOcr.then(async () => {
+    const worker = await obterOcrWorker();
+    if (!worker) return null;
+    const img = Buffer.from(String(dataUrl).split(",")[1] || "", "base64");
+    const r = await worker.recognize(img);
+    return (r && r.data && r.data.text) || "";
+  });
+  filaOcr = trabalho.catch(() => {});
+  return Promise.race([
+    trabalho,
+    new Promise(res => setTimeout(() => res(null), 90000))
+  ]).catch(e => { log("🔎 OCR falhou: " + e.message); ocrWorker = null; return null; });
+}
+/* Valores em dinheiro no texto do OCR: "R$ 30,00" · "30.00" · "R$ 30" */
+function extrairValores(texto) {
+  const achados = [];
+  let m;
+  const reBr = /(\d{1,3}(?:\.\d{3})*|\d+),(\d{2})(?!\d)/g;       // 1.230,00 · 30,00
+  while ((m = reBr.exec(texto))) achados.push(parseInt(m[1].replace(/\./g, ""), 10) + parseInt(m[2], 10) / 100);
+  const reUs = /(?<![\d,])(\d{1,6})\.(\d{2})(?!\d)/g;             // 30.00
+  while ((m = reUs.exec(texto))) achados.push(parseInt(m[1], 10) + parseInt(m[2], 10) / 100);
+  const reInt = /R\$?\s*(\d{1,6})(?![\d.,])/gi;                   // R$ 30
+  while ((m = reInt.exec(texto))) achados.push(parseInt(m[1], 10));
+  return achados;
+}
+/* Datas no texto do OCR: 25/07/2026 · 25/07/26 · 2026-07-25 · 25 de julho de 2026 · 25 JUL 2026 */
+const MESES_PT = { jan: 0, fev: 1, mar: 2, abr: 3, mai: 4, jun: 5, jul: 6, ago: 7, set: 8, out: 9, nov: 10, dez: 11 };
+function extrairDatas(texto) {
+  const datas = [];
+  let m;
+  const t = String(texto).toLowerCase();
+  const reNum = /(\d{1,2})[\/.](\d{1,2})[\/.](\d{2,4})/g;
+  while ((m = reNum.exec(t))) {
+    let ano = parseInt(m[3], 10); if (ano < 100) ano += 2000;
+    const d = Date.UTC(ano, parseInt(m[2], 10) - 1, parseInt(m[1], 10));
+    if (!isNaN(d)) datas.push(d);
+  }
+  const reIso = /(\d{4})-(\d{2})-(\d{2})/g;
+  while ((m = reIso.exec(t))) {
+    const d = Date.UTC(parseInt(m[1], 10), parseInt(m[2], 10) - 1, parseInt(m[3], 10));
+    if (!isNaN(d)) datas.push(d);
+  }
+  const reExt = /(\d{1,2})\s*(?:de\s+)?(jan|fev|mar|abr|mai|jun|jul|ago|set|out|nov|dez)\w*\.?\s*(?:de\s+)?(\d{2,4})/g;
+  while ((m = reExt.exec(t))) {
+    let ano = parseInt(m[3], 10); if (ano < 100) ano += 2000;
+    const d = Date.UTC(ano, MESES_PT[m[2]], parseInt(m[1], 10));
+    if (!isNaN(d)) datas.push(d);
+  }
+  return datas;
+}
+/* Regras do Andrio: valor CORRETO + data CORRETA (recente) */
+const TOLERANCIA_DIAS_COMPROVANTE = 3; // comprovante de até 3 dias atrás vale
+function analisarComprovante(texto, valorEsperadoStr) {
+  const esperado = parseFloat(String(valorEsperadoStr || "").replace(/[^\d.,]/g, "").replace(/\.(?=\d{3})/g, "").replace(",", "."));
+  const valores = extrairValores(texto);
+  const datas = extrairDatas(texto);
+  const valorOk = !!esperado && valores.some(v => Math.abs(v - esperado) < 0.005);
+  const agora = Date.now();
+  const dataOk = datas.some(d => d >= agora - TOLERANCIA_DIAS_COMPROVANTE * 86400000 && d <= agora + 36 * 3600e3);
+  const motivos = [];
+  if (!valorOk) motivos.push(valores.length ? "valor lido (" + valores.slice(0, 5).map(v => "R$ " + v.toFixed(2).replace(".", ",")).join(", ") + ") ≠ " + valorEsperadoStr : "nenhum valor legível no print");
+  if (!dataOk) motivos.push(datas.length ? "data do comprovante não é recente" : "nenhuma data legível no print");
+  return { valorOk, dataOk, motivos };
+}
+/* 🔔 aviso pro celular do Andrio (usa o push da conta admin, se assinado) */
+async function notificarAdmin(titulo, corpo) {
+  const adm = CONTAS[ADMIN_EMAIL];
+  if (!webpush || !adm || !adm.push) return;
+  try { await webpush.sendNotification(adm.push, JSON.stringify({ t: titulo, b: corpo })); }
+  catch (e) { if (e.statusCode === 404 || e.statusCode === 410) { delete adm.push; persistir(); } }
+}
+/* Roda em segundo plano logo depois que o pedido é criado */
+async function verificarPedidoAuto(pedido) {
+  try {
+    if (!Tesseract) {
+      pedido.verificacao = { status: "manual", motivo: "verificação automática indisponível no servidor" };
+      persistirPedidos();
+      notificarAdmin("💳 Novo pedido VIP pra conferir", pedido.nome + " · " + pedido.valor + " (" + pedido.dias + "d) — abra o painel Admin");
+      return;
+    }
+    // Comprovante repetido NUNCA aprova sozinho (alguém reenviando o mesmo print)
+    const hash = crypto.createHash("sha256").update(pedido.comprovante).digest("hex");
+    pedido.comprovanteHash = hash;
+    const repetido = PEDIDOS.some(p => p.id !== pedido.id && p.comprovanteHash === hash);
+    const texto = await lerTextoComprovante(pedido.comprovante);
+    if (texto == null) {
+      pedido.verificacao = { status: "manual", motivo: "não consegui ler o print (OCR indisponível ou falhou)" };
+      persistirPedidos();
+      notificarAdmin("💳 Novo pedido VIP pra conferir", pedido.nome + " · " + pedido.valor + " (" + pedido.dias + "d) — abra o painel Admin");
+      return;
+    }
+    const analise = analisarComprovante(texto, pedido.valor);
+    if (analise.valorOk && analise.dataOk && !repetido && pedido.status === "pendente") {
+      const c = CONTAS[pedido.email];
+      if (c) {
+        const dias = Math.max(1, Math.min(3650, parseInt(pedido.dias, 10) || 30));
+        const base = (c.premiumAte && c.premiumAte > Date.now()) ? c.premiumAte : Date.now();
+        c.premiumAte = base + dias * 86400000;
+        pedido.status = "aprovado";
+        pedido.autoAprovado = true;
+        pedido.conferido = false; // fica em destaque no painel até o Andrio dar o OK
+        pedido.aprovadoEm = new Date().toISOString();
+        pedido.diasConcedidos = dias;
+        pedido.verificacao = { status: "aprovado-auto", motivo: "valor e data conferidos no comprovante" };
+        persistir();
+        persistirPedidos();
+        log("🤖✅ Pedido AUTO-aprovado: " + pedido.email + " +" + dias + " dias VIP (valor e data ok)");
+        notificarAdmin("🤖 VIP ativado automaticamente", pedido.nome + " · " + pedido.valor + " (" + dias + "d) — comprovante conferiu. Revise no painel; se for falso, revogue.");
+        return;
+      }
+    }
+    const motivo = repetido ? "comprovante repetido (já usado em outro pedido)" : (analise.motivos.join(" · ") || "não conferiu");
+    pedido.verificacao = { status: "manual", motivo };
+    persistirPedidos();
+    log("🔎 Pedido precisa de revisão manual: " + pedido.email + " — " + motivo);
+    notificarAdmin("💳 Pedido VIP precisa de você", pedido.nome + " · " + pedido.valor + " — " + motivo);
+  } catch (e) {
+    log("🔎 Verificação automática falhou: " + e.message);
+    pedido.verificacao = { status: "manual", motivo: "erro na verificação automática" };
+    persistirPedidos();
+  }
+}
+
 /* ---------- API ---------- */
 async function tratarApi(req, res, rota, ip) {
   // Saúde do servidor
@@ -423,6 +619,8 @@ async function tratarApi(req, res, rota, ip) {
   // 💳 Pedidos de compra Pix — listar / aprovar / rejeitar (só o Andrio, via ADMIN_CHAVE)
   if (rota.startsWith("/api/admin/pedidos/aprovar") && req.method === "GET") return aprovarPedido(req, res);
   if (rota.startsWith("/api/admin/pedidos/rejeitar") && req.method === "GET") return rejeitarPedido(req, res);
+  if (rota.startsWith("/api/admin/pedidos/revogar") && req.method === "GET") return revogarPedido(req, res);
+  if (rota.startsWith("/api/admin/pedidos/conferir") && req.method === "GET") return conferirPedido(req, res);
   if (rota.startsWith("/api/admin/pedidos") && req.method === "GET") return listarPedidos(req, res);
   // 🔔 Push: chave pública (pro navegador assinar)
   if (rota.startsWith("/api/push/chave") && req.method === "GET") {
@@ -432,8 +630,7 @@ async function tratarApi(req, res, rota, ip) {
   // 🔔 Push: teste imediato (admin) — abre no celular e vê a notificação chegar
   if (rota.startsWith("/api/push/testar") && req.method === "GET") {
     const u = new URL(req.url, "http://x");
-    const ADMIN = process.env.ADMIN_CHAVE || "";
-    if (!ADMIN || (u.searchParams.get("chave") || "") !== ADMIN) return responder(res, 403, { erro: "Chave errada." });
+    if (!chaveAdminValida(u.searchParams.get("chave"))) return responder(res, 403, { erro: "Chave errada." });
     const r = await enviarPalavraDoDia();
     return responder(res, r.ok ? 200 : 503, r);
   }
@@ -539,12 +736,31 @@ async function tratarApi(req, res, rota, ip) {
       valor: String(corpo.valor || "").slice(0, 20),
       comprovante,
       status: "pendente",
+      verificacao: { status: Tesseract ? "analisando" : "manual" },
       criadoEm: new Date().toISOString()
     };
     PEDIDOS.unshift(pedido);
     persistirPedidos();
     log("💳 Novo pedido de compra: " + email + " (" + pedido.planoNome + ")");
-    return responder(res, 200, { ok: true, id: pedido.id });
+    // Verificação automática roda em segundo plano — a resposta não espera o OCR
+    setImmediate(() => verificarPedidoAuto(pedido));
+    return responder(res, 200, { ok: true, id: pedido.id, verificando: !!Tesseract });
+  }
+
+  // 💳 Status do MEU pedido (o app consulta depois de enviar o comprovante,
+  // pra avisar na hora se o VIP foi ativado sozinho) — autenticado
+  if (rota === "/api/pedidos/status") {
+    const c = CONTAS[email];
+    if (!c) return responder(res, 404, { erro: "Conta não encontrada" });
+    if (c.senhaServidor !== hashServidor(senhaHash)) return responder(res, 401, { erro: "Senha errada" });
+    const id = String(corpo.id || "");
+    const pedido = PEDIDOS.find(p => p.email === email && (!id || p.id === id));
+    if (!pedido) return responder(res, 404, { erro: "Pedido não encontrado" });
+    return responder(res, 200, {
+      ok: true,
+      pedido: { id: pedido.id, status: pedido.status, autoAprovado: !!pedido.autoAprovado, verificacao: pedido.verificacao ? { status: pedido.verificacao.status, motivo: pedido.verificacao.motivo || null } : null },
+      premiumAte: c.premiumAte || 0
+    });
   }
 
   // 🔔 Push: assinar / cancelar (autenticado — a assinatura fica na conta)
@@ -630,9 +846,7 @@ process.on("SIGINT", desligar);
      https://SEU-SITE.onrender.com/api/creditar-baus?chave=SUACHAVE&email=aluno@email.com&qtd=200 */
   function creditarBaus(req, res) {
     const u = new URL(req.url, "http://x");
-    const ADMIN = process.env.ADMIN_CHAVE || "";
-    if (!ADMIN) return responder(res, 403, { erro: "Defina ADMIN_CHAVE nas variáveis do Render para usar esta rota." });
-    if ((u.searchParams.get("chave") || "") !== ADMIN) return responder(res, 403, { erro: "Chave errada." });
+    if (!chaveAdminValida(u.searchParams.get("chave"))) return responder(res, 403, { erro: "Chave errada. Entre no app com a conta admin ou use a ADMIN_CHAVE." });
     const email = (u.searchParams.get("email") || "").trim().toLowerCase();
     const qtd = Math.max(1, Math.min(10000, parseInt(u.searchParams.get("qtd") || "0", 10) || 0));
     const c = CONTAS[email];
@@ -651,9 +865,7 @@ process.on("SIGINT", desligar);
      aqui, protegido pela ADMIN_CHAVE — ninguém mais vê. */
   function checarAdmin(req, res) {
     const u = new URL(req.url, "http://x");
-    const ADMIN = process.env.ADMIN_CHAVE || "";
-    if (!ADMIN) { responder(res, 403, { erro: "Defina ADMIN_CHAVE nas variáveis do Render para usar esta rota." }); return null; }
-    if ((u.searchParams.get("chave") || "") !== ADMIN) { responder(res, 403, { erro: "Chave errada." }); return null; }
+    if (!chaveAdminValida(u.searchParams.get("chave"))) { responder(res, 403, { erro: "Chave errada. Entre no app com a conta admin ou use a ADMIN_CHAVE." }); return null; }
     return u;
   }
   function listarPedidos(req, res) {
@@ -692,14 +904,44 @@ process.on("SIGINT", desligar);
     log("💳❌ Pedido rejeitado: " + pedido.email);
     return responder(res, 200, { ok: true });
   }
+  /* Comprovante falso passou na verificação automática? Revoga: tira os
+     dias concedidos por AQUELE pedido e marca como revogado. */
+  function revogarPedido(req, res) {
+    const u = checarAdmin(req, res);
+    if (!u) return;
+    const id = u.searchParams.get("id") || "";
+    const pedido = PEDIDOS.find(p => p.id === id);
+    if (!pedido) return responder(res, 404, { erro: "Pedido não encontrado" });
+    if (pedido.status !== "aprovado") return responder(res, 400, { erro: "Só dá pra revogar pedido aprovado" });
+    const c = CONTAS[pedido.email];
+    if (c && c.premiumAte) {
+      const dias = parseInt(pedido.diasConcedidos || pedido.dias || 0, 10) || 0;
+      c.premiumAte = Math.max(Date.now() - 1, c.premiumAte - dias * 86400000);
+      persistir();
+    }
+    pedido.status = "revogado";
+    pedido.revogadoEm = new Date().toISOString();
+    persistirPedidos();
+    log("💳🚫 Pedido revogado (comprovante inválido): " + pedido.email);
+    return responder(res, 200, { ok: true, email: pedido.email, premiumAte: (c && c.premiumAte) || 0 });
+  }
+  /* Andrio conferiu um pedido auto-aprovado e está tudo certo → some do destaque */
+  function conferirPedido(req, res) {
+    const u = checarAdmin(req, res);
+    if (!u) return;
+    const id = u.searchParams.get("id") || "";
+    const pedido = PEDIDOS.find(p => p.id === id);
+    if (!pedido) return responder(res, 404, { erro: "Pedido não encontrado" });
+    pedido.conferido = true;
+    persistirPedidos();
+    return responder(res, 200, { ok: true });
+  }
 
   /* ---------- ADMIN: dados do Painel do Dono ----------
      Nunca expõe senha (nem hash). Só métricas de negócio. */
   function adminDados(req, res) {
     const u = new URL(req.url, "http://x");
-    const ADMIN = process.env.ADMIN_CHAVE || "";
-    if (!ADMIN) return responder(res, 403, { erro: "Defina ADMIN_CHAVE nas variáveis do Render para usar o painel." });
-    if ((u.searchParams.get("chave") || "") !== ADMIN) return responder(res, 403, { erro: "Chave errada." });
+    if (!chaveAdminValida(u.searchParams.get("chave"))) return responder(res, 403, { erro: "Chave errada. Entre no app com a conta admin ou use a ADMIN_CHAVE." });
     const contas = Object.values(CONTAS).map(c => {
       const p = c.progresso || {};
       return {
@@ -764,8 +1006,8 @@ input,select{font-family:inherit;font-weight:700;padding:10px;border:2px solid r
 .vazio{color:var(--suave);font-weight:700;font-size:.85rem;padding:8px}
 </style></head><body>
 <h1>🦜 FalaFina — Painel do Dono</h1>
-<p class="sub">Quem chamar hoje, quem é Premium, ativação em 1 toque. Só você vê isso (ADMIN_CHAVE).</p>
-<div id="entrar"><input type="password" id="chave" placeholder="Sua ADMIN_CHAVE" style="flex:1"><button onclick="entrar()" style="background:var(--verde);color:#fff;border:none;border-radius:10px;padding:10px 16px;font-weight:800;cursor:pointer">Entrar</button></div>
+<p class="sub">Quem chamar hoje, quem é Premium, ativação em 1 toque. Só você vê isso (senha do admin ou ADMIN_CHAVE).</p>
+<div id="entrar"><input type="password" id="chave" placeholder="Senha do admin (ou ADMIN_CHAVE)" style="flex:1"><button onclick="entrar()" style="background:var(--verde);color:#fff;border:none;border-radius:10px;padding:10px 16px;font-weight:800;cursor:pointer">Entrar</button></div>
 <div id="msg"></div>
 <div id="painel" style="display:none">
   <div class="cards" id="stats"></div>
@@ -806,21 +1048,46 @@ async function carregarPedidos() {
 }
 function desenharPedidos() {
   const pend = PEDIDOS.filter(p => p.status === "pendente");
-  const feitos = PEDIDOS.filter(p => p.status !== "pendente").slice(0, 15);
-  $("#qtdPedidos").textContent = pend.length ? "(" + pend.length + " pendente" + (pend.length === 1 ? "" : "s") + ")" : "";
-  const cartaoPed = (p, ativo) => {
-    const acoes = ativo
-      ? '<div class="acoes"><button class="btn-aprovar" data-id="' + p.id + '" data-dias="' + p.dias + '">✅ Aprovar (' + p.dias + 'd)</button><button class="coral btn-rejeitar" data-id="' + p.id + '">❌ Rejeitar</button></div>'
-      : '<div class="meta">' + (p.status === "aprovado" ? "✅ aprovado" : "❌ rejeitado") + '</div>';
-    return '<div class="pedido' + (ativo ? "" : " feito") + '"><img class="img-abrir" data-src="' + p.comprovante + '" src="' + p.comprovante + '" alt="comprovante"><div class="info">' +
+  const autos = PEDIDOS.filter(p => p.status === "aprovado" && p.autoAprovado && !p.conferido);
+  const feitos = PEDIDOS.filter(p => p.status !== "pendente" && !(p.autoAprovado && !p.conferido)).slice(0, 15);
+  const avisos = pend.length + autos.length;
+  $("#qtdPedidos").textContent = avisos ? "(" + avisos + " pra você ver)" : "";
+  const infoVerif = p => {
+    if (!p.verificacao) return "";
+    if (p.verificacao.status === "analisando") return '<div class="meta">🔎 lendo o comprovante automaticamente…</div>';
+    if (p.verificacao.status === "aprovado-auto") return '<div class="meta" style="color:var(--verde)">🤖 ' + esc(p.verificacao.motivo || "aprovado automaticamente") + '</div>';
+    if (p.verificacao.motivo) return '<div class="meta" style="color:var(--coral)">🔎 análise automática: ' + esc(p.verificacao.motivo) + '</div>';
+    return "";
+  };
+  const cartaoPed = (p, tipo) => {
+    let acoes = "";
+    if (tipo === "pend") acoes = '<div class="acoes"><button class="btn-aprovar" data-id="' + p.id + '" data-dias="' + p.dias + '">✅ Aprovar (' + p.dias + 'd)</button><button class="coral btn-rejeitar" data-id="' + p.id + '">❌ Rejeitar</button></div>';
+    else if (tipo === "auto") acoes = '<div class="acoes"><button class="btn-conferir" data-id="' + p.id + '">👍 Conferi, tudo certo</button><button class="coral btn-revogar" data-id="' + p.id + '">🚫 Falso — revogar VIP</button></div>';
+    else acoes = '<div class="meta">' + (p.status === "aprovado" ? "✅ aprovado" + (p.autoAprovado ? " (🤖 automático)" : "") : p.status === "revogado" ? "🚫 revogado" : "❌ rejeitado") + '</div>' +
+      (p.status === "aprovado" ? '<div class="acoes"><button class="coral btn-revogar" data-id="' + p.id + '">🚫 Revogar VIP</button></div>' : "");
+    return '<div class="pedido' + (tipo === "feito" ? " feito" : "") + '"' + (tipo === "auto" ? ' style="border-color:var(--sol)"' : "") + '><img class="img-abrir" data-src="' + p.comprovante + '" src="' + p.comprovante + '" alt="comprovante"><div class="info">' +
+      (tipo === "auto" ? '<div class="meta" style="color:#7A5A00">🔔 VIP JÁ ATIVADO SOZINHO — confira o comprovante</div>' : "") +
       '<b>' + esc(p.nome || p.email) + '</b><div class="mail">' + esc(p.email) + '</div>' +
       '<div class="meta">' + esc(p.planoNome || p.plano || "") + (p.valor ? " · " + esc(p.valor) : "") + " · " + new Date(p.criadoEm).toLocaleString("pt-BR") + "</div>" +
-      acoes + "</div></div>";
+      infoVerif(p) + acoes + "</div></div>";
   };
-  $("#pedidos").innerHTML = pend.map(p => cartaoPed(p, true)).join("") + feitos.map(p => cartaoPed(p, false)).join("") || '<p class="vazio">Nenhum pedido ainda.</p>';
+  $("#pedidos").innerHTML = autos.map(p => cartaoPed(p, "auto")).join("") + pend.map(p => cartaoPed(p, "pend")).join("") + feitos.map(p => cartaoPed(p, "feito")).join("") || '<p class="vazio">Nenhum pedido ainda.</p>';
   $("#pedidos").querySelectorAll(".img-abrir").forEach(img => img.addEventListener("click", () => window.open(img.dataset.src)));
   $("#pedidos").querySelectorAll(".btn-aprovar").forEach(b => b.addEventListener("click", () => aprovarPed(b.dataset.id, b.dataset.dias)));
   $("#pedidos").querySelectorAll(".btn-rejeitar").forEach(b => b.addEventListener("click", () => rejeitarPed(b.dataset.id)));
+  $("#pedidos").querySelectorAll(".btn-revogar").forEach(b => b.addEventListener("click", () => revogarPed(b.dataset.id)));
+  $("#pedidos").querySelectorAll(".btn-conferir").forEach(b => b.addEventListener("click", () => conferirPed(b.dataset.id)));
+}
+async function revogarPed(id) {
+  if (!confirm("Comprovante falso? Isso REMOVE os dias de VIP dados por este pedido.")) return;
+  const r = await fetch("/api/admin/pedidos/revogar?chave=" + encodeURIComponent(CHAVE) + "&id=" + encodeURIComponent(id));
+  const j = await r.json();
+  if (j.ok) { alert("🚫 VIP revogado."); carregarPedidos(); entrar(); } else alert("❌ " + (j.erro || "Erro"));
+}
+async function conferirPed(id) {
+  const r = await fetch("/api/admin/pedidos/conferir?chave=" + encodeURIComponent(CHAVE) + "&id=" + encodeURIComponent(id));
+  const j = await r.json();
+  if (j.ok) carregarPedidos(); else alert("❌ " + (j.erro || "Erro"));
 }
 async function aprovarPed(id, dias) {
   if (!confirm("Aprovar este pagamento e ativar " + dias + " dias de VIP?")) return;
@@ -903,9 +1170,7 @@ function copiar(t) { navigator.clipboard && navigator.clipboard.writeText(t); }
      https://SEU-SITE.onrender.com/api/premium?chave=SUACHAVE&email=aluno@email.com&dias=30 */
   function ativarPremium(req, res) {
     const u = new URL(req.url, "http://x");
-    const ADMIN = process.env.ADMIN_CHAVE || "";
-    if (!ADMIN) return responder(res, 403, { erro: "Defina ADMIN_CHAVE nas variáveis do Render para usar esta rota." });
-    if ((u.searchParams.get("chave") || "") !== ADMIN) return responder(res, 403, { erro: "Chave errada." });
+    if (!chaveAdminValida(u.searchParams.get("chave"))) return responder(res, 403, { erro: "Chave errada. Entre no app com a conta admin ou use a ADMIN_CHAVE." });
     const email = (u.searchParams.get("email") || "").trim().toLowerCase();
     const dias = Math.max(1, Math.min(36500, parseInt(u.searchParams.get("dias") || "30", 10) || 30));
     const c = CONTAS[email];
