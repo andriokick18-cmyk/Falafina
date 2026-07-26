@@ -882,6 +882,40 @@ body.sem-shell .btn-info-topo{display:none}
 @keyframes pfFragmentoFlutua{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-14px) rotate(180deg)}}
 .prestigio-hero .prestigio-selo{ font-size:.72rem; padding:5px 22px; }
 
+/* ---- Card BÁSICO (sem Estandarte comprado): limpo e neutro de propósito —
+   é o contraste que faz o item comprado parecer ESPECIAL de verdade ---- */
+.prestigio.prestigio-basico{ position:relative; border-radius:12px; border:2px solid rgba(120,105,75,.28);
+  background:linear-gradient(180deg,#FDFAF2,#F4EDDC); box-shadow:0 2px 6px rgba(40,30,10,.10); }
+
+/* ---- 🎖️ RARIDADE DOS ITENS DA LOJA: quanto mais caro, mais desenhado o card ---- */
+.loja-item.lr-comum{ border-color:rgba(33,49,58,.14); }
+.loja-item.lr-raro{ border-color:#2D9CDB; box-shadow:0 0 12px rgba(45,156,219,.28); }
+.loja-item.lr-epico{ border:2.5px solid transparent;
+  background:linear-gradient(180deg,#FDFBFF,#F5EEFF) padding-box, linear-gradient(135deg,#B266FF,#7B2FF7,#D9B8FF,#B266FF) border-box;
+  background-size:100% 100%,260% 260%; animation:pfEnergiaFluxo 5s linear infinite; box-shadow:0 0 16px rgba(178,102,255,.35); }
+.loja-item.lr-lendario{ border:3px solid transparent;
+  background:linear-gradient(180deg,#FFFDF4,#FFF6DC) padding-box, linear-gradient(120deg,#FFD700,#B8860B,#FFF3B0,#FFD700) border-box;
+  background-size:100% 100%,300% 300%; animation:pfEnergiaFluxo 3.6s linear infinite;
+  box-shadow:0 0 20px rgba(255,215,0,.45); }
+.lr-tag{ font-size:.56rem; font-weight:900; letter-spacing:.6px; text-transform:uppercase;
+  padding:2px 9px; border-radius:99px; color:#fff; }
+.lr-tag.comum{ background:#8A939B; } .lr-tag.raro{ background:#2D9CDB; }
+.lr-tag.epico{ background:linear-gradient(90deg,#7B2FF7,#B266FF); }
+.lr-tag.lendario{ background:linear-gradient(90deg,#B8860B,#FFD700); color:#4A3400; text-shadow:none; }
+
+/* ---- 🛍️ LOJA: palco escuro de vitrine — brilho/glow dos itens aparece de verdade ---- */
+.loja-palco{ width:100%; min-height:92px; display:flex; align-items:center; justify-content:center; border-radius:14px;
+  background:radial-gradient(85% 100% at 50% 25%, #2E3A46, #131A22 85%);
+  box-shadow:inset 0 0 20px rgba(0,0,0,.55), inset 0 -2px 6px rgba(255,255,255,.06); position:relative; overflow:hidden; }
+.loja-palco::after{ content:""; position:absolute; left:12%; right:12%; bottom:8px; height:10px; border-radius:50%;
+  background:radial-gradient(50% 100% at 50% 50%, rgba(255,255,255,.16), transparent 75%); }
+.loja-item{ position:relative; }
+.equip-flag{ position:absolute; top:-9px; right:10px; z-index:2; font-size:.6rem; font-weight:900; letter-spacing:.5px;
+  color:#fff; background:linear-gradient(90deg,var(--verde,#00885F),#0AA372); padding:3px 10px; border-radius:99px;
+  box-shadow:0 2px 6px rgba(0,136,95,.45); }
+/* Borda equipada em destaque no banner grande do perfil */
+.prestigio-hero .avb{ padding:5px; filter:drop-shadow(0 0 10px var(--glow)); }
+
 /* ---- Medalhas das Conquistas: badge circular de metal + fita pendurada ---- */
 .conq{ background:linear-gradient(180deg,#FBF3E1,#F3E6C8); border:2px solid rgba(120,90,40,.25); border-radius:16px;
   padding:20px 12px 16px; text-align:center; position:relative; overflow:visible; }
@@ -5126,16 +5160,16 @@ const COSM = {
     { id:"dragao",  slot:"pet", nome:"Dragão FalaFina",emo:"🐉", anim:"brilhar",  preco:30000, req:250, desc:"Lendário — exige nível 250" }
   ],
   EFEITOS: [
-    { id:"brilho-verde",  slot:"efeito", nome:"Brilho Verde",      preco:400,   desc:"Sua linha do ranking brilha" },
-    { id:"ouro-listrado", slot:"efeito", nome:"Listras de Ouro",   preco:900,   desc:"Fundo dourado listrado" },
-    { id:"neon-azul",     slot:"efeito", nome:"Neon Azul",         preco:1500,  desc:"Vibração neon" },
-    { id:"estrelas",      slot:"efeito", nome:"Chuva de Estrelas", preco:2500,  desc:"✦ piscando pra todo mundo ver" },
-    { id:"fogo",          slot:"efeito", nome:"Fogo na Borda",     preco:4000,  desc:"🔥 saltando na sua linha" },
-    { id:"raios",         slot:"efeito", nome:"Raios",             preco:6500,  desc:"⚡ estalando sem parar" },
-    { id:"aurora",        slot:"efeito", nome:"Aurora",            preco:10000, desc:"Borda com as cores do céu" },
-    { id:"nevoa",         slot:"efeito", nome:"Névoa Cósmica",     preco:15000, desc:"🌌 roxo misterioso" },
-    { id:"arcoiris",      slot:"efeito", nome:"Arco-Íris",         preco:22000, desc:"Todas as cores girando" },
-    { id:"trono",         slot:"efeito", nome:"Trono Imortal",     preco:35000, req:500, desc:"👑 dourado — exige nível 500" }
+    { id:"brilho-verde",  slot:"efeito", nome:"Estandarte da Selva",    preco:400,   desc:"Pano verde-esmeralda com folhas caindo" },
+    { id:"ouro-listrado", slot:"efeito", nome:"Estandarte Dourado",     preco:900,   desc:"Pano de realeza com fragmentos de ouro" },
+    { id:"neon-azul",     slot:"efeito", nome:"Estandarte Neon",        preco:1500,  desc:"Azul elétrico vibrando no seu card" },
+    { id:"estrelas",      slot:"efeito", nome:"Céu Estrelado",          preco:2500,  desc:"✦ constelações piscando pra todo mundo ver" },
+    { id:"fogo",          slot:"efeito", nome:"Estandarte em Chamas",   preco:4000,  desc:"🔥 pano em brasas com fagulhas subindo" },
+    { id:"raios",         slot:"efeito", nome:"Tempestade",             preco:6500,  desc:"⚡ raios estalando no seu estandarte" },
+    { id:"aurora",        slot:"efeito", nome:"Aurora Boreal",          preco:10000, desc:"As cores do céu do norte no seu pano" },
+    { id:"nevoa",         slot:"efeito", nome:"Névoa Cósmica",          preco:15000, desc:"🌌 roxo profundo com poeira de estrelas" },
+    { id:"arcoiris",      slot:"efeito", nome:"Arco-Íris",              preco:22000, desc:"Todas as cores girando por você" },
+    { id:"trono",         slot:"efeito", nome:"Trono Imortal",          preco:35000, req:500, desc:"👑 o pano dourado do rei — exige nível 500" }
   ],
   PACOTES: [
     { rs:"4,90",  s:600 }, { rs:"14,90", s:2200 }, { rs:"29,90", s:5000 }, { rs:"59,90", s:12000 }
@@ -5305,7 +5339,7 @@ function abrirPerfilPublico(c, pos){
   const todas = listaConquistas(resumo);
   const medalhas = todas.filter(m => m.ok);
   const alvo = $("#bauCaixaConteudo");
-  const pf = prestigioAtributos(c.xp || 0);
+  const pf = prestigioAtributos(c.xp || 0, { efeito: c.efeito });
   const posBadge = (pos != null) ? `<span class="perfil-selo-pos">${pos === 0 ? "👑 1º lugar — Rei do Ranking" : (pos + 1) + "º lugar no ranking"}</span>` : "";
   /* Fragmentos flutuando: quantidade cresce com o tier (mais grandioso pra quem tem mais XP) */
   const nFrag = 3 + Math.min(5, Math.floor(todas.filter(m=>m.ok).length / 3));
@@ -5314,13 +5348,13 @@ function abrirPerfilPublico(c, pos){
     return `<span class="pf-fragmento" style="top:${topo}%;left:${esq}%;animation-delay:${atraso}s">✦</span>`;
   }).join("");
   alvo.innerHTML = `
-    <div class="prestigio prestigio-frame prestigio-hero ${c.efeito ? "fx-" + c.efeito : ""}" style="${pf.styleVars}" ${pf.dataAttrs}>
-      <canvas class="pf-shader" id="pfShaderCanvas" aria-hidden="true"></canvas>
-      ${pf.cantosHTML}${pf.penduradoHTML}${fragmentos}
+    <div class="${pf.frameClass} prestigio-hero ${c.efeito ? "fx-" + c.efeito : ""}" style="${pf.styleVars}" ${pf.dataAttrs}>
+      ${pf.temSkin ? '<canvas class="pf-shader" id="pfShaderCanvas" aria-hidden="true"></canvas>' : ""}
+      ${pf.cantosHTML}${pf.penduradoHTML}${pf.temSkin ? fragmentos : ""}
       ${posBadge}
       <div style="display:flex;justify-content:center;margin-top:8px;position:relative;z-index:1">${bordaWrap(`<div class="avatar-g" style="width:104px;height:104px;font-size:2.8rem">${c.foto ? `<img src="${c.foto}" alt="">` : "👤"}</div>`, c.borda)}</div>
       <p class="perfil-nome-modal">${esc(c.nome)}</p>
-      <p class="perfil-titulo-modal">${tituloPorXP(c.xp || 0)} ${petHTML(c.pet, 26)}</p>
+      <p class="perfil-titulo-modal">${tituloPorXP(c.xp || 0)} ${petHTML(c.pet, 34)}</p>
       <div style="margin-top:6px">${pf.seloHTML}</div>
       ${pf.runasHTML}
     </div>
@@ -5340,7 +5374,7 @@ function abrirPerfilPublico(c, pos){
   $("#fecharPerfilPub").addEventListener("click", fecharBauModal);
   destruirShaderHero();
   const canvasHero = $("#pfShaderCanvas");
-  if(canvasHero) RPG_HERO_SHADER = iniciarShaderHero(canvasHero, pf.tier.cor1, pf.tier.cor2);
+  if(canvasHero) RPG_HERO_SHADER = iniciarShaderHero(canvasHero, pf.cor1, pf.cor2);
   if(typeof RPGFX !== "undefined") RPGFX.registrar();
 }
 function abrirBauGratisModal(){
@@ -5454,21 +5488,49 @@ function prestigioRunasHTML(t){
   return `<div class="prestigio-runas">${glifos.map((g, i) => `<span style="animation-delay:${(i * .18).toFixed(2)}s">${g}</span>`).join("")}</div>`;
 }
 const PF_CANTOS_HTML = `<i class="pf-profundidade"></i><i class="pf-reflexo"></i><i class="prestigio-canto c1"></i><i class="prestigio-canto c2"></i><i class="prestigio-canto c3"></i><i class="prestigio-canto c4"></i>`;
+/* ✨ COMPRA = USO: o EFEITO que a pessoa comprou na Loja vira a SKIN do
+   estandarte dela — troca as cores do pano e as partículas do card
+   inteiro (lista, pódio e perfil), mantendo o brasão/nome do tier.
+   Quem compra "Chama Viva" fica com o estandarte em chamas de verdade. */
+const PF_FX_TEMA = {
+  "brilho-verde":  { cor1:"#39E28A", cor2:"#0A7A48", glow:"rgba(57,226,138,.85)",  particula:"folha" },
+  "ouro-listrado": { cor1:"#FFD700", cor2:"#A8790B", glow:"rgba(255,215,0,.8)",   particula:"fragmento" },
+  "neon-azul":     { cor1:"#00C2FF", cor2:"#0051AA", glow:"rgba(0,194,255,.85)",  particula:"brilho" },
+  "estrelas":      { cor1:"#FFE68A", cor2:"#B8860B", glow:"rgba(255,215,0,.85)",  particula:"cosmos" },
+  "fogo":          { cor1:"#FF4E00", cor2:"#8C1A00", glow:"rgba(255,78,0,.85)",   particula:"brasa" },
+  "raios":         { cor1:"#00C2FF", cor2:"#0A3E9E", glow:"rgba(0,194,255,.9)",   particula:"raio" },
+  "aurora":        { cor1:"#00FFC2", cor2:"#7A2EFF", glow:"rgba(0,255,194,.85)",  particula:"aurora" },
+  "nevoa":         { cor1:"#B266FF", cor2:"#3B0A70", glow:"rgba(178,102,255,.85)",particula:"cosmos" },
+  "arcoiris":      { cor1:"#FF3D9A", cor2:"#00C2FF", glow:"rgba(255,61,154,.85)", particula:"aurora" },
+  "trono":         { cor1:"#FFD700", cor2:"#7A4F1E", glow:"rgba(255,215,0,.95)",  particula:"supremo" }
+};
 /* Atributos prontos pra grudar num card: classe, style inline (cores) e os elementos decorativos.
    crista = o brasão (escudo com o emblema do tier dentro) — "inline" pra linha da lista
-   (fica ao lado do avatar), ou "pendurado" (haste + rabicho) pro pódio/perfil. */
+   (fica ao lado do avatar), ou "pendurado" (haste + rabicho) pro pódio/perfil.
+
+   ⚖️ REGRA DE OURO (pedido do Andrio): SEM Estandarte comprado na Loja,
+   o card é BÁSICO — limpo, neutro, sem partícula, sem runa, sem brilho.
+   TODA a festa visual (cores do pano, partículas, runas, rabicho,
+   shader) é EXCLUSIVA de quem COMPROU um Estandarte (aba Estandartes).
+   O escudo com o emblema do tier continua pra todos (é conquistado por
+   XP), mas em metal neutro. Compra = visivelmente superior. */
+const PF_NEUTRO = { cor1:"#B9AE93", cor2:"#8A8069", glow:"rgba(120,110,85,.25)" };
 function prestigioAtributos(xp, opts){
   const t = prestigioTier(xp);
   const inline = !!(opts && opts.inline);
+  const skin = (opts && opts.efeito && PF_FX_TEMA[opts.efeito]) || null;
+  const cor1 = skin ? skin.cor1 : PF_NEUTRO.cor1, cor2 = skin ? skin.cor2 : PF_NEUTRO.cor2;
+  const glow = skin ? skin.glow : PF_NEUTRO.glow;
   return {
-    tier: t,
-    dataAttrs: `data-pf-tema="${t.particula}" data-pf-cor="${t.glow}"`,
-    styleVars: `--p1:${t.cor1};--p2:${t.cor2};--glow:${t.glow}`,
-    cantosHTML: PF_CANTOS_HTML,
-    runasHTML: prestigioRunasHTML(t),
+    tier: t, temSkin: !!skin, cor1, cor2, glow,
+    frameClass: skin ? "prestigio prestigio-frame" : "prestigio prestigio-basico",
+    dataAttrs: skin ? `data-pf-tema="${skin.particula}" data-pf-cor="${glow}"` : "",
+    styleVars: `--p1:${cor1};--p2:${cor2};--glow:${glow}`,
+    cantosHTML: skin ? PF_CANTOS_HTML : "",
+    runasHTML: skin ? prestigioRunasHTML({ id: t.id, runas: Math.max(3, t.runas) }) : "",
     seloHTML: `<span class="prestigio-selo">${esc(t.nome)}</span>`,
     cristaHTML: `<span class="pf-crista" title="${esc(t.nome)}">${t.ic}</span>`,
-    penduradoHTML: inline ? "" : `<i class="pf-haste"></i><span class="pf-crista" title="${esc(t.nome)}">${t.ic}</span><i class="pf-rabicho"></i>`
+    penduradoHTML: inline ? "" : `<i class="pf-haste"></i><span class="pf-crista" title="${esc(t.nome)}">${t.ic}</span>` + (skin ? `<i class="pf-rabicho"></i>` : "")
   };
 }
 
@@ -6197,8 +6259,8 @@ function renderRanking(){
     const temPodio = ordenada.length >= 3;
     const cartaoPodio = (c, pos) => {
       const p1 = pos === 0;
-      const pf = prestigioAtributos(c.xp || 0);
-      return `<div class="pd prestigio prestigio-frame ${p1 ? "p1" : ""} ${c.efeito ? "fx-" + c.efeito : ""}" style="${pf.styleVars}" ${pf.dataAttrs} data-perfil="${pos}">
+      const pf = prestigioAtributos(c.xp || 0, { efeito: c.efeito });
+      return `<div class="pd ${pf.frameClass} ${p1 ? "p1" : ""} ${c.efeito ? "fx-" + c.efeito : ""}" style="${pf.styleVars}" ${pf.dataAttrs} data-perfil="${pos}">
         ${pf.cantosHTML}${pf.penduradoHTML}
         <span class="coroa">${p1 ? "👑" : medalha[pos]}</span>
         <div class="avwrap">${bordaWrap(`<div class="avatar-mini" style="width:${p1 ? 68 : 52}px;height:${p1 ? 68 : 52}px;font-size:${p1 ? 1.9 : 1.4}rem">${c.foto ? `<img src="${c.foto}" alt="">` : "👤"}</div>`, c.borda)}</div>
@@ -6211,8 +6273,8 @@ function renderRanking(){
     const podioHtml = temPodio ? `<div class="podio">${cartaoPodio(ordenada[1], 1)}${cartaoPodio(ordenada[0], 0)}${cartaoPodio(ordenada[2], 2)}</div>` : "";
     const resto = temPodio ? ordenada.slice(3) : ordenada;
     const cartaoLista = (c, pos) => {
-      const pf = prestigioAtributos(c.xp || 0, { inline:true });
-      return `<div class="rank-item clicavel prestigio prestigio-frame prestigio-mini ${c.voce ? "eu" : ""} ${c.efeito ? "fx-" + c.efeito : ""}" style="${pf.styleVars}" ${pf.dataAttrs} data-perfil="${pos}">
+      const pf = prestigioAtributos(c.xp || 0, { inline:true, efeito: c.efeito });
+      return `<div class="rank-item clicavel ${pf.frameClass} prestigio-mini ${c.voce ? "eu" : ""} ${c.efeito ? "fx-" + c.efeito : ""}" style="${pf.styleVars}" ${pf.dataAttrs} data-perfil="${pos}">
       ${pf.cantosHTML}
       <div class="rank-pos">${medalha[pos] || (pos + 1) + "º"}</div>
       ${pf.cristaHTML}
@@ -6221,11 +6283,17 @@ function renderRanking(){
       <div class="rank-xp" style="margin-left:auto">${aba.valor(c)}</div>
     </div>`;
     };
+    /* Célula compra→uso: quem ainda está no card básico vê AQUI o convite
+       pro Estandarte — no exato lugar onde os compradores estão brilhando */
+    const meuEfeito = (COSM.est().usando || {}).efeito;
+    const ctaEstandarte = meuEfeito ? "" : `<div id="rkCtaEstandarte" style="display:flex;align-items:center;gap:10px;background:linear-gradient(90deg,#FFF3D6,#FFE9AE);border:2px solid #E8B84C;border-radius:14px;padding:10px 14px;margin-bottom:10px;cursor:pointer">
+      <span style="font-size:1.5rem">🚩</span><div style="flex:1;min-width:0"><b style="font-size:.85rem">Seu card está no modo básico</b><br><small style="font-weight:700;color:var(--tinta-suave);font-size:.75rem">Os coloridos com partículas e brasão são <b>Estandartes da Loja</b> — toque pra ver</small></div><span style="font-weight:900">→</span></div>`;
     alvo.innerHTML = `<div class="loja-abas" style="margin-top:0">${ABAS.map(a => `<button class="loja-aba ${a.id === rankAba ? "ativa" : ""}" data-raba="${a.id}">${a.nome}</button>`).join("")}
       <button class="loja-aba" id="rkLoja" style="margin-left:auto;border-color:#E8B84C;background:#FFF3D6">🛍️ Loja</button></div>`
-      + selo + podioHtml + (resto.length ? resto.map((c, i) => cartaoLista(c, temPodio ? i + 3 : i)).join("") : (temPodio ? "" : '<p style="font-weight:700;color:var(--tinta-suave)">Ninguém neste placar ainda — seja o primeiro! 😏</p>'));
+      + selo + ctaEstandarte + podioHtml + (resto.length ? resto.map((c, i) => cartaoLista(c, temPodio ? i + 3 : i)).join("") : (temPodio ? "" : '<p style="font-weight:700;color:var(--tinta-suave)">Ninguém neste placar ainda — seja o primeiro! 😏</p>'));
     alvo.querySelectorAll("[data-raba]").forEach(b => b.addEventListener("click", () => { rankAba = b.dataset.raba; renderRanking(); }));
     const rl = alvo.querySelector("#rkLoja"); if(rl) rl.addEventListener("click", () => navPara("loja"));
+    const rkCta = alvo.querySelector("#rkCtaEstandarte"); if(rkCta) rkCta.addEventListener("click", () => { lojaAba = "efeito"; navPara("loja"); });
     alvo.querySelectorAll("[data-perfil]").forEach(el => el.addEventListener("click", () => { const pp = Number(el.dataset.perfil); abrirPerfilPublico(ordenada[pp], pp); }));
     if(typeof RPGFX !== "undefined") RPGFX.registrar();
   };
@@ -9122,21 +9190,31 @@ function renderLoja(){
   const c = Contas.atual();
   const foto = c && c.perfil && c.perfil.foto ? `<img src="${c.perfil.foto}" alt="">` : "👤";
   const rec = (Progresso.dados.escalada || {}).recorde || 1;
+  /* Raridade dá identidade à Loja: quanto mais caro, mais desenhado o
+     PRÓPRIO card do item — comum simples, lendário dourado pulsando */
+  const raridadeDe = it => it.req ? "lendario" : (it.preco >= 8000 ? "epico" : (it.preco >= 2000 ? "raro" : "comum"));
+  const NOME_RARIDADE = { comum:"Comum", raro:"Raro", epico:"Épico", lendario:"Lendário" };
   const cartao = it => {
     const chave = it.slot + ":" + it.id;
     const tem = COSM.est().tem[chave];
     const emUso = COSM.est().usando[it.slot] === it.id && tem;
     const bloqueado = !COSM.liberado(it);
+    const rar = raridadeDe(it);
+    /* Vitrine: palco escuro faz o brilho/animação do item aparecer DE VERDADE —
+       a pessoa vê exatamente o que está comprando e como fica quando equipar */
     let preview = "";
-    if(it.slot === "borda") preview = bordaWrap(`<div class="avatar-mini" style="width:52px;height:52px;font-size:1.5rem">${foto}</div>`, it.id);
-    else if(it.slot === "pet") preview = `<div style="height:56px;display:flex;align-items:center">${petHTML(it.id, 46)}</div>`;
-    else preview = `<div class="rank-item fx-${it.id}" style="width:100%;padding:8px;margin:0;font-size:.72rem;font-weight:800">✨ Sua linha no ranking</div>`;
+    if(it.slot === "borda") preview = `<div class="loja-palco">${bordaWrap(`<div class="avatar-mini" style="width:64px;height:64px;font-size:1.8rem">${foto}</div>`, it.id)}</div>`;
+    else if(it.slot === "pet") preview = `<div class="loja-palco">${petHTML(it.id, 54)}</div>`;
+    else {
+      const skin = PF_FX_TEMA[it.id] || { cor1:"#FFD700", cor2:"#A8790B", glow:"rgba(255,215,0,.8)" };
+      preview = `<div class="loja-palco" style="padding:12px 8px"><div class="prestigio prestigio-frame fx-${it.id}" style="--p1:${skin.cor1};--p2:${skin.cor2};--glow:${skin.glow};width:94%;padding:10px 6px 8px;font-size:.66rem;font-weight:900;text-align:center">${PF_CANTOS_HTML}Seu estandarte<br>no Ranking</div></div>`;
+    }
     let botao;
     if(emUso) botao = `<button class="emuso" data-eq="${chave}">Em uso ✅ (tirar)</button>`;
     else if(tem) botao = `<button class="usar" data-eq="${chave}">Usar</button>`;
     else if(bloqueado) botao = `<button disabled>🔒 Exige nível ${it.req}</button>`;
     else botao = `<button data-buy="${chave}">Comprar 🌻 ${it.preco.toLocaleString("pt-BR")}</button>`;
-    return `<div class="loja-item ${tem ? "tem" : ""}">${preview}<b>${it.nome}</b><small style="font-weight:700;color:var(--tinta-suave)">${it.desc}</small>${tem ? "" : `<span class="preco">🌻 ${it.preco.toLocaleString("pt-BR")}</span>`}${botao}</div>`;
+    return `<div class="loja-item lr-${rar} ${tem ? "tem" : ""}">${emUso ? '<span class="equip-flag">✔ EQUIPADO</span>' : ""}${preview}<span class="lr-tag ${rar}">${NOME_RARIDADE[rar]}</span><b>${it.nome}</b><small style="font-weight:700;color:var(--tinta-suave)">${it.desc}</small>${tem ? "" : `<span class="preco">🌻 ${it.preco.toLocaleString("pt-BR")}</span>`}${botao}</div>`;
   };
   const catalogo = lojaAba === "borda" ? COSM.BORDAS : (lojaAba === "pet" ? COSM.PETS : (lojaAba === "efeito" ? COSM.EFEITOS : null));
   let corpo;
@@ -9194,7 +9272,7 @@ function renderLoja(){
     <button class="loja-aba ${lojaAba === "vip" ? "ativa" : ""}" data-laba="vip" style="border-color:var(--sol);background:${lojaAba === "vip" ? "" : "#FFF3D6"}">👑 VIP</button>
     <button class="loja-aba ${lojaAba === "borda" ? "ativa" : ""}" data-laba="borda">🖼️ Bordas</button>
     <button class="loja-aba ${lojaAba === "pet" ? "ativa" : ""}" data-laba="pet">🐾 Pets</button>
-    <button class="loja-aba ${lojaAba === "efeito" ? "ativa" : ""}" data-laba="efeito">✨ Efeitos</button>
+    <button class="loja-aba ${lojaAba === "efeito" ? "ativa" : ""}" data-laba="efeito">🚩 Estandartes</button>
     <button class="loja-aba ${lojaAba === "baus" ? "ativa" : ""}" data-laba="baus" style="border-color:#E8B84C;background:${lojaAba === "baus" ? "" : "#FFF3D6"}">🎁 Baús</button>
     <button class="loja-aba ${lojaAba === "protetor" ? "ativa" : ""}" data-laba="protetor">🛡️ Protetor</button>
     <button class="loja-aba ${lojaAba === "girassol" ? "ativa" : ""}" data-laba="girassol">🌻 Girassóis</button>
@@ -9446,7 +9524,7 @@ const AREAS_GUIA = {
     ["🔊","Ligue ou desligue a leitura em voz alta das perguntas do Simulador."],
     ["📲","Instale o FalaFina no celular pra usar como aplicativo — funciona até offline."]
   ]},
-  loja: { ic:"🛍️", nome:"Loja", resumo:"Gaste os 🌻 girassóis que ganhou estudando: bordas, pets, efeitos e baús.", passos:[
+  loja: { ic:"🛍️", nome:"Loja", resumo:"Gaste os 🌻 girassóis que ganhou estudando: bordas, pets, Estandartes de Ranking e baús.", passos:[
     ["🌻","Girassóis se ganham JOGANDO: vencendo níveis da Escalada, resgatando desafios, desbloqueando medalhas e florescendo palavras no Jardim."],
     ["🖼️","Bordas e efeitos deixam seu perfil único no ranking; pets te acompanham. Itens lendários exigem recorde alto na Escalada."],
     ["🎁","Baús dão girassóis (e raridades). Tem um baú grátis por dia — não esqueça de abrir!"]
