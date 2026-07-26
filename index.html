@@ -795,20 +795,22 @@ body.sem-shell .btn-info-topo{display:none}
 .mapa-item p{font-weight:700;color:var(--tinta-suave);font-size:.78rem;line-height:1.35}
 
 /* ==================================================================
-   👑 SISTEMA DE PRESTÍGIO — Banner de Prestígio (skin rara por tier de
-   XP: 13 níveis, de Turista a Imortal da Montanha). Cada jogador tem
-   o seu, em QUALQUER lugar do Ranking (lista inteira, pódio e perfil).
+   👑 SISTEMA DE PRESTÍGIO — Estandarte de Prestígio medieval/heráldico
+   (skin rara por tier de XP: 13 níveis, de Turista a Imortal da
+   Montanha). Cada jogador tem o seu, em QUALQUER lugar do Ranking
+   (lista inteira, pódio e perfil). Pergaminho + trim dourado + brasão
+   pendurado numa haste, como um estandarte de guilda de verdade.
    Cores vêm de --p1/--p2/--glow definidas inline por prestigioTier().
    ================================================================== */
 .prestigio{ position:relative; isolation:isolate; }
 .prestigio.prestigio-frame{
-  position:relative !important; border-radius:18px !important; border:2.5px solid transparent !important;
+  position:relative !important; border-radius:12px !important; border:3px solid transparent !important;
   background:
-    linear-gradient(180deg, color-mix(in srgb, var(--p1) 14%, #fff), #fff) padding-box,
-    linear-gradient(120deg, var(--p2), var(--p1), var(--glow), var(--p1), var(--p2)) border-box !important;
+    linear-gradient(180deg, color-mix(in srgb, var(--p1) 22%, #FBF3E1), color-mix(in srgb, var(--p2) 10%, #F3E6C8)) padding-box,
+    linear-gradient(155deg, #F4D77A, var(--p1), var(--p2), var(--p1), #F4D77A) border-box !important;
   background-size: 100% 100%, 260% 260% !important;
-  animation: pfEnergiaFluxo 5s linear infinite !important;
-  box-shadow: 0 3px 10px rgba(15,15,20,.14), inset 0 0 22px -8px var(--glow) !important;
+  animation: pfEnergiaFluxo 6s linear infinite !important;
+  box-shadow: 0 4px 12px rgba(40,26,10,.28), inset 0 0 0 1px rgba(255,255,255,.5), inset 0 0 20px -10px var(--glow) !important;
 }
 @keyframes pfEnergiaFluxo{0%{background-position:0 0,0% 50%}100%{background-position:0 0,200% 50%}}
 /* Névoa/profundidade + reflexo cinematográfico: elementos REAIS (não ::before/::after)
@@ -817,49 +819,84 @@ body.sem-shell .btn-info-topo{display:none}
 .pf-profundidade{ inset:-10px; z-index:-2; opacity:.55; filter:blur(14px);
   background: radial-gradient(60% 60% at 50% 20%, var(--glow), transparent 70%);
   animation: pfRespiraProfundidade 4.2s ease-in-out infinite; }
-.pf-reflexo{ inset:0; z-index:2; border-radius:inherit; mix-blend-mode:screen; opacity:.5;
-  background: linear-gradient(115deg, transparent 30%, rgba(255,255,255,.85) 46%, rgba(255,255,255,.2) 52%, transparent 62%);
+.pf-reflexo{ inset:0; z-index:2; border-radius:inherit; mix-blend-mode:screen; opacity:.45;
+  background: linear-gradient(115deg, transparent 30%, rgba(255,255,255,.8) 46%, rgba(255,255,255,.2) 52%, transparent 62%);
   background-size:250% 250%; animation: pfReflexoCinematografico 3.6s ease-in-out infinite; }
 @keyframes pfRespiraProfundidade{0%,100%{transform:scale(1) translateY(0);opacity:.4}50%{transform:scale(1.06) translateY(-3px);opacity:.7}}
 @keyframes pfReflexoCinematografico{0%{background-position:120% -20%}45%,100%{background-position:-40% 60%}}
-/* Cantos esculpidos (moldura) — 4 fragmentos SVG-like via clip-path, cor do tier */
-.prestigio-canto{ position:absolute; width:16px; height:16px; z-index:3; pointer-events:none;
-  background:linear-gradient(135deg,var(--p1),var(--p2));
-  clip-path:polygon(0 0,100% 0,100% 30%,30% 30%,30% 100%,0 100%);
-  filter:drop-shadow(0 0 4px var(--glow)); }
-.prestigio-canto.c1{top:-3px;left:-3px}
-.prestigio-canto.c2{top:-3px;right:-3px;transform:rotate(90deg)}
-.prestigio-canto.c3{bottom:-3px;right:-3px;transform:rotate(180deg)}
-.prestigio-canto.c4{bottom:-3px;left:-3px;transform:rotate(270deg)}
+/* Rebites dourados nos 4 cantos — tachas de metal cravadas na moldura */
+.prestigio-canto{ position:absolute; width:10px; height:10px; z-index:3; pointer-events:none; border-radius:50%;
+  background:radial-gradient(circle at 35% 30%, #FFF6D9, var(--p1) 55%, var(--p2) 100%);
+  box-shadow:0 1px 2px rgba(0,0,0,.4), 0 0 4px var(--glow), inset 0 0 1px rgba(255,255,255,.6); }
+.prestigio-canto.c1{top:6px;left:6px} .prestigio-canto.c2{top:6px;right:6px}
+.prestigio-canto.c3{bottom:6px;right:6px} .prestigio-canto.c4{bottom:6px;left:6px}
 /* Runas brilhantes — glifos rúnicos reais (Unicode Elder Futhark), cintilando fora de fase */
 .prestigio-runas{ display:flex; gap:3px; justify-content:center; margin-top:2px; position:relative; z-index:2; }
 .prestigio-runas span{ font-size:.7rem; color:var(--p1); text-shadow:0 0 6px var(--glow),0 0 12px var(--glow);
   animation: pfRunaBrilha 2.4s ease-in-out infinite; opacity:.55; }
 @keyframes pfRunaBrilha{0%,100%{opacity:.35;transform:scale(.9)}50%{opacity:1;transform:scale(1.15)}}
-/* Selo de tier (faixa com nome do prestígio) */
-.prestigio-selo{ display:inline-flex; align-items:center; gap:4px; font-weight:900; font-size:.62rem; letter-spacing:.4px;
-  text-transform:uppercase; padding:2px 9px; border-radius:99px; color:#fff; z-index:2; position:relative; white-space:nowrap;
+/* Selo de tier — fita de pergaminho com pontas em V, como um listel de brasão */
+.prestigio-selo{ display:inline-flex; align-items:center; gap:4px; font-weight:900; font-size:.6rem; letter-spacing:.4px;
+  text-transform:uppercase; padding:4px 18px; color:#fff; z-index:2; position:relative; white-space:nowrap;
+  clip-path:polygon(9% 0,91% 0,100% 50%,91% 100%,9% 100%,0 50%);
   /* Base escura misturada com a cor do tier: garante texto branco legível mesmo em tiers claros (prata/imortal) */
   background:linear-gradient(90deg, color-mix(in srgb, var(--p2) 65%, #12121a), color-mix(in srgb, var(--p1) 65%, #12121a));
   text-shadow:0 1px 2px rgba(0,0,0,.5); box-shadow:0 0 8px var(--glow); }
+/* Brasão (crista) — escudo pendurado na haste, com o emblema do tier dentro */
+.pf-crista{ position:absolute; left:50%; top:-24px; transform:translateX(-50%); z-index:5; pointer-events:none;
+  width:38px; height:44px; display:flex; align-items:center; justify-content:center; font-size:1.25rem; line-height:1;
+  background:linear-gradient(160deg, color-mix(in srgb, var(--p1) 75%, #fff), var(--p2));
+  clip-path:polygon(50% 0%,100% 16%,100% 62%,50% 100%,0% 62%,0% 16%);
+  box-shadow:0 3px 6px rgba(0,0,0,.35), inset 0 0 0 2px rgba(255,255,255,.55); }
+/* Haste dourada de onde o estandarte pendura, com pomos nas pontas */
+.pf-haste{ position:absolute; left:10%; right:10%; top:-8px; height:6px; border-radius:4px; z-index:4; pointer-events:none;
+  background:linear-gradient(180deg,#C9974A,#7A4F1E); box-shadow:0 2px 3px rgba(0,0,0,.35); }
+.pf-haste::before,.pf-haste::after{ content:""; position:absolute; top:50%; width:11px; height:11px; border-radius:50%;
+  transform:translateY(-50%); background:radial-gradient(circle at 35% 30%, #FFE9A8, #B8860B 75%); box-shadow:0 1px 2px rgba(0,0,0,.45); }
+.pf-haste::before{ left:-8px; } .pf-haste::after{ right:-8px; }
+/* Rabicho do estandarte — a ponta do pano pendendo por baixo, cor do tier */
+.pf-rabicho{ position:absolute; left:50%; bottom:-12px; width:20px; height:15px; transform:translateX(-50%); z-index:1; pointer-events:none;
+  background:linear-gradient(180deg,var(--p1),var(--p2)); clip-path:polygon(0 0,100% 0,50% 100%);
+  filter:drop-shadow(0 2px 3px rgba(0,0,0,.3)); }
 
-/* ---- Variante MINI (linha da lista de Ranking) ---- */
-.rank-item.prestigio-mini{ padding:12px 14px; }
+/* ---- Variante MINI (linha da lista de Ranking) — brasão pequeno junto do avatar ---- */
+.rank-item.prestigio-mini{ padding:12px 14px 12px 18px; }
 .rank-item.prestigio-mini .rank-pos{ text-shadow:0 0 6px var(--glow); }
+.rank-item.prestigio-mini .pf-crista{ position:static; transform:none; width:24px; height:28px; font-size:.85rem; flex-shrink:0; }
 
 /* ---- Variante PÓDIO (top 3) ---- */
-.podio .pd.prestigio-frame{ padding-top:16px; }
+.podio .pd.prestigio-frame{ padding-top:30px; margin-top:14px; }
 
 /* ---- Variante HERO (banner grande do perfil aberto) ---- */
-.prestigio-hero{ padding:26px 18px 20px; }
-.prestigio-hero .prestigio-canto{ width:28px; height:28px; }
+.prestigio-hero{ padding:34px 18px 24px; margin-top:16px; }
+.prestigio-hero .prestigio-canto{ width:16px; height:16px; }
 .prestigio-hero .prestigio-runas span{ font-size:1.15rem; }
+.prestigio-hero .pf-crista{ width:58px; height:66px; font-size:1.9rem; top:-34px; }
+.prestigio-hero .pf-haste{ top:-13px; height:8px; }
+.prestigio-hero .pf-haste::before,.prestigio-hero .pf-haste::after{ width:15px; height:15px; }
+.prestigio-hero .pf-rabicho{ width:32px; height:24px; bottom:-20px; }
 .prestigio-hero canvas.pf-shader{ position:absolute; inset:0; width:100%; height:100%; border-radius:inherit; z-index:0; opacity:.85; mix-blend-mode:screen; }
 /* Fragmentos flutuando (partículas CSS extras, só no hero — leve e sempre visível) */
 .pf-fragmento{ position:absolute; z-index:1; pointer-events:none; font-size:.8rem; color:var(--p1); opacity:.8;
   text-shadow:0 0 8px var(--glow); animation: pfFragmentoFlutua 5s ease-in-out infinite; }
 @keyframes pfFragmentoFlutua{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-14px) rotate(180deg)}}
-.prestigio-hero .prestigio-selo{ font-size:.72rem; padding:4px 14px; }
+.prestigio-hero .prestigio-selo{ font-size:.72rem; padding:5px 22px; }
+
+/* ---- Medalhas das Conquistas: badge circular de metal + fita pendurada ---- */
+.conq{ background:linear-gradient(180deg,#FBF3E1,#F3E6C8); border:2px solid rgba(120,90,40,.25); border-radius:16px;
+  padding:20px 12px 16px; text-align:center; position:relative; overflow:visible; }
+.conq .ic{ font-size:1.7rem; display:inline-flex; align-items:center; justify-content:center; width:52px; height:52px;
+  border-radius:50%; position:relative; margin-bottom:6px;
+  box-shadow:0 3px 6px rgba(0,0,0,.28), inset 0 0 0 2px rgba(255,255,255,.55); }
+.conq .ic::after{ content:""; position:absolute; left:50%; bottom:-10px; transform:translateX(-50%); width:22px; height:13px;
+  background:inherit; clip-path:polygon(0 0,100% 0,100% 65%,50% 100%,0 65%); filter:brightness(.82); }
+.conq b{ display:block; font-size:.88rem; margin-top:6px; } .conq small{ font-weight:700; color:var(--tinta-suave); font-size:.74rem; }
+.medal-bronze .ic{ background:radial-gradient(circle at 35% 30%,#EFC397,#CD7F32 60%,#8C5A28); }
+.medal-prata .ic{ background:radial-gradient(circle at 35% 30%,#F5F8FA,#B8C2CC 60%,#7C8892); }
+.medal-ouro .ic{ background:radial-gradient(circle at 35% 30%,#FFF3C4,#FFD700 60%,#B8860B); }
+.medal-diamante .ic{ background:radial-gradient(circle at 35% 30%,#E4FBFF,#4FD8FF 60%,#0E6FA8); box-shadow:0 3px 8px rgba(0,194,255,.4), inset 0 0 0 2px rgba(255,255,255,.6); }
+.conq.trancada{ opacity:.5; filter:grayscale(.7); }
+.conq.trancada .ic{ background:radial-gradient(circle at 35% 30%,#eee,#b9c2c8 60%,#8a939b); box-shadow:none; }
 </style>
 </head>
 <body>
@@ -5279,7 +5316,7 @@ function abrirPerfilPublico(c, pos){
   alvo.innerHTML = `
     <div class="prestigio prestigio-frame prestigio-hero ${c.efeito ? "fx-" + c.efeito : ""}" style="${pf.styleVars}" ${pf.dataAttrs}>
       <canvas class="pf-shader" id="pfShaderCanvas" aria-hidden="true"></canvas>
-      ${pf.cantosHTML}${fragmentos}
+      ${pf.cantosHTML}${pf.penduradoHTML}${fragmentos}
       ${posBadge}
       <div style="display:flex;justify-content:center;margin-top:8px;position:relative;z-index:1">${bordaWrap(`<div class="avatar-g" style="width:104px;height:104px;font-size:2.8rem">${c.foto ? `<img src="${c.foto}" alt="">` : "👤"}</div>`, c.borda)}</div>
       <p class="perfil-nome-modal">${esc(c.nome)}</p>
@@ -5390,19 +5427,19 @@ function petHTML(petId, tam){
    lugar que mostra um jogador: lista do Ranking, pódio e perfil aberto.
    ================================================================== */
 const PRESTIGIO_TIERS = [
-  { min:0,       id:"t0",  nome:"Turista",                tema:"lona",      cor1:"#9C7A52", cor2:"#5C4830", glow:"rgba(156,122,82,.55)",  particula:"poeira",    runas:0 },
-  { min:100,     id:"t1",  nome:"Sobrevivente",           tema:"couro",     cor1:"#B4703A", cor2:"#6B4220", glow:"rgba(180,112,58,.6)",   particula:"poeira",    runas:1 },
-  { min:300,     id:"t2",  nome:"Trabalhador",            tema:"ferro",     cor1:"#9AA1AC", cor2:"#4B4F57", glow:"rgba(154,161,172,.6)",  particula:"faisca",    runas:1 },
-  { min:600,     id:"t3",  nome:"Morador",                tema:"cobre",     cor1:"#D9884E", cor2:"#7A4322", glow:"rgba(217,136,78,.65)",  particula:"faisca",    runas:2 },
-  { min:1000,    id:"t4",  nome:"Quase Gringo",           tema:"prata",     cor1:"#E4EAF0", cor2:"#8A94A0", glow:"rgba(220,228,238,.8)",  particula:"brilho",    runas:2 },
-  { min:2000,    id:"t5",  nome:"Gringo Honorário",       tema:"ouro",      cor1:"#FFD700", cor2:"#A8790B", glow:"rgba(255,215,0,.75)",   particula:"fragmento", runas:3 },
-  { min:5000,    id:"t6",  nome:"Bilíngue em Construção", tema:"cristal",   cor1:"#4FD8FF", cor2:"#0E6FA8", glow:"rgba(79,216,255,.8)",   particula:"cristal",   runas:3 },
-  { min:15000,   id:"t7",  nome:"Fluente da Firma",       tema:"esmeralda", cor1:"#39E28A", cor2:"#0A7A48", glow:"rgba(57,226,138,.8)",   particula:"folha",     runas:4 },
-  { min:50000,   id:"t8",  nome:"Chefe de Equipe",        tema:"rubi",      cor1:"#FF5C3E", cor2:"#A0170A", glow:"rgba(255,92,62,.85)",   particula:"brasa",     runas:4 },
-  { min:150000,  id:"t9",  nome:"Gerente Gringo",         tema:"safira",    cor1:"#3EA1FF", cor2:"#0A3E9E", glow:"rgba(62,161,255,.85)",  particula:"raio",      runas:5 },
-  { min:500000,  id:"t10", nome:"Embaixador",             tema:"aurora",    cor1:"#00FFC2", cor2:"#7A2EFF", glow:"rgba(122,46,255,.85)",  particula:"aurora",    runas:6 },
-  { min:2000000, id:"t11", nome:"Lenda do FalaFina",      tema:"mitico",    cor1:"#FF3D9A", cor2:"#FFD700", glow:"rgba(255,61,154,.9)",   particula:"cosmos",    runas:7 },
-  { min:7700000, id:"t12", nome:"Imortal da Montanha",    tema:"supremo",   cor1:"#FFFFFF", cor2:"#FFD700", glow:"rgba(255,255,255,.95)", particula:"supremo",  runas:8 }
+  { min:0,       id:"t0",  nome:"Turista",                ic:"🎒", tema:"lona",      cor1:"#9C7A52", cor2:"#5C4830", glow:"rgba(156,122,82,.55)",  particula:"poeira",    runas:0 },
+  { min:100,     id:"t1",  nome:"Sobrevivente",           ic:"🏕️", tema:"couro",     cor1:"#B4703A", cor2:"#6B4220", glow:"rgba(180,112,58,.6)",   particula:"poeira",    runas:1 },
+  { min:300,     id:"t2",  nome:"Trabalhador",            ic:"💼", tema:"ferro",     cor1:"#9AA1AC", cor2:"#4B4F57", glow:"rgba(154,161,172,.6)",  particula:"faisca",    runas:1 },
+  { min:600,     id:"t3",  nome:"Morador",                ic:"🏠", tema:"cobre",     cor1:"#D9884E", cor2:"#7A4322", glow:"rgba(217,136,78,.65)",  particula:"faisca",    runas:2 },
+  { min:1000,    id:"t4",  nome:"Quase Gringo",           ic:"🇺🇸", tema:"prata",     cor1:"#E4EAF0", cor2:"#8A94A0", glow:"rgba(220,228,238,.8)",  particula:"brilho",    runas:2 },
+  { min:2000,    id:"t5",  nome:"Gringo Honorário",       ic:"🦅", tema:"ouro",      cor1:"#FFD700", cor2:"#A8790B", glow:"rgba(255,215,0,.75)",   particula:"fragmento", runas:3 },
+  { min:5000,    id:"t6",  nome:"Bilíngue em Construção", ic:"🗣️", tema:"cristal",   cor1:"#4FD8FF", cor2:"#0E6FA8", glow:"rgba(79,216,255,.8)",   particula:"cristal",   runas:3 },
+  { min:15000,   id:"t7",  nome:"Fluente da Firma",       ic:"🏭", tema:"esmeralda", cor1:"#39E28A", cor2:"#0A7A48", glow:"rgba(57,226,138,.8)",   particula:"folha",     runas:4 },
+  { min:50000,   id:"t8",  nome:"Chefe de Equipe",        ic:"👷", tema:"rubi",      cor1:"#FF5C3E", cor2:"#A0170A", glow:"rgba(255,92,62,.85)",   particula:"brasa",     runas:4 },
+  { min:150000,  id:"t9",  nome:"Gerente Gringo",         ic:"🕴️", tema:"safira",    cor1:"#3EA1FF", cor2:"#0A3E9E", glow:"rgba(62,161,255,.85)",  particula:"raio",      runas:5 },
+  { min:500000,  id:"t10", nome:"Embaixador",             ic:"🌎", tema:"aurora",    cor1:"#00FFC2", cor2:"#7A2EFF", glow:"rgba(122,46,255,.85)",  particula:"aurora",    runas:6 },
+  { min:2000000, id:"t11", nome:"Lenda do FalaFina",      ic:"🏆", tema:"mitico",    cor1:"#FF3D9A", cor2:"#FFD700", glow:"rgba(255,61,154,.9)",   particula:"cosmos",    runas:7 },
+  { min:7700000, id:"t12", nome:"Imortal da Montanha",    ic:"⛰️", tema:"supremo",   cor1:"#FFFFFF", cor2:"#FFD700", glow:"rgba(255,255,255,.95)", particula:"supremo",  runas:8 }
 ];
 function prestigioTier(xp){
   xp = xp || 0;
@@ -5417,16 +5454,21 @@ function prestigioRunasHTML(t){
   return `<div class="prestigio-runas">${glifos.map((g, i) => `<span style="animation-delay:${(i * .18).toFixed(2)}s">${g}</span>`).join("")}</div>`;
 }
 const PF_CANTOS_HTML = `<i class="pf-profundidade"></i><i class="pf-reflexo"></i><i class="prestigio-canto c1"></i><i class="prestigio-canto c2"></i><i class="prestigio-canto c3"></i><i class="prestigio-canto c4"></i>`;
-/* Atributos prontos pra grudar num card: classe, style inline (cores) e os elementos decorativos */
-function prestigioAtributos(xp){
+/* Atributos prontos pra grudar num card: classe, style inline (cores) e os elementos decorativos.
+   crista = o brasão (escudo com o emblema do tier dentro) — "inline" pra linha da lista
+   (fica ao lado do avatar), ou "pendurado" (haste + rabicho) pro pódio/perfil. */
+function prestigioAtributos(xp, opts){
   const t = prestigioTier(xp);
+  const inline = !!(opts && opts.inline);
   return {
     tier: t,
     dataAttrs: `data-pf-tema="${t.particula}" data-pf-cor="${t.glow}"`,
     styleVars: `--p1:${t.cor1};--p2:${t.cor2};--glow:${t.glow}`,
     cantosHTML: PF_CANTOS_HTML,
     runasHTML: prestigioRunasHTML(t),
-    seloHTML: `<span class="prestigio-selo">${esc(t.nome)}</span>`
+    seloHTML: `<span class="prestigio-selo">${esc(t.nome)}</span>`,
+    cristaHTML: `<span class="pf-crista" title="${esc(t.nome)}">${t.ic}</span>`,
+    penduradoHTML: inline ? "" : `<i class="pf-haste"></i><span class="pf-crista" title="${esc(t.nome)}">${t.ic}</span><i class="pf-rabicho"></i>`
   };
 }
 
@@ -6157,7 +6199,7 @@ function renderRanking(){
       const p1 = pos === 0;
       const pf = prestigioAtributos(c.xp || 0);
       return `<div class="pd prestigio prestigio-frame ${p1 ? "p1" : ""} ${c.efeito ? "fx-" + c.efeito : ""}" style="${pf.styleVars}" ${pf.dataAttrs} data-perfil="${pos}">
-        ${pf.cantosHTML}
+        ${pf.cantosHTML}${pf.penduradoHTML}
         <span class="coroa">${p1 ? "👑" : medalha[pos]}</span>
         <div class="avwrap">${bordaWrap(`<div class="avatar-mini" style="width:${p1 ? 68 : 52}px;height:${p1 ? 68 : 52}px;font-size:${p1 ? 1.9 : 1.4}rem">${c.foto ? `<img src="${c.foto}" alt="">` : "👤"}</div>`, c.borda)}</div>
         <b>${esc(c.nome)}${c.voce ? " ⭐" : ""} ${petHTML(c.pet, 20)}</b>
@@ -6169,10 +6211,11 @@ function renderRanking(){
     const podioHtml = temPodio ? `<div class="podio">${cartaoPodio(ordenada[1], 1)}${cartaoPodio(ordenada[0], 0)}${cartaoPodio(ordenada[2], 2)}</div>` : "";
     const resto = temPodio ? ordenada.slice(3) : ordenada;
     const cartaoLista = (c, pos) => {
-      const pf = prestigioAtributos(c.xp || 0);
+      const pf = prestigioAtributos(c.xp || 0, { inline:true });
       return `<div class="rank-item clicavel prestigio prestigio-frame prestigio-mini ${c.voce ? "eu" : ""} ${c.efeito ? "fx-" + c.efeito : ""}" style="${pf.styleVars}" ${pf.dataAttrs} data-perfil="${pos}">
       ${pf.cantosHTML}
       <div class="rank-pos">${medalha[pos] || (pos + 1) + "º"}</div>
+      ${pf.cristaHTML}
       ${bordaWrap(`<div class="avatar-mini">${c.foto ? `<img src="${c.foto}" alt="">` : "👤"}</div>`, c.borda)}
       <div style="min-width:0"><b style="display:flex;align-items:center;gap:6px">${esc(c.nome)}${c.voce ? " (você)" : ""} ${petHTML(c.pet, 22)}</b><small>${tituloPorXP(c.xp || 0)} · 🔥 ${c.diasSeguidos || 0} dias · 🗼 nv ${c.recorde || 1}</small>${pf.runasHTML}</div>
       <div class="rank-xp" style="margin-left:auto">${aba.valor(c)}</div>
