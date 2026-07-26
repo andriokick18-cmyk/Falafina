@@ -1,4 +1,5 @@
 // FalaFina Service Worker — app instalável e funcionando offline
+// v42: 🏰 MASMORRA DAS PALAVRAS — 1º jogo com sprites Kenney (pico-8, CC0): herói escolhe a porta com a palavra certa; corações, estrelas, XP e habilidade de vocabulário integrados
 // v41: 🏰 HOME RPG (estandarte pessoal + barra de XP + quadro de missões de madeira) + 🔑 2 e-mails de admin (kick18 e usa2026); página Admin nem existe pra não-admin
 // v40: 🖼️ ABA 1/redesenho RPG — 10 bordas de avatar refeitas como molduras de RPG (metal com relevo, gemas, glint mascarado, fagulhas) — NADA mais gira a foto
 // v39: 🚩 SISTEMA-CÉLULA COMPRA=USO — card do Ranking é BÁSICO por padrão; Estandarte colorido/partículas/runas SÓ pra quem compra na Loja (aba Estandartes); Loja com raridades (Comum→Lendário), vitrine escura e selo EQUIPADO
@@ -28,8 +29,8 @@
 // v15: faixa-guia nas Aulas + desafios com botão "Treinar agora" que leva pro treino certo
 // v14: Guia de Áreas (Mapa do FalaFina, "?" em toda tela, nomes claros)
 // v8: ícones com nome correto (minúsculo) + NUNCA cacheia /api/ (dados da nuvem sempre frescos)
-const CACHE = "falafina-v41";
-const ARQUIVOS = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png", "./mascote.png"];
+const CACHE = "falafina-v42";
+const ARQUIVOS = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png", "./mascote.png", "./sprites/pico8.png"];
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ARQUIVOS)).then(() => self.skipWaiting()));
 });

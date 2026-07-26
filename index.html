@@ -1416,6 +1416,7 @@ body.sem-shell .btn-info-topo{display:none}
 <main class="tela" id="tela-paywall"><div id="paywallConteudo"></div></main>
 <main class="tela" id="tela-loja"><div id="lojaConteudo"></div></main>
 <main class="tela" id="tela-admin"><div id="adminConteudo"></div></main>
+<main class="tela" id="tela-masmorra"><div id="masmorraConteudo"></div></main>
 </div><!-- /conteudo -->
 </div><!-- /principal -->
 </div><!-- /app -->
@@ -9071,9 +9072,179 @@ function ditadoFim(){
    ♾️ Revisão Infinita = repetição espaçada (vocab)
    ❌ Caça aos Erros = só o que você errou (pontos fracos)
    ================================================================== */
+/* ==================================================================
+   🏰 MASMORRA DAS PALAVRAS — o primeiro jogo do FalaFina com SPRITES
+   de verdade (Kenney pico-8, CC0, enviados pelo Andrio). Canvas puro:
+   o herói de pixel anda pela masmorra; cada sala tem 3 portas com
+   palavras em INGLÊS; o jogador escolhe a porta da tradução certa.
+   Certa → herói atravessa e pega estrela. Errada → monstro salta e
+   custa 1 coração (são 3). 10 salas por corrida. XP e habilidade de
+   vocabulário integrados ao resto do app.
+   ================================================================== */
+const MAS = {
+  img: null, pronto: false,
+  T: 15,             // colunas do tilemap pico-8
+  estado: null,
+  carregar(cb){
+    if(this.pronto){ cb(); return; }
+    const im = new Image();
+    im.onload = () => { this.img = im; this.pronto = true; cb(); };
+    im.onerror = () => mostrarToast("❌ Não deu pra carregar os gráficos do jogo");
+    im.src = "sprites/pico8.png";
+  },
+  tile(ctx, idx, dx, dy, s){
+    ctx.drawImage(this.img, (idx % this.T) * 8, Math.floor(idx / this.T) * 8, 8, 8, dx, dy, s, s);
+  }
+};
+function masSortearRodada(){
+  const i = Math.floor(Math.random() * LEX_CORPUS.length);
+  const certa = LEX_CORPUS[i];
+  const ops = [certa];
+  while(ops.length < 3){
+    const o = LEX_CORPUS[Math.floor(Math.random() * LEX_CORPUS.length)];
+    if(!ops.some(x => x[0] === o[0])) ops.push(o);
+  }
+  for(let k = ops.length - 1; k > 0; k--){ const j = Math.floor(Math.random() * (k + 1)); [ops[k], ops[j]] = [ops[j], ops[k]]; }
+  return { pt: certa[1], en: certa[0], som: certa[2], opcoes: ops.map(o => o[0]), certaIdx: ops.findIndex(o => o[0] === certa[0]) };
+}
+function iniciarMasmorra(){
+  if(!podeIniciarTarefaGratis()) return;
+  MAS.carregar(() => {
+    MAS.estado = {
+      sala: 1, TOTAL: 10, coracoes: 3, estrelas: 0, xp: 0, acertos: 0,
+      rodada: masSortearRodada(),
+      heroiX: 8, alvoX: 44, fase: "entrando", portaEscolhida: -1, t: 0, fim: false, monstroY: 0, estrelaAnim: 0
+    };
+    renderMasmorra();
+    irPara("tela-masmorra");
+    masLoop();
+  });
+}
+function renderMasmorra(){
+  const e = MAS.estado;
+  $("#masmorraConteudo").innerHTML = `
+  <div style="max-width:560px;margin:0 auto">
+    <div class="cardb" style="padding:10px 14px;display:flex;justify-content:space-between;align-items:center">
+      <b style="font-family:var(--f-display)">🏰 Masmorra das Palavras</b>
+      <span style="font-weight:800;font-size:.85rem">Sala <span id="masSala">${e.sala}</span>/${e.TOTAL}</span>
+    </div>
+    <canvas id="masCanvas" width="240" height="150" style="width:100%;image-rendering:pixelated;border-radius:14px;background:#1C242D;display:block;margin-top:10px;border:3px solid #7A4F1E"></canvas>
+    <div class="cardb" style="margin-top:10px;text-align:center;padding:12px">
+      <p style="font-weight:800;font-size:.8rem;color:var(--tinta-suave)">Qual porta é...</p>
+      <p id="masPergunta" style="font-family:var(--f-display);font-size:1.3rem;font-weight:700">“${esc(e.rodada.pt)}”?</p>
+      <div id="masBotoes" style="display:flex;gap:8px;margin-top:10px">
+        ${e.rodada.opcoes.map((op, i) => `<button class="btn-principal mas-op" data-op="${i}" style="flex:1;padding:12px 6px;font-size:.95rem">${i + 1}️⃣ ${esc(op)}</button>`).join("")}
+      </div>
+    </div>
+    <button class="btn-link" id="masSair" style="margin-top:8px">← Sair da masmorra (XP fica guardado)</button>
+  </div>`;
+  $("#masmorraConteudo").querySelectorAll(".mas-op").forEach(b => b.addEventListener("click", () => masResponder(parseInt(b.dataset.op, 10))));
+  $("#masSair").addEventListener("click", () => { MAS.estado.fim = true; masEncerrar(false); });
+}
+function masResponder(i){
+  const e = MAS.estado;
+  if(e.fase !== "escolha") return;
+  e.portaEscolhida = i;
+  e.alvoX = 76 + i * 56 + 8;
+  e.fase = "indo";
+  $("#masmorraConteudo").querySelectorAll(".mas-op").forEach(b => b.disabled = true);
+}
+function masProximaSala(){
+  const e = MAS.estado;
+  if(e.sala >= e.TOTAL){ masEncerrar(true); return; }
+  e.sala++; e.rodada = masSortearRodada();
+  e.heroiX = 8; e.alvoX = 44; e.fase = "entrando"; e.portaEscolhida = -1; e.t = 0; e.monstroY = 0; e.estrelaAnim = 0;
+  const sp = $("#masSala"); if(sp) sp.textContent = e.sala;
+  const pg = $("#masPergunta"); if(pg) pg.textContent = `“${e.rodada.pt}”?`;
+  const bts = $("#masBotoes");
+  if(bts){
+    bts.innerHTML = e.rodada.opcoes.map((op, i) => `<button class="btn-principal mas-op" data-op="${i}" style="flex:1;padding:12px 6px;font-size:.95rem">${i + 1}️⃣ ${esc(op)}</button>`).join("");
+    bts.querySelectorAll(".mas-op").forEach(b => b.addEventListener("click", () => masResponder(parseInt(b.dataset.op, 10))));
+  }
+}
+function masEncerrar(completou){
+  const e = MAS.estado;
+  e.fim = true;
+  const perfeito = completou && e.acertos === e.TOTAL;
+  if(e.xp > 0) registrarAtividade(e.xp);
+  if(perfeito) COSM.ganhar(15, "Masmorra perfeita! 🏰");
+  $("#masmorraConteudo").innerHTML = `
+  <div class="cardb" style="max-width:480px;margin:24px auto;text-align:center;padding:28px 20px">
+    <div style="font-size:3rem">${perfeito ? "👑" : (completou ? "🏆" : (e.coracoes <= 0 ? "💔" : "🚪"))}</div>
+    <h2 style="font-family:var(--f-display);margin:8px 0">${perfeito ? "PERFEITO! Rei da Masmorra!" : (completou ? "Masmorra vencida!" : (e.coracoes <= 0 ? "Os monstros venceram..." : "Até a próxima!"))}</h2>
+    <p style="font-weight:700;color:var(--tinta-suave)">⭐ ${e.estrelas} estrela${e.estrelas === 1 ? "" : "s"} · ✅ ${e.acertos}/${e.TOTAL} portas certas · +${e.xp} XP${perfeito ? " · 🌻 +15" : ""}</p>
+    <button class="btn-principal" id="masDeNovo" style="max-width:300px;margin:14px auto 0">🏰 Jogar de novo</button>
+    <button class="btn-link" id="masVoltar" style="margin-top:8px">← Voltar pros Jogos</button>
+  </div>`;
+  $("#masDeNovo").addEventListener("click", iniciarMasmorra);
+  $("#masVoltar").addEventListener("click", () => navPara("pratica"));
+  atualizarXP();
+}
+function masLoop(){
+  const e = MAS.estado;
+  if(!e || e.fim) return;
+  const cv = $("#masCanvas");
+  if(!cv){ return; }
+  const ctx = cv.getContext("2d");
+  ctx.imageSmoothingEnabled = false;
+  e.t++;
+  ctx.clearRect(0, 0, 240, 150);
+  /* chão de caverna: pedra speckle em cima, rocha sólida embaixo
+     (tiles conferidos por análise de cor: 17/32 = speckle, 2 = sólido) */
+  for(let x = 0; x < 240; x += 16){
+    MAS.tile(ctx, (x / 16) % 2 ? 17 : 32, x, 118, 16);
+    MAS.tile(ctx, (x / 16) % 3 === 1 ? 24 : 2, x, 134, 16);
+  }
+  /* 3 portas (2x2 tiles) com número em cima */
+  for(let i = 0; i < 3; i++){
+    const dx = 76 + i * 56;
+    const aberta = (e.fase === "acertou" && i === e.portaEscolhida);
+    const t0 = aberta ? 104 : 102, t1 = aberta ? 104 : 103, t2 = aberta ? 119 : 117, t3 = aberta ? 119 : 118;
+    MAS.tile(ctx, t0, dx, 86, 16); MAS.tile(ctx, t1, dx + 16, 86, 16);
+    MAS.tile(ctx, t2, dx, 102, 16); MAS.tile(ctx, t3, dx + 16, 102, 16);
+    MAS.tile(ctx, 121 + i, dx + 8, 68, 16);   // número 1/2/3
+    /* monstro saltando da porta errada */
+    if(e.fase === "errou" && i === e.portaEscolhida){
+      MAS.tile(ctx, 112, dx + 8, 96 - Math.abs(Math.sin(e.t * .25)) * 14, 16);
+    }
+  }
+  /* herói (frames de caminhada alternando) */
+  const andando = (e.fase === "entrando" || e.fase === "indo") && Math.abs(e.heroiX - e.alvoX) > 1;
+  const frame = andando ? (Math.floor(e.t / 6) % 2 ? 91 : 90) : 90;
+  if(andando) e.heroiX += (e.alvoX - e.heroiX) * .12 + (e.alvoX > e.heroiX ? .8 : -.8);
+  MAS.tile(ctx, frame, e.heroiX, 102, 16);
+  /* estrela subindo quando acerta */
+  if(e.fase === "acertou"){
+    e.estrelaAnim++;
+    MAS.tile(ctx, 147, e.heroiX + 2, 84 - e.estrelaAnim * 1.2, 12);
+  }
+  /* HUD: corações + estrelas */
+  for(let h = 0; h < 3; h++) MAS.tile(ctx, h < e.coracoes ? 132 : 133, 6 + h * 15, 6, 13);
+  MAS.tile(ctx, 147, 200, 6, 13);
+  ctx.fillStyle = "#FFF"; ctx.font = "bold 10px monospace"; ctx.fillText("x" + e.estrelas, 215, 16);
+  /* transições de fase */
+  if(e.fase === "entrando" && Math.abs(e.heroiX - e.alvoX) <= 1){ e.fase = "escolha"; }
+  else if(e.fase === "indo" && Math.abs(e.heroiX - e.alvoX) <= 1){
+    const certa = e.portaEscolhida === e.rodada.certaIdx;
+    ENGINE.registrar("vocab", certa);
+    if(certa){
+      e.fase = "acertou"; e.estrelas++; e.acertos++; e.xp += 6; e.t = 0;
+      Fala.dizer && Fala.dizer(e.rodada.en);
+      setTimeout(masProximaSala, 950);
+    } else {
+      e.fase = "errou"; e.coracoes--; e.t = 0;
+      mostrarToast(`❌ “${e.rodada.pt}” = ${e.rodada.en} (soa "${e.rodada.som}")`);
+      if(e.coracoes <= 0){ setTimeout(() => masEncerrar(false), 1100); }
+      else setTimeout(masProximaSala, 1400);
+    }
+  }
+  requestAnimationFrame(masLoop);
+}
+
 const JOGOS_LISTA = [
   { id:"carreira",  ic:"🧗", nome:"Modo Carreira",    skill:"vocab",   cor:"#FFF3D1", desc:"Sua história nos EUA em temporadas: domine o VOCABULÁRIO de cada etapa — agência, vaga, visto, chegada, trabalho." },
   { id:"entrevista",ic:"🎙️", nome:"Simulador de Entrevista", skill:"speaking", cor:"#E4EDFA", desc:"Ensaie a entrevista real do visto: agência, empregador, consulado e chegada nos EUA." },
+  { id:"masmorra",  ic:"🏰", nome:"Masmorra das Palavras", skill:"vocab", cor:"#EFE4FA", desc:"NOVO! Guie o herói de pixel: escolha a porta com a palavra certa em inglês, colete estrelas e fuja dos monstros." },
   { id:"ditado",    ic:"👂", nome:"Ditado Relâmpago", skill:"listening", cor:"#E1F3EA", desc:"Treine o OUVIDO: escute a frase em inglês e escreva o que ouviu. 3 vidas." },
   { id:"jardim",    ic:"🌻", nome:"Jardim de Palavras", skill:"vocab", cor:"#FFF3D1", desc:"Aprenda palavra por palavra: ler, ouvir, escrever e FALAR até florescer." },
   { id:"escalada",  ic:"🗼", nome:"Escalada",         skill:"speed",     cor:"#FCE4DB", desc:"Responda rápido e sem errar pra subir níveis. Até onde você aguenta?" },
@@ -9099,6 +9270,12 @@ const JOGOS_TUTORIAL = {
     ["🧩","Sua resposta é avaliada por PONTOS-CHAVE: o que o entrevistador precisava ouvir. Cobriu tudo = resposta forte."],
     ["🔁","O que você errar volta numa rodada de reforço no final — repetição espaçada de verdade."],
     ["⏱️","Ative o modo com tempo se quiser pressão progressiva: quanto mais respostas você domina, menos tempo recebe. Estourar o tempo nunca pune — vira aprendizado."]
+  ]},
+  masmorra: { ic:"🏰", nome:"Masmorra das Palavras", passos:[
+    ["🏰","Você é o herói de pixel numa masmorra de 10 salas. Em cada sala tem 3 PORTAS, cada uma guardando uma palavra em INGLÊS."],
+    ["🚪","O jogo pergunta uma palavra em português — toque no botão da porta com a tradução CERTA e o herói atravessa."],
+    ["👾","Porta errada? Um MONSTRO salta e você perde 1 coração ❤️ (são 3). Perdeu os 3, a corrida acaba."],
+    ["⭐","Cada porta certa vale estrela + XP. Fechou as 10 salas SEM errar nenhuma? Bônus de 🌻 15 girassóis — Rei da Masmorra 👑"]
   ]},
   ditado: { ic:"👂", nome:"Ditado Relâmpago", passos:[
     ["🔊","Você OUVE uma frase em inglês — sem ler nada — e escreve o que ouviu. Pode repetir o áudio quantas vezes quiser."],
@@ -9180,6 +9357,7 @@ function abrirJogoDireto(id){
   ENGINE.jogou(id);
   if(id === "carreira") navPara("carreira");
   else if(id === "entrevista"){ renderSimConfig(); irPara("tela-simulador"); }
+  else if(id === "masmorra") iniciarMasmorra();
   else if(id === "ditado") iniciarDitado();
   else if(id === "jardim") iniciarJardim();
   else if(id === "escalada"){ renderEscalada(); irPara("tela-escalada"); }
@@ -9794,7 +9972,8 @@ const FF_TITULOS = {
   "tela-entrevista":"🎙️ Entrevista ao vivo", "tela-licao":"📖 Aula", "tela-quiz":"📝 Exercícios",
   "tela-conclusao":"🎉 Parabéns!", "tela-escalada":"🗼 Escalada", "tela-perfil":"🪪 Perfil", "tela-paywall":"👑 Comprar VIP", "tela-loja":"🛍️ Loja",
   "tela-carreira":"🧗 Modo Carreira", "tela-ditado":"👂 Ditado Relâmpago", "tela-jardim":"🌻 Jardim de Palavras",
-  "tela-admin":"🔑 Painel Admin"
+  "tela-admin":"🔑 Painel Admin",
+  "tela-masmorra":"🏰 Masmorra das Palavras"
 };
 const FF_SEM_SHELL = ["tela-onboarding","tela-inicio","tela-cadastro","tela-login","tela-paywall"];
 function ffAposIrPara(tela){
@@ -9806,7 +9985,7 @@ function ffAposIrPara(tela){
   const mapa = { "tela-home":"home", "tela-trilha":"aulas", "tela-pratica":"pratica", "tela-desafios":"home",
     "tela-revisao":"home", "tela-conquistas":"progresso", "tela-ranking":"ranking", "tela-comunidade":"home",
     "tela-meuperfil":"progresso", "tela-config":"progresso", "tela-simulador":"pratica", "tela-entrevista":"pratica",
-    "tela-licao":"aulas", "tela-quiz":"aulas", "tela-escalada":"pratica", "tela-conclusao":"aulas", "tela-carreira":"pratica", "tela-ditado":"pratica", "tela-jardim":"pratica", "tela-loja":"loja", "tela-admin":"admin" };
+    "tela-licao":"aulas", "tela-quiz":"aulas", "tela-escalada":"pratica", "tela-conclusao":"aulas", "tela-carreira":"pratica", "tela-ditado":"pratica", "tela-jardim":"pratica", "tela-loja":"loja", "tela-admin":"admin", "tela-masmorra":"pratica" };
   const ativa = mapa[tela] || "";
   areaAtualRota = ativa || "home";
   document.querySelectorAll(".sb-item").forEach(b => b.classList.toggle("ativo", b.dataset.rota === ativa));
