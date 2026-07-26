@@ -255,6 +255,15 @@ function mesclarProgresso(a, b) {
   /* 🛡️ Protetores de sequência: comprados/usados só crescem → máximo é seguro */
   const prA = a.protetores || {}, prB = b.protetores || {};
   r.protetores = { comprados: Math.max(prA.comprados || 0, prB.comprados || 0), usados: Math.max(prA.usados || 0, prB.usados || 0) };
+  /* 🗼 Masmorra/Torre: tudo monotônico — andar e recordes nunca voltam */
+  const msA = a.masmorra || {}, msB = b.masmorra || {};
+  r.masmorra = {
+    corridas: Math.max(msA.corridas || 0, msB.corridas || 0),
+    melhorEstrelas: Math.max(msA.melhorEstrelas || 0, msB.melhorEstrelas || 0),
+    coroas: Math.max(msA.coroas || 0, msB.coroas || 0),
+    andar: Math.max(msA.andar || 0, msB.andar || 0),
+    bausTorre: Math.max(msA.bausTorre || 0, msB.bausTorre || 0)
+  };
   /* Learning Engine: contadores por habilidade e uso de jogos — só crescem */
   const habA = a.habilidades || {}, habB = b.habilidades || {};
   r.habilidades = {};
