@@ -1,4 +1,6 @@
 // FalaFina Service Worker — app instalável e funcionando offline
+// v37: 👑 SISTEMA DE PRESTÍGIO — banner AAA por tier de XP em TODO o Ranking (lista, pódio e perfil), com partículas em canvas e shader WebGL no perfil
+// v36: 🤖 COMPROVANTE CONFERIDO SOZINHO (valor+data → VIP na hora) + 🔑 conta admin fixa do Andrio + 🚫 revogar VIP falso
 // v35: 🔑 ABA ADMIN dentro do app (aprovar pedidos sem sair do FalaFina) + 👑 perfil/ranking com muito mais vida (Rei do topo 1, bordas com mais brilho)
 // v34: 👑 ABA VIP NA LOJA — 30 dias por R$30, 60 dias por R$50, direto pro checkout
 // v33: 🎁 MODO GRÁTIS LIMITADO (nunca mais bloqueia) + 👑 COMPRAR VIP com Pix + comprovante + painel de aprovação
@@ -22,7 +24,7 @@
 // v15: faixa-guia nas Aulas + desafios com botão "Treinar agora" que leva pro treino certo
 // v14: Guia de Áreas (Mapa do FalaFina, "?" em toda tela, nomes claros)
 // v8: ícones com nome correto (minúsculo) + NUNCA cacheia /api/ (dados da nuvem sempre frescos)
-const CACHE = "falafina-v35";
+const CACHE = "falafina-v37";
 const ARQUIVOS = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png", "./mascote.png"];
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ARQUIVOS)).then(() => self.skipWaiting()));
