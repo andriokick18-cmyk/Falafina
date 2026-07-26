@@ -807,7 +807,9 @@ const MIME = {
 };
 function servirArquivo(res, rota) {
   let arq = rota === "/" ? "/index.html" : rota;
-  if (!ARQUIVOS_PUBLICOS.has(arq)) { res.writeHead(404, { "Content-Type": "text/plain" }); return res.end("404"); }
+  // 🎨 sprites de pixel art do jogo (nomes simples, sem "..", cache longo)
+  const ehSprite = /^\/sprites\/[a-z0-9-]+\.png$/.test(arq);
+  if (!ARQUIVOS_PUBLICOS.has(arq) && !ehSprite) { res.writeHead(404, { "Content-Type": "text/plain" }); return res.end("404"); }
   const caminho = path.join(PUBLICO, arq);
   fs.readFile(caminho, (err, dados) => {
     if (err) { res.writeHead(404, { "Content-Type": "text/plain" }); return res.end("404"); }
