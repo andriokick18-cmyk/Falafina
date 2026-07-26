@@ -581,6 +581,35 @@ async function verificarPedidoAuto(pedido) {
   }
 }
 
+/* ==================================================================
+   🎰 ROLETA DIÁRIA DE LOGIN (ideia do Andrio) — substitui o baú grátis.
+   TUDO acontece AQUI no servidor: sorteio, prêmio aplicado na conta e
+   log — o navegador só anima a roleta parando no prêmio que o servidor
+   mandou. Ninguém falsifica prêmio (nem VIP) mexendo no cliente.
+   Chances (em 1.000.000):
+     👑 VIP 30 dias = 1  ·  👑 VIP 7 dias = 20 (1/50.000)
+     👑 VIP 3 dias = 500 (1/2.000)  ·  🌻200 = 70.000 (7%)
+     🌻100 = 180.000 (18%)  ·  🎁 Baú = 450.000 (45%, o mais comum)
+     🌻40 (consolação) = resto (~29,95%)
+   ================================================================== */
+function roletaSortear() {
+  const n = Math.random() * 1000000;
+  if (n < 1) return { id: "vip30", tipo: "vip", dias: 30, rotulo: "👑 30 DIAS DE VIP!!!" };
+  if (n < 21) return { id: "vip7", tipo: "vip", dias: 7, rotulo: "👑 7 dias de VIP!" };
+  if (n < 521) return { id: "vip3", tipo: "vip", dias: 3, rotulo: "👑 3 dias de VIP!" };
+  if (n < 70521) return { id: "g200", tipo: "girassois", qtd: 200, rotulo: "🌻 200 girassóis!" };
+  if (n < 250521) return { id: "g100", tipo: "girassois", qtd: 100, rotulo: "🌻 100 girassóis" };
+  if (n < 700521) return { id: "bau", tipo: "bau", qtd: 1, rotulo: "🎁 1 Baú" };
+  return { id: "g40", tipo: "girassois", qtd: 40, rotulo: "🌻 40 girassóis" };
+}
+function roletaCarteira(c) {
+  if (!c.progresso) c.progresso = { xp: 0 };
+  if (!c.progresso.cosmeticos) c.progresso.cosmeticos = { tem: {}, usando: {}, ganhas: 0, gastas: 0 };
+  if (!c.progresso.cosmeticos.baus) c.progresso.cosmeticos.baus = { comprados: 0, abertos: 0, ultimoGratis: null };
+  return c.progresso.cosmeticos;
+}
+function hojeBrasilia() { return new Date(Date.now() - 3 * 3600e3).toISOString().slice(0, 10); }
+
 /* ---------- API ---------- */
 async function tratarApi(req, res, rota, ip) {
   // Saúde do servidor
@@ -802,6 +831,41 @@ async function tratarApi(req, res, rota, ip) {
     delete c.push;
     persistir();
     return responder(res, 200, { ok: true });
+  }
+
+  // 🎰 Roleta diária — sorteia, aplica e loga NO SERVIDOR; 1x por dia (Brasília)
+  if (rota === "/api/roleta/girar") {
+    const c = CONTAS[email];
+    if (!c) return responder(res, 404, { erro: "Conta não encontrada" });
+    if (c.senhaServidor !== hashServidor(senhaHash)) return responder(res, 401, { erro: "Senha errada" });
+    const hoje = hojeBrasilia();
+    if (!c.roleta) c.roleta = { ultimoDia: null, historico: [] };
+    if (c.roleta.ultimoDia === hoje) {
+      return responder(res, 429, { erro: "Você já girou hoje — a roleta volta amanhã! 🎰", jaGirou: true, ultimoDia: c.roleta.ultimoDia });
+    }
+    const premio = roletaSortear();
+    // aplica DIRETO na conta (como o Andrio pediu) — carteira monotônica
+    if (premio.tipo === "girassois") {
+      roletaCarteira(c).ganhas = (roletaCarteira(c).ganhas || 0) + premio.qtd;
+    } else if (premio.tipo === "bau") {
+      const cart = roletaCarteira(c);
+      cart.baus.comprados = (cart.baus.comprados || 0) + premio.qtd;
+    } else if (premio.tipo === "vip") {
+      const base = (c.premiumAte && c.premiumAte > Date.now()) ? c.premiumAte : Date.now();
+      c.premiumAte = base + premio.dias * 86400000;
+    }
+    // log permanente: histórico na conta (últimos 90 giros) + log do servidor
+    c.roleta.ultimoDia = hoje;
+    c.roleta.historico = [{ dia: hoje, premio: premio.id, rotulo: premio.rotulo, em: new Date().toISOString() }]
+      .concat(c.roleta.historico || []).slice(0, 90);
+    persistir();
+    log("🎰 Roleta: " + email + " → " + premio.rotulo + (premio.tipo === "vip" ? " (premiumAte " + new Date(c.premiumAte).toISOString().slice(0, 10) + ")" : ""));
+    const cart = roletaCarteira(c);
+    return responder(res, 200, {
+      ok: true, premio, premiumAte: c.premiumAte || 0, dia: hoje,
+      /* totais APÓS o prêmio: o cliente iguala por máximo (nunca soma) — sem duplicar */
+      carteira: { ganhas: cart.ganhas || 0, bausComprados: cart.baus.comprados || 0 }
+    });
   }
 
   return responder(res, 404, { erro: "Rota não existe" });

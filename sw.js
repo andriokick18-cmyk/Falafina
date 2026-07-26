@@ -1,4 +1,5 @@
 // FalaFina Service Worker — app instalável e funcionando offline
+// v45: 🎰 ROLETA DIÁRIA DE LOGIN — substitui o baú grátis: sorteio/prêmio/log 100% no SERVIDOR (anti-trapaça), 1 giro por dia (Brasília); prêmios: baú (45%), 🌻40/100/200, VIP 3d (1/2mil), 7d (1/50mil), 30d (1/1milhão)
 // v44: 🗼 A TORRE — progressão infinita da Masmorra: cada porta certa sobe 1 andar (pra sempre); a cada 20 andares um Baú da Torre, com tier subindo com a altura (madeira→prata→ouro→LENDÁRIO no 500+)
 // v43: 🏰 MASMORRA v2 — arco completo (abertura com recordes → PASSOU!/OUCH! com shake e fade entre salas → final com recorde salvo) + card-jogo AO VIVO como 1º clique da Home
 // v42: 🏰 MASMORRA DAS PALAVRAS — 1º jogo com sprites Kenney (pico-8, CC0): herói escolhe a porta com a palavra certa; corações, estrelas, XP e habilidade de vocabulário integrados
@@ -31,7 +32,7 @@
 // v15: faixa-guia nas Aulas + desafios com botão "Treinar agora" que leva pro treino certo
 // v14: Guia de Áreas (Mapa do FalaFina, "?" em toda tela, nomes claros)
 // v8: ícones com nome correto (minúsculo) + NUNCA cacheia /api/ (dados da nuvem sempre frescos)
-const CACHE = "falafina-v44";
+const CACHE = "falafina-v45";
 const ARQUIVOS = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png", "./mascote.png", "./sprites/pico8.png"];
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ARQUIVOS)).then(() => self.skipWaiting()));

@@ -5463,7 +5463,7 @@ const BAU = {
     c.baus.abertos = (c.baus.abertos || 0) + 1;
     Progresso.salvar();
   },
-  podeAbrirGratis(){ return COSM.est().baus.ultimoGratis !== hojeStr(); },
+  podeAbrirGratis(){ return false; }, /* o baú grátis diário virou a 🎰 Roleta Diária (V858) */
   resgatarGratis(){
     const c = COSM.est();
     if(c.baus.ultimoGratis === hojeStr()) return null;
@@ -5493,6 +5493,149 @@ const BAU = {
     return { ic:"✨", titulo: resultado.nome, sub:"Novo efeito de ranking!" };
   }
 };
+/* ==================================================================
+   🎰 ROLETA DIÁRIA DE LOGIN — substitui o baú grátis do dia.
+   O SERVIDOR sorteia, aplica na conta e loga (anti-trapaça); aqui a
+   gente só gira a roda bonita até parar no prêmio que ele mandou.
+   Prêmios: 🎁 Baú (o mais comum) · 🌻 40/100/200 · 👑 VIP 3d (1/2.000),
+   7d (1/50.000) e 30d (1/1.000.000). 1 giro por dia (fuso de Brasília).
+   ================================================================== */
+const ROLETA_SEG = [
+  { ic:"🎁", rot:"BAÚ",  cor:"#8B5A2B", ids:["bau"] },
+  { ic:"🌻", rot:"100",  cor:"#2F7D46", ids:["g100"] },
+  { ic:"👑", rot:"VIP",  cor:"#B8860B", ids:["vip3","vip7","vip30"] },
+  { ic:"🎁", rot:"BAÚ",  cor:"#6B4420", ids:["bau"] },
+  { ic:"🌻", rot:"200",  cor:"#0B5D3B", ids:["g200"] },
+  { ic:"🎁", rot:"BAÚ",  cor:"#8B5A2B", ids:["bau"] },
+  { ic:"🌻", rot:"40",   cor:"#5A6B74", ids:["g40"] },
+  { ic:"👑", rot:"VIP",  cor:"#D4960A", ids:["vip3","vip7","vip30"] }
+];
+function roletaDisponivel(){ return !!Contas.atual() && Progresso.dados.roletaDia !== hojeStr(); }
+function roletaDesenhar(ctx, angulo){
+  const N = ROLETA_SEG.length, fatia = (Math.PI * 2) / N, cx = 120, cy = 120, r = 100;
+  ctx.clearRect(0, 0, 240, 240);
+  for(let i = 0; i < N; i++){
+    const a0 = angulo + i * fatia, a1 = a0 + fatia;
+    ctx.beginPath(); ctx.moveTo(cx, cy); ctx.arc(cx, cy, r, a0, a1); ctx.closePath();
+    ctx.fillStyle = ROLETA_SEG[i].cor; ctx.fill();
+    ctx.strokeStyle = "rgba(255,235,176,.5)"; ctx.lineWidth = 2; ctx.stroke();
+    const am = a0 + fatia / 2;
+    ctx.save();
+    ctx.translate(cx + Math.cos(am) * r * .62, cy + Math.sin(am) * r * .62);
+    ctx.rotate(am + Math.PI / 2);
+    ctx.textAlign = "center"; ctx.font = "20px serif";
+    ctx.fillText(ROLETA_SEG[i].ic, 0, 0);
+    ctx.font = "bold 9px monospace"; ctx.fillStyle = "#FFF";
+    ctx.fillText(ROLETA_SEG[i].rot, 0, 14);
+    ctx.restore();
+  }
+  /* aro dourado + cubo central + ponteiro fixo no topo */
+  ctx.beginPath(); ctx.arc(cx, cy, r + 3, 0, Math.PI * 2);
+  ctx.strokeStyle = "#B8860B"; ctx.lineWidth = 6; ctx.stroke();
+  ctx.beginPath(); ctx.arc(cx, cy, r + 3, 0, Math.PI * 2);
+  ctx.strokeStyle = "#FFD700"; ctx.lineWidth = 2.5; ctx.stroke();
+  ctx.beginPath(); ctx.arc(cx, cy, 16, 0, Math.PI * 2);
+  ctx.fillStyle = "#FFD700"; ctx.fill(); ctx.strokeStyle = "#7A4F1E"; ctx.lineWidth = 3; ctx.stroke();
+  ctx.font = "14px serif"; ctx.textAlign = "center"; ctx.fillText("🦜", cx, cy + 5);
+  ctx.beginPath(); ctx.moveTo(cx - 10, 6); ctx.lineTo(cx + 10, 6); ctx.lineTo(cx, 26); ctx.closePath();
+  ctx.fillStyle = "#E4572E"; ctx.fill(); ctx.strokeStyle = "#7A1F0E"; ctx.lineWidth = 2; ctx.stroke();
+}
+function abrirRoleta(){
+  const c = Contas.atual();
+  if(!c){ mostrarToast("Entre na sua conta pra girar a roleta 😉"); return; }
+  if(!roletaDisponivel()){ mostrarToast("🎰 Você já girou hoje — volta amanhã!"); return; }
+  const alvo = $("#bauCaixaConteudo");
+  alvo.innerHTML = `
+    <p class="bau-titulo">🎰 Roleta Diária</p>
+    <p class="bau-sub">Um giro por dia — prêmio cai DIRETO na sua conta. Tem até dias de VIP 👑 na roda!</p>
+    <canvas id="roletaCanvas" width="240" height="240" style="width:min(78vw,300px);display:block;margin:0 auto"></canvas>
+    <div id="roletaResultado" style="min-height:30px;font-weight:900;margin-top:8px"></div>
+    <button class="bau-cta" id="roletaGirar">GIRAR! 🎰</button>
+    <button class="bau-fechar" id="roletaFechar">Fechar</button>`;
+  $("#bauOverlay").classList.add("aberto");
+  $("#roletaFechar").addEventListener("click", fecharBauModal);
+  const cv = $("#roletaCanvas"), ctx = cv.getContext("2d");
+  let angulo = -Math.PI / 2;
+  roletaDesenhar(ctx, angulo);
+  $("#roletaGirar").addEventListener("click", async function(){
+    this.disabled = true; this.textContent = "Girando…";
+    let resp = null;
+    try{
+      const r = await fetch("/api/roleta/girar", {
+        method:"POST", headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({ email: c.email, senhaHash: c.senhaHash })
+      });
+      resp = await r.json();
+    }catch(e){}
+    if(!resp || (!resp.ok && !resp.jaGirou)){
+      this.disabled = false; this.textContent = "GIRAR! 🎰";
+      mostrarToast("❌ Sem conexão — a roleta precisa de internet (o prêmio é oficial, vem do servidor)");
+      return;
+    }
+    if(resp.jaGirou){
+      Progresso.dados.roletaDia = hojeStr(); Progresso.salvar();
+      mostrarToast("🎰 Você já girou hoje — volta amanhã!");
+      fecharBauModal();
+      if(telaAtual === "tela-home") renderHome();
+      return;
+    }
+    /* o prêmio JÁ está na conta (servidor aplicou) — agora a festa: a roda
+       gira 5 voltas e para exatamente num gomo daquele prêmio */
+    const premio = resp.premio;
+    const candidatos = ROLETA_SEG.map((s, i) => s.ids.includes(premio.id) ? i : -1).filter(i => i >= 0);
+    const segAlvo = candidatos[Math.floor(Math.random() * candidatos.length)] || 0;
+    const fatia = (Math.PI * 2) / ROLETA_SEG.length;
+    /* ponteiro fica no topo (-90°): o centro do gomo alvo precisa terminar lá */
+    const anguloFinal = -Math.PI / 2 - (segAlvo * fatia + fatia / 2) - Math.PI * 2 * 5;
+    const anguloInicial = angulo, delta = anguloFinal - anguloInicial;
+    const DUR = 4200; const t0 = performance.now();
+    (function girar(ts){
+      const p = Math.min(1, (ts - t0) / DUR);
+      const easo = 1 - Math.pow(1 - p, 3); // ease-out cúbico: rápida → suspense
+      angulo = anguloInicial + delta * easo;
+      roletaDesenhar(ctx, angulo);
+      if(p < 1){ requestAnimationFrame(girar); return; }
+      roletaPremiar(premio, resp);
+    })(t0);
+  });
+}
+function roletaPremiar(premio, resp){
+  /* marca o dia + espelha o prêmio localmente (o merge é por máximo — não duplica) */
+  Progresso.dados.roletaDia = hojeStr();
+  const conta = Contas.atual();
+  const res = $("#roletaResultado");
+  if(res) res.innerHTML = `<span style="font-size:1.05rem;color:var(--verde-escuro)">${esc(premio.rotulo)}</span>`;
+  const btn = $("#roletaGirar");
+  if(!btn){ Progresso.salvar(); return; }
+  btn.disabled = false;
+  btn.textContent = premio.tipo === "bau" ? "RECEBER E ABRIR 🎁" : "RECEBER ✔";
+  btn.onclick = null;
+  const novo = btn.cloneNode(true); btn.parentNode.replaceChild(novo, btn); // limpa o listener antigo do GIRAR
+  novo.addEventListener("click", () => {
+    /* espelho local por MÁXIMO com os totais do servidor — se a sincronização
+       já trouxe o prêmio, não soma de novo (nada de prêmio dobrado) */
+    const cart = (resp && resp.carteira) || null;
+    if(premio.tipo === "girassois"){
+      const est = COSM.est();
+      est.ganhas = cart ? Math.max(est.ganhas || 0, cart.ganhas || 0) : (est.ganhas || 0) + premio.qtd;
+      mostrarToast(`🌻 +${premio.qtd} girassóis na sua conta!`);
+    } else if(premio.tipo === "bau"){
+      const cb = COSM.est().baus;
+      if(cart) cb.comprados = Math.max(cb.comprados || 0, cart.bausComprados || 0);
+      else cb.comprados = (cb.comprados || 0) + premio.qtd;
+    } else if(premio.tipo === "vip"){
+      if(conta && resp.premiumAte){ conta.premiumAte = resp.premiumAte; Contas.salvarAtual(conta); }
+      mostrarToast(`👑 ${premio.dias} dia${premio.dias > 1 ? "s" : ""} de VIP ativados AGORA!`);
+      atualizarSeloTrial();
+    }
+    Progresso.salvar();
+    atualizarXP();
+    if(premio.tipo === "bau"){ abrirLoteBauModal(1); }  // "se for baú ele clica pra abrir"
+    else { fecharBauModal(); }
+    if(telaAtual === "tela-home") renderHome();
+  });
+}
+
 /* ---------- MODAL DE ABERTURA DE BAÚ (único ou em lote de 10) ---------- */
 function fecharBauModal(){ $("#bauOverlay").classList.remove("aberto"); destruirShaderHero(); }
 $("#bauOverlay") && $("#bauOverlay").addEventListener("click", e => { if(e.target.id === "bauOverlay") fecharBauModal(); });
@@ -8245,10 +8388,10 @@ function renderHome(){
       <button class="btn-link" data-ir="loja" style="padding:4px 6px">🛍️ Loja</button>
       <button class="btn-link" id="homeMapa" style="padding:4px 6px">🗺️ Guia</button>
     </div>
-    ${(typeof BAU !== "undefined") ? `<div class="${BAU.podeAbrirGratis() ? "faixa-bau" : "faixa-trofeu"}" id="homeBauFaixa" style="${BAU.podeAbrirGratis() ? "" : "cursor:pointer"}">
-      <span style="font-size:1.8rem">🎁</span>
-      <div style="min-width:0"><b>${BAU.podeAbrirGratis() ? "Seu baú grátis do dia está esperando!" : `Estoque: ${BAU.estoque()} baú${BAU.estoque() === 1 ? "" : "s"} · 🌻 ${COSM.saldo().toLocaleString("pt-BR")}`}</b><br>
-      <small style="font-weight:700">${BAU.podeAbrirGratis() ? "Toque aqui pra abrir agora" : "Toque pra abrir ou comprar mais na Loja"}</small></div>
+    ${(typeof BAU !== "undefined") ? `<div class="${roletaDisponivel() ? "faixa-bau" : "faixa-trofeu"}" id="homeBauFaixa" style="cursor:pointer">
+      <span style="font-size:1.8rem">${roletaDisponivel() ? "🎰" : "🎁"}</span>
+      <div style="min-width:0"><b>${roletaDisponivel() ? "Sua Roleta Diária está pronta!" : `Estoque: ${BAU.estoque()} baú${BAU.estoque() === 1 ? "" : "s"} · 🌻 ${COSM.saldo().toLocaleString("pt-BR")}`}</b><br>
+      <small style="font-weight:700">${roletaDisponivel() ? "Gire e ganhe: baús, girassóis e até dias de VIP 👑 (1x por dia)" : "Toque pra abrir seus baús ou comprar mais na Loja"}</small></div>
     </div>` : ""}
     <div class="dica-card" style="margin-top:14px"><img src="mascote.png" alt=""><p><b>Dica do FalaFina:</b> ${dicaDoDia()}</p></div>
   </div>`;
@@ -8297,7 +8440,7 @@ function renderHome(){
   });
   const homeBauFaixa = $("#homeBauFaixa");
   if(homeBauFaixa) homeBauFaixa.addEventListener("click", () => {
-    if(typeof BAU !== "undefined" && BAU.podeAbrirGratis()) abrirBauGratisModal();
+    if(roletaDisponivel()) abrirRoleta();
     else { lojaAba = "baus"; navPara("loja"); }
   });
   if(typeof RPGFX !== "undefined") RPGFX.registrar(); // partículas do estandarte pessoal (se skin comprada)
@@ -9909,7 +10052,7 @@ function renderLoja(){
       <small style="font-weight:700;color:var(--tinta-suave)">Abra de 10 em 10 pra ver tudo brilhando na tela</small></div>
       <button class="bau-cta" style="width:auto;max-width:none;margin:0" id="btAbrirEstoque" ${estoque < 1 ? "disabled" : ""}>Abrir ${Math.min(10, estoque)} 🎉</button>
     </div>
-    ${podeGratis ? `<div class="faixa-bau" id="btBauGratisLoja"><span style="font-size:1.8rem">🎁</span><div><b>Seu baú grátis do dia está esperando!</b><br><small style="font-weight:700">Toque aqui pra abrir agora</small></div></div>` : ""}
+    ${roletaDisponivel() ? `<div class="faixa-bau" id="btRoletaLoja"><span style="font-size:1.8rem">🎰</span><div><b>Sua Roleta Diária está pronta!</b><br><small style="font-weight:700">Baús, girassóis e até dias de VIP 👑 — 1 giro por dia</small></div></div>` : ""}
     <div class="cardb" style="margin:14px 0">
       <b>🍀 Chances por baú</b>
       <p style="font-weight:700;color:var(--tinta-suave);font-size:.85rem;margin-top:6px">🌻10 · 🌻20 · 🌻50 · 🌻100 — comuns e fáceis &nbsp;·&nbsp; 🌻150 incomum &nbsp;·&nbsp; 🌻200 raro (10x mais difícil) &nbsp;·&nbsp; 🖼️ borda de avatar muito rara (100x) &nbsp;·&nbsp; ✨ efeito de ranking raríssimo (200x)</p>
@@ -9947,8 +10090,8 @@ function renderLoja(){
   $("#lojaConteudo").querySelectorAll("[data-vipplano]").forEach(b => b.addEventListener("click", () => abrirComprarVIP(b.dataset.vipplano)));
   const btAbrirEstoque = $("#btAbrirEstoque");
   if(btAbrirEstoque) btAbrirEstoque.addEventListener("click", () => abrirLoteBauModal(Math.min(10, BAU.estoque())));
-  const btBauGratisLoja = $("#btBauGratisLoja");
-  if(btBauGratisLoja) btBauGratisLoja.addEventListener("click", abrirBauGratisModal);
+  const btRoletaLoja = $("#btRoletaLoja");
+  if(btRoletaLoja) btRoletaLoja.addEventListener("click", abrirRoleta);
   const btProtetor = $("#btProtetor");
   if(btProtetor) btProtetor.addEventListener("click", () => PROTETOR.comprar());
   $("#lojaConteudo").querySelectorAll("[data-baupack]").forEach(b => b.addEventListener("click", () => {
