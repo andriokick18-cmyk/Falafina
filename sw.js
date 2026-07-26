@@ -1,4 +1,5 @@
 // FalaFina Service Worker — app instalável e funcionando offline
+// v40: 🖼️ ABA 1/redesenho RPG — 10 bordas de avatar refeitas como molduras de RPG (metal com relevo, gemas, glint mascarado, fagulhas) — NADA mais gira a foto
 // v39: 🚩 SISTEMA-CÉLULA COMPRA=USO — card do Ranking é BÁSICO por padrão; Estandarte colorido/partículas/runas SÓ pra quem compra na Loja (aba Estandartes); Loja com raridades (Comum→Lendário), vitrine escura e selo EQUIPADO
 // v38: 🛡️ ESTANDARTE MEDIEVAL — Banner de Prestígio virou brasão heráldico (haste+pomos, escudo com emblema, rabicho, rebites) + medalhas das Conquistas com fita
 // v37: 👑 SISTEMA DE PRESTÍGIO — banner AAA por tier de XP em TODO o Ranking (lista, pódio e perfil), com partículas em canvas e shader WebGL no perfil
@@ -26,7 +27,7 @@
 // v15: faixa-guia nas Aulas + desafios com botão "Treinar agora" que leva pro treino certo
 // v14: Guia de Áreas (Mapa do FalaFina, "?" em toda tela, nomes claros)
 // v8: ícones com nome correto (minúsculo) + NUNCA cacheia /api/ (dados da nuvem sempre frescos)
-const CACHE = "falafina-v39";
+const CACHE = "falafina-v40";
 const ARQUIVOS = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png", "./mascote.png"];
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ARQUIVOS)).then(() => self.skipWaiting()));
