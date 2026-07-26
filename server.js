@@ -130,19 +130,29 @@ const RE_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
    de contas suma, o login do dono volta a funcionar sozinho.
    ⚠️ Senha fixa por enquanto (o próprio Andrio pediu assim); depois
    colocamos mais segurança. */
-const ADMIN_EMAIL = "andrio.kick18@gmail.com";
+/* Dois e-mails de admin do Andrio:
+   - andrio.kick18@gmail.com — semeada em todo boot com a senha fixa combinada
+   - andrio.usa2026@gmail.com — a conta pessoal dele: mantém a PRÓPRIA senha,
+     só ganha o poder de admin (flag + VIP eterno) quando existir */
+const ADMIN_EMAILS = ["andrio.kick18@gmail.com", "andrio.usa2026@gmail.com"];
+const ADMIN_EMAIL = ADMIN_EMAILS[0];
 const ADMIN_SENHA = "8480054";
 // Mesmo hash que o navegador calcula antes de enviar (SHA-256 de "falafina:" + senha)
 const ADMIN_SENHA_HASH = crypto.createHash("sha256").update("falafina:" + ADMIN_SENHA).digest("hex");
-function garantirContaAdmin() {
-  const c = CONTAS[ADMIN_EMAIL] || { nome: "Andrio", email: ADMIN_EMAIL, criadaEm: new Date().toISOString(), perfil: null, progresso: null };
-  c.senhaServidor = hashServidor(ADMIN_SENHA_HASH);
+function ehEmailAdmin(email) { return ADMIN_EMAILS.includes(String(email || "").toLowerCase()); }
+function promoverAdmin(c) {
+  if (!c || !ehEmailAdmin(c.email)) return;
   c.admin = true;
   const eterno = Date.now() + 36500 * 86400000; // "adm tem vip pra sempre"
   if (!c.premiumAte || c.premiumAte < eterno) c.premiumAte = eterno;
+}
+function garantirContaAdmin() {
+  const c = CONTAS[ADMIN_EMAIL] || { nome: "Andrio", email: ADMIN_EMAIL, criadaEm: new Date().toISOString(), perfil: null, progresso: null };
+  c.senhaServidor = hashServidor(ADMIN_SENHA_HASH);
   CONTAS[ADMIN_EMAIL] = c;
+  for (const em of ADMIN_EMAILS) promoverAdmin(CONTAS[em]); // a usa2026 mantém a senha dela
   persistir();
-  log("🔑 Conta admin garantida: " + ADMIN_EMAIL);
+  log("🔑 Contas admin garantidas: " + ADMIN_EMAILS.join(", "));
 }
 garantirContaAdmin();
 
@@ -156,8 +166,8 @@ function chaveAdminValida(chave) {
   const ENV = process.env.ADMIN_CHAVE || "";
   if (ENV && chave === ENV) return true;
   if (chave === ADMIN_SENHA) return true; // a senha do dono também abre o /admin
-  const c = CONTAS[ADMIN_EMAIL];
-  return !!(c && c.senhaServidor === hashServidor(chave));
+  // o senhaHash de QUALQUER conta admin serve de chave (é o que o app usa sozinho)
+  return ADMIN_EMAILS.some(em => { const c = CONTAS[em]; return c && c.senhaServidor === hashServidor(chave); });
 }
 
 function limparPerfil(p) {
@@ -657,6 +667,7 @@ async function tratarApi(req, res, rota, ip) {
       perfil: limparPerfil(corpo.perfil),
       progresso: (corpo.progresso && typeof corpo.progresso === "object") ? corpo.progresso : null
     };
+    promoverAdmin(CONTAS[email]); // e-mail de admin do Andrio nasce com o poder
     /* 📣 INDICAÇÃO PREMIADA: quem convidou ganha 🌻100 + 🎁2 baús;
        quem chegou ganha 🌻50 + 🎁1 baú. A carteira é monotônica
        (ganhas/comprados só crescem), então o crédito sobrevive a
@@ -696,6 +707,7 @@ async function tratarApi(req, res, rota, ip) {
     const c = CONTAS[email];
     if (!c) return responder(res, 404, { erro: "Conta não encontrada" });
     if (c.senhaServidor !== hashServidor(senhaHash)) return responder(res, 401, { erro: "Senha errada" });
+    if (ehEmailAdmin(email) && !c.admin) { promoverAdmin(c); persistir(); }
     return responder(res, 200, { ok: true, conta: contaPublica(c) });
   }
 

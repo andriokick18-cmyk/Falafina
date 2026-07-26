@@ -1019,6 +1019,42 @@ body.sem-shell .btn-info-topo{display:none}
 /* Borda equipada em destaque no banner grande do perfil */
 .prestigio-hero .avb{ padding:5px; filter:drop-shadow(0 0 10px var(--glow)); }
 
+/* ==================================================================
+   🏰 HOME RPG — painel de personagem (o SEU estandarte pessoal) +
+   quadro de missões de madeira com pergaminhos e selos de cera
+   ================================================================== */
+.rpg-heroi{ padding:30px 16px 16px; margin-top:18px; text-align:center; }
+.rpg-xpbar{ position:relative; height:17px; border-radius:99px; background:rgba(30,20,10,.28); overflow:hidden;
+  box-shadow:inset 0 1px 3px rgba(0,0,0,.4); margin-top:10px; }
+.rpg-xpbar>i{ display:block; height:100%; border-radius:99px;
+  background:linear-gradient(90deg,#E8A20C,#FFD700 60%,#FFF3B0); box-shadow:0 0 8px rgba(255,215,0,.65); transition:width .4s; }
+.rpg-xpbar>span{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  font-size:.6rem; font-weight:900; color:#fff; letter-spacing:.6px; text-shadow:0 1px 2px rgba(0,0,0,.65); }
+.rpg-stats{ display:flex; gap:6px; justify-content:center; flex-wrap:wrap; margin-top:10px; position:relative; z-index:1; }
+.rpg-stats span{ background:rgba(255,255,255,.78); border:1.5px solid rgba(120,90,40,.3); border-radius:99px;
+  padding:4px 11px; font-weight:800; font-size:.76rem; }
+.rpg-missao{ background:linear-gradient(180deg,#FBF3E1,#F0E4C8); border:2px solid rgba(120,90,40,.4);
+  border-radius:14px; padding:14px 12px 12px; margin-top:12px; position:relative; z-index:1; box-shadow:0 2px 4px rgba(40,26,10,.18); }
+.rpg-missao::before{ content:"⚔️"; position:absolute; top:-13px; left:12px; font-size:1.35rem; filter:drop-shadow(0 1px 2px rgba(0,0,0,.35)); }
+.quadro-missoes{ border-radius:16px; border:3px solid #7A4F1E; background:
+  repeating-linear-gradient(90deg, rgba(0,0,0,.07) 0 3px, transparent 3px 18px),
+  linear-gradient(180deg,#8B5A2B,#6B4420); padding:14px;
+  box-shadow:inset 0 0 20px rgba(0,0,0,.35), 0 3px 8px rgba(40,26,10,.28); }
+.qm-titulo{ color:#FFE9B0; font-weight:900; font-size:.95rem; letter-spacing:.5px; display:flex;
+  justify-content:space-between; align-items:center; margin-bottom:10px; text-shadow:0 1px 2px rgba(0,0,0,.5); }
+.qm-item{ display:flex; align-items:center; gap:10px; width:100%; text-align:left; font-family:inherit;
+  background:linear-gradient(180deg,#FBF3E1,#F0E4C8); border:1.5px solid rgba(120,90,40,.4); border-radius:10px;
+  padding:10px 12px; margin-bottom:8px; font-weight:800; font-size:.86rem; cursor:pointer; box-shadow:0 2px 3px rgba(0,0,0,.22); }
+.qm-item:last-child{ margin-bottom:0; }
+.qm-item:active{ transform:translateY(1px); }
+.qm-item .qm-selo{ flex:none; width:27px; height:27px; border-radius:50%; display:flex; align-items:center;
+  justify-content:center; font-size:.82rem; font-weight:900; color:#8C5A20;
+  background:radial-gradient(circle at 35% 30%,#F5EDDC,#D8C9A5); box-shadow:inset 0 0 0 1.5px rgba(120,90,40,.35); }
+.qm-item>b{ margin-left:auto; color:#8C5A20; flex:none; }
+.qm-item.feita{ background:linear-gradient(180deg,#E9F5EC,#D2EAD9); border-color:rgba(0,136,95,.4); }
+.qm-item.feita .qm-selo{ color:#fff; background:radial-gradient(circle at 35% 30%,#7BC950,#00885F);
+  box-shadow:0 0 7px rgba(0,136,95,.55); }
+
 /* ---- Medalhas das Conquistas: badge circular de metal + fita pendurada ---- */
 .conq{ background:linear-gradient(180deg,#FBF3E1,#F3E6C8); border:2px solid rgba(120,90,40,.25); border-radius:16px;
   padding:20px 12px 16px; text-align:center; position:relative; overflow:visible; }
@@ -7832,11 +7868,11 @@ function renderComprarVIP(planoPreSelecionado){
   });
   $("#pwSair").addEventListener("click", () => { Contas.sair(); document.body.classList.add("sem-shell"); irPara("tela-inicio"); });
 }
-/* 🔑 A conta do dono (andrio.kick18@gmail.com) vê a aba Admin; ninguém mais */
-const FF_ADMIN_EMAIL = "andrio.kick18@gmail.com";
+/* 🔑 As contas do dono veem a aba Admin; pra TODO o resto ela nem existe */
+const FF_ADMIN_EMAILS = ["andrio.kick18@gmail.com", "andrio.usa2026@gmail.com"];
 function contaEhAdmin(){
   const c = Contas.atual();
-  return !!(c && (c.admin || c.email === FF_ADMIN_EMAIL));
+  return !!(c && (c.admin || FF_ADMIN_EMAILS.includes(c.email)));
 }
 function atualizarBotaoAdmin(){
   const b = $("#sbAdminItem");
@@ -8109,22 +8145,40 @@ function renderHome(){
     semana += `<span class="${st && st.xp > 0 ? "feito" : ""} ${i2 === 0 ? "hoje" : ""}">${st && st.xp > 0 ? "✓" : letras[d.getDay()]}</span>`;
   }
   const dias = diasTrialRestantes();
-  const selo = ehPremium() ? "👑 Premium ativo" : (dias > 0 ? `🎁 ${dias} dia${dias === 1 ? "" : "s"} grátis` : "");
+  const selo = ehPremium() ? "👑 Premium" : (dias > 0 ? `🎁 ${dias} dia${dias === 1 ? "" : "s"} grátis` : "");
+  /* 🏰 Painel de personagem: o SEU estandarte pessoal (básico ou com a
+     skin comprada), com a borda/pet equipados e barra de XP de RPG */
+  const usando = COSM.est().usando || {};
+  const pf = prestigioAtributos(p.xp || 0, { efeito: usando.efeito || null });
+  const fotoHome = (c.perfil && c.perfil.foto) ? `<img src="${c.perfil.foto}" alt="">` : "👤";
+  const nivel = nivelNum();
+  const xpNoNivel = (p.xp || 0) % 350;
   const linhaHoje = (ok, ic, txt, prog) => `
-    <button class="linha-cat" style="background:${ok ? "var(--verde-claro)" : "var(--branco)"};border:1.5px solid var(--borda);width:100%" data-hj="${ic}">
-      <span>${ok ? "✅" : "⬜"} ${txt}</span><b>${prog}</b>
+    <button class="qm-item ${ok ? "feita" : ""}" data-hj="${ic}">
+      <span class="qm-selo">${ok ? "✓" : "!"}</span><span>${txt}</span><b>${prog}</b>
     </button>`;
   $("#homeConteudo").innerHTML = `
   <div style="max-width:640px;margin:0 auto">
-    <div class="cardb" style="text-align:center;padding:26px 20px">
-      <p style="font-family:var(--f-display);font-size:1.35rem;font-weight:700">Olá, ${esc((c.nome || "Aluno").split(" ")[0])}! 👋</p>
-      <p style="font-weight:700;color:var(--tinta-suave);font-size:.9rem;margin:2px 0 14px">⭐ ${p.xp || 0} XP · Nível ${nivelNum()} · 🔥 ${streak} dia${streak === 1 ? "" : "s"}${(typeof PROTETOR !== "undefined" && PROTETOR.saldo() > 0) ? " 🛡️×" + PROTETOR.saldo() : ""}${selo ? " · " + selo : ""}</p>
-      <div style="background:var(--verde-claro);border-radius:18px;padding:16px">
-        <p style="font-weight:800;font-size:.78rem;color:var(--verde-escuro);letter-spacing:1px">SEU PRÓXIMO PASSO</p>
-        <p style="font-family:var(--f-display);font-size:1.15rem;font-weight:700;margin:4px 0 12px">${revisarPrimeiro ? `🔄 Revisar ${devidos} itens da memória` : `${prox.icone} ${esc(prox.titulo)}`}</p>
+    <div class="${pf.frameClass} rpg-heroi" style="${pf.styleVars}" ${pf.dataAttrs}>
+      ${pf.cantosHTML}${pf.penduradoHTML}
+      <div style="display:flex;justify-content:center;position:relative;z-index:1">${bordaWrap(`<div class="avatar-g" style="width:86px;height:86px;font-size:2.3rem">${fotoHome}</div>`, usando.borda || null)}</div>
+      <p style="font-family:var(--f-display);font-size:1.25rem;font-weight:700;margin-top:8px;position:relative;z-index:1">${esc((c.nome || "Aluno").split(" ")[0])} ${petHTML(usando.pet || null, 26)}</p>
+      <p style="font-weight:800;color:var(--tinta-suave);font-size:.84rem;position:relative;z-index:1">${tituloPorXP(p.xp || 0)}</p>
+      <div style="margin-top:5px;position:relative;z-index:1">${pf.seloHTML}</div>
+      ${pf.runasHTML}
+      <div class="rpg-xpbar"><i style="width:${Math.max(3, Math.round(xpNoNivel / 350 * 100))}%"></i><span>NÍVEL ${nivel} · ${xpNoNivel}/350 XP</span></div>
+      <div class="rpg-stats">
+        <span>🔥 ${streak} dia${streak === 1 ? "" : "s"}</span>
+        <span>🌻 ${COSM.saldo().toLocaleString("pt-BR")}</span>
+        ${(typeof PROTETOR !== "undefined" && PROTETOR.saldo() > 0) ? `<span>🛡️ ×${PROTETOR.saldo()}</span>` : ""}
+        ${selo ? `<span>${selo}</span>` : ""}
+      </div>
+      <div class="rpg-missao">
+        <p style="font-weight:900;font-size:.7rem;color:#8C5A20;letter-spacing:1.2px">SUA MISSÃO AGORA</p>
+        <p style="font-family:var(--f-display);font-size:1.12rem;font-weight:700;margin:4px 0 10px">${revisarPrimeiro ? `🔄 Revisar ${devidos} itens da memória` : `${prox.icone} ${esc(prox.titulo)}`}</p>
         <button class="btn-principal" id="homePasso" style="max-width:320px;margin:0 auto">${revisarPrimeiro ? "Revisar agora" : "Começar a aula"} ▶</button>
       </div>
-      <div class="semana" style="justify-content:center;margin-top:16px">${semana}</div>
+      <div class="semana" style="justify-content:center;margin-top:12px;position:relative;z-index:1">${semana}</div>
     </div>
     ${cardPalavraDoDia()}
     ${!window.speechSynthesis ? `<div class="cardb" style="margin-top:14px;background:var(--sol-claro);border:2px solid var(--sol)">
@@ -8138,15 +8192,13 @@ function renderHome(){
     </div>` : ""}
     ${!ehPremium() ? `<button class="btn-principal" id="homeComprarVip" style="margin-top:14px;background:var(--sol);color:#5C4400;box-shadow:0 4px 0 #C89A20;font-size:1.05rem">👑 QUERO SER VIP ▶</button>` : ""}
     ${primeirosPassosPendentes() ? cardPrimeirosPassos() : ""}
-    <div class="cardb" style="margin-top:14px">
-      <div class="secao-t">Hoje no FalaFina <button class="btn-link" style="padding:0;font-size:.85rem" data-ir="desafios">Desafios completos →</button></div>
-      <div class="lista-limpa">
-        ${linhaHoje(s.aulas >= 1, "aula", "Concluir 1 aula", `${Math.min(s.aulas,1)}/1`)}
-        ${linhaHoje(s.ex >= 10, "ex", "Fazer 10 exercícios", `${Math.min(s.ex,10)}/10`)}
-        ${Fala.temMic
-          ? linhaHoje(s.pron >= 3, "pron", "Praticar pronúncia 3x", `${Math.min(s.pron,3)}/3`)
-          : linhaHoje((s.audio || 0) >= 5, "pron", "Ouvir 5 áudios no 🔊 (e repetir em voz alta)", `${Math.min(s.audio || 0,5)}/5`)}
-      </div>
+    <div class="quadro-missoes" style="margin-top:14px">
+      <div class="qm-titulo"><span>📜 Quadro de Missões de hoje</span><button class="btn-link" style="padding:0;font-size:.8rem;color:#FFE9B0" data-ir="desafios">todas →</button></div>
+      ${linhaHoje(s.aulas >= 1, "aula", "Concluir 1 aula", `${Math.min(s.aulas,1)}/1`)}
+      ${linhaHoje(s.ex >= 10, "ex", "Fazer 10 exercícios", `${Math.min(s.ex,10)}/10`)}
+      ${Fala.temMic
+        ? linhaHoje(s.pron >= 3, "pron", "Praticar pronúncia 3x", `${Math.min(s.pron,3)}/3`)
+        : linhaHoje((s.audio || 0) >= 5, "pron", "Ouvir 5 áudios no 🔊", `${Math.min(s.audio || 0,5)}/5`)}
     </div>
     <div class="cardb" style="margin-top:14px;border:2.5px solid var(--sol);background:linear-gradient(135deg,#FFF8E7,#FFF3D1)">
       <div class="secao-t" style="margin-bottom:6px">🧗 Modo Carreira <span style="font-size:.68rem;background:var(--sol);color:#5C4400;padding:2px 8px;border-radius:99px;font-weight:800">★ PRINCIPAL</span></div>
@@ -8215,6 +8267,7 @@ function renderHome(){
     if(typeof BAU !== "undefined" && BAU.podeAbrirGratis()) abrirBauGratisModal();
     else { lojaAba = "baus"; navPara("loja"); }
   });
+  if(typeof RPGFX !== "undefined") RPGFX.registrar(); // partículas do estandarte pessoal (se skin comprada)
   ligarAcoes($("#homeConteudo"));
   /* Missões do dia: TODO clique leva pra uma ação DE VERDADE — nunca
      pra uma tela vazia ("cliquei e não aconteceu nada" é proibido) */
@@ -9405,9 +9458,12 @@ function renderLoja(){
    ================================================================== */
 let ADMIN_APP = { chave: localStorage.getItem("ff_admin_chave") || "", dados: null, pedidos: [] };
 async function renderAdminApp(){
+  /* Pra quem NÃO é admin, esta página NEM EXISTE — sem tela de chave,
+     sem pista: volta pra Home na hora (pedido do Andrio) */
+  if(!contaEhAdmin()){ navPara("home"); return; }
   // Logado com a conta do dono? A aba entra SOZINHA (a própria senha da conta é a chave)
   const c = Contas.atual();
-  if(!ADMIN_APP.chave && c && c.senhaHash && contaEhAdmin()) ADMIN_APP.chave = c.senhaHash;
+  if(!ADMIN_APP.chave && c && c.senhaHash) ADMIN_APP.chave = c.senhaHash;
   if(!ADMIN_APP.chave){ renderAdminLogin(); return; }
   await adminAppCarregar();
 }
