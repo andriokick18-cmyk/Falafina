@@ -793,6 +793,73 @@ body.sem-shell .btn-info-topo{display:none}
 .mapa-item .ic{font-size:1.4rem;flex-shrink:0;margin-top:2px}
 .mapa-item b{font-family:var(--f-display);font-size:.92rem;display:block}
 .mapa-item p{font-weight:700;color:var(--tinta-suave);font-size:.78rem;line-height:1.35}
+
+/* ==================================================================
+   👑 SISTEMA DE PRESTÍGIO — Banner de Prestígio (skin rara por tier de
+   XP: 13 níveis, de Turista a Imortal da Montanha). Cada jogador tem
+   o seu, em QUALQUER lugar do Ranking (lista inteira, pódio e perfil).
+   Cores vêm de --p1/--p2/--glow definidas inline por prestigioTier().
+   ================================================================== */
+.prestigio{ position:relative; isolation:isolate; }
+.prestigio.prestigio-frame{
+  position:relative !important; border-radius:18px !important; border:2.5px solid transparent !important;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--p1) 14%, #fff), #fff) padding-box,
+    linear-gradient(120deg, var(--p2), var(--p1), var(--glow), var(--p1), var(--p2)) border-box !important;
+  background-size: 100% 100%, 260% 260% !important;
+  animation: pfEnergiaFluxo 5s linear infinite !important;
+  box-shadow: 0 3px 10px rgba(15,15,20,.14), inset 0 0 22px -8px var(--glow) !important;
+}
+@keyframes pfEnergiaFluxo{0%{background-position:0 0,0% 50%}100%{background-position:0 0,200% 50%}}
+/* Névoa/profundidade + reflexo cinematográfico: elementos REAIS (não ::before/::after)
+   pra nunca brigar com os efeitos fx-* que o aluno já comprou na Loja. */
+.pf-profundidade,.pf-reflexo{ content:""; position:absolute; border-radius:inherit; pointer-events:none; }
+.pf-profundidade{ inset:-10px; z-index:-2; opacity:.55; filter:blur(14px);
+  background: radial-gradient(60% 60% at 50% 20%, var(--glow), transparent 70%);
+  animation: pfRespiraProfundidade 4.2s ease-in-out infinite; }
+.pf-reflexo{ inset:0; z-index:2; border-radius:inherit; mix-blend-mode:screen; opacity:.5;
+  background: linear-gradient(115deg, transparent 30%, rgba(255,255,255,.85) 46%, rgba(255,255,255,.2) 52%, transparent 62%);
+  background-size:250% 250%; animation: pfReflexoCinematografico 3.6s ease-in-out infinite; }
+@keyframes pfRespiraProfundidade{0%,100%{transform:scale(1) translateY(0);opacity:.4}50%{transform:scale(1.06) translateY(-3px);opacity:.7}}
+@keyframes pfReflexoCinematografico{0%{background-position:120% -20%}45%,100%{background-position:-40% 60%}}
+/* Cantos esculpidos (moldura) — 4 fragmentos SVG-like via clip-path, cor do tier */
+.prestigio-canto{ position:absolute; width:16px; height:16px; z-index:3; pointer-events:none;
+  background:linear-gradient(135deg,var(--p1),var(--p2));
+  clip-path:polygon(0 0,100% 0,100% 30%,30% 30%,30% 100%,0 100%);
+  filter:drop-shadow(0 0 4px var(--glow)); }
+.prestigio-canto.c1{top:-3px;left:-3px}
+.prestigio-canto.c2{top:-3px;right:-3px;transform:rotate(90deg)}
+.prestigio-canto.c3{bottom:-3px;right:-3px;transform:rotate(180deg)}
+.prestigio-canto.c4{bottom:-3px;left:-3px;transform:rotate(270deg)}
+/* Runas brilhantes — glifos rúnicos reais (Unicode Elder Futhark), cintilando fora de fase */
+.prestigio-runas{ display:flex; gap:3px; justify-content:center; margin-top:2px; position:relative; z-index:2; }
+.prestigio-runas span{ font-size:.7rem; color:var(--p1); text-shadow:0 0 6px var(--glow),0 0 12px var(--glow);
+  animation: pfRunaBrilha 2.4s ease-in-out infinite; opacity:.55; }
+@keyframes pfRunaBrilha{0%,100%{opacity:.35;transform:scale(.9)}50%{opacity:1;transform:scale(1.15)}}
+/* Selo de tier (faixa com nome do prestígio) */
+.prestigio-selo{ display:inline-flex; align-items:center; gap:4px; font-weight:900; font-size:.62rem; letter-spacing:.4px;
+  text-transform:uppercase; padding:2px 9px; border-radius:99px; color:#fff; z-index:2; position:relative; white-space:nowrap;
+  /* Base escura misturada com a cor do tier: garante texto branco legível mesmo em tiers claros (prata/imortal) */
+  background:linear-gradient(90deg, color-mix(in srgb, var(--p2) 65%, #12121a), color-mix(in srgb, var(--p1) 65%, #12121a));
+  text-shadow:0 1px 2px rgba(0,0,0,.5); box-shadow:0 0 8px var(--glow); }
+
+/* ---- Variante MINI (linha da lista de Ranking) ---- */
+.rank-item.prestigio-mini{ padding:12px 14px; }
+.rank-item.prestigio-mini .rank-pos{ text-shadow:0 0 6px var(--glow); }
+
+/* ---- Variante PÓDIO (top 3) ---- */
+.podio .pd.prestigio-frame{ padding-top:16px; }
+
+/* ---- Variante HERO (banner grande do perfil aberto) ---- */
+.prestigio-hero{ padding:26px 18px 20px; }
+.prestigio-hero .prestigio-canto{ width:28px; height:28px; }
+.prestigio-hero .prestigio-runas span{ font-size:1.15rem; }
+.prestigio-hero canvas.pf-shader{ position:absolute; inset:0; width:100%; height:100%; border-radius:inherit; z-index:0; opacity:.85; mix-blend-mode:screen; }
+/* Fragmentos flutuando (partículas CSS extras, só no hero — leve e sempre visível) */
+.pf-fragmento{ position:absolute; z-index:1; pointer-events:none; font-size:.8rem; color:var(--p1); opacity:.8;
+  text-shadow:0 0 8px var(--glow); animation: pfFragmentoFlutua 5s ease-in-out infinite; }
+@keyframes pfFragmentoFlutua{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-14px) rotate(180deg)}}
+.prestigio-hero .prestigio-selo{ font-size:.72rem; padding:4px 14px; }
 </style>
 </head>
 <body>
@@ -1151,6 +1218,28 @@ body.sem-shell .btn-info-topo{display:none}
 </nav>
 <div class="toast" id="toast"></div>
 <div class="bau-overlay" id="bauOverlay"><div class="bau-caixa" id="bauCaixaConteudo"></div></div>
+<canvas id="rpgFx" style="position:fixed;inset:0;pointer-events:none;z-index:5" aria-hidden="true"></canvas>
+<!-- 👑 Filtros SVG do Sistema de Prestígio: metal esculpido + refração de cristal (usados só no banner grande do perfil) -->
+<svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true">
+  <defs>
+    <filter id="pfMetalGravado" x="-30%" y="-30%" width="160%" height="160%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="ruido"/>
+      <feDisplacementMap in="SourceGraphic" in2="ruido" scale="3" xChannelSelector="R" yChannelSelector="G" result="desloc"/>
+      <feDiffuseLighting in="ruido" lightingColor="#fff" surfaceScale="2" result="luz"><feDistantLight azimuth="235" elevation="55"/></feDiffuseLighting>
+      <feComposite in="desloc" in2="luz" operator="arithmetic" k1="0" k2="1" k3=".55" k4="0"/>
+    </filter>
+    <filter id="pfCristalRefracao" x="-40%" y="-40%" width="180%" height="180%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.012 0.08" numOctaves="2" seed="3" result="n"/>
+      <feColorMatrix in="n" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .5 0" result="brilho"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="14" xChannelSelector="R" yChannelSelector="G"/>
+      <feBlend in2="brilho" mode="screen"/>
+    </filter>
+    <filter id="pfBrilhoIntenso" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="4.5" result="b1"/>
+      <feMerge><feMergeNode in="b1"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+</svg>
 
 <script>
 "use strict";
@@ -5169,7 +5258,7 @@ const BAU = {
   }
 };
 /* ---------- MODAL DE ABERTURA DE BAÚ (único ou em lote de 10) ---------- */
-function fecharBauModal(){ $("#bauOverlay").classList.remove("aberto"); }
+function fecharBauModal(){ $("#bauOverlay").classList.remove("aberto"); destruirShaderHero(); }
 $("#bauOverlay") && $("#bauOverlay").addEventListener("click", e => { if(e.target.id === "bauOverlay") fecharBauModal(); });
 
 /* ---------- PERFIL PÚBLICO (clique no nome no ranking) ---------- */
@@ -5179,14 +5268,24 @@ function abrirPerfilPublico(c, pos){
   const todas = listaConquistas(resumo);
   const medalhas = todas.filter(m => m.ok);
   const alvo = $("#bauCaixaConteudo");
-  const tierClass = pos === 0 ? "tier-rei" : pos === 1 ? "tier-prata" : pos === 2 ? "tier-bronze" : "";
+  const pf = prestigioAtributos(c.xp || 0);
   const posBadge = (pos != null) ? `<span class="perfil-selo-pos">${pos === 0 ? "👑 1º lugar — Rei do Ranking" : (pos + 1) + "º lugar no ranking"}</span>` : "";
+  /* Fragmentos flutuando: quantidade cresce com o tier (mais grandioso pra quem tem mais XP) */
+  const nFrag = 3 + Math.min(5, Math.floor(todas.filter(m=>m.ok).length / 3));
+  const fragmentos = Array.from({length:nFrag}, (_, i) => {
+    const topo = 8 + Math.random() * 70, esq = 6 + Math.random() * 88, atraso = (Math.random() * 4).toFixed(2);
+    return `<span class="pf-fragmento" style="top:${topo}%;left:${esq}%;animation-delay:${atraso}s">✦</span>`;
+  }).join("");
   alvo.innerHTML = `
-    <div class="perfil-banner ${tierClass} ${c.efeito ? "fx-" + c.efeito : ""}">
+    <div class="prestigio prestigio-frame prestigio-hero ${c.efeito ? "fx-" + c.efeito : ""}" style="${pf.styleVars}" ${pf.dataAttrs}>
+      <canvas class="pf-shader" id="pfShaderCanvas" aria-hidden="true"></canvas>
+      ${pf.cantosHTML}${fragmentos}
       ${posBadge}
-      <div style="display:flex;justify-content:center;margin-top:8px">${bordaWrap(`<div class="avatar-g" style="width:104px;height:104px;font-size:2.8rem">${c.foto ? `<img src="${c.foto}" alt="">` : "👤"}</div>`, c.borda)}</div>
+      <div style="display:flex;justify-content:center;margin-top:8px;position:relative;z-index:1">${bordaWrap(`<div class="avatar-g" style="width:104px;height:104px;font-size:2.8rem">${c.foto ? `<img src="${c.foto}" alt="">` : "👤"}</div>`, c.borda)}</div>
       <p class="perfil-nome-modal">${esc(c.nome)}</p>
       <p class="perfil-titulo-modal">${tituloPorXP(c.xp || 0)} ${petHTML(c.pet, 26)}</p>
+      <div style="margin-top:6px">${pf.seloHTML}</div>
+      ${pf.runasHTML}
     </div>
     <div class="stat-grid" style="margin-top:10px">
       <div class="stat-mini"><b>⭐ ${(c.xp || 0).toLocaleString("pt-BR")}</b><small>XP total</small></div>
@@ -5202,6 +5301,10 @@ function abrirPerfilPublico(c, pos){
     <button class="bau-fechar" id="fecharPerfilPub">Fechar</button>`;
   $("#bauOverlay").classList.add("aberto");
   $("#fecharPerfilPub").addEventListener("click", fecharBauModal);
+  destruirShaderHero();
+  const canvasHero = $("#pfShaderCanvas");
+  if(canvasHero) RPG_HERO_SHADER = iniciarShaderHero(canvasHero, pf.tier.cor1, pf.tier.cor2);
+  if(typeof RPGFX !== "undefined") RPGFX.registrar();
 }
 function abrirBauGratisModal(){
   const r = BAU.podeAbrirGratis();
@@ -5280,6 +5383,266 @@ function petHTML(petId, tam){
     ? `<img src="${it.img}" class="pet anim-${it.anim}" style="width:${s}px;height:auto" alt="pet">`
     : `<span class="pet anim-${it.anim}" style="font-size:${Math.round(s * 0.85)}px">${it.emo}</span>`;
 }
+/* ==================================================================
+   👑 SISTEMA DE PRESTÍGIO — Banner de Prestígio por tier de XP.
+   13 tiers (mesmos limiares de tituloPorXP), cada um com sua própria
+   paleta, tema e partícula — igual progressão de MMO. Usado em TODO
+   lugar que mostra um jogador: lista do Ranking, pódio e perfil aberto.
+   ================================================================== */
+const PRESTIGIO_TIERS = [
+  { min:0,       id:"t0",  nome:"Turista",                tema:"lona",      cor1:"#9C7A52", cor2:"#5C4830", glow:"rgba(156,122,82,.55)",  particula:"poeira",    runas:0 },
+  { min:100,     id:"t1",  nome:"Sobrevivente",           tema:"couro",     cor1:"#B4703A", cor2:"#6B4220", glow:"rgba(180,112,58,.6)",   particula:"poeira",    runas:1 },
+  { min:300,     id:"t2",  nome:"Trabalhador",            tema:"ferro",     cor1:"#9AA1AC", cor2:"#4B4F57", glow:"rgba(154,161,172,.6)",  particula:"faisca",    runas:1 },
+  { min:600,     id:"t3",  nome:"Morador",                tema:"cobre",     cor1:"#D9884E", cor2:"#7A4322", glow:"rgba(217,136,78,.65)",  particula:"faisca",    runas:2 },
+  { min:1000,    id:"t4",  nome:"Quase Gringo",           tema:"prata",     cor1:"#E4EAF0", cor2:"#8A94A0", glow:"rgba(220,228,238,.8)",  particula:"brilho",    runas:2 },
+  { min:2000,    id:"t5",  nome:"Gringo Honorário",       tema:"ouro",      cor1:"#FFD700", cor2:"#A8790B", glow:"rgba(255,215,0,.75)",   particula:"fragmento", runas:3 },
+  { min:5000,    id:"t6",  nome:"Bilíngue em Construção", tema:"cristal",   cor1:"#4FD8FF", cor2:"#0E6FA8", glow:"rgba(79,216,255,.8)",   particula:"cristal",   runas:3 },
+  { min:15000,   id:"t7",  nome:"Fluente da Firma",       tema:"esmeralda", cor1:"#39E28A", cor2:"#0A7A48", glow:"rgba(57,226,138,.8)",   particula:"folha",     runas:4 },
+  { min:50000,   id:"t8",  nome:"Chefe de Equipe",        tema:"rubi",      cor1:"#FF5C3E", cor2:"#A0170A", glow:"rgba(255,92,62,.85)",   particula:"brasa",     runas:4 },
+  { min:150000,  id:"t9",  nome:"Gerente Gringo",         tema:"safira",    cor1:"#3EA1FF", cor2:"#0A3E9E", glow:"rgba(62,161,255,.85)",  particula:"raio",      runas:5 },
+  { min:500000,  id:"t10", nome:"Embaixador",             tema:"aurora",    cor1:"#00FFC2", cor2:"#7A2EFF", glow:"rgba(122,46,255,.85)",  particula:"aurora",    runas:6 },
+  { min:2000000, id:"t11", nome:"Lenda do FalaFina",      tema:"mitico",    cor1:"#FF3D9A", cor2:"#FFD700", glow:"rgba(255,61,154,.9)",   particula:"cosmos",    runas:7 },
+  { min:7700000, id:"t12", nome:"Imortal da Montanha",    tema:"supremo",   cor1:"#FFFFFF", cor2:"#FFD700", glow:"rgba(255,255,255,.95)", particula:"supremo",  runas:8 }
+];
+function prestigioTier(xp){
+  xp = xp || 0;
+  let t = PRESTIGIO_TIERS[0];
+  for(const p of PRESTIGIO_TIERS){ if(xp >= p.min) t = p; else break; }
+  return t;
+}
+const PF_RUNAS_POOL = ["ᚠ","ᚢ","ᚦ","ᚨ","ᚱ","ᚲ","ᚷ","ᚹ","ᚺ","ᚾ","ᛁ","ᛃ","ᛇ","ᛈ","ᛉ","ᛊ","ᛏ","ᛒ","ᛖ","ᛗ","ᛚ","ᛜ","ᛞ","ᛟ"];
+function prestigioRunasHTML(t){
+  if(!t.runas) return "";
+  const glifos = Array.from({length:t.runas}, (_, i) => PF_RUNAS_POOL[(t.id.charCodeAt(1) + i * 7) % PF_RUNAS_POOL.length]);
+  return `<div class="prestigio-runas">${glifos.map((g, i) => `<span style="animation-delay:${(i * .18).toFixed(2)}s">${g}</span>`).join("")}</div>`;
+}
+const PF_CANTOS_HTML = `<i class="pf-profundidade"></i><i class="pf-reflexo"></i><i class="prestigio-canto c1"></i><i class="prestigio-canto c2"></i><i class="prestigio-canto c3"></i><i class="prestigio-canto c4"></i>`;
+/* Atributos prontos pra grudar num card: classe, style inline (cores) e os elementos decorativos */
+function prestigioAtributos(xp){
+  const t = prestigioTier(xp);
+  return {
+    tier: t,
+    dataAttrs: `data-pf-tema="${t.particula}" data-pf-cor="${t.glow}"`,
+    styleVars: `--p1:${t.cor1};--p2:${t.cor2};--glow:${t.glow}`,
+    cantosHTML: PF_CANTOS_HTML,
+    runasHTML: prestigioRunasHTML(t),
+    seloHTML: `<span class="prestigio-selo">${esc(t.nome)}</span>`
+  };
+}
+
+/* ---------- ⚡ PARTÍCULAS DO RANKING — 1 canvas só pra tudo ----------
+   Em vez de um canvas/WebGL por card (o navegador trava com muitos
+   contextos), um único motor lê a posição de CADA card de Prestígio
+   visível na tela e desenha as partículas certas por cima — todo
+   card participa, mas o custo é o de UM canvas só. */
+const RPGFX = (() => {
+  const PRESETS = {
+    poeira:    { taxa:22, vida:130, vy:-.25, vySpread:.25, vxSpread:.18, grav:0,    tam:[1,2.4],  forma:"circulo" },
+    faisca:    { taxa:14, vida:38,  vy:-.9,  vySpread:1.6, vxSpread:1.4, grav:.045, tam:[1,2],    forma:"circulo", cintilar:true },
+    brilho:    { taxa:26, vida:90,  vy:-.05, vySpread:.06, vxSpread:.05, grav:0,    tam:[1,2.6],  forma:"estrela", cintilar:true },
+    fragmento: { taxa:20, vida:150, vy:-.5,  vySpread:.18, vxSpread:.35, grav:0,    tam:[2,3.6],  forma:"diamante" },
+    cristal:   { taxa:18, vida:160, vy:-.4,  vySpread:.16, vxSpread:.3,  grav:0,    tam:[2.4,4.2],forma:"diamante", brilhoExtra:true },
+    folha:     { taxa:16, vida:140, vy:-.45, vySpread:.2,  vxSpread:.5,  grav:0,    tam:[2,3.4],  forma:"circulo" },
+    brasa:     { taxa:16, vida:80,  vy:-1.1, vySpread:.4,  vxSpread:.35, grav:-.01, tam:[1.6,3.2],forma:"circulo", cintilar:true },
+    raio:      { taxa:10, vida:46,  vy:-.6,  vySpread:1.2, vxSpread:1.2, grav:.02,  tam:[1.2,2.4],forma:"raio", cintilar:true },
+    aurora:    { taxa:12, vida:170, vy:-.35, vySpread:.15, vxSpread:.4,  grav:0,    tam:[3,5],    forma:"circulo", brilhoExtra:true },
+    cosmos:    { taxa:14, vida:180, vy:-.2,  vySpread:.15, vxSpread:.25, grav:0,    tam:[1.4,2.8],forma:"estrela", cintilar:true },
+    supremo:   { taxa:9,  vida:110, vy:-.7,  vySpread:.6,  vxSpread:.6,  grav:0,    tam:[1.6,3.4],forma:"estrela", cintilar:true, brilhoExtra:true }
+  };
+  let canvas = null, ctx = null, dpr = 1, io = null;
+  const registro = new Map();   // elemento -> {tema, cor}
+  const visiveis = new Set();
+  const contadores = new WeakMap(); // elemento -> frames até o próximo spawn
+  let particulas = [];
+  let rodando = false;
+
+  function redimensionar(){
+    if(!canvas) return;
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.max(1, Math.round(innerWidth * dpr));
+    canvas.height = Math.max(1, Math.round(innerHeight * dpr));
+    canvas.style.width = innerWidth + "px";
+    canvas.style.height = innerHeight + "px";
+  }
+  function garantirIO(){
+    if(io || typeof IntersectionObserver === "undefined") return;
+    io = new IntersectionObserver(entradas => {
+      entradas.forEach(en => { if(en.isIntersecting) visiveis.add(en.target); else visiveis.delete(en.target); });
+      if(visiveis.size) iniciar(); // saiu de "ocioso" (ex: voltou pro Ranking) → religa o motor
+    }, { rootMargin:"60px", threshold:0 });
+  }
+  function hexParaRgb(cor){
+    const m = String(cor).match(/rgba?\(([^)]+)\)/);
+    if(m) return m[1].split(",").slice(0, 3).map(n => parseFloat(n));
+    return [255, 215, 0];
+  }
+  function desenharParticula(p){
+    const [r, g, b] = p.rgb;
+    const alpha = Math.max(0, p.vida / p.vidaMax) * (p.cintilar ? (.55 + .45 * Math.sin(p.vida * .5)) : 1);
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    if(p.brilhoExtra){
+      const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, p.tam * 3.4);
+      grad.addColorStop(0, `rgba(${r},${g},${b},${(alpha * .55).toFixed(3)})`);
+      grad.addColorStop(1, `rgba(${r},${g},${b},0)`);
+      ctx.fillStyle = grad;
+      ctx.beginPath(); ctx.arc(0, 0, p.tam * 3.4, 0, 6.283); ctx.fill();
+    }
+    ctx.fillStyle = `rgba(${r},${g},${b},${alpha.toFixed(3)})`;
+    if(p.forma === "diamante"){
+      ctx.rotate(p.rot);
+      ctx.beginPath(); ctx.moveTo(0, -p.tam); ctx.lineTo(p.tam, 0); ctx.lineTo(0, p.tam); ctx.lineTo(-p.tam, 0); ctx.closePath(); ctx.fill();
+    } else if(p.forma === "estrela"){
+      ctx.beginPath();
+      for(let i = 0; i < 4; i++){ const a = (Math.PI / 2) * i + p.rot; ctx.moveTo(0, 0); ctx.lineTo(Math.cos(a) * p.tam * 1.6, Math.sin(a) * p.tam * 1.6); }
+      ctx.strokeStyle = ctx.fillStyle; ctx.lineWidth = Math.max(.6, p.tam * .35); ctx.stroke();
+    } else if(p.forma === "raio"){
+      ctx.rotate(p.rot);
+      ctx.beginPath(); ctx.moveTo(-p.tam, -p.tam * 1.6); ctx.lineTo(p.tam * .4, -p.tam * .3); ctx.lineTo(-p.tam * .3, p.tam * .3); ctx.lineTo(p.tam, p.tam * 1.6);
+      ctx.strokeStyle = ctx.fillStyle; ctx.lineWidth = 1.4; ctx.stroke();
+    } else {
+      ctx.beginPath(); ctx.arc(0, 0, p.tam, 0, 6.283); ctx.fill();
+    }
+    ctx.restore();
+  }
+  function passo(){
+    if(!ctx || !canvas){ rodando = false; return; }
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.save(); ctx.scale(dpr, dpr);
+    visiveis.forEach(el => {
+      const cfg = registro.get(el); if(!cfg) return;
+      const preset = PRESETS[cfg.tema] || PRESETS.poeira;
+      const rect = el.getBoundingClientRect();
+      if(rect.width < 4 || rect.bottom < -60 || rect.top > innerHeight + 60) return;
+      let restante = contadores.get(el); if(restante == null) restante = Math.random() * preset.taxa;
+      restante -= 1;
+      if(restante <= 0 && particulas.length < 420){
+        restante = preset.taxa * (.7 + Math.random() * .6);
+        const [r, g, b] = hexParaRgb(cfg.cor);
+        particulas.push({
+          x: rect.left + rect.width * (.15 + Math.random() * .7),
+          y: rect.top + rect.height * (.2 + Math.random() * .6),
+          vx: (Math.random() * 2 - 1) * preset.vxSpread,
+          vy: preset.vy + (Math.random() * 2 - 1) * preset.vySpread,
+          grav: preset.grav,
+          tam: preset.tam[0] + Math.random() * (preset.tam[1] - preset.tam[0]),
+          vida: preset.vida, vidaMax: preset.vida,
+          rot: Math.random() * 6.283, vrot: (Math.random() * 2 - 1) * .05,
+          forma: preset.forma, rgb: [r, g, b], cintilar: !!preset.cintilar, brilhoExtra: !!preset.brilhoExtra
+        });
+      }
+      contadores.set(el, restante);
+    });
+    particulas = particulas.filter(p => {
+      p.x += p.vx; p.y += p.vy; p.vy += p.grav; p.rot += p.vrot; p.vida -= 1;
+      if(p.vida <= 0) return false;
+      desenharParticula(p);
+      return true;
+    });
+    ctx.restore();
+    /* Ninguém visível e nada sobrando pra animar → desliga o motor (economiza bateria
+       quando o aluno sai do Ranking); o IntersectionObserver religa sozinho na volta. */
+    if(particulas.length || visiveis.size) requestAnimationFrame(passo);
+    else rodando = false;
+  }
+  function iniciar(){ if(!rodando && ctx){ rodando = true; requestAnimationFrame(passo); } }
+  function registrar(){
+    if(!canvas){
+      canvas = document.getElementById("rpgFx");
+      if(!canvas) return;
+      ctx = canvas.getContext("2d");
+      redimensionar();
+      window.addEventListener("resize", redimensionar);
+      iniciar();
+    }
+    garantirIO();
+    registro.forEach((_, el) => { if(io) io.unobserve(el); });
+    registro.clear(); visiveis.clear();
+    document.querySelectorAll(".prestigio-frame[data-pf-tema]").forEach(el => {
+      registro.set(el, { tema: el.dataset.pfTema, cor: el.dataset.pfCor });
+      if(io) io.observe(el); else visiveis.add(el);
+    });
+    iniciar();
+  }
+  return { registrar };
+})();
+
+/* ---------- 🔥 SHADER WEBGL DO BANNER GRANDE (perfil aberto) ----------
+   Só UM por vez (o modal só mostra um perfil), então dá pra usar
+   WebGL de verdade: um shader de energia/aura com ruído procedural,
+   nas cores do tier da pessoa. Se o aparelho não suportar, o CSS
+   sozinho já deixa o banner bonito — nada quebra. */
+let RPG_HERO_SHADER = null;
+function destruirShaderHero(){
+  if(RPG_HERO_SHADER){ try{ RPG_HERO_SHADER.destruir(); }catch(e){} RPG_HERO_SHADER = null; }
+}
+function iniciarShaderHero(canvas, corA, corB){
+  try{
+    const gl = canvas.getContext("webgl", { alpha:true, premultipliedAlpha:false }) || canvas.getContext("experimental-webgl");
+    if(!gl) return null;
+    const vsSrc = "attribute vec2 p; void main(){ gl_Position = vec4(p, 0.0, 1.0); }";
+    const fsSrc = "precision mediump float;\n" +
+      "uniform float u_t; uniform vec2 u_res; uniform vec3 u_c1; uniform vec3 u_c2;\n" +
+      "float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7))) * 43758.5453123); }\n" +
+      "float ruido(vec2 p){ vec2 i=floor(p), f=fract(p);\n" +
+      "  float a=hash(i), b=hash(i+vec2(1.0,0.0)), c=hash(i+vec2(0.0,1.0)), d=hash(i+vec2(1.0,1.0));\n" +
+      "  vec2 u=f*f*(3.0-2.0*f); return mix(a,b,u.x) + (c-a)*u.y*(1.0-u.x) + (d-b)*u.x*u.y; }\n" +
+      "void main(){\n" +
+      "  vec2 uv = gl_FragCoord.xy / u_res.xy; vec2 p = uv * 3.2;\n" +
+      "  float n = 0.0; float amp = 0.55;\n" +
+      "  for(int i=0;i<4;i++){ n += ruido(p + u_t * 0.18) * amp; p *= 2.02; amp *= 0.55; }\n" +
+      "  vec2 c = uv - 0.5; float vinheta = 1.0 - smoothstep(0.2, 0.78, length(c));\n" +
+      "  vec3 cor = mix(u_c2, u_c1, clamp(n, 0.0, 1.0));\n" +
+      "  gl_FragColor = vec4(cor * vinheta, vinheta * (0.5 + 0.3 * n));\n" +
+      "}";
+    function compilar(tipo, src){
+      const s = gl.createShader(tipo); gl.shaderSource(s, src); gl.compileShader(s);
+      if(!gl.getShaderParameter(s, gl.COMPILE_STATUS)){ gl.deleteShader(s); return null; }
+      return s;
+    }
+    const vs = compilar(gl.VERTEX_SHADER, vsSrc), fs = compilar(gl.FRAGMENT_SHADER, fsSrc);
+    if(!vs || !fs) return null;
+    const prog = gl.createProgram();
+    gl.attachShader(prog, vs); gl.attachShader(prog, fs); gl.linkProgram(prog);
+    if(!gl.getProgramParameter(prog, gl.LINK_STATUS)) return null;
+    gl.useProgram(prog);
+    const buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, -1,1, 1,-1, 1,1]), gl.STATIC_DRAW);
+    const locP = gl.getAttribLocation(prog, "p");
+    gl.enableVertexAttribArray(locP); gl.vertexAttribPointer(locP, 2, gl.FLOAT, false, 0, 0);
+    const uT = gl.getUniformLocation(prog, "u_t"), uRes = gl.getUniformLocation(prog, "u_res"),
+          uC1 = gl.getUniformLocation(prog, "u_c1"), uC2 = gl.getUniformLocation(prog, "u_c2");
+    function hexParaVec3(hex){ hex = String(hex).replace("#", ""); const n = parseInt(hex, 16) || 0xFFD700;
+      return [((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255]; }
+    const c1v = hexParaVec3(corA), c2v = hexParaVec3(corB);
+    let raf = null, t0 = null, ativo = true;
+    function redim(){
+      const dprL = Math.min(window.devicePixelRatio || 1, 2);
+      const w = Math.max(1, Math.round(canvas.clientWidth * dprL)), h = Math.max(1, Math.round(canvas.clientHeight * dprL));
+      if(canvas.width !== w) canvas.width = w;
+      if(canvas.height !== h) canvas.height = h;
+      gl.viewport(0, 0, canvas.width, canvas.height);
+    }
+    function quadro(ts){
+      if(!ativo) return;
+      if(t0 == null) t0 = ts;
+      redim();
+      gl.uniform1f(uT, (ts - t0) / 1000);
+      gl.uniform2f(uRes, canvas.width, canvas.height);
+      gl.uniform3f(uC1, c1v[0], c1v[1], c1v[2]);
+      gl.uniform3f(uC2, c2v[0], c2v[1], c2v[2]);
+      gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+      gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.drawArrays(gl.TRIANGLES, 0, 6);
+      raf = requestAnimationFrame(quadro);
+    }
+    raf = requestAnimationFrame(quadro);
+    return { destruir(){ ativo = false; if(raf) cancelAnimationFrame(raf);
+      try{ const ext = gl.getExtension("WEBGL_lose_context"); ext && ext.loseContext(); }catch(e){} } };
+  }catch(e){ return null; }
+}
+
 /* Medalhas: paga 🌻 uma única vez por medalha conquistada (metal define o prêmio) */
 function creditarMedalhas(){
   if(typeof listaConquistas !== "function") return;
@@ -5792,28 +6155,36 @@ function renderRanking(){
     const temPodio = ordenada.length >= 3;
     const cartaoPodio = (c, pos) => {
       const p1 = pos === 0;
-      return `<div class="pd ${p1 ? "p1" : ""} ${c.efeito ? "fx-" + c.efeito : ""}" data-perfil="${pos}">
+      const pf = prestigioAtributos(c.xp || 0);
+      return `<div class="pd prestigio prestigio-frame ${p1 ? "p1" : ""} ${c.efeito ? "fx-" + c.efeito : ""}" style="${pf.styleVars}" ${pf.dataAttrs} data-perfil="${pos}">
+        ${pf.cantosHTML}
         <span class="coroa">${p1 ? "👑" : medalha[pos]}</span>
         <div class="avwrap">${bordaWrap(`<div class="avatar-mini" style="width:${p1 ? 68 : 52}px;height:${p1 ? 68 : 52}px;font-size:${p1 ? 1.9 : 1.4}rem">${c.foto ? `<img src="${c.foto}" alt="">` : "👤"}</div>`, c.borda)}</div>
         <b>${esc(c.nome)}${c.voce ? " ⭐" : ""} ${petHTML(c.pet, 20)}</b>
         <small>${tituloPorXP(c.xp || 0)}</small>
         <small style="color:var(--verde-escuro);font-weight:800">${aba.valor(c)}</small>
+        ${pf.runasHTML}
       </div>`;
     };
     const podioHtml = temPodio ? `<div class="podio">${cartaoPodio(ordenada[1], 1)}${cartaoPodio(ordenada[0], 0)}${cartaoPodio(ordenada[2], 2)}</div>` : "";
     const resto = temPodio ? ordenada.slice(3) : ordenada;
-    alvo.innerHTML = `<div class="loja-abas" style="margin-top:0">${ABAS.map(a => `<button class="loja-aba ${a.id === rankAba ? "ativa" : ""}" data-raba="${a.id}">${a.nome}</button>`).join("")}
-      <button class="loja-aba" id="rkLoja" style="margin-left:auto;border-color:#E8B84C;background:#FFF3D6">🛍️ Loja</button></div>`
-      + selo + podioHtml + (resto.length ? resto.map((c, i) => { const pos = temPodio ? i + 3 : i; return `
-    <div class="rank-item clicavel ${c.voce ? "eu" : ""} ${c.efeito ? "fx-" + c.efeito : ""}" data-perfil="${pos}">
+    const cartaoLista = (c, pos) => {
+      const pf = prestigioAtributos(c.xp || 0);
+      return `<div class="rank-item clicavel prestigio prestigio-frame prestigio-mini ${c.voce ? "eu" : ""} ${c.efeito ? "fx-" + c.efeito : ""}" style="${pf.styleVars}" ${pf.dataAttrs} data-perfil="${pos}">
+      ${pf.cantosHTML}
       <div class="rank-pos">${medalha[pos] || (pos + 1) + "º"}</div>
       ${bordaWrap(`<div class="avatar-mini">${c.foto ? `<img src="${c.foto}" alt="">` : "👤"}</div>`, c.borda)}
-      <div style="min-width:0"><b style="display:flex;align-items:center;gap:6px">${esc(c.nome)}${c.voce ? " (você)" : ""} ${petHTML(c.pet, 22)}</b><small>${tituloPorXP(c.xp || 0)} · 🔥 ${c.diasSeguidos || 0} dias · 🗼 nv ${c.recorde || 1}</small></div>
+      <div style="min-width:0"><b style="display:flex;align-items:center;gap:6px">${esc(c.nome)}${c.voce ? " (você)" : ""} ${petHTML(c.pet, 22)}</b><small>${tituloPorXP(c.xp || 0)} · 🔥 ${c.diasSeguidos || 0} dias · 🗼 nv ${c.recorde || 1}</small>${pf.runasHTML}</div>
       <div class="rank-xp" style="margin-left:auto">${aba.valor(c)}</div>
-    </div>`; }).join("") : (temPodio ? "" : '<p style="font-weight:700;color:var(--tinta-suave)">Ninguém neste placar ainda — seja o primeiro! 😏</p>'));
+    </div>`;
+    };
+    alvo.innerHTML = `<div class="loja-abas" style="margin-top:0">${ABAS.map(a => `<button class="loja-aba ${a.id === rankAba ? "ativa" : ""}" data-raba="${a.id}">${a.nome}</button>`).join("")}
+      <button class="loja-aba" id="rkLoja" style="margin-left:auto;border-color:#E8B84C;background:#FFF3D6">🛍️ Loja</button></div>`
+      + selo + podioHtml + (resto.length ? resto.map((c, i) => cartaoLista(c, temPodio ? i + 3 : i)).join("") : (temPodio ? "" : '<p style="font-weight:700;color:var(--tinta-suave)">Ninguém neste placar ainda — seja o primeiro! 😏</p>'));
     alvo.querySelectorAll("[data-raba]").forEach(b => b.addEventListener("click", () => { rankAba = b.dataset.raba; renderRanking(); }));
     const rl = alvo.querySelector("#rkLoja"); if(rl) rl.addEventListener("click", () => navPara("loja"));
     alvo.querySelectorAll("[data-perfil]").forEach(el => el.addEventListener("click", () => { const pp = Number(el.dataset.perfil); abrirPerfilPublico(ordenada[pp], pp); }));
+    if(typeof RPGFX !== "undefined") RPGFX.registrar();
   };
   const meusCosm = slot => { const u = COSM.usando(slot); return u ? u.id : null; };
   const eu = Contas.sessao();
