@@ -1036,6 +1036,22 @@ body.sem-shell .btn-info-topo{display:none}
 .rpg-missao{ background:linear-gradient(180deg,#FBF3E1,#F0E4C8); border:2px solid rgba(120,90,40,.4);
   border-radius:14px; padding:14px 12px 12px; margin-top:12px; position:relative; z-index:1; box-shadow:0 2px 4px rgba(40,26,10,.18); }
 .rpg-missao::before{ content:"⚔️"; position:absolute; top:-13px; left:12px; font-size:1.35rem; filter:drop-shadow(0 1px 2px rgba(0,0,0,.35)); }
+/* 🏰 Card-jogo da Home: o PRIMEIRO clique — preview do jogo rodando ao vivo */
+.mas-home{ display:block; width:100%; padding:0; margin-top:14px; border-radius:16px; overflow:hidden;
+  border:3px solid #7A4F1E; background:#1C242D; cursor:pointer; text-align:left; font-family:inherit;
+  box-shadow:0 4px 12px rgba(40,26,10,.3); position:relative; }
+.mas-home:active{ transform:translateY(2px); }
+.mas-home canvas{ display:block; width:100%; image-rendering:pixelated; }
+.mas-home-faixa{ display:flex; align-items:center; gap:10px; padding:10px 14px;
+  background:linear-gradient(180deg,#2A3440,#1C242D); border-top:2px solid rgba(255,197,61,.35); }
+.mas-home-faixa b{ color:#FFE9B0; font-family:var(--f-display); font-size:1rem; display:block; }
+.mas-home-faixa small{ color:#B8C2CC; font-weight:700; font-size:.74rem; display:block; line-height:1.3; }
+.mas-home-cta{ margin-left:auto; flex:none; font-style:normal; font-weight:900; font-size:.8rem; color:#5C4400;
+  background:linear-gradient(180deg,#FFD700,#FFC53D); padding:8px 14px; border-radius:99px;
+  box-shadow:0 3px 0 #C89A20; animation:masCtaPulsa 1.6s ease-in-out infinite; }
+@keyframes masCtaPulsa{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+@keyframes masChuva{0%{transform:translateY(-14px);opacity:0}15%{opacity:1}100%{transform:translateY(300px);opacity:.9}}
+
 .quadro-missoes{ border-radius:16px; border:3px solid #7A4F1E; background:
   repeating-linear-gradient(90deg, rgba(0,0,0,.07) 0 3px, transparent 3px 18px),
   linear-gradient(180deg,#8B5A2B,#6B4420); padding:14px;
@@ -8181,6 +8197,13 @@ function renderHome(){
       </div>
       <div class="semana" style="justify-content:center;margin-top:12px;position:relative;z-index:1">${semana}</div>
     </div>
+    <button class="mas-home" id="homeMasmorra" aria-label="Jogar Masmorra das Palavras">
+      <canvas id="masPrevCanvas" width="240" height="80" aria-hidden="true"></canvas>
+      <span class="mas-home-faixa">
+        <span style="min-width:0"><b>🏰 Masmorra das Palavras</b><small>O jogo do FalaFina: escolha a porta certa do inglês e fuja dos monstros</small></span>
+        <i class="mas-home-cta">JOGAR ▶</i>
+      </span>
+    </button>
     ${cardPalavraDoDia()}
     ${!window.speechSynthesis ? `<div class="cardb" style="margin-top:14px;background:var(--sol-claro);border:2px solid var(--sol)">
       <b>🔇 Seu navegador está sem o áudio de voz</b>
@@ -8269,6 +8292,9 @@ function renderHome(){
     else { lojaAba = "baus"; navPara("loja"); }
   });
   if(typeof RPGFX !== "undefined") RPGFX.registrar(); // partículas do estandarte pessoal (se skin comprada)
+  const homeMasBtn = $("#homeMasmorra");
+  if(homeMasBtn) homeMasBtn.addEventListener("click", () => abrirJogo("masmorra"));
+  masPreviewHome(); // o jogo rodando em miniatura dentro do card (a "imagem" é ao vivo)
   ligarAcoes($("#homeConteudo"));
   /* Missões do dia: TODO clique leva pra uma ação DE VERDADE — nunca
      pra uma tela vazia ("cliquei e não aconteceu nada" é proibido) */
@@ -9107,18 +9133,93 @@ function masSortearRodada(){
   for(let k = ops.length - 1; k > 0; k--){ const j = Math.floor(Math.random() * (k + 1)); [ops[k], ops[j]] = [ops[j], ops[k]]; }
   return { pt: certa[1], en: certa[0], som: certa[2], opcoes: ops.map(o => o[0]), certaIdx: ops.findIndex(o => o[0] === certa[0]) };
 }
+/* INÍCIO: tela de abertura do jogo (recordes + cena animada). A cota do
+   modo grátis só é gasta quando a pessoa aperta ENTRAR de verdade. */
+function masDados(){
+  const p = Progresso.dados;
+  if(!p.masmorra) p.masmorra = { corridas: 0, melhorEstrelas: 0, coroas: 0 };
+  return p.masmorra;
+}
 function iniciarMasmorra(){
-  if(!podeIniciarTarefaGratis()) return;
   MAS.carregar(() => {
-    MAS.estado = {
-      sala: 1, TOTAL: 10, coracoes: 3, estrelas: 0, xp: 0, acertos: 0,
-      rodada: masSortearRodada(),
-      heroiX: 8, alvoX: 44, fase: "entrando", portaEscolhida: -1, t: 0, fim: false, monstroY: 0, estrelaAnim: 0
-    };
-    renderMasmorra();
+    const r = masDados();
+    $("#masmorraConteudo").innerHTML = `
+    <div style="max-width:560px;margin:0 auto;text-align:center">
+      <canvas id="masIntroCanvas" width="240" height="110" style="width:100%;image-rendering:pixelated;border-radius:14px;background:#1C242D;display:block;border:3px solid #7A4F1E"></canvas>
+      <h2 style="font-family:var(--f-display);margin:14px 0 4px">🏰 Masmorra das Palavras</h2>
+      <p style="font-weight:700;color:var(--tinta-suave);font-size:.9rem">10 salas · 3 corações · escolha a porta com a palavra certa em inglês</p>
+      <div style="display:flex;gap:8px;justify-content:center;margin:12px 0;flex-wrap:wrap">
+        <span class="chip-girassol">⭐ Recorde: ${r.melhorEstrelas}/10</span>
+        <span class="chip-girassol">👑 Coroas: ${r.coroas}</span>
+        <span class="chip-girassol">🏃 Corridas: ${r.corridas}</span>
+      </div>
+      <button class="btn-principal" id="masEntrar" style="max-width:340px;margin:6px auto 0;font-size:1.05rem;background:var(--sol);color:#5C4400;box-shadow:0 4px 0 #C89A20">⚔️ ENTRAR NA MASMORRA</button>
+      <button class="btn-link" id="masIntroVoltar" style="margin-top:10px">← Voltar pros Jogos</button>
+    </div>`;
+    $("#masEntrar").addEventListener("click", masComecarCorrida);
+    $("#masIntroVoltar").addEventListener("click", () => navPara("pratica"));
     irPara("tela-masmorra");
-    masLoop();
+    /* cena de abertura: herói andando entre as portas com estrela flutuando */
+    let t = 0;
+    (function introLoop(){
+      const cv = $("#masIntroCanvas");
+      if(!cv || telaAtual !== "tela-masmorra" || MAS.estado) return;
+      const ctx = cv.getContext("2d"); ctx.imageSmoothingEnabled = false;
+      t++;
+      ctx.clearRect(0, 0, 240, 110);
+      for(let x = 0; x < 240; x += 16){ MAS.tile(ctx, (x / 16) % 2 ? 17 : 32, x, 94, 16); }
+      for(let i = 0; i < 3; i++){
+        const dx = 108 + i * 44;
+        MAS.tile(ctx, 102, dx, 62, 16); MAS.tile(ctx, 103, dx + 16, 62, 16);
+        MAS.tile(ctx, 117, dx, 78, 16); MAS.tile(ctx, 118, dx + 16, 78, 16);
+      }
+      const hx = 8 + (t * .5) % 88;
+      MAS.tile(ctx, Math.floor(t / 8) % 2 ? 91 : 90, hx, 78, 16);
+      MAS.tile(ctx, 147, 46, 30 + Math.sin(t * .06) * 5, 13);
+      MAS.tile(ctx, 132, 200, 8, 13);
+      requestAnimationFrame(introLoop);
+    })();
   });
+}
+/* Preview ao vivo na HOME: o jogo em miniatura rodando dentro do card —
+   melhor que qualquer imagem parada pra mostrar COMO o jogo é */
+function masPreviewHome(){
+  const cv = $("#masPrevCanvas");
+  if(!cv) return;
+  MAS.carregar(() => {
+    const ctx = cv.getContext("2d");
+    ctx.imageSmoothingEnabled = false;
+    let t = 0;
+    (function loop(){
+      const c2 = $("#masPrevCanvas");
+      if(!c2 || !c2.isConnected || telaAtual !== "tela-home") return; // para sozinho ao sair da Home
+      t++;
+      ctx.clearRect(0, 0, 240, 80);
+      for(let x = 0; x < 240; x += 16) MAS.tile(ctx, (x / 16) % 2 ? 17 : 32, x, 64, 16);
+      for(let i = 0; i < 3; i++){
+        const dx = 116 + i * 42;
+        MAS.tile(ctx, 102, dx, 32, 16); MAS.tile(ctx, 103, dx + 16, 32, 16);
+        MAS.tile(ctx, 117, dx, 48, 16); MAS.tile(ctx, 118, dx + 16, 48, 16);
+      }
+      const hx = 4 + (t * .55) % 100;
+      MAS.tile(ctx, Math.floor(t / 8) % 2 ? 91 : 90, hx, 48, 16);
+      MAS.tile(ctx, 147, 58, 14 + Math.sin(t * .06) * 4, 12);
+      MAS.tile(ctx, 132, 6, 6, 11); MAS.tile(ctx, 132, 19, 6, 11); MAS.tile(ctx, 132, 32, 6, 11);
+      requestAnimationFrame(loop);
+    })();
+  });
+}
+/* MEIO: a corrida de verdade */
+function masComecarCorrida(){
+  if(!podeIniciarTarefaGratis()) return;
+  MAS.estado = {
+    sala: 1, TOTAL: 10, coracoes: 3, estrelas: 0, xp: 0, acertos: 0,
+    rodada: masSortearRodada(), resultados: [],
+    heroiX: 8, alvoX: 44, fase: "entrando", portaEscolhida: -1,
+    t: 0, fim: false, fade: 1, shake: 0, estrelaAnim: 0
+  };
+  renderMasmorra();
+  masLoop();
 }
 function renderMasmorra(){
   const e = MAS.estado;
@@ -9153,7 +9254,8 @@ function masProximaSala(){
   const e = MAS.estado;
   if(e.sala >= e.TOTAL){ masEncerrar(true); return; }
   e.sala++; e.rodada = masSortearRodada();
-  e.heroiX = 8; e.alvoX = 44; e.fase = "entrando"; e.portaEscolhida = -1; e.t = 0; e.monstroY = 0; e.estrelaAnim = 0;
+  e.heroiX = 8; e.alvoX = 44; e.fase = "entrando"; e.portaEscolhida = -1; e.t = 0; e.estrelaAnim = 0;
+  e.fade = 1; // chega na sala nova vindo do escuro (fade-in)
   const sp = $("#masSala"); if(sp) sp.textContent = e.sala;
   const pg = $("#masPergunta"); if(pg) pg.textContent = `“${e.rodada.pt}”?`;
   const bts = $("#masBotoes");
@@ -9162,21 +9264,33 @@ function masProximaSala(){
     bts.querySelectorAll(".mas-op").forEach(b => b.addEventListener("click", () => masResponder(parseInt(b.dataset.op, 10))));
   }
 }
+/* FIM: placar, recorde salvo pra sempre e festa (ou luto) com estilo */
 function masEncerrar(completou){
   const e = MAS.estado;
   e.fim = true;
   const perfeito = completou && e.acertos === e.TOTAL;
+  const r = masDados();
+  r.corridas++;
+  const novoRecorde = e.estrelas > r.melhorEstrelas;
+  if(novoRecorde) r.melhorEstrelas = e.estrelas;
+  if(perfeito) r.coroas++;
   if(e.xp > 0) registrarAtividade(e.xp);
   if(perfeito) COSM.ganhar(15, "Masmorra perfeita! 🏰");
+  Progresso.salvar();
+  const dots = e.resultados.map(ok => ok ? "🟩" : "🟥").join("");
   $("#masmorraConteudo").innerHTML = `
-  <div class="cardb" style="max-width:480px;margin:24px auto;text-align:center;padding:28px 20px">
-    <div style="font-size:3rem">${perfeito ? "👑" : (completou ? "🏆" : (e.coracoes <= 0 ? "💔" : "🚪"))}</div>
+  <div class="cardb" style="max-width:480px;margin:24px auto;text-align:center;padding:28px 20px;overflow:hidden;position:relative">
+    ${perfeito ? `<div aria-hidden="true" style="position:absolute;inset:0;pointer-events:none">${Array.from({length:10}, (_, i) => `<span style="position:absolute;top:-12px;left:${6 + i * 9.5}%;font-size:1rem;animation:masChuva ${(1.6 + (i % 4) * .4)}s linear ${(i * .22)}s infinite">${i % 2 ? "⭐" : "🌻"}</span>`).join("")}</div>` : ""}
+    <div style="font-size:3.4rem;animation:${perfeito ? "petPula 1s ease-in-out infinite" : "petFlutua 2.6s ease-in-out infinite"}">${perfeito ? "👑" : (completou ? "🏆" : (e.coracoes <= 0 ? "💔" : "🚪"))}</div>
     <h2 style="font-family:var(--f-display);margin:8px 0">${perfeito ? "PERFEITO! Rei da Masmorra!" : (completou ? "Masmorra vencida!" : (e.coracoes <= 0 ? "Os monstros venceram..." : "Até a próxima!"))}</h2>
-    <p style="font-weight:700;color:var(--tinta-suave)">⭐ ${e.estrelas} estrela${e.estrelas === 1 ? "" : "s"} · ✅ ${e.acertos}/${e.TOTAL} portas certas · +${e.xp} XP${perfeito ? " · 🌻 +15" : ""}</p>
-    <button class="btn-principal" id="masDeNovo" style="max-width:300px;margin:14px auto 0">🏰 Jogar de novo</button>
+    <p style="font-size:1.1rem;letter-spacing:2px;margin:6px 0">${dots}</p>
+    <p style="font-weight:700;color:var(--tinta-suave)">⭐ ${e.estrelas}/${e.TOTAL} portas certas · +${e.xp} XP${perfeito ? " · 🌻 +15" : ""}</p>
+    ${novoRecorde ? `<p style="font-weight:900;color:var(--verde);margin-top:6px">🎉 NOVO RECORDE PESSOAL!</p>` : `<p style="font-weight:700;color:var(--tinta-suave);font-size:.85rem;margin-top:6px">Recorde: ⭐ ${r.melhorEstrelas}/10 · 👑 ${r.coroas} coroa${r.coroas === 1 ? "" : "s"}</p>`}
+    <button class="btn-principal" id="masDeNovo" style="max-width:300px;margin:14px auto 0">⚔️ Jogar de novo</button>
     <button class="btn-link" id="masVoltar" style="margin-top:8px">← Voltar pros Jogos</button>
   </div>`;
-  $("#masDeNovo").addEventListener("click", iniciarMasmorra);
+  MAS.estado = null; // libera a intro/preview de voltarem a animar
+  $("#masDeNovo").addEventListener("click", masComecarCorrida);
   $("#masVoltar").addEventListener("click", () => navPara("pratica"));
   atualizarXP();
 }
@@ -9189,6 +9303,9 @@ function masLoop(){
   ctx.imageSmoothingEnabled = false;
   e.t++;
   ctx.clearRect(0, 0, 240, 150);
+  ctx.save();
+  /* 💥 tremida de tela no erro (impacto de jogo de verdade) */
+  if(e.shake > 0){ e.shake--; ctx.translate((Math.random() * 2 - 1) * 3, (Math.random() * 2 - 1) * 2); }
   /* chão de caverna: pedra speckle em cima, rocha sólida embaixo
      (tiles conferidos por análise de cor: 17/32 = speckle, 2 = sólido) */
   for(let x = 0; x < 240; x += 16){
@@ -9196,47 +9313,99 @@ function masLoop(){
     MAS.tile(ctx, (x / 16) % 3 === 1 ? 24 : 2, x, 134, 16);
   }
   /* 3 portas (2x2 tiles) com número em cima */
+  const entrouNaPorta = (e.fase === "acertou" || e.fase === "fadeout");
   for(let i = 0; i < 3; i++){
     const dx = 76 + i * 56;
-    const aberta = (e.fase === "acertou" && i === e.portaEscolhida);
-    const t0 = aberta ? 104 : 102, t1 = aberta ? 104 : 103, t2 = aberta ? 119 : 117, t3 = aberta ? 119 : 118;
-    MAS.tile(ctx, t0, dx, 86, 16); MAS.tile(ctx, t1, dx + 16, 86, 16);
-    MAS.tile(ctx, t2, dx, 102, 16); MAS.tile(ctx, t3, dx + 16, 102, 16);
-    MAS.tile(ctx, 121 + i, dx + 8, 68, 16);   // número 1/2/3
-    /* monstro saltando da porta errada */
+    const aberta = entrouNaPorta && i === e.portaEscolhida;
+    MAS.tile(ctx, aberta ? 104 : 102, dx, 86, 16); MAS.tile(ctx, aberta ? 104 : 103, dx + 16, 86, 16);
+    MAS.tile(ctx, aberta ? 119 : 117, dx, 102, 16); MAS.tile(ctx, aberta ? 119 : 118, dx + 16, 102, 16);
+    MAS.tile(ctx, 121 + i, dx + 8, 68, 16);
     if(e.fase === "errou" && i === e.portaEscolhida){
       MAS.tile(ctx, 112, dx + 8, 96 - Math.abs(Math.sin(e.t * .25)) * 14, 16);
     }
   }
-  /* herói (frames de caminhada alternando) */
+  /* herói: anda; no acerto ENTRA na porta (some desaparecendo na passagem) */
   const andando = (e.fase === "entrando" || e.fase === "indo") && Math.abs(e.heroiX - e.alvoX) > 1;
   const frame = andando ? (Math.floor(e.t / 6) % 2 ? 91 : 90) : 90;
   if(andando) e.heroiX += (e.alvoX - e.heroiX) * .12 + (e.alvoX > e.heroiX ? .8 : -.8);
-  MAS.tile(ctx, frame, e.heroiX, 102, 16);
+  if(e.fase === "acertou"){
+    /* atravessando a porta: continua andando e esmaece na escuridão do arco */
+    e.heroiX += .55;
+    ctx.globalAlpha = Math.max(0, 1 - e.t / 34);
+    MAS.tile(ctx, Math.floor(e.t / 5) % 2 ? 91 : 90, e.heroiX, 102, 16);
+    ctx.globalAlpha = 1;
+  } else if(e.fase === "errou"){
+    /* recuo com quique após o susto */
+    e.heroiX += (44 - e.heroiX) * .1;
+    MAS.tile(ctx, 90, e.heroiX, 102 - Math.max(0, 6 - e.t * .4), 16);
+  } else {
+    MAS.tile(ctx, frame, e.heroiX, 102, 16);
+  }
   /* estrela subindo quando acerta */
   if(e.fase === "acertou"){
     e.estrelaAnim++;
-    MAS.tile(ctx, 147, e.heroiX + 2, 84 - e.estrelaAnim * 1.2, 12);
+    MAS.tile(ctx, 147, e.heroiX + 2, 84 - e.estrelaAnim * 1.4, 12);
   }
-  /* HUD: corações + estrelas */
+  /* HUD: corações + contador de estrelas + trilha das 10 salas */
   for(let h = 0; h < 3; h++) MAS.tile(ctx, h < e.coracoes ? 132 : 133, 6 + h * 15, 6, 13);
   MAS.tile(ctx, 147, 200, 6, 13);
   ctx.fillStyle = "#FFF"; ctx.font = "bold 10px monospace"; ctx.fillText("x" + e.estrelas, 215, 16);
-  /* transições de fase */
-  if(e.fase === "entrando" && Math.abs(e.heroiX - e.alvoX) <= 1){ e.fase = "escolha"; }
-  else if(e.fase === "indo" && Math.abs(e.heroiX - e.alvoX) <= 1){
+  for(let s = 0; s < e.TOTAL; s++){
+    const feito = e.resultados[s];
+    ctx.fillStyle = feito === true ? "#7BC950" : (feito === false ? "#E4572E" : (s === e.sala - 1 ? "#FFC53D" : "rgba(255,255,255,.25)"));
+    ctx.fillRect(70 + s * 11, 8, 8, 5);
+  }
+  ctx.restore();
+  /* ✨ feedback grandão de resultado (por cima de tudo, sem tremer) */
+  if(e.fase === "acertou" && e.t < 34){
+    const pop = Math.min(1, e.t / 6);
+    ctx.font = `bold ${Math.round(15 * pop)}px monospace`;
+    ctx.textAlign = "center"; ctx.lineWidth = 3; ctx.strokeStyle = "#0B3D2A";
+    ctx.strokeText("PASSOU!", 120, 46); ctx.fillStyle = "#7BC950"; ctx.fillText("PASSOU!", 120, 46);
+    ctx.textAlign = "left";
+  }
+  if(e.fase === "errou" && e.t < 40){
+    ctx.font = "bold 14px monospace"; ctx.textAlign = "center";
+    ctx.lineWidth = 3; ctx.strokeStyle = "#4A0E08";
+    ctx.strokeText("OUCH!", 120, 46); ctx.fillStyle = "#FF5C3E"; ctx.fillText("OUCH!", 120, 46);
+    ctx.textAlign = "left";
+  }
+  /* cortina de transição entre salas + anúncio da sala */
+  if(e.fade > 0){
+    ctx.fillStyle = `rgba(10,8,14,${Math.min(1, e.fade).toFixed(2)})`;
+    ctx.fillRect(0, 0, 240, 150);
+    if(e.fase === "entrando" && e.fade > .15){
+      ctx.globalAlpha = Math.min(1, e.fade + .3);
+      ctx.font = "bold 16px monospace"; ctx.textAlign = "center";
+      ctx.fillStyle = "#FFC53D"; ctx.fillText("SALA " + e.sala, 120, 70);
+      ctx.font = "bold 9px monospace"; ctx.fillStyle = "#D8C9A5";
+      ctx.fillText("de " + e.TOTAL, 120, 84);
+      ctx.textAlign = "left"; ctx.globalAlpha = 1;
+    }
+  }
+  /* máquina de estados (tudo por frame — sem setTimeout, sem corrida) */
+  if(e.fase === "entrando"){
+    e.fade = Math.max(0, e.fade - .035);
+    if(e.fade <= 0 && Math.abs(e.heroiX - e.alvoX) <= 1) e.fase = "escolha";
+  } else if(e.fase === "indo" && Math.abs(e.heroiX - e.alvoX) <= 1){
     const certa = e.portaEscolhida === e.rodada.certaIdx;
     ENGINE.registrar("vocab", certa);
+    e.resultados.push(certa);
     if(certa){
-      e.fase = "acertou"; e.estrelas++; e.acertos++; e.xp += 6; e.t = 0;
+      e.fase = "acertou"; e.estrelas++; e.acertos++; e.xp += 6; e.t = 0; e.estrelaAnim = 0;
       Fala.dizer && Fala.dizer(e.rodada.en);
-      setTimeout(masProximaSala, 950);
     } else {
-      e.fase = "errou"; e.coracoes--; e.t = 0;
+      e.fase = "errou"; e.coracoes--; e.t = 0; e.shake = 16;
       mostrarToast(`❌ “${e.rodada.pt}” = ${e.rodada.en} (soa "${e.rodada.som}")`);
-      if(e.coracoes <= 0){ setTimeout(() => masEncerrar(false), 1100); }
-      else setTimeout(masProximaSala, 1400);
     }
+  } else if(e.fase === "acertou" && e.t >= 44){
+    e.fase = "fadeout"; e.fade = 0.01;
+  } else if(e.fase === "errou" && e.t >= 70){
+    if(e.coracoes <= 0){ masEncerrar(false); return; }
+    e.fase = "fadeout"; e.fade = 0.01;
+  } else if(e.fase === "fadeout"){
+    e.fade = Math.min(1, e.fade + .06);
+    if(e.fade >= 1){ masProximaSala(); if(MAS.estado && MAS.estado.fim) return; }
   }
   requestAnimationFrame(masLoop);
 }
