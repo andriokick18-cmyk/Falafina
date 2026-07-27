@@ -10196,7 +10196,7 @@ const AVT = {
   imgs: {}, pronto: false,
   carregar(cb){
     if(this.pronto){ cb(); return; }
-    const nomes = { cidade:"sprites/cidade.png", dungeon:"sprites/dungeon.png", pad:"sprites/stick-pad.png", nub:"sprites/stick-nub.png" };
+    const nomes = { cidade:"sprites/cidade.png", dungeon:"sprites/dungeon.png", rog:"sprites/roguelike.png", pad:"sprites/stick-pad.png", nub:"sprites/stick-nub.png" };
     let falta = Object.keys(nomes).length + 1;
     const um = () => { if(--falta === 0){ this.pronto = true; cb(); } };
     MAS.carregar(um); // monstros/corações vêm do tilemap pico-8 da Masmorra
@@ -10212,6 +10212,10 @@ const AVT = {
   },
   tileDungeon(ctx, idx, dx, dy, s){
     ctx.drawImage(this.imgs.dungeon, (idx % 12) * 16, Math.floor(idx / 12) * 16, 16, 16, dx, dy, s, s);
+  },
+  /* Roguelike RPG pack: 57 colunas, tiles 16px com 1px de margem (stride 17) */
+  tileRog(ctx, idx, dx, dy, s){
+    ctx.drawImage(this.imgs.rog, (idx % 57) * 17, Math.floor(idx / 57) * 17, 16, 16, dx, dy, s, s);
   }
 };
 /* Mapa 1 — "Praça dos Ecos" (28x18): a=água g=grama p=calçada T=árvore
@@ -10226,16 +10230,16 @@ const AVT = {
    nome = espécie + adjetivo do elemento ("Morcego Flamejante") */
 const AV_ESPECIES = { 84:"Mago", 86:"Zumbi", 87:"Cavaleiro", 88:"Ogro", 92:"Mímico", 108:"Slime", 109:"Ciclope", 110:"Diabrete", 120:"Morcego", 121:"Fantasma", 122:"Aranha", 123:"Escorpião", 124:"Rato" };
 const AV_ELEMENTOS = [
-  { el:"🌿", nome:"Planta",  adj:"Verdejante", tema:0, chefe:108, pool:[124, 122, 108] },
+  { el:"🌿", nome:"Planta",  adj:"Verdejante", tema:5, chefe:108, pool:[124, 122, 108] },
   { el:"💧", nome:"Água",    adj:"das Marés",  tema:1, chefe:121, pool:[120, 108, 121] },
-  { el:"🔥", nome:"Fogo",    adj:"Flamejante", tema:2, chefe:110, pool:[120, 109, 110] },
+  { el:"🔥", nome:"Fogo",    adj:"Flamejante", tema:6, chefe:110, pool:[120, 109, 110] },
   { el:"⚡", nome:"Raio",    adj:"Faiscante",  tema:3, chefe:123, pool:[122, 110, 123] },
   { el:"🪨", nome:"Pedra",   adj:"da Rocha",   tema:2, chefe:109, pool:[124, 122, 88] },
   { el:"❄️", nome:"Gelo",    adj:"Polar",      tema:1, chefe:124, pool:[121, 108, 124] },
   { el:"🌪️", nome:"Vento",   adj:"dos Ventos", tema:0, chefe:120, pool:[122, 121, 120] },
-  { el:"🌑", nome:"Sombra",  adj:"Sombrio",    tema:2, chefe:87,  pool:[86, 109, 87] },
-  { el:"✨", nome:"Luz",     adj:"Luminoso",   tema:3, chefe:84,  pool:[121, 87, 84] },
-  { el:"🐉", nome:"Dragão",  adj:"Dracônico",  tema:2, chefe:92,  pool:[110, 88, 92] }
+  { el:"🌑", nome:"Sombra",  adj:"Sombrio",    tema:7, chefe:87,  pool:[86, 109, 87] },
+  { el:"✨", nome:"Luz",     adj:"Luminoso",   tema:4, chefe:84,  pool:[121, 87, 84] },
+  { el:"🐉", nome:"Dragão",  adj:"Dracônico",  tema:6, chefe:92,  pool:[110, 88, 92] }
 ];
 function avNomeMonstro(tile, elInfo){ return (AV_ESPECIES[tile] || "Monstro") + " " + elInfo.adj; }
 /* NPCs (Tiny Dungeon) e o mistério do baú: a dica vem SÓ em inglês —
@@ -10257,12 +10261,17 @@ function dungeonCSS(idx, px){
   const col = idx % 12, linha = Math.floor(idx / 12);
   return `display:inline-block;width:${px}px;height:${px}px;background-image:url(sprites/dungeon.png);background-size:${12 * px}px ${11 * px}px;background-position:${-col * px}px ${-linha * px}px;image-rendering:pixelated;`;
 }
-/* Temas visuais: cid = tile do pico8city, pic = tile do tilemap da Masmorra */
+/* Temas visuais: cid = pico8city · pic = tilemap da Masmorra ·
+   rog = Roguelike RPG pack (sobreRog = enfeite por cima) */
 const AV_TEMAS = [
-  { nome:"Campo",   borda:{ cid:1, solido:true }, chao:{ cid:0 }, caminho:{ cid:3 }, det:{ cid:0, sobre:48 }, obst:{ cid:0, sobre:358, solido:true }, mancha:{ cid:2 } },
-  { nome:"Costa",   borda:{ cid:1, solido:true }, chao:{ cid:2 }, caminho:{ cid:3 }, det:{ cid:2, sobre:310 }, obst:{ cid:2, sobre:359, solido:true }, mancha:{ cid:1, solido:true } },
-  { nome:"Caverna", borda:{ pic:2, solido:true }, chao:{ pic:17 }, caminho:{ pic:32 }, det:{ pic:24 }, obst:{ pic:2, solido:true }, mancha:{ pic:32 } },
-  { nome:"Cidade",  borda:{ cid:1, solido:true }, chao:{ cid:3 }, caminho:{ cid:0 }, det:{ cid:3, sobre:48 }, obst:{ cid:3, sobre:334, solido:true }, mancha:{ cid:2 } }
+  { nome:"Campo",    borda:{ cid:1, solido:true }, chao:{ cid:0 }, caminho:{ cid:3 }, det:{ cid:0, sobre:48 }, obst:{ cid:0, sobre:358, solido:true }, mancha:{ cid:2 } },
+  { nome:"Costa",    borda:{ cid:1, solido:true }, chao:{ cid:2 }, caminho:{ cid:3 }, det:{ cid:2, sobre:310 }, obst:{ cid:2, sobre:359, solido:true }, mancha:{ cid:1, solido:true } },
+  { nome:"Caverna",  borda:{ pic:2, solido:true }, chao:{ pic:17 }, caminho:{ pic:32 }, det:{ pic:24 }, obst:{ pic:2, solido:true }, mancha:{ pic:32 } },
+  { nome:"Cidade",   borda:{ cid:1, solido:true }, chao:{ cid:3 }, caminho:{ cid:0 }, det:{ cid:3, sobre:48 }, obst:{ cid:3, sobre:334, solido:true }, mancha:{ cid:2 } },
+  { nome:"Deserto",  borda:{ rog:9, solido:true }, chao:{ rog:8 }, caminho:{ rog:6 }, det:{ rog:8, sobreRog:541 }, obst:{ rog:8, sobreRog:535, solido:true }, mancha:{ rog:6 } },
+  { nome:"Floresta", borda:{ rog:9, solido:true }, chao:{ rog:5 }, caminho:{ rog:6 }, det:{ rog:5, sobreRog:653 }, obst:{ rog:5, sobreRog:529, solido:true }, mancha:{ rog:6 } },
+  { nome:"Vulcão",   borda:{ rog:1026, solido:true }, chao:{ rog:6 }, caminho:{ rog:7 }, det:{ rog:6, sobreRog:540 }, obst:{ rog:6, sobreRog:9, solido:true }, mancha:{ rog:1083, solido:true } },
+  { nome:"Místico",  borda:{ rog:9, solido:true }, chao:{ rog:1197 }, caminho:{ rog:1254 }, det:{ rog:1197, sobreRog:547 }, obst:{ rog:1197, sobreRog:530, solido:true }, mancha:{ rog:7 } }
 ];
 /* Gera o mapa do nível m: layout determinístico (semente = m) */
 function avGerarMapa(m){
@@ -10626,7 +10635,9 @@ function avLoop(){
       const t = avTileDe(e.mapa[ty][tx], e.temaIdx);
       if(t.cid != null) AVT.tileCidade(ctx, t.cid, tx * 8, ty * 8);
       else if(t.pic != null) MAS.tile(ctx, t.pic, tx * 8, ty * 8, 8);
+      else if(t.rog != null) AVT.tileRog(ctx, t.rog, tx * 8, ty * 8, 8);
       if(t.sobre != null) AVT.tileCidade(ctx, t.sobre, tx * 8, ty * 8);
+      if(t.sobreRog != null) AVT.tileRog(ctx, t.sobreRog, tx * 8, ty * 8, 8);
     }
   }
   /* monstros: o ALVO DA VEZ fica aceso e balançando; os outros dormem 💤 */
