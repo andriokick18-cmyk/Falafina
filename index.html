@@ -10200,19 +10200,23 @@ const AVT = {
    monstros ~10x mais fortes (tier 2: chefe exige acertos SEM errar).
    4 temas visuais rodam entre os elementos (com os tilesets que temos —
    os packs Roguelike que o Andrio vai mandar destravam temas próprios). */
-/* monstros = tiles do Tiny Dungeon (sheet 12 col, 16px) */
+/* monstros = tiles do Tiny Dungeon (sheet 12 col, 16px).
+   Cada elemento tem um POOL de 3 monstros comuns + 1 sprite de CHEFE —
+   nome = espécie + adjetivo do elemento ("Morcego Flamejante") */
+const AV_ESPECIES = { 84:"Mago", 86:"Zumbi", 87:"Cavaleiro", 88:"Ogro", 92:"Mímico", 108:"Slime", 109:"Ciclope", 110:"Diabrete", 120:"Morcego", 121:"Fantasma", 122:"Aranha", 123:"Escorpião", 124:"Rato" };
 const AV_ELEMENTOS = [
-  { el:"🌿", nome:"Planta",  tema:0, monstro:108, mNome:"Slime Verdejante" },
-  { el:"💧", nome:"Água",    tema:1, monstro:121, mNome:"Fantasma das Marés" },
-  { el:"🔥", nome:"Fogo",    tema:2, monstro:110, mNome:"Diabrete Flamejante" },
-  { el:"⚡", nome:"Raio",    tema:3, monstro:123, mNome:"Escorpião Faiscante" },
-  { el:"🪨", nome:"Pedra",   tema:2, monstro:122, mNome:"Aranha Rochosa" },
-  { el:"❄️", nome:"Gelo",    tema:1, monstro:124, mNome:"Rato Polar" },
-  { el:"🌪️", nome:"Vento",   tema:0, monstro:120, mNome:"Aranha dos Ventos" },
-  { el:"🌑", nome:"Sombra",  tema:2, monstro:109, mNome:"Ciclope Sombrio" },
-  { el:"✨", nome:"Luz",     tema:3, monstro:84,  mNome:"Mago Luminoso" },
-  { el:"🐉", nome:"Dragão",  tema:2, monstro:92,  mNome:"Mímico Dracônico" }
+  { el:"🌿", nome:"Planta",  adj:"Verdejante", tema:0, chefe:108, pool:[124, 122, 108] },
+  { el:"💧", nome:"Água",    adj:"das Marés",  tema:1, chefe:121, pool:[120, 108, 121] },
+  { el:"🔥", nome:"Fogo",    adj:"Flamejante", tema:2, chefe:110, pool:[120, 109, 110] },
+  { el:"⚡", nome:"Raio",    adj:"Faiscante",  tema:3, chefe:123, pool:[122, 110, 123] },
+  { el:"🪨", nome:"Pedra",   adj:"da Rocha",   tema:2, chefe:109, pool:[124, 122, 88] },
+  { el:"❄️", nome:"Gelo",    adj:"Polar",      tema:1, chefe:124, pool:[121, 108, 124] },
+  { el:"🌪️", nome:"Vento",   adj:"dos Ventos", tema:0, chefe:120, pool:[122, 121, 120] },
+  { el:"🌑", nome:"Sombra",  adj:"Sombrio",    tema:2, chefe:87,  pool:[86, 109, 87] },
+  { el:"✨", nome:"Luz",     adj:"Luminoso",   tema:3, chefe:84,  pool:[121, 87, 84] },
+  { el:"🐉", nome:"Dragão",  adj:"Dracônico",  tema:2, chefe:92,  pool:[110, 88, 92] }
 ];
+function avNomeMonstro(tile, elInfo){ return (AV_ESPECIES[tile] || "Monstro") + " " + elInfo.adj; }
 function dungeonCSS(idx, px){
   const col = idx % 12, linha = Math.floor(idx / 12);
   return `display:inline-block;width:${px}px;height:${px}px;background-image:url(sprites/dungeon.png);background-size:${12 * px}px ${11 * px}px;background-position:${-col * px}px ${-linha * px}px;image-rendering:pixelated;`;
@@ -10285,8 +10289,14 @@ function avRolarDrop(){
   d.equip[id === "espada1" ? "espada1" : id] = true;
   return { equip: id };
 }
-/* Dificuldade da pergunta sobe com o nível do monstro */
+/* Dificuldade da pergunta sobe com o nível do monstro:
+   palavras curtas → longas → frases → Nv60+: ESCREVER a resposta */
 function avSortearPergunta(nivel){
+  if(nivel >= 60){
+    const r = masSortearRodada();
+    r.escrever = true;
+    return r;
+  }
   if(nivel >= 30 && PALAVRA_DIA_POOL.length >= 4){
     /* FRASES inteiras nos níveis altos */
     const pool = PALAVRA_DIA_POOL.slice();
@@ -10362,9 +10372,9 @@ function avTelaMapas(){
       <span style="font-size:1.7rem">${trancado ? "🔒" : elInfo.el}</span>
       <span style="flex:1;min-width:0">
         <b style="font-family:var(--f-display)">Mapa ${m} — ${elInfo.nome}${tier > 1 ? " " + "★".repeat(Math.min(tier, 5)) : ""}</b><br>
-        <small style="font-weight:700;color:var(--tinta-suave)">${trancado ? `Derrote o CHEFE do Mapa ${m - 1} pra destravar` : `${esc(elInfo.mNome)} Nv${(m - 1) * 3 + 1}–${(m - 1) * 3 + 3} + 👑 CHEFE${tier >= 2 ? " · ⭐ MODO PERFEITO: errou, o monstro se recupera!" : ""}`}</small>
+        <small style="font-weight:700;color:var(--tinta-suave)">${trancado ? `Derrote o CHEFE do Mapa ${m - 1} pra destravar` : `Monstros Nv${(m - 1) * 3 + 1}–${(m - 1) * 3 + 3} + 👑 ${esc(avNomeMonstro(elInfo.chefe, elInfo))}${tier >= 2 ? " · ⭐ MODO PERFEITO: errou, o monstro se recupera!" : ""}`}</small>
       </span>
-      ${trancado ? "" : `<span style="${dungeonCSS(elInfo.monstro, 36)}"></span>`}
+      ${trancado ? "" : `<span style="${dungeonCSS(elInfo.chefe, 36)}"></span>`}
     </button>`);
   }
   const nEquips = Object.keys(AV_EQUIPS).filter(k => d.equip[k]).length;
@@ -10401,8 +10411,8 @@ function avEntrarMapa(m){
     }
   });
   const monstros = pontos.map((s, i) => s.chefe
-    ? { tx: s.tx, ty: s.ty, chefe: true, perfeito: tier >= 2, nome: "CHEFE " + elInfo.mNome, nivel: m * 3 + 1, hp: 5 + (tier - 1) * 2 }
-    : { tx: s.tx, ty: s.ty, perfeito: tier >= 2, nome: elInfo.mNome, nivel: (m - 1) * 3 + i + 1, hp: 3 + (tier - 1) * 2 });
+    ? { tx: s.tx, ty: s.ty, tile: elInfo.chefe, chefe: true, perfeito: tier >= 2, nome: "CHEFE " + avNomeMonstro(elInfo.chefe, elInfo), nivel: m * 3 + 1, hp: 5 + (tier - 1) * 2 }
+    : { tx: s.tx, ty: s.ty, tile: elInfo.pool[i % elInfo.pool.length], perfeito: tier >= 2, nome: avNomeMonstro(elInfo.pool[i % elInfo.pool.length], elInfo), nivel: (m - 1) * 3 + i + 1, hp: 3 + (tier - 1) * 2 });
   monstros.forEach(mo => { mo.hpMax = mo.hp; });
   const velho = AV;
   AV = {
@@ -10579,7 +10589,7 @@ function avLoop(){
     const s = mo.chefe ? 14 : 10;
     const dy = mo.ty * 8 + 8 - s + (acordado ? Math.sin(e.rel * .006 + mo.tx) * 1.2 : 0);
     if(!acordado) ctx.globalAlpha = .5;
-    AVT.tileDungeon(ctx, e.elemento.monstro, mo.tx * 8 + 4 - s / 2, dy, s);
+    AVT.tileDungeon(ctx, mo.tile, mo.tx * 8 + 4 - s / 2, dy, s);
     ctx.globalAlpha = 1;
     if(mo.chefe && acordado) MAS.tile(ctx, 147, mo.tx * 8, dy - 8, 8);
     /* rótulo: acima do monstro; perto do topo do mapa vai pra BAIXO (não briga com o HUD) */
@@ -10656,55 +10666,89 @@ function avPergunta(){
   e.rodada = avSortearPergunta(e.alvo.nivel);
   e.cortadas = [];
   e.dicaSom = false;
-  e.fala = e.rodada.frase
-    ? `O monstro desafia: <br>"<i>Translate it, human!</i> Como fica em inglês: <b>${esc(e.rodada.pt)}</b>?"`
-    : AV_FALAS[Math.floor(Math.random() * AV_FALAS.length)](e.rodada.pt);
+  e.reveladas = 0;
+  e.fala = e.rodada.escrever
+    ? `O monstro exige: <br>"<i>WRITE it, human!</i> Escreva <b>${esc(e.rodada.pt)}</b> em inglês — sem alternativas!"`
+    : (e.rodada.frase
+      ? `O monstro desafia: <br>"<i>Translate it, human!</i> Como fica em inglês: <b>${esc(e.rodada.pt)}</b>?"`
+      : AV_FALAS[Math.floor(Math.random() * AV_FALAS.length)](e.rodada.pt));
   avRenderBatalha();
 }
 function avRenderBatalha(){
   const e = AV, mo = e.alvo, d = avDados(), r = e.rodada;
-  /* EQUIPAMENTOS = DICAS: os botões só existem pra quem dropou o item */
+  /* EQUIPAMENTOS = DICAS: os botões só existem pra quem dropou o item.
+     No modo ESCREVER as espadas viram "revelar letras" */
   const erradasRestam = r.opcoes.map((_, i) => i).filter(i => i !== r.certaIdx && !e.cortadas.includes(i)).length;
   const bts = [];
-  if(!e.usoEspada && d.equip.espada2 && erradasRestam >= 2) bts.push(`<button class="av-btn av-dica" data-d="espada2">⚔️ Cortar 2</button>`);
-  else if(!e.usoEspada && (d.equip.espada1 || d.equip.espada2) && erradasRestam >= 1) bts.push(`<button class="av-btn av-dica" data-d="espada1">🗡️ Cortar 1</button>`);
+  if(r.escrever){
+    if(!e.usoEspada && d.equip.espada2) bts.push(`<button class="av-btn av-dica" data-d="espada2">⚔️ Revelar 2 letras</button>`);
+    else if(!e.usoEspada && (d.equip.espada1 || d.equip.espada2)) bts.push(`<button class="av-btn av-dica" data-d="espada1">🗡️ Revelar 1 letra</button>`);
+  } else {
+    if(!e.usoEspada && d.equip.espada2 && erradasRestam >= 2) bts.push(`<button class="av-btn av-dica" data-d="espada2">⚔️ Cortar 2</button>`);
+    else if(!e.usoEspada && (d.equip.espada1 || d.equip.espada2) && erradasRestam >= 1) bts.push(`<button class="av-btn av-dica" data-d="espada1">🗡️ Cortar 1</button>`);
+  }
   if(d.equip.orbe) bts.push(`<button class="av-btn av-dica" data-d="orbe">🔮 Ouvir</button>`);
   if(d.equip.livro && r.som && !e.dicaSom) bts.push(`<button class="av-btn av-dica" data-d="livro">📖 Como soa</button>`);
   if(d.equip.coroa && !e.usoCoroa) bts.push(`<button class="av-btn av-dica" data-d="coroa">👑 Sábio</button>`);
+  const respostaHTML = r.escrever
+    ? `${e.reveladas > 0 ? `<p style="font-weight:800;font-size:.85rem;color:#7A5C1E;margin-top:4px">💡 começa com: <b>${esc(r.en.slice(0, e.reveladas))}</b>…</p>` : ""}
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <input id="avEscrever" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="escreva em inglês…" style="flex:1;min-width:0;padding:12px;border:2.5px solid #7A4F1E;border-radius:12px;font-weight:800;font-size:1rem;font-family:inherit">
+        <button class="btn-principal" id="avEnviar" style="max-width:90px;padding:12px">⚔️</button>
+      </div>`
+    : `<div class="av-ops"${r.frase ? ` style="flex-direction:column"` : ""}>
+      ${r.opcoes.map((op, i) => e.cortadas.includes(i)
+        ? `<button class="btn-principal" disabled style="padding:12px 4px;font-size:.9rem;opacity:.25;text-decoration:line-through">${esc(op)}</button>`
+        : `<button class="btn-principal av-op" data-op="${i}" style="padding:12px 4px;font-size:${r.frase ? ".82rem" : ".9rem"}">${esc(op)}</button>`).join("")}
+    </div>`;
   $("#avOverlay").innerHTML = `
   <div class="av-batalha">
     <div style="display:flex;align-items:center;gap:10px;justify-content:center">
-      <span style="${dungeonCSS(e.elemento.monstro, 44)};animation:petPula 1s ease-in-out infinite"></span>
+      <span style="${dungeonCSS(mo.tile, 44)};animation:petPula 1s ease-in-out infinite"></span>
       <div style="text-align:left"><b>${e.elemento.el} ${esc(mo.nome)} · Nv${mo.nivel}</b>${mo.perfeito ? ` <span style="font-size:.68rem;font-weight:900;color:#B8860B">⭐ PERFEITO</span>` : ""}<br>
       <span style="font-size:.8rem;font-weight:800">${"🟪".repeat(mo.hp)}${"⬜".repeat(mo.hpMax - mo.hp)} HP${e.escudo ? " · 🛡️" : ""}</span></div>
     </div>
     <p class="av-fala" style="margin-top:8px">${e.fala}</p>
     ${e.dicaSom && r.som ? `<p style="font-weight:800;font-size:.85rem;color:#7A5C1E;margin-top:4px">📖 soa como: “${esc(r.som)}”</p>` : ""}
     ${bts.length ? `<div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:6px">${bts.join("")}</div>` : ""}
-    <div class="av-ops"${r.frase ? ` style="flex-direction:column"` : ""}>
-      ${r.opcoes.map((op, i) => e.cortadas.includes(i)
-        ? `<button class="btn-principal" disabled style="padding:12px 4px;font-size:.9rem;opacity:.25;text-decoration:line-through">${esc(op)}</button>`
-        : `<button class="btn-principal av-op" data-op="${i}" style="padding:12px 4px;font-size:${r.frase ? ".82rem" : ".9rem"}">${esc(op)}</button>`).join("")}
-    </div>
+    ${respostaHTML}
   </div>`;
   $("#avOverlay").querySelectorAll(".av-op").forEach(b => b.addEventListener("click", () => avResponder(parseInt(b.dataset.op, 10), false)));
   $("#avOverlay").querySelectorAll(".av-dica").forEach(b => b.addEventListener("click", () => avUsarDica(b.dataset.d)));
+  const inp = $("#avEscrever");
+  if(inp){
+    const enviar = () => {
+      const v = (inp.value || "").trim().toLowerCase();
+      if(!v) return;
+      avResolver(v === r.en.trim().toLowerCase(), false);
+    };
+    $("#avEnviar").addEventListener("click", enviar);
+    inp.addEventListener("keydown", ev => { if(ev.key === "Enter") enviar(); });
+    inp.focus();
+  }
 }
 function avUsarDica(qual){
   const e = AV, r = e.rodada;
   if(qual === "orbe"){ Fala.dizer(r.en); return; }
   if(qual === "livro"){ e.dicaSom = true; avRenderBatalha(); return; }
-  if(qual === "coroa"){ e.usoCoroa = true; mostrarToast("👑 O Sábio sussurra a resposta…"); avResponder(r.certaIdx, true); return; }
-  /* espadas: cortam alternativas erradas (1x por batalha) */
+  if(qual === "coroa"){ e.usoCoroa = true; mostrarToast("👑 O Sábio sussurra a resposta…"); avResolver(true, true); return; }
   const n = qual === "espada2" ? 2 : 1;
   e.usoEspada = true;
-  const erradas = r.opcoes.map((_, i) => i).filter(i => i !== r.certaIdx && !e.cortadas.includes(i));
-  for(let k = 0; k < n && erradas.length; k++) e.cortadas.push(erradas.splice(Math.floor(Math.random() * erradas.length), 1)[0]);
+  if(r.escrever){
+    /* modo escrever: a espada REVELA as primeiras letras */
+    e.reveladas = Math.min(r.en.length - 1, n);
+  } else {
+    /* modo alternativas: a espada CORTA erradas */
+    const erradas = r.opcoes.map((_, i) => i).filter(i => i !== r.certaIdx && !e.cortadas.includes(i));
+    for(let k = 0; k < n && erradas.length; k++) e.cortadas.push(erradas.splice(Math.floor(Math.random() * erradas.length), 1)[0]);
+  }
   avRenderBatalha();
 }
 function avResponder(i, auto){
+  avResolver(i === AV.rodada.certaIdx, auto);
+}
+function avResolver(certo, auto){
   const e = AV, mo = e.alvo, r = e.rodada;
-  const certo = i === r.certaIdx;
   if(!auto) ENGINE.registrar("vocab", certo);
   if(certo){
     mo.hp--;

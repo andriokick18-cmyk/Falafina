@@ -1,4 +1,5 @@
 // FalaFina Service Worker — app instalável e funcionando offline
+// v51: 👾 VARIEDADE + ✍️ ESCREVER — cada elemento tem POOL de 3 espécies de monstro (Rato Verdejante, Morcego Flamejante…) + chefe próprio; do Nv60+ a batalha exige ESCREVER a resposta (espadas viram "revelar letras")
 // v50: 🔊 SOM NA AVENTURA — chiptune 8-bit sintetizado (WebAudio, zero download, offline): golpe, erro, vitória, drop, encontro, fanfarra do chefe e derrota + botão 🔊/🔇 que fica salvo na conta
 // v49: ⚔️ AVENTURA v1.1 MOBILE-FIRST — velocidade por tempo real (60/120Hz iguais), tela SEM barras pretas (escala que cobre tudo + retina), analógico FLUTUANTE (nasce embaixo do dedo), monstros acordam EM ORDEM (fraco→forte→CHEFE) com seta-guia dourada e intro de mapa, janela 🧍 Herói com o corpo e os slots equipados, 🌻15 na 1ª vitória de cada chefe
 // v48: ⚔️ AVENTURA v1 — 10 ELEMENTOS + CHEFES + EQUIPAMENTOS-DICA: cada mapa tem um elemento (monstros do Tiny Dungeon) e um CHEFE que destrava o próximo; drops por baralho de pesos (espadas cortam alternativas, orbe fala, livro mostra o som, coroa responde, escudo absorve erro); mapa 11+ = modo PERFEITO; perguntas escalam até frases
@@ -37,7 +38,7 @@
 // v15: faixa-guia nas Aulas + desafios com botão "Treinar agora" que leva pro treino certo
 // v14: Guia de Áreas (Mapa do FalaFina, "?" em toda tela, nomes claros)
 // v8: ícones com nome correto (minúsculo) + NUNCA cacheia /api/ (dados da nuvem sempre frescos)
-const CACHE = "falafina-v50";
+const CACHE = "falafina-v51";
 const ARQUIVOS = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png", "./mascote.png", "./sprites/pico8.png", "./sprites/cidade.png", "./sprites/dungeon.png"];
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ARQUIVOS)).then(() => self.skipWaiting()));
