@@ -10304,6 +10304,40 @@ function avSortearPergunta(nivel){
     if(r.en.length <= maxLen || tenta === 29) return r;
   }
 }
+/* 🔊 SOM DA AVENTURA — chiptune 8-bit sintetizado (WebAudio, zero download,
+   funciona offline; casa com a pixel art). Toca só após gesto do usuário. */
+const AVSOM = {
+  ctx: null,
+  ac(){
+    if(!this.ctx){ try{ this.ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e){ return null; } }
+    if(this.ctx.state === "suspended") this.ctx.resume().catch(() => {});
+    return this.ctx;
+  },
+  nota(freq, ini, dur, tipo, vol){
+    const c = this.ctx;
+    const o = c.createOscillator(), g = c.createGain();
+    o.type = tipo; o.frequency.value = freq;
+    g.gain.setValueAtTime(vol, ini);
+    g.gain.exponentialRampToValueAtTime(.001, ini + dur);
+    o.connect(g); g.connect(c.destination);
+    o.start(ini); o.stop(ini + dur + .02);
+  },
+  toca(nome){
+    if(avDados().mudo) return;
+    const c = this.ac(); if(!c) return;
+    const t = c.currentTime;
+    const fx = {
+      golpe:   () => { this.nota(660, t, .07, "square", .16); this.nota(990, t + .06, .1, "square", .14); },
+      erro:    () => { this.nota(220, t, .12, "sawtooth", .15); this.nota(147, t + .1, .2, "sawtooth", .13); },
+      vitoria: () => [523, 659, 784, 1047].forEach((f, i) => this.nota(f, t + i * .09, .13, "square", .14)),
+      drop:    () => [784, 988, 1319, 1568].forEach((f, i) => this.nota(f, t + i * .07, .11, "triangle", .16)),
+      encontro:() => { this.nota(330, t, .1, "square", .14); this.nota(415, t + .1, .12, "square", .14); },
+      chefe:   () => [196, 196, 196, 155].forEach((f, i) => this.nota(f, t + i * .15, .14, "square", .17)),
+      derrota: () => [392, 330, 262, 196].forEach((f, i) => this.nota(f, t + i * .17, .22, "triangle", .14))
+    };
+    if(fx[nome]) fx[nome]();
+  }
+};
 const AV_FALAS = [
   (pt) => `O monstro rosna: <br>"Só passa quem sabe... o que é <b>${esc(pt)}</b> <i>in English</i>?"`,
   (pt) => `"<i>Answer me, human!</i> Como se diz <b>${esc(pt)}</b> na minha língua?"`,
@@ -10411,7 +10445,7 @@ function avMontarTela(){
   <div class="av-wrap" id="avWrap">
     <canvas id="avCanvas"></canvas>
     <div class="av-hud">
-      <div style="display:flex;gap:8px"><button class="av-btn" id="avSair">← Mapas</button><button class="av-btn" id="avTelaCheia">⛶</button></div>
+      <div style="display:flex;gap:8px"><button class="av-btn" id="avSair">← Mapas</button><button class="av-btn" id="avTelaCheia">⛶</button><button class="av-btn" id="avSom">${avDados().mudo ? "🔇" : "🔊"}</button></div>
       <div style="display:flex;gap:8px"><button class="av-btn" id="avHeroi">🧍 Herói</button><button class="av-btn" id="avMochila">🎒</button></div>
     </div>
     <div class="av-stick" id="avStick">
@@ -10436,6 +10470,12 @@ function avMontarTela(){
   });
   $("#avMochila").addEventListener("click", avAbrirMochila);
   $("#avHeroi").addEventListener("click", avAbrirHeroi);
+  $("#avSom").addEventListener("click", () => {
+    const d = avDados();
+    d.mudo = !d.mudo; Progresso.salvar();
+    $("#avSom").textContent = d.mudo ? "🔇" : "🔊";
+    if(!d.mudo) AVSOM.toca("golpe");
+  });
   /* 🕹️ ANALÓGICO FLUTUANTE (padrão dos grandes jogos mobile): toque em
      QUALQUER lugar livre e arraste — o direcional nasce embaixo do dedo */
   const wrap = $("#avWrap"), stick = $("#avStick"), nub = $("#avNub");
@@ -10606,6 +10646,7 @@ function avIniciarBatalha(mo){
   const e = AV, d = avDados();
   e.fase = "batalha";
   e.alvo = mo;
+  AVSOM.toca(mo.chefe ? "chefe" : "encontro");
   e.usoEspada = false; e.usoCoroa = false;
   e.escudo = !!d.equip.escudo;   /* 🛡️ absorve o 1º erro DA BATALHA */
   avPergunta();
@@ -10667,11 +10708,13 @@ function avResponder(i, auto){
   if(!auto) ENGINE.registrar("vocab", certo);
   if(certo){
     mo.hp--;
+    AVSOM.toca("golpe");
     Fala.dizer && Fala.dizer(r.en);
     if(mo.hp <= 0){ avVitoria(); return; }
     mostrarToast(auto ? "👑 O Sábio acertou por você!" : "⚔️ Golpe certeiro! (" + r.en + ")");
     avPergunta();
   } else {
+    AVSOM.toca("erro");
     let msg = `💥 O monstro atacou! “${r.pt}” = ${r.en}`;
     if(e.escudo){ e.escudo = false; msg = `🛡️ O Escudo de Couro absorveu o golpe! “${r.pt}” = ${r.en}`; }
     else e.vidas--;
@@ -10684,6 +10727,7 @@ function avResponder(i, auto){
 function avVitoria(){
   const e = AV, mo = e.alvo, d = avDados();
   d.mortos++;
+  AVSOM.toca("vitoria");
   const xp = (mo.chefe ? 15 : 8) + mo.nivel * 2;
   registrarAtividade(xp);
   let drop = "";
@@ -10706,6 +10750,7 @@ function avVitoria(){
         <small style="font-weight:700">Equipado! Poder: ${eq.desc}.</small></div>`;
     }
   }
+  if(drop) setTimeout(() => AVSOM.toca("drop"), 550);
   Progresso.salvar();
   let extra = "";
   let botoes = `<button class="btn-principal" id="avContinuar" style="max-width:280px;margin:12px auto 0">Continuar explorando ▶</button>`;
@@ -10740,6 +10785,7 @@ function avVitoria(){
 }
 function avDerrota(){
   const e = AV;
+  AVSOM.toca("derrota");
   $("#avOverlay").innerHTML = `
   <div class="av-modal"><div>
     <div style="font-size:3rem">💀</div>
