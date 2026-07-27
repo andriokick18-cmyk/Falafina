@@ -57,12 +57,13 @@ NPCs com falas PT/EN misturadas que dão pistas do mistério local (ex.:
 "O baú está atrás da WATERFALL — você sabe o que é?"), baús escondidos.
 
 ## Roadmap de construção
-- **v0 (AGORA)**: motor — tela cheia, analógico, mapa 1 (cidade),
-  colisão, encontro, batalha de 3 perguntas, amuleto no 1º kill, mochila
-  com poção. ✅ nesta versão
-- v1: elementos + chefes + destravar mapas + tabela de drops completa
-- v2: NPCs/mistérios + baús escondidos + escrever respostas nos níveis altos
-- v3: sons (packs de áudio do Kenney) + música + save de posição
+- **v0** ✅ (V860): motor — tela cheia, analógico, colisão, encontro,
+  batalha de 3 perguntas, amuleto no 1º kill, mochila com poção
+- **v1** ✅ (V861): elementos + chefes + destravar mapas + tabela de
+  drops completa + equipamentos-dica + tier 2 (modo perfeito) + frases
+- **v2 (PRÓXIMA)**: SOM (packs rpg-audio/interface-sounds/music-jingles
+  já recebidos) + NPCs/mistérios + baús escondidos + escrever respostas
+  nos níveis altos + save de posição
 
 ## 📦 Packs que o Andrio precisa baixar (kenney.nl, grátis)
 1. **Roguelike/RPG pack** — kenney.nl/assets/roguelike-rpg-pack (mapas top-down: cavernas, florestas, castelos)
