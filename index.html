@@ -1074,6 +1074,14 @@ body.sem-shell .btn-info-topo{display:none}
 .arc-card b{ display:block; color:#FFE9B0; font-size:.72rem; padding:6px 4px 2px; font-family:var(--f-display); }
 .arc-card small{ display:block; color:#B8C2CC; font-weight:700; font-size:.58rem; padding:0 4px 8px; line-height:1.25; }
 .arc-card:active{ transform:translateY(2px); }
+.avh-banner{ width:100%; margin-top:10px; display:flex; align-items:center; gap:12px; text-align:left; cursor:pointer;
+  background:linear-gradient(135deg,#141B24,#232F1B 60%,#141B24); border:2.5px solid #B8860B; border-radius:16px; padding:12px 14px;
+  box-shadow:0 4px 14px rgba(0,0,0,.35), inset 0 0 24px rgba(255,214,64,.06); }
+.avh-banner:active{ transform:translateY(2px); }
+.avh-banner b{ color:#FFE9B0; font-family:var(--f-display); font-size:.95rem; display:block; }
+.avh-banner small{ color:#B8C2CC; font-weight:700; font-size:.68rem; line-height:1.3; display:block; }
+.avh-cta{ margin-left:auto; flex-shrink:0; background:#B8860B; color:#1C1206; font-weight:900; font-size:.72rem;
+  border-radius:99px; padding:8px 12px; font-style:normal; animation:masCtaPulsa 1.6s ease-in-out infinite; }
 
 /* ⚔️ AVENTURA FALAFINA — tela cheia com analógico */
 .av-wrap{ position:fixed; inset:0; z-index:180; background:#0B0E14; overflow:hidden; touch-action:none; }
@@ -8411,6 +8419,17 @@ function renderHome(){
       <button class="arc-card" data-arcade="invasao"><canvas id="arcPrevInv" width="80" height="54" aria-hidden="true"></canvas><b>👾 Invasão</b><small>derrube o certo</small></button>
       <button class="arc-card" data-arcade="eco"><canvas id="arcPrevEco" width="80" height="54" aria-hidden="true"></canvas><b>👂 Eco</b><small>ouça e acerte</small></button>
     </div>
+    ${(() => { const av = (p.aventura || {}); const m = av.ultimoMapa || av.mapaMax || 1; const elA = AV_ELEMENTOS[(m - 1) % 10]; const nb = Object.keys(av.bauAchado || {}).length; return `
+    <button class="avh-banner" id="homeAventura" aria-label="Jogar Aventura FalaFina">
+      <span style="${cidadeCSS(308, 34)};flex-shrink:0"></span>
+      <span style="min-width:0">
+        <b>⚔️ Aventura FalaFina</b>
+        <small>RPG em TELA CHEIA: explore, decifre mistérios e vença chefes em inglês</small>
+        <small style="color:#FFD640;margin-top:2px">${elA.el} Mapa ${m} — ${elA.nome}${nb ? ` · 🧰 ${nb} baú${nb > 1 ? "s" : ""} secreto${nb > 1 ? "s" : ""}` : ""}</small>
+      </span>
+      <span style="${dungeonCSS(elA.chefe, 30)};flex-shrink:0;margin-left:auto"></span>
+      <i class="avh-cta">JOGAR ▶</i>
+    </button>`; })()}
     ${cardPalavraDoDia()}
     ${!window.speechSynthesis ? `<div class="cardb" style="margin-top:14px;background:var(--sol-claro);border:2px solid var(--sol)">
       <b>🔇 Seu navegador está sem o áudio de voz</b>
@@ -8501,6 +8520,8 @@ function renderHome(){
   if(typeof RPGFX !== "undefined") RPGFX.registrar(); // partículas do estandarte pessoal (se skin comprada)
   const homeMasBtn = $("#homeMasmorra");
   if(homeMasBtn) homeMasBtn.addEventListener("click", () => abrirJogo("masmorra"));
+  const homeAvBtn = $("#homeAventura");
+  if(homeAvBtn) homeAvBtn.addEventListener("click", () => abrirJogo("aventura"));
   masPreviewHome(); // o jogo rodando em miniatura dentro do card (a "imagem" é ao vivo)
   $("#homeConteudo").querySelectorAll("[data-arcade]").forEach(b => b.addEventListener("click", () => abrirJogo(b.dataset.arcade)));
   arcadePreviewHome();
@@ -10401,11 +10422,15 @@ function avTelaMapas(){
       <p style="font-weight:700;color:var(--tinta-suave);font-size:.85rem">10 elementos, mapas sem fim: derrote o 👑 CHEFE de cada mapa pra viajar pro próximo. Equipamentos dropados viram DICAS nas batalhas!</p>
       <p style="font-weight:800;font-size:.85rem;margin-top:6px">📿 ${d.amuleto ? "Amuleto Rubi (+1 ❤️)" : "Amuleto: ???"} · ⚔️ ${nEquips}/${Object.keys(AV_EQUIPS).length} equips · 🧪 ${d.pocoes} poções · 👾 ${d.mortos} derrotados</p>
     </div>
+    ${d.ultimoMapa && d.ultimoMapa <= d.mapaMax ? (() => { const elC = AV_ELEMENTOS[(d.ultimoMapa - 1) % 10]; return `
+    <button class="btn-principal" id="avContinuarMapa" style="margin-top:10px;background:var(--verde);font-size:1rem">▶ CONTINUAR — Mapa ${d.ultimoMapa} ${elC.el} ${elC.nome}</button>`; })() : ""}
     ${cartoes.join("")}
     <button class="btn-link" id="avMenuVoltar" style="margin-top:10px">← Voltar pros Jogos</button>
   </div>`;
   $("#aventuraConteudo").querySelectorAll(".av-mapa-card:not([disabled])").forEach(b =>
     b.addEventListener("click", () => AVT.carregar(() => avEntrarMapa(parseInt(b.dataset.mapa, 10)))));
+  const bc = $("#avContinuarMapa");
+  if(bc) bc.addEventListener("click", () => AVT.carregar(() => avEntrarMapa(d.ultimoMapa)));
   $("#avMenuVoltar").addEventListener("click", () => navPara("pratica"));
   irPara("tela-aventura");
 }
@@ -10443,6 +10468,7 @@ function avEntrarMapa(m){
     npcVezes: 0, npcLonge: true
   };
   AV.vidas = AV.maxVidas;
+  if(d.ultimoMapa !== m){ d.ultimoMapa = m; Progresso.salvar(); } /* save: "Continuar" volta aqui */
   if(velho && !velho.fim && $("#avWrap")){
     /* viajando de mapa com a tela aberta: o loop continua, só troca o mundo */
     AV.teclas = velho.teclas; AV.kd = velho.kd; AV.ku = velho.ku;

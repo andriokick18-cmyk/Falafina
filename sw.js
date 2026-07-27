@@ -1,4 +1,5 @@
 // FalaFina Service Worker — app instalável e funcionando offline
+// v53: 🏠 AVENTURA NA HOME + 💾 CONTINUAR — banner dourado do RPG na página inicial (mostra seu mapa e baús secretos) + save do último mapa com botão ▶ CONTINUAR na tela de mapas
 // v52: 🕵️ NPCs + BAÚ SECRETO — cada mapa tem um morador (Tobias/Lia/Vó Zilda/Olaf/Ren) que esconde um treasure chest e dá a dica SÓ EM INGLÊS (north/south/east/west); insistiu, ele traduz; baú = 🌻10 + poção, 1x por mapa
 // v51: 👾 VARIEDADE + ✍️ ESCREVER — cada elemento tem POOL de 3 espécies de monstro (Rato Verdejante, Morcego Flamejante…) + chefe próprio; do Nv60+ a batalha exige ESCREVER a resposta (espadas viram "revelar letras")
 // v50: 🔊 SOM NA AVENTURA — chiptune 8-bit sintetizado (WebAudio, zero download, offline): golpe, erro, vitória, drop, encontro, fanfarra do chefe e derrota + botão 🔊/🔇 que fica salvo na conta
@@ -39,7 +40,7 @@
 // v15: faixa-guia nas Aulas + desafios com botão "Treinar agora" que leva pro treino certo
 // v14: Guia de Áreas (Mapa do FalaFina, "?" em toda tela, nomes claros)
 // v8: ícones com nome correto (minúsculo) + NUNCA cacheia /api/ (dados da nuvem sempre frescos)
-const CACHE = "falafina-v52";
+const CACHE = "falafina-v53";
 const ARQUIVOS = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png", "./mascote.png", "./sprites/pico8.png", "./sprites/cidade.png", "./sprites/dungeon.png"];
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ARQUIVOS)).then(() => self.skipWaiting()));
