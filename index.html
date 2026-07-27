@@ -1052,6 +1052,29 @@ body.sem-shell .btn-info-topo{display:none}
 @keyframes masCtaPulsa{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
 @keyframes masChuva{0%{transform:translateY(-14px);opacity:0}15%{opacity:1}100%{transform:translateY(300px);opacity:.9}}
 
+/* 🃏 Memória Mágica: cartas 3D de madeira/pergaminho */
+.mem-grid{ display:grid; gap:8px; margin-top:12px; }
+.mem-carta{ position:relative; aspect-ratio:3/4; perspective:600px; cursor:pointer; border:none; background:none; padding:0; font-family:inherit; }
+.mem-face{ position:absolute; inset:0; border-radius:10px; backface-visibility:hidden; -webkit-backface-visibility:hidden;
+  transition:transform .45s; display:flex; align-items:center; justify-content:center; font-weight:800; padding:4px;
+  overflow:hidden; word-break:break-word; }
+.mem-verso{ background:linear-gradient(180deg,#8B5A2B,#6B4420); border:2px solid #4A2F12;
+  box-shadow:inset 0 0 0 2px rgba(255,235,176,.25), 0 2px 4px rgba(0,0,0,.25); }
+.mem-frente{ background:linear-gradient(180deg,#FBF3E1,#F0E4C8); border:2px solid rgba(120,90,40,.45);
+  transform:rotateY(180deg); color:var(--tinta); text-align:center; line-height:1.15; }
+.mem-carta.aberta .mem-verso{ transform:rotateY(180deg); }
+.mem-carta.aberta .mem-frente{ transform:rotateY(0deg); }
+.mem-carta.acertada .mem-frente{ background:linear-gradient(180deg,#E9F5EC,#D2EAD9); border-color:var(--verde); }
+.mem-carta.acertada{ animation:petPula .5s ease-in-out; }
+/* 🕹️ Grid do Arcade na Home: 3 mini-cards no mesmo estilo do card da Masmorra */
+.arcade-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:10px; }
+.arc-card{ border-radius:14px; overflow:hidden; border:2.5px solid #7A4F1E; background:#1C242D; cursor:pointer;
+  padding:0; font-family:inherit; text-align:center; box-shadow:0 3px 8px rgba(40,26,10,.28); }
+.arc-card canvas{ display:block; width:100%; image-rendering:pixelated; }
+.arc-card b{ display:block; color:#FFE9B0; font-size:.72rem; padding:6px 4px 2px; font-family:var(--f-display); }
+.arc-card small{ display:block; color:#B8C2CC; font-weight:700; font-size:.58rem; padding:0 4px 8px; line-height:1.25; }
+.arc-card:active{ transform:translateY(2px); }
+
 .quadro-missoes{ border-radius:16px; border:3px solid #7A4F1E; background:
   repeating-linear-gradient(90deg, rgba(0,0,0,.07) 0 3px, transparent 3px 18px),
   linear-gradient(180deg,#8B5A2B,#6B4420); padding:14px;
@@ -1433,6 +1456,9 @@ body.sem-shell .btn-info-topo{display:none}
 <main class="tela" id="tela-loja"><div id="lojaConteudo"></div></main>
 <main class="tela" id="tela-admin"><div id="adminConteudo"></div></main>
 <main class="tela" id="tela-masmorra"><div id="masmorraConteudo"></div></main>
+<main class="tela" id="tela-memoria"><div id="memoriaConteudo"></div></main>
+<main class="tela" id="tela-invasao"><div id="invasaoConteudo"></div></main>
+<main class="tela" id="tela-eco"><div id="ecoConteudo"></div></main>
 </div><!-- /conteudo -->
 </div><!-- /principal -->
 </div><!-- /app -->
@@ -5312,17 +5338,21 @@ const COSM = {
     { id:"galaxia",  slot:"borda", nome:"Galáxia",             preco:20000, desc:"Espaço profundo com estrelas piscando" },
     { id:"imortal",  slot:"borda", nome:"Coroa Imortal",       preco:30000, req:100, desc:"Ouro duplo, 8 gemas e a coroa do rei" }
   ],
+  /* 🐾 Pets com sprites de VERDADE (Kenney Cube Pets, CC0 — pack do Andrio) */
   PETS: [
-    { id:"fininho", slot:"pet", nome:"Fininho",        img:"mascote.png", anim:"flutuar",  preco:500,   desc:"O papagaio oficial, sempre com você" },
-    { id:"pipoca",  slot:"pet", nome:"Pipoca",         emo:"🐥", anim:"pular",    preco:800,   desc:"Pintinho saltitante" },
-    { id:"tata",    slot:"pet", nome:"Tatá",           emo:"🐢", anim:"balancar", preco:1200,  desc:"Devagar e sempre — igual o inglês" },
-    { id:"foxy",    slot:"pet", nome:"Foxy",           emo:"🦊", anim:"pular",    preco:2000,  desc:"Esperta como você" },
-    { id:"zeca",    slot:"pet", nome:"Zeca",           emo:"🐒", anim:"balancar", preco:3000,  desc:"Macaco arteiro" },
-    { id:"sabio",   slot:"pet", nome:"Sábio",          emo:"🦉", anim:"flutuar",  preco:5000,  desc:"A coruja que sabe todas" },
-    { id:"pintada", slot:"pet", nome:"Onça Pintada",   emo:"🐆", anim:"pular",    preco:8000,  desc:"Velocidade brasileira" },
-    { id:"real",    slot:"pet", nome:"Águia Real",     emo:"🦅", anim:"flutuar",  preco:12000, desc:"Visão de águia nos estudos" },
-    { id:"uni",     slot:"pet", nome:"Unicórnio",      emo:"🦄", anim:"brilhar",  preco:18000, desc:"Raro como quem estuda todo dia" },
-    { id:"dragao",  slot:"pet", nome:"Dragão FalaFina",emo:"🐉", anim:"brilhar",  preco:30000, req:250, desc:"Lendário — exige nível 250" }
+    { id:"fininho", slot:"pet", nome:"Fininho",           img:"mascote.png",            anim:"flutuar",  preco:500,   desc:"O papagaio oficial, sempre com você" },
+    { id:"pipoca",  slot:"pet", nome:"Pipoca",            img:"sprites/pet-pipoca.png", anim:"pular",    preco:800,   desc:"Pintinho saltitante" },
+    { id:"tata",    slot:"pet", nome:"Tatá",              img:"sprites/pet-tata.png",   anim:"balancar", preco:1200,  desc:"Devagar e sempre — igual o inglês" },
+    { id:"gato",    slot:"pet", nome:"Miss Miau",         img:"sprites/pet-gato.png",   anim:"balancar", preco:1500,  desc:"Elegância que estuda de madrugada" },
+    { id:"foxy",    slot:"pet", nome:"Foxy",              img:"sprites/pet-foxy.png",   anim:"pular",    preco:2000,  desc:"Esperta como você" },
+    { id:"dog",     slot:"pet", nome:"Buddy",             img:"sprites/pet-dog.png",    anim:"pular",    preco:2500,  desc:"O melhor amigo do estudo" },
+    { id:"zeca",    slot:"pet", nome:"Zeca",              img:"sprites/pet-zeca.png",   anim:"balancar", preco:3000,  desc:"Macaco arteiro" },
+    { id:"sabio",   slot:"pet", nome:"Sábio",             img:"sprites/pet-sabio.png",  anim:"flutuar",  preco:5000,  desc:"O panda que sabe todas" },
+    { id:"pinguim", slot:"pet", nome:"Gelinho",           img:"sprites/pet-pinguim.png",anim:"balancar", preco:6000,  desc:"Frio por fora, focado por dentro" },
+    { id:"pintada", slot:"pet", nome:"Tigrão",            img:"sprites/pet-pintada.png",anim:"pular",    preco:8000,  desc:"Velocidade brasileira" },
+    { id:"real",    slot:"pet", nome:"Leão Real",         img:"sprites/pet-real.png",   anim:"flutuar",  preco:12000, desc:"O rei da selva dos estudos" },
+    { id:"uni",     slot:"pet", nome:"Cervo Místico",     img:"sprites/pet-uni.png",    anim:"brilhar",  preco:18000, desc:"Raro como quem estuda todo dia" },
+    { id:"dragao",  slot:"pet", nome:"Elefante Ancestral",img:"sprites/pet-dragao.png", anim:"brilhar",  preco:30000, req:250, desc:"Lendário — memória de elefante (nível 250)" }
   ],
   EFEITOS: [
     { id:"brilho-verde",  slot:"efeito", nome:"Estandarte da Selva",    preco:400,   desc:"Pano verde-esmeralda com folhas caindo" },
@@ -8356,6 +8386,11 @@ function renderHome(){
         <i class="mas-home-cta">JOGAR ▶</i>
       </span>
     </button>
+    <div class="arcade-grid">
+      <button class="arc-card" data-arcade="memoria"><canvas id="arcPrevMem" width="80" height="54" aria-hidden="true"></canvas><b>🃏 Memória</b><small>pares EN·PT</small></button>
+      <button class="arc-card" data-arcade="invasao"><canvas id="arcPrevInv" width="80" height="54" aria-hidden="true"></canvas><b>👾 Invasão</b><small>derrube o certo</small></button>
+      <button class="arc-card" data-arcade="eco"><canvas id="arcPrevEco" width="80" height="54" aria-hidden="true"></canvas><b>👂 Eco</b><small>ouça e acerte</small></button>
+    </div>
     ${cardPalavraDoDia()}
     ${!window.speechSynthesis ? `<div class="cardb" style="margin-top:14px;background:var(--sol-claro);border:2px solid var(--sol)">
       <b>🔇 Seu navegador está sem o áudio de voz</b>
@@ -8447,6 +8482,8 @@ function renderHome(){
   const homeMasBtn = $("#homeMasmorra");
   if(homeMasBtn) homeMasBtn.addEventListener("click", () => abrirJogo("masmorra"));
   masPreviewHome(); // o jogo rodando em miniatura dentro do card (a "imagem" é ao vivo)
+  $("#homeConteudo").querySelectorAll("[data-arcade]").forEach(b => b.addEventListener("click", () => abrirJogo(b.dataset.arcade)));
+  arcadePreviewHome();
   ligarAcoes($("#homeConteudo"));
   /* Missões do dia: TODO clique leva pra uma ação DE VERDADE — nunca
      pra uma tela vazia ("cliquei e não aconteceu nada" é proibido) */
@@ -9397,6 +9434,47 @@ function masPreviewHome(){
     })();
   });
 }
+/* Previews dos 3 jogos do Arcade na Home — um loop só desenha os 3 mini-canvas */
+function arcadePreviewHome(){
+  if(!$("#arcPrevMem")) return;
+  MAS.carregar(() => {
+    let t = 0;
+    (function loop(){
+      const vivo = $("#arcPrevMem");
+      if(!vivo || !vivo.isConnected || telaAtual !== "tela-home") return;
+      t++;
+      const c1 = $("#arcPrevMem");
+      if(c1){
+        const x = c1.getContext("2d"); x.imageSmoothingEnabled = false; x.clearRect(0, 0, 80, 54);
+        for(let i = 0; i < 4; i++){
+          const cx = 6 + (i % 2) * 38, cy = 4 + Math.floor(i / 2) * 26;
+          const w = i === 0 ? Math.abs(Math.cos(t * .05)) * 32 + 2 : 34;
+          x.fillStyle = "#6B4420"; x.fillRect(cx + (34 - w) / 2, cy, w, 22);
+          x.strokeStyle = "#3A2410"; x.strokeRect(cx + (34 - w) / 2, cy, w, 22);
+          if(i !== 0 || Math.cos(t * .05) > 0) MAS.tile(x, 147, cx + 11, cy + 5, 12);
+        }
+      }
+      const c2 = $("#arcPrevInv");
+      if(c2){
+        const x = c2.getContext("2d"); x.imageSmoothingEnabled = false; x.clearRect(0, 0, 80, 54);
+        for(let gx = 0; gx < 80; gx += 16) MAS.tile(x, 17, gx, 44, 16);
+        MAS.tile(x, 112, 32, ((t * .5) % 54) - 12, 16);
+        MAS.tile(x, 132, 4, 4, 10);
+      }
+      const c3 = $("#arcPrevEco");
+      if(c3){
+        const x = c3.getContext("2d"); x.imageSmoothingEnabled = false; x.clearRect(0, 0, 80, 54);
+        MAS.tile(x, 113, 10, 20, 16);
+        for(let o = 0; o < 3; o++){
+          const r = 8 + ((t * .6 + o * 10) % 30);
+          x.beginPath(); x.arc(28, 28, r, -.6, .6);
+          x.strokeStyle = `rgba(155,233,255,${Math.max(0, 1 - r / 32).toFixed(2)})`; x.lineWidth = 2; x.stroke();
+        }
+      }
+      requestAnimationFrame(loop);
+    })();
+  });
+}
 /* MEIO: a corrida de verdade */
 function masComecarCorrida(){
   if(!podeIniciarTarefaGratis()) return;
@@ -9713,10 +9791,367 @@ function masLoop(){
   requestAnimationFrame(masLoop);
 }
 
+/* ==================================================================
+   🕹️ ARCADE FALAFINA — 3 jogos novos (V859), todos com os sprites dos
+   packs Kenney (pico-8) e integrados a XP/habilidades/cota:
+   🃏 Memória Mágica (vocab, níveis: palavras → frases)
+   👾 Invasão dos Monstrinhos (velocidade: derrube antes de aterrissar)
+   👂 Eco da Caverna (escuta: ouça e acerte o que ouviu)
+   ================================================================== */
+/* Recorte de tile do pico-8 como CSS (sprite em QUALQUER elemento HTML) */
+function pico8CSS(idx, px){
+  const col = idx % 15, linha = Math.floor(idx / 15);
+  return `display:inline-block;width:${px}px;height:${px}px;background-image:url(sprites/pico8.png);background-size:${15 * px}px ${10 * px}px;background-position:${-col * px}px ${-linha * px}px;image-rendering:pixelated;`;
+}
+
+/* ---------- 🃏 MEMÓRIA MÁGICA ---------- */
+const MEM_NIVEIS = {
+  facil:   { nome:"Fácil",   pares:4, tipo:"palavra", cols:4 },
+  medio:   { nome:"Médio",   pares:6, tipo:"palavra", cols:4 },
+  dificil: { nome:"Difícil", pares:6, tipo:"frase",   cols:3 }
+};
+let MEM = null;
+function iniciarMemoria(){
+  MEM = null;
+  $("#memoriaConteudo").innerHTML = `
+  <div style="max-width:560px;margin:0 auto;text-align:center">
+    <div class="cardb" style="padding:24px 18px">
+      <div style="font-size:2.6rem">🃏</div>
+      <h2 style="font-family:var(--f-display);margin:8px 0 4px">Memória Mágica</h2>
+      <p style="font-weight:700;color:var(--tinta-suave);font-size:.88rem">Vire as cartas e case o INGLÊS com o PORTUGUÊS. Menos erros = mais estrelas!</p>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:14px">
+        <button class="btn-principal mem-nivel" data-nv="facil">🌱 Fácil — 4 pares de palavras</button>
+        <button class="btn-principal mem-nivel" data-nv="medio" style="background:var(--azul)">🌿 Médio — 6 pares de palavras</button>
+        <button class="btn-principal mem-nivel" data-nv="dificil" style="background:var(--sol);color:#5C4400;box-shadow:0 4px 0 #C89A20">🌳 Difícil — 6 pares de FRASES</button>
+      </div>
+      <button class="btn-link" id="memVoltar" style="margin-top:12px">← Voltar pros Jogos</button>
+    </div>
+  </div>`;
+  $("#memoriaConteudo").querySelectorAll(".mem-nivel").forEach(b => b.addEventListener("click", () => memComecar(b.dataset.nv)));
+  $("#memVoltar").addEventListener("click", () => navPara("pratica"));
+  irPara("tela-memoria");
+}
+function memComecar(nv){
+  if(!podeIniciarTarefaGratis()) return;
+  const cfg = MEM_NIVEIS[nv] || MEM_NIVEIS.facil;
+  const pares = [];
+  if(cfg.tipo === "frase"){
+    const pool = PALAVRA_DIA_POOL.slice();
+    for(let i = 0; i < cfg.pares; i++){
+      const k = Math.floor(Math.random() * pool.length);
+      const w = pool.splice(k, 1)[0];
+      pares.push({ en: w.fEn, pt: w.fPt, fala: w.fEn });
+    }
+  } else {
+    const usados = new Set();
+    while(pares.length < cfg.pares){
+      const w = LEX_CORPUS[Math.floor(Math.random() * LEX_CORPUS.length)];
+      if(usados.has(w[0])) continue;
+      usados.add(w[0]);
+      pares.push({ en: w[0], pt: w[1], fala: w[0] });
+    }
+  }
+  const cartas = [];
+  pares.forEach((p, i) => { cartas.push({ par: i, texto: p.en, fala: p.fala }); cartas.push({ par: i, texto: p.pt, fala: p.fala }); });
+  for(let k = cartas.length - 1; k > 0; k--){ const j = Math.floor(Math.random() * (k + 1)); [cartas[k], cartas[j]] = [cartas[j], cartas[k]]; }
+  MEM = { nv, cfg, cartas, sel: null, trava: false, feitos: 0, erros: 0, t0: Date.now() };
+  $("#memoriaConteudo").innerHTML = `
+  <div style="max-width:560px;margin:0 auto">
+    <div class="cardb" style="padding:10px 14px;display:flex;justify-content:space-between;align-items:center">
+      <b style="font-family:var(--f-display)">🃏 ${cfg.nome}</b>
+      <span style="font-weight:800;font-size:.85rem">Pares: <span id="memFeitos">0</span>/${cfg.pares} · ❌ <span id="memErros">0</span></span>
+    </div>
+    <div class="mem-grid" style="grid-template-columns:repeat(${cfg.cols},1fr)">
+      ${cartas.map((c, i) => `
+      <button class="mem-carta" data-idx="${i}" aria-label="carta">
+        <span class="mem-face mem-verso"><i style="${pico8CSS(147, 26)}"></i></span>
+        <span class="mem-face mem-frente" style="font-size:${cfg.tipo === "frase" ? ".62rem" : ".78rem"}">${esc(c.texto)}</span>
+      </button>`).join("")}
+    </div>
+    <button class="btn-link" id="memSair" style="margin-top:10px">← Sair (nada é salvo no meio)</button>
+  </div>`;
+  $("#memoriaConteudo").querySelectorAll(".mem-carta").forEach(b => b.addEventListener("click", () => memClicar(parseInt(b.dataset.idx, 10))));
+  $("#memSair").addEventListener("click", iniciarMemoria);
+}
+function memClicar(idx){
+  const m = MEM;
+  if(!m || m.trava) return;
+  const carta = m.cartas[idx];
+  if(carta.feita || carta.aberta || m.sel === idx) return;
+  const el = $("#memoriaConteudo").querySelector(`[data-idx="${idx}"]`);
+  carta.aberta = true; el.classList.add("aberta");
+  if(m.sel == null){ m.sel = idx; return; }
+  const selIdx = m.sel, a = m.cartas[selIdx];
+  m.sel = null;
+  const elA = $("#memoriaConteudo").querySelector(`[data-idx="${selIdx}"]`);
+  if(a.par === carta.par){
+    a.feita = carta.feita = true;
+    m.feitos++;
+    ENGINE.registrar("vocab", true);
+    el.classList.add("acertada"); elA.classList.add("acertada");
+    Fala.dizer && Fala.dizer(carta.fala);
+    $("#memFeitos").textContent = m.feitos;
+    if(m.feitos === m.cfg.pares) setTimeout(memFim, 750);
+  } else {
+    m.erros++;
+    ENGINE.registrar("vocab", false);
+    $("#memErros").textContent = m.erros;
+    m.trava = true;
+    setTimeout(() => {
+      a.aberta = carta.aberta = false;
+      el.classList.remove("aberta"); elA.classList.remove("aberta");
+      m.trava = false;
+    }, 900);
+  }
+}
+function memFim(){
+  const m = MEM;
+  const seg = Math.round((Date.now() - m.t0) / 1000);
+  const estrelas = m.erros <= Math.ceil(m.cfg.pares / 2) ? 3 : (m.erros <= m.cfg.pares ? 2 : 1);
+  const xp = Math.max(5, m.cfg.pares * 5 - m.erros * 2 + (m.cfg.tipo === "frase" ? 10 : 0));
+  registrarAtividade(xp);
+  MEM = null;
+  $("#memoriaConteudo").innerHTML = `
+  <div class="cardb" style="max-width:480px;margin:24px auto;text-align:center;padding:28px 20px">
+    <div style="font-size:3rem;animation:petPula 1s ease-in-out infinite">${estrelas === 3 ? "🏆" : "🃏"}</div>
+    <h2 style="font-family:var(--f-display);margin:8px 0">${estrelas === 3 ? "Memória de elefante!" : "Muito bem!"}</h2>
+    <p style="font-size:1.6rem">${"⭐".repeat(estrelas)}${"☆".repeat(3 - estrelas)}</p>
+    <p style="font-weight:700;color:var(--tinta-suave)">❌ ${m.erros} erro${m.erros === 1 ? "" : "s"} · ⏱️ ${seg}s · +${xp} XP</p>
+    <button class="btn-principal" id="memDeNovo" style="max-width:300px;margin:14px auto 0">🃏 Jogar de novo</button>
+    <button class="btn-link" id="memVoltar2" style="margin-top:8px">← Voltar pros Jogos</button>
+  </div>`;
+  $("#memDeNovo").addEventListener("click", iniciarMemoria);
+  $("#memVoltar2").addEventListener("click", () => navPara("pratica"));
+  atualizarXP();
+}
+
+/* ---------- 👾 INVASÃO DOS MONSTRINHOS ---------- */
+let INV = null;
+function iniciarInvasao(){
+  if(!podeIniciarTarefaGratis()) return;
+  MAS.carregar(() => {
+    INV = { onda: 1, TOTAL: 10, coracoes: 3, acertos: 0, xp: 0, fim: false, t: 0, shake: 0, resultados: [] };
+    invNovaOnda();
+    $("#invasaoConteudo").innerHTML = `
+    <div style="max-width:560px;margin:0 auto">
+      <div class="cardb" style="padding:10px 14px;display:flex;justify-content:space-between;align-items:center">
+        <b style="font-family:var(--f-display)">👾 Invasão dos Monstrinhos</b>
+        <span style="font-weight:800;font-size:.85rem">Onda <span id="invOnda">1</span>/10</span>
+      </div>
+      <canvas id="invCanvas" width="240" height="150" style="width:100%;image-rendering:pixelated;border-radius:14px;background:#12161E;display:block;margin-top:10px;border:3px solid #7A4F1E"></canvas>
+      <div class="cardb" style="margin-top:10px;text-align:center;padding:12px">
+        <p style="font-weight:800;font-size:.8rem;color:var(--tinta-suave)">Derrube o monstro que carrega…</p>
+        <p id="invPergunta" style="font-family:var(--f-display);font-size:1.25rem;font-weight:700">“${esc(INV.rodada.pt)}”</p>
+        <div id="invBotoes" style="display:flex;gap:8px;margin-top:10px">
+          ${INV.rodada.opcoes.map((op, i) => `<button class="btn-principal inv-op" data-op="${i}" style="flex:1;padding:12px 6px;font-size:.92rem">${esc(op)}</button>`).join("")}
+        </div>
+      </div>
+      <button class="btn-link" id="invSair" style="margin-top:8px">← Fugir da invasão (XP fica guardado)</button>
+    </div>`;
+    $("#invasaoConteudo").querySelectorAll(".inv-op").forEach(b => b.addEventListener("click", () => invResponder(parseInt(b.dataset.op, 10))));
+    $("#invSair").addEventListener("click", () => { INV.fim = true; invFim(false); });
+    irPara("tela-invasao");
+    invLoop();
+  });
+}
+function invNovaOnda(){
+  const e = INV;
+  e.rodada = masSortearRodada();
+  /* o monstro certo é o que carrega a resposta — cai mais rápido a cada onda */
+  e.monstros = e.rodada.opcoes.map((op, i) => ({
+    palavra: op, x: 24 + i * 76, y: -14 - Math.random() * 10,
+    tile: 111 + (Math.floor(Math.random() * 4)), morto: false
+  }));
+  e.queda = Math.max(.22, .34 + e.onda * .045); // px por frame — sobe com a onda
+  e.fase = "caindo"; e.t = 0;
+}
+function invAtualizarUI(){
+  const e = INV;
+  const sp = $("#invOnda"); if(sp) sp.textContent = e.onda;
+  const pg = $("#invPergunta"); if(pg) pg.textContent = `“${e.rodada.pt}”`;
+  const bts = $("#invBotoes");
+  if(bts){
+    bts.innerHTML = e.rodada.opcoes.map((op, i) => `<button class="btn-principal inv-op" data-op="${i}" style="flex:1;padding:12px 6px;font-size:.92rem">${esc(op)}</button>`).join("");
+    bts.querySelectorAll(".inv-op").forEach(b => b.addEventListener("click", () => invResponder(parseInt(b.dataset.op, 10))));
+  }
+}
+function invResponder(i){
+  const e = INV;
+  if(!e || e.fase !== "caindo") return;
+  const certo = i === e.rodada.certaIdx;
+  ENGINE.registrar("speed", certo);
+  e.resultados.push(certo);
+  if(certo){
+    e.monstros[i].morto = true;
+    e.acertos++; e.xp += 6; e.fase = "explodindo"; e.t = 0;
+    Fala.dizer && Fala.dizer(e.rodada.en);
+  } else {
+    e.coracoes--; e.shake = 16; e.fase = "errou"; e.t = 0;
+    mostrarToast(`❌ “${e.rodada.pt}” = ${e.rodada.en} (soa "${e.rodada.som}")`);
+  }
+  $("#invasaoConteudo").querySelectorAll(".inv-op").forEach(b => b.disabled = true);
+}
+function invLoop(){
+  const e = INV;
+  if(!e || e.fim) return;
+  const cv = $("#invCanvas");
+  if(!cv) return;
+  const ctx = cv.getContext("2d");
+  ctx.imageSmoothingEnabled = false;
+  e.t++;
+  ctx.clearRect(0, 0, 240, 150);
+  ctx.save();
+  if(e.shake > 0){ e.shake--; ctx.translate((Math.random() * 2 - 1) * 3, (Math.random() * 2 - 1) * 2); }
+  for(let x = 0; x < 240; x += 16){ MAS.tile(ctx, (x / 16) % 2 ? 17 : 32, x, 134, 16); }
+  e.monstros.forEach((mo, i) => {
+    if(mo.morto){
+      if(e.fase === "explodindo"){ /* estrelinhas da explosão */
+        for(let s2 = 0; s2 < 4; s2++){
+          const ang = s2 * 1.57 + e.t * .1;
+          MAS.tile(ctx, 147, mo.x + 4 + Math.cos(ang) * e.t * 1.2, mo.y + Math.sin(ang) * e.t * 1.2, 8);
+        }
+      }
+      return;
+    }
+    if(e.fase === "caindo") mo.y += e.queda;
+    /* plaquinha com a palavra em cima do monstro */
+    ctx.fillStyle = "rgba(243,230,200,.92)";
+    const larg = Math.min(74, mo.palavra.length * 5.4 + 8);
+    ctx.fillRect(mo.x + 8 - larg / 2, mo.y - 11, larg, 10);
+    ctx.fillStyle = "#21313A"; ctx.font = "bold 7px monospace"; ctx.textAlign = "center";
+    ctx.fillText(mo.palavra.slice(0, 13), mo.x + 8, mo.y - 3.5);
+    ctx.textAlign = "left";
+    MAS.tile(ctx, mo.tile, mo.x + Math.sin(e.t * .1 + i) * 2, mo.y, 16);
+  });
+  for(let h = 0; h < 3; h++) MAS.tile(ctx, h < e.coracoes ? 132 : 133, 6 + h * 15, 6, 13);
+  for(let s = 0; s < e.TOTAL; s++){
+    const feito = e.resultados[s];
+    ctx.fillStyle = feito === true ? "#7BC950" : (feito === false ? "#E4572E" : (s === e.onda - 1 ? "#FFC53D" : "rgba(255,255,255,.25)"));
+    ctx.fillRect(70 + s * 11, 8, 8, 5);
+  }
+  ctx.restore();
+  /* monstros aterrissaram sem resposta = coração perdido */
+  if(e.fase === "caindo" && e.monstros.some(mo => !mo.morto && mo.y >= 116)){
+    e.coracoes--; e.shake = 16; e.fase = "errou"; e.t = 0;
+    ENGINE.registrar("speed", false);
+    e.resultados.push(false);
+    mostrarToast(`💥 Aterrissaram! “${e.rodada.pt}” = ${e.rodada.en}`);
+    $("#invasaoConteudo").querySelectorAll(".inv-op").forEach(b => b.disabled = true);
+  }
+  if((e.fase === "explodindo" && e.t >= 34) || (e.fase === "errou" && e.t >= 55)){
+    if(e.coracoes <= 0){ invFim(false); return; }
+    if(e.onda >= e.TOTAL){ invFim(true); return; }
+    e.onda++;
+    invNovaOnda();
+    invAtualizarUI();
+  }
+  requestAnimationFrame(invLoop);
+}
+function invFim(completou){
+  const e = INV;
+  e.fim = true;
+  const perfeito = completou && e.acertos === e.TOTAL;
+  if(e.xp > 0) registrarAtividade(e.xp);
+  if(perfeito) COSM.ganhar(12, "Invasão perfeita! 👾");
+  INV = null;
+  $("#invasaoConteudo").innerHTML = `
+  <div class="cardb" style="max-width:480px;margin:24px auto;text-align:center;padding:28px 20px">
+    <div style="font-size:3rem;animation:petPula 1s ease-in-out infinite">${perfeito ? "🏅" : (completou ? "🛡️" : "💥")}</div>
+    <h2 style="font-family:var(--f-display);margin:8px 0">${perfeito ? "DEFESA PERFEITA!" : (completou ? "Invasão contida!" : "A vila caiu...")}</h2>
+    <p style="font-size:1.05rem;letter-spacing:2px">${e.resultados.map(ok => ok ? "🟩" : "🟥").join("")}</p>
+    <p style="font-weight:700;color:var(--tinta-suave)">✅ ${e.acertos}/${e.TOTAL} monstros derrubados · +${e.xp} XP${perfeito ? " · 🌻 +12" : ""}</p>
+    <button class="btn-principal" id="invDeNovo" style="max-width:300px;margin:14px auto 0">👾 Defender de novo</button>
+    <button class="btn-link" id="invVoltar" style="margin-top:8px">← Voltar pros Jogos</button>
+  </div>`;
+  $("#invDeNovo").addEventListener("click", iniciarInvasao);
+  $("#invVoltar").addEventListener("click", () => navPara("pratica"));
+  atualizarXP();
+}
+
+/* ---------- 👂 ECO DA CAVERNA ---------- */
+let ECO = null;
+function iniciarEco(){
+  if(!podeIniciarTarefaGratis()) return;
+  ECO = { rodada: 1, TOTAL: 10, acertos: 0, xp: 0, resultados: [] };
+  ecoRodada();
+  irPara("tela-eco");
+}
+function ecoRodada(){
+  const e = ECO;
+  const alvo = LEX_CORPUS[Math.floor(Math.random() * LEX_CORPUS.length)];
+  const ops = [alvo];
+  while(ops.length < 4){
+    const o = LEX_CORPUS[Math.floor(Math.random() * LEX_CORPUS.length)];
+    if(!ops.some(x => x[0] === o[0])) ops.push(o);
+  }
+  for(let k = ops.length - 1; k > 0; k--){ const j = Math.floor(Math.random() * (k + 1)); [ops[k], ops[j]] = [ops[j], ops[k]]; }
+  e.alvo = alvo; e.ops = ops;
+  const temVoz = !!window.speechSynthesis;
+  $("#ecoConteudo").innerHTML = `
+  <div style="max-width:560px;margin:0 auto;text-align:center">
+    <div class="cardb" style="padding:10px 14px;display:flex;justify-content:space-between;align-items:center">
+      <b style="font-family:var(--f-display)">👂 Eco da Caverna</b>
+      <span style="font-weight:800;font-size:.85rem">${e.rodada}/${e.TOTAL} · ✅ ${e.acertos}</span>
+    </div>
+    <div class="cardb" style="margin-top:10px;padding:20px">
+      <span style="${pico8CSS(113, 48)};animation:petBalanca 2s ease-in-out infinite"></span>
+      <p style="font-weight:700;color:var(--tinta-suave);font-size:.85rem;margin-top:8px">${temVoz ? "O monstro da caverna ecoou uma palavra — qual foi?" : `O eco soou como: <b style="font-size:1.1rem">"${esc(alvo[2])}"</b> — qual palavra é?`}</p>
+      ${temVoz ? `<button class="btn-principal azul" id="ecoOuvir" style="max-width:220px;margin:10px auto 0">🔊 Ouvir o eco</button>` : ""}
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px">
+        ${ops.map((o, i) => `<button class="btn-principal eco-op" data-op="${i}" style="padding:13px 6px;font-size:.95rem;background:var(--verde)">${esc(o[0])}</button>`).join("")}
+      </div>
+    </div>
+    <button class="btn-link" id="ecoSair" style="margin-top:8px">← Sair (XP fica guardado)</button>
+  </div>`;
+  const bo = $("#ecoOuvir");
+  if(bo){ bo.addEventListener("click", () => Fala.dizer(alvo[0])); setTimeout(() => Fala.dizer(alvo[0]), 350); }
+  $("#ecoConteudo").querySelectorAll(".eco-op").forEach(b => b.addEventListener("click", () => ecoResponder(parseInt(b.dataset.op, 10))));
+  $("#ecoSair").addEventListener("click", () => ecoFim());
+}
+function ecoResponder(i){
+  const e = ECO;
+  const certo = e.ops[i][0] === e.alvo[0];
+  ENGINE.registrar("listening", certo);
+  e.resultados.push(certo);
+  const botoes = $("#ecoConteudo").querySelectorAll(".eco-op");
+  botoes.forEach(b => b.disabled = true);
+  botoes[i].style.background = certo ? "var(--verde-escuro)" : "var(--coral)";
+  if(certo){ e.acertos++; e.xp += 5; mostrarToast(`✅ ${e.alvo[0]} = ${e.alvo[1]}`); }
+  else mostrarToast(`❌ Era "${e.alvo[0]}" (${e.alvo[1]}) — soa "${e.alvo[2]}"`);
+  setTimeout(() => {
+    if(e.rodada >= e.TOTAL){ ecoFim(); return; }
+    e.rodada++;
+    ecoRodada();
+  }, 1100);
+}
+function ecoFim(){
+  const e = ECO;
+  if(!e) return;
+  if(e.xp > 0) registrarAtividade(e.xp);
+  const perfeito = e.acertos === e.TOTAL && e.resultados.length === e.TOTAL;
+  if(perfeito) COSM.ganhar(12, "Ouvido de ouro! 👂");
+  ECO = null;
+  $("#ecoConteudo").innerHTML = `
+  <div class="cardb" style="max-width:480px;margin:24px auto;text-align:center;padding:28px 20px">
+    <div style="font-size:3rem;animation:petFlutua 2.6s ease-in-out infinite">${perfeito ? "🎧" : "👂"}</div>
+    <h2 style="font-family:var(--f-display);margin:8px 0">${perfeito ? "OUVIDO DE OURO!" : "Bom treino de escuta!"}</h2>
+    <p style="font-size:1.05rem;letter-spacing:2px">${e.resultados.map(ok => ok ? "🟩" : "🟥").join("")}</p>
+    <p style="font-weight:700;color:var(--tinta-suave)">✅ ${e.acertos}/${e.TOTAL} ecos reconhecidos · +${e.xp} XP${perfeito ? " · 🌻 +12" : ""}</p>
+    <button class="btn-principal" id="ecoDeNovo" style="max-width:300px;margin:14px auto 0">👂 Ouvir de novo</button>
+    <button class="btn-link" id="ecoVoltar" style="margin-top:8px">← Voltar pros Jogos</button>
+  </div>`;
+  $("#ecoDeNovo").addEventListener("click", iniciarEco);
+  $("#ecoVoltar").addEventListener("click", () => navPara("pratica"));
+  atualizarXP();
+}
+
 const JOGOS_LISTA = [
   { id:"carreira",  ic:"🧗", nome:"Modo Carreira",    skill:"vocab",   cor:"#FFF3D1", desc:"Sua história nos EUA em temporadas: domine o VOCABULÁRIO de cada etapa — agência, vaga, visto, chegada, trabalho." },
   { id:"entrevista",ic:"🎙️", nome:"Simulador de Entrevista", skill:"speaking", cor:"#E4EDFA", desc:"Ensaie a entrevista real do visto: agência, empregador, consulado e chegada nos EUA." },
-  { id:"masmorra",  ic:"🏰", nome:"Masmorra das Palavras", skill:"vocab", cor:"#EFE4FA", desc:"NOVO! Guie o herói de pixel: escolha a porta com a palavra certa em inglês, colete estrelas e fuja dos monstros." },
+  { id:"masmorra",  ic:"🏰", nome:"Masmorra das Palavras", skill:"vocab", cor:"#EFE4FA", desc:"Guie o herói de pixel: escolha a porta com a palavra certa em inglês e suba a Torre — baús a cada 20 andares." },
+  { id:"memoria",   ic:"🃏", nome:"Memória Mágica", skill:"vocab", cor:"#FFF3D1", desc:"NOVO! Vire as cartas e case o inglês com o português. No difícil, os pares são FRASES inteiras." },
+  { id:"invasao",   ic:"👾", nome:"Invasão dos Monstrinhos", skill:"speed", cor:"#FCE4DB", desc:"NOVO! Monstros caem do céu carregando palavras — derrube o certo ANTES de aterrissar." },
+  { id:"eco",       ic:"👂", nome:"Eco da Caverna", skill:"listening", cor:"#E4EDFA", desc:"NOVO! Ouça o eco em inglês e acerte qual palavra foi — treino puro de ouvido." },
   { id:"ditado",    ic:"👂", nome:"Ditado Relâmpago", skill:"listening", cor:"#E1F3EA", desc:"Treine o OUVIDO: escute a frase em inglês e escreva o que ouviu. 3 vidas." },
   { id:"jardim",    ic:"🌻", nome:"Jardim de Palavras", skill:"vocab", cor:"#FFF3D1", desc:"Aprenda palavra por palavra: ler, ouvir, escrever e FALAR até florescer." },
   { id:"escalada",  ic:"🗼", nome:"Escalada",         skill:"speed",     cor:"#FCE4DB", desc:"Responda rápido e sem errar pra subir níveis. Até onde você aguenta?" },
@@ -9748,6 +10183,24 @@ const JOGOS_TUTORIAL = {
     ["🚪","O jogo pergunta uma palavra em português — toque no botão da porta com a tradução CERTA e o herói atravessa."],
     ["👾","Porta errada? Um MONSTRO salta e você perde 1 coração ❤️ (são 3). Perdeu os 3, a corrida acaba."],
     ["⭐","Cada porta certa vale estrela + XP. Fechou as 10 salas SEM errar nenhuma? Bônus de 🌻 15 girassóis — Rei da Masmorra 👑"]
+  ]},
+  memoria: { ic:"🃏", nome:"Memória Mágica", passos:[
+    ["🃏","Cartas viradas pra baixo: metade tem palavras em INGLÊS, metade as traduções em PORTUGUÊS. Vire 2 por vez e ache os pares."],
+    ["🎚️","Escolha o nível: Fácil (4 pares) e Médio (6 pares) usam palavras; no DIFÍCIL os pares são FRASES inteiras."],
+    ["❌","Errou o par? As cartas viram de volta — grave onde cada uma estava! Menos erros = mais estrelas (até ⭐⭐⭐)."],
+    ["🔊","Cada par encontrado é FALADO em inglês pelo app — memória + ouvido no mesmo jogo."]
+  ]},
+  invasao: { ic:"👾", nome:"Invasão dos Monstrinhos", passos:[
+    ["👾","3 monstros caem do céu, cada um carregando uma palavra em INGLÊS. O jogo diz uma palavra em português."],
+    ["🎯","Toque no botão do monstro com a tradução CERTA pra derrubá-lo ANTES que aterrisse — a queda fica mais rápida a cada onda!"],
+    ["❤️","Errou ou deixou aterrissar? Perde 1 de 3 corações. 10 ondas pra vencer a invasão."],
+    ["⚡","Este jogo treina sua VELOCIDADE — pensar rápido em inglês, como numa conversa de verdade."]
+  ]},
+  eco: { ic:"👂", nome:"Eco da Caverna", passos:[
+    ["🔊","O monstro da caverna ECOA uma palavra em inglês (áudio de verdade). Você não lê nada — só OUVE."],
+    ["🎯","Escolha entre 4 opções escritas qual palavra você ouviu. Pode repetir o eco quantas vezes quiser."],
+    ["👂","São 10 ecos por corrida — treino puro de ouvido, a habilidade nº 1 pra entender o chefe nos EUA."],
+    ["📱","Sem áudio no aparelho? O jogo mostra o COMO SOA escrito e você acha a palavra — treina do mesmo jeito."]
   ]},
   ditado: { ic:"👂", nome:"Ditado Relâmpago", passos:[
     ["🔊","Você OUVE uma frase em inglês — sem ler nada — e escreve o que ouviu. Pode repetir o áudio quantas vezes quiser."],
@@ -9830,6 +10283,9 @@ function abrirJogoDireto(id){
   if(id === "carreira") navPara("carreira");
   else if(id === "entrevista"){ renderSimConfig(); irPara("tela-simulador"); }
   else if(id === "masmorra") iniciarMasmorra();
+  else if(id === "memoria") iniciarMemoria();
+  else if(id === "invasao") iniciarInvasao();
+  else if(id === "eco") iniciarEco();
   else if(id === "ditado") iniciarDitado();
   else if(id === "jardim") iniciarJardim();
   else if(id === "escalada"){ renderEscalada(); irPara("tela-escalada"); }
@@ -10445,7 +10901,10 @@ const FF_TITULOS = {
   "tela-conclusao":"🎉 Parabéns!", "tela-escalada":"🗼 Escalada", "tela-perfil":"🪪 Perfil", "tela-paywall":"👑 Comprar VIP", "tela-loja":"🛍️ Loja",
   "tela-carreira":"🧗 Modo Carreira", "tela-ditado":"👂 Ditado Relâmpago", "tela-jardim":"🌻 Jardim de Palavras",
   "tela-admin":"🔑 Painel Admin",
-  "tela-masmorra":"🏰 Masmorra das Palavras"
+  "tela-masmorra":"🏰 Masmorra das Palavras",
+  "tela-memoria":"🃏 Memória Mágica",
+  "tela-invasao":"👾 Invasão dos Monstrinhos",
+  "tela-eco":"👂 Eco da Caverna"
 };
 const FF_SEM_SHELL = ["tela-onboarding","tela-inicio","tela-cadastro","tela-login","tela-paywall"];
 function ffAposIrPara(tela){
@@ -10457,7 +10916,7 @@ function ffAposIrPara(tela){
   const mapa = { "tela-home":"home", "tela-trilha":"aulas", "tela-pratica":"pratica", "tela-desafios":"home",
     "tela-revisao":"home", "tela-conquistas":"progresso", "tela-ranking":"ranking", "tela-comunidade":"home",
     "tela-meuperfil":"progresso", "tela-config":"progresso", "tela-simulador":"pratica", "tela-entrevista":"pratica",
-    "tela-licao":"aulas", "tela-quiz":"aulas", "tela-escalada":"pratica", "tela-conclusao":"aulas", "tela-carreira":"pratica", "tela-ditado":"pratica", "tela-jardim":"pratica", "tela-loja":"loja", "tela-admin":"admin", "tela-masmorra":"pratica" };
+    "tela-licao":"aulas", "tela-quiz":"aulas", "tela-escalada":"pratica", "tela-conclusao":"aulas", "tela-carreira":"pratica", "tela-ditado":"pratica", "tela-jardim":"pratica", "tela-loja":"loja", "tela-admin":"admin", "tela-masmorra":"pratica", "tela-memoria":"pratica", "tela-invasao":"pratica", "tela-eco":"pratica" };
   const ativa = mapa[tela] || "";
   areaAtualRota = ativa || "home";
   document.querySelectorAll(".sb-item").forEach(b => b.classList.toggle("ativo", b.dataset.rota === ativa));
