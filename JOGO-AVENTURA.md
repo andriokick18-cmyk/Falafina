@@ -61,9 +61,15 @@ NPCs com falas PT/EN misturadas que dão pistas do mistério local (ex.:
   batalha de 3 perguntas, amuleto no 1º kill, mochila com poção
 - **v1** ✅ (V861): elementos + chefes + destravar mapas + tabela de
   drops completa + equipamentos-dica + tier 2 (modo perfeito) + frases
-- **v2 (PRÓXIMA)**: SOM (packs rpg-audio/interface-sounds/music-jingles
-  já recebidos) + NPCs/mistérios + baús escondidos + escrever respostas
-  nos níveis altos + save de posição
+- **v1.1** ✅ (V862): mobile-first (dt real, tela cheia sem cortes,
+  analógico flutuante) + monstros acordam EM ORDEM + janela 🧍 Herói
+- **v2** ✅ (V863–V867): SOM chiptune 8-bit sintetizado (WebAudio) +
+  pools de espécies por elemento + ESCREVER a resposta no Nv60+ +
+  NPCs com mistério do baú em inglês (north/south/east/west) +
+  save de mapa/Continuar + banner na Home + 8 biomas (Roguelike pack)
+- **v3 (PRÓXIMA)**: OGGs do Kenney (reenviar rpg-audio/interface-sounds/
+  music-jingles) + herói com 4 direções (roguelike-characters) + música
+  ambiente + eventos sazonais + coleções de monstros (bestiário)
 
 ## 📦 Packs que o Andrio precisa baixar (kenney.nl, grátis)
 1. **Roguelike/RPG pack** — kenney.nl/assets/roguelike-rpg-pack (mapas top-down: cavernas, florestas, castelos)
