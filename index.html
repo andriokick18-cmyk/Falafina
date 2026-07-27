@@ -10217,6 +10217,21 @@ const AV_ELEMENTOS = [
   { el:"🐉", nome:"Dragão",  adj:"Dracônico",  tema:2, chefe:92,  pool:[110, 88, 92] }
 ];
 function avNomeMonstro(tile, elInfo){ return (AV_ESPECIES[tile] || "Monstro") + " " + elInfo.adj; }
+/* NPCs (Tiny Dungeon) e o mistério do baú: a dica vem SÓ em inglês —
+   entender a direção é o enigma; insistiu, o NPC traduz */
+const AV_NPCS = [
+  { tile:85,  nome:"Aldeão Tobias" },
+  { tile:99,  nome:"Princesa Lia" },
+  { tile:100, nome:"Anciã Vó Zilda" },
+  { tile:111, nome:"Viking Olaf" },
+  { tile:112, nome:"Elfo Ren" }
+];
+const AV_DIRS = [
+  { en:"north", pt:"o NORTE (lá em cima)",   tx:14, ty:2 },
+  { en:"south", pt:"o SUL (lá embaixo)",     tx:14, ty:15 },
+  { en:"east",  pt:"o LESTE (na direita)",   tx:25, ty:9 },
+  { en:"west",  pt:"o OESTE (na esquerda)",  tx:2,  ty:9 }
+];
 function dungeonCSS(idx, px){
   const col = idx % 12, linha = Math.floor(idx / 12);
   return `display:inline-block;width:${px}px;height:${px}px;background-image:url(sprites/dungeon.png);background-size:${12 * px}px ${11 * px}px;background-position:${-col * px}px ${-linha * px}px;image-rendering:pixelated;`;
@@ -10403,8 +10418,11 @@ function avEntrarMapa(m){
   const tier = Math.ceil(m / 10);
   const grade = avGerarMapa(m).map(l => l.split(""));
   const pontos = [{ tx: 6, ty: 12 }, { tx: 22, ty: 4 }, { tx: 20, ty: 14 }, { tx: 14, ty: 3, chefe: true }];
-  /* terreno livre em volta de cada monstro — sempre dá pra chegar */
-  pontos.forEach(s => {
+  const npcInfo = AV_NPCS[(m - 1) % AV_NPCS.length];
+  const dirInfo = AV_DIRS[(m - 1) % AV_DIRS.length];
+  const npcSpot = { tx: 10, ty: 6 };
+  /* terreno livre em volta de monstros, NPC e baú — sempre dá pra chegar */
+  [...pontos, npcSpot, { tx: dirInfo.tx, ty: dirInfo.ty }].forEach(s => {
     for(let dy = -1; dy <= 1; dy++) for(let dx = -1; dx <= 1; dx++){
       const y = s.ty + dy, x = s.tx + dx;
       if(y > 0 && y < 17 && x > 0 && x < 27 && grade[y][x] !== "p") grade[y][x] = "c";
@@ -10419,7 +10437,10 @@ function avEntrarMapa(m){
     mapaN: m, tier, elemento: elInfo, temaIdx: elInfo.tema, mapa: grade.map(l => l.join("")),
     x: 14 * 8, y: 9 * 8, vx: 0, vy: 0, flip: false, frame: 1, rel: 0,
     maxVidas: 3 + (d.amuleto ? 1 : 0), vidas: 0, fase: "intro", fim: false,
-    monstros, teclas: {}
+    monstros, teclas: {},
+    npc: { tx: npcSpot.tx, ty: npcSpot.ty, tile: npcInfo.tile, nome: npcInfo.nome },
+    bau: { tx: dirInfo.tx, ty: dirInfo.ty, dir: dirInfo.en, dirPt: dirInfo.pt, revelado: false },
+    npcVezes: 0, npcLonge: true
   };
   AV.vidas = AV.maxVidas;
   if(velho && !velho.fim && $("#avWrap")){
@@ -10443,6 +10464,7 @@ function avIntroMapa(){
     <p style="font-weight:700;font-size:.85rem;color:var(--tinta-suave);margin-top:6px">Os monstros dormem 💤 e acordam <b>um por vez</b>, do mais fraco pro mais forte. Siga a <b style="color:#B8860B">seta dourada</b> — ela aponta seu alvo!</p>
     <p style="font-weight:900;font-size:.85rem;margin-top:6px">🎯 ${seq}</p>
     <p style="font-weight:700;font-size:.78rem;color:var(--tinta-suave);margin-top:4px">Recompensa do CHEFE: 🗺️ destrava o Mapa ${e.mapaN + 1} + 🌻 15 na 1ª vitória</p>
+    <p style="font-weight:700;font-size:.78rem;color:var(--tinta-suave);margin-top:2px">🕵️ Um morador esconde um BAÚ SECRETO — fale com ele!</p>
     ${e.tier >= 2 ? `<p style="font-weight:900;font-size:.8rem;color:#B8860B;margin-top:4px">⭐ TIER ${e.tier}: errou, o monstro se regenera!</p>` : ""}
     <button class="btn-principal" id="avComecarMapa" style="margin-top:12px">Explorar ▶</button>
   </div></div>`;
@@ -10600,6 +10622,20 @@ function avLoop(){
     ctx.fillText(acordado ? (mo.chefe ? "CHEFE" : "Nv" + mo.nivel) : "zZz", mo.tx * 8 + 4, ly + 4);
     ctx.textAlign = "left";
   });
+  /* NPC do mapa (balão "?" enquanto o baú não foi achado) */
+  const dEstado = avDados();
+  const bauAchado = !!(dEstado.bauAchado || {})[e.mapaN];
+  if(e.npc){
+    AVT.tileDungeon(ctx, e.npc.tile, e.npc.tx * 8 - 1, e.npc.ty * 8 - 2 + Math.sin(e.rel * .004) * .8, 10);
+    if(!bauAchado){
+      ctx.fillStyle = "rgba(255,233,176,.95)"; ctx.font = "bold 6px monospace"; ctx.textAlign = "center";
+      ctx.fillText("?", e.npc.tx * 8 + 4, e.npc.ty * 8 - 4); ctx.textAlign = "left";
+    }
+  }
+  /* baú do mistério: aparece depois da dica do NPC; aberto se já achou */
+  if(e.bau && (e.bau.revelado || bauAchado)){
+    AVT.tileDungeon(ctx, bauAchado ? 90 : 89, e.bau.tx * 8 - 1, e.bau.ty * 8 - 2, 10);
+  }
   /* seta dourada em volta do herói apontando o alvo da vez */
   if(alvo && e.fase === "explorar"){
     const ang = Math.atan2(alvo.ty * 8 - e.y, alvo.tx * 8 - e.x);
@@ -10635,6 +10671,23 @@ function avLoop(){
     ctx.fillText(txt, W / 2, by + ba / 2);
     ctx.textAlign = "left"; ctx.textBaseline = "alphabetic";
   }
+  /* conversa com o NPC (com histerese: precisa afastar pra reabrir) */
+  if(e.fase === "explorar" && e.npc){
+    const dNpc = Math.hypot(e.npc.tx * 8 - e.x, e.npc.ty * 8 - e.y);
+    if(dNpc < 9 && e.npcLonge){ e.npcLonge = false; avDialogoNpc(); }
+    else if(dNpc > 15) e.npcLonge = true;
+  }
+  /* pegar o baú do mistério */
+  if(e.fase === "explorar" && e.bau && e.bau.revelado && !bauAchado &&
+     Math.hypot(e.bau.tx * 8 - e.x, e.bau.ty * 8 - e.y) < 8){
+    if(!dEstado.bauAchado) dEstado.bauAchado = {};
+    dEstado.bauAchado[e.mapaN] = true;
+    dEstado.pocoes++;
+    COSM.ganhar(10, "Baú secreto do mapa " + e.mapaN + "! 🧰");
+    Progresso.salvar();
+    AVSOM.toca("drop");
+    mostrarToast("🧰 TREASURE CHEST! +🌻10 e +1 🧪 poção na mochila!");
+  }
   /* encontro: SÓ o alvo da vez aceita batalha; os outros avisam que dormem */
   if(e.fase === "explorar" && alvo){
     for(const mo of e.monstros){
@@ -10652,6 +10705,26 @@ function avLoop(){
   requestAnimationFrame(avLoop);
 }
 
+/* 🕵️ Diálogo do NPC: 1ª fala = enigma SÓ em inglês; 2ª fala = tradução */
+function avDialogoNpc(){
+  const e = AV, d = avDados();
+  e.fase = "dialogo";
+  const achado = !!(d.bauAchado || {})[e.mapaN];
+  e.npcVezes++;
+  let fala;
+  if(achado) fala = `<i>"You found my treasure!"</i> Mandou bem, aventureiro! 🏆 Agora vai lá derrotar o 👑 CHEFE!`;
+  else if(e.npcVezes === 1) fala = `Psiu… escondi um <b>treasure chest</b> 🧰 no lado <b>${e.bau.dir.toUpperCase()}</b> deste mapa. <i>"Do you know where ${e.bau.dir} is?"</i> 🧭`;
+  else fala = `Tá bom, eu ajudo: <i>"${e.bau.dir}"</i> quer dizer <b>${e.bau.dirPt}</b>! O baú já apareceu — corre lá! 😉`;
+  $("#avOverlay").innerHTML = `
+  <div class="av-modal"><div>
+    <span style="${dungeonCSS(e.npc.tile, 48)}"></span>
+    <b style="font-family:var(--f-display);font-size:1.05rem;display:block;margin-top:4px">${esc(e.npc.nome)}</b>
+    <p style="font-weight:700;font-size:.9rem;margin-top:8px;line-height:1.45">${fala}</p>
+    <button class="btn-principal" id="avFecharNpc" style="margin-top:12px">${achado ? "Valeu! 👋" : (e.npcVezes === 1 ? "Vou procurar! 🔎" : "Entendi! 🧭")}</button>
+  </div></div>`;
+  if(!achado) e.bau.revelado = true;
+  $("#avFecharNpc").addEventListener("click", () => { $("#avOverlay").innerHTML = ""; AV.fase = "explorar"; });
+}
 function avIniciarBatalha(mo){
   const e = AV, d = avDados();
   e.fase = "batalha";
