@@ -303,8 +303,45 @@ function mesclarProgresso(a, b) {
 }
 
 function contaPublica(c) {
-  return { nome: c.nome, email: c.email, criadaEm: c.criadaEm, premiumAte: c.premiumAte || 0, admin: !!c.admin, perfil: c.perfil || null, progresso: c.progresso || null };
+  return { nome: c.nome, email: c.email, criadaEm: c.criadaEm, premiumAte: c.premiumAte || 0, diamantes: c.diamantes || 0, admin: !!c.admin, perfil: c.perfil || null, progresso: c.progresso || null };
 }
+/* 💎 DIAMANTES: moeda comprada com dinheiro REAL (Pix + comprovante,
+   mesmo fluxo do VIP do h2bapply). Saldo mora AQUI no servidor — o
+   navegador só exibe. Concessão/estorno num lugar só. */
+function concederPedido(pedido, c, diasOverride) {
+  if (pedido.tipo === "diamantes") {
+    const qtd = Math.max(0, Math.min(100000, parseInt(pedido.diamantes, 10) || 0));
+    c.diamantes = (c.diamantes || 0) + qtd;
+    pedido.diamantesConcedidos = qtd;
+    return "💎 +" + qtd + " diamantes";
+  }
+  const dias = Math.max(1, Math.min(36500, parseInt(diasOverride || pedido.dias || 30, 10) || 30));
+  const base = (c.premiumAte && c.premiumAte > Date.now()) ? c.premiumAte : Date.now();
+  c.premiumAte = base + dias * 86400000;
+  pedido.diasConcedidos = dias;
+  return "+" + dias + " dias VIP";
+}
+function estornarPedido(pedido, c) {
+  if (pedido.tipo === "diamantes") {
+    const qtd = parseInt(pedido.diamantesConcedidos || pedido.diamantes || 0, 10) || 0;
+    c.diamantes = Math.max(0, (c.diamantes || 0) - qtd);
+    return;
+  }
+  if (c.premiumAte) {
+    const dias = parseInt(pedido.diasConcedidos || pedido.dias || 0, 10) || 0;
+    c.premiumAte = Math.max(Date.now() - 1, c.premiumAte - dias * 86400000);
+  }
+}
+/* Catálogo de trocas (preços SÓ aqui — cliente não manda valor) */
+const TROCAS_DIAMANTES = {
+  vip7:  { custo: 90,  tipo: "vip", dias: 7,  rotulo: "👑 VIP 7 dias" },
+  vip30: { custo: 300, tipo: "vip", dias: 30, rotulo: "👑 VIP 30 dias" },
+  vip60: { custo: 500, tipo: "vip", dias: 60, rotulo: "👑 VIP 60 dias" },
+  bau1:  { custo: 40,  tipo: "bau", qtd: 1,   rotulo: "🎁 1 Baú" },
+  bau5:  { custo: 180, tipo: "bau", qtd: 5,   rotulo: "🎁 5 Baús" },
+  g600:  { custo: 60,  tipo: "girassois", qtd: 600,  rotulo: "🌻 600 girassóis" },
+  g1500: { custo: 130, tipo: "girassois", qtd: 1500, rotulo: "🌻 1.500 girassóis" }
+};
 
 /* ---------- LEITURA DO CORPO (com limite) ---------- */
 function lerCorpo(req) {
@@ -553,19 +590,16 @@ async function verificarPedidoAuto(pedido) {
     if (analise.valorOk && analise.dataOk && !repetido && pedido.status === "pendente") {
       const c = CONTAS[pedido.email];
       if (c) {
-        const dias = Math.max(1, Math.min(3650, parseInt(pedido.dias, 10) || 30));
-        const base = (c.premiumAte && c.premiumAte > Date.now()) ? c.premiumAte : Date.now();
-        c.premiumAte = base + dias * 86400000;
+        const oQue = concederPedido(pedido, c);
         pedido.status = "aprovado";
         pedido.autoAprovado = true;
         pedido.conferido = false; // fica em destaque no painel até o Andrio dar o OK
         pedido.aprovadoEm = new Date().toISOString();
-        pedido.diasConcedidos = dias;
         pedido.verificacao = { status: "aprovado-auto", motivo: "valor e data conferidos no comprovante" };
         persistir();
         persistirPedidos();
-        log("🤖✅ Pedido AUTO-aprovado: " + pedido.email + " +" + dias + " dias VIP (valor e data ok)");
-        notificarAdmin("🤖 VIP ativado automaticamente", pedido.nome + " · " + pedido.valor + " (" + dias + "d) — comprovante conferiu. Revise no painel; se for falso, revogue.");
+        log("🤖✅ Pedido AUTO-aprovado: " + pedido.email + " " + oQue + " (valor e data ok)");
+        notificarAdmin("🤖 Compra ativada automaticamente", pedido.nome + " · " + pedido.valor + " (" + oQue + ") — comprovante conferiu. Revise no painel; se for falso, revogue.");
         return;
       }
     }
@@ -782,6 +816,8 @@ async function tratarApi(req, res, rota, ip) {
       email, nome: String(corpo.nome || c.nome || "").slice(0, 30),
       plano: String(corpo.plano || "").slice(0, 30),
       planoNome: String(corpo.planoNome || "").slice(0, 30),
+      tipo: corpo.tipo === "diamantes" ? "diamantes" : "vip",
+      diamantes: Math.max(0, Math.min(100000, parseInt(corpo.diamantes, 10) || 0)),
       dias,
       valor: String(corpo.valor || "").slice(0, 20),
       comprovante,
@@ -795,6 +831,37 @@ async function tratarApi(req, res, rota, ip) {
     // Verificação automática roda em segundo plano — a resposta não espera o OCR
     setImmediate(() => verificarPedidoAuto(pedido));
     return responder(res, 200, { ok: true, id: pedido.id, verificando: !!Tesseract });
+  }
+
+  // 💎 Trocar diamantes por VIP/baús/girassóis — TUDO no servidor:
+  // preço vem do catálogo daqui, saldo mora na conta, log de cada troca.
+  if (rota === "/api/diamantes/trocar") {
+    const c = CONTAS[email];
+    if (!c) return responder(res, 404, { erro: "Conta não encontrada" });
+    if (c.senhaServidor !== hashServidor(senhaHash)) return responder(res, 401, { erro: "Senha errada" });
+    const item = TROCAS_DIAMANTES[String(corpo.item || "")];
+    if (!item) return responder(res, 400, { erro: "Item de troca desconhecido" });
+    const saldo = c.diamantes || 0;
+    if (saldo < item.custo) return responder(res, 400, { erro: "Diamantes insuficientes (tem " + saldo + ", precisa " + item.custo + ")" });
+    c.diamantes = saldo - item.custo;
+    const carteira = roletaCarteira(c);
+    if (item.tipo === "vip") {
+      const base = (c.premiumAte && c.premiumAte > Date.now()) ? c.premiumAte : Date.now();
+      c.premiumAte = base + item.dias * 86400000;
+    } else if (item.tipo === "bau") {
+      carteira.baus.comprados = (carteira.baus.comprados || 0) + item.qtd;
+    } else if (item.tipo === "girassois") {
+      carteira.ganhas = (carteira.ganhas || 0) + item.qtd;
+    }
+    if (!c.trocasDiamantes) c.trocasDiamantes = [];
+    c.trocasDiamantes.unshift({ item: corpo.item, custo: item.custo, quando: new Date().toISOString() });
+    c.trocasDiamantes = c.trocasDiamantes.slice(0, 100);
+    persistir();
+    log("💎 Troca: " + email + " gastou " + item.custo + " em " + item.rotulo + " (saldo " + c.diamantes + ")");
+    return responder(res, 200, {
+      ok: true, rotulo: item.rotulo, diamantes: c.diamantes, premiumAte: c.premiumAte || 0,
+      carteira: { ganhas: carteira.ganhas || 0, gastas: carteira.gastas || 0, bausComprados: carteira.baus.comprados || 0 }
+    });
   }
 
   // 💳 Status do MEU pedido (o app consulta depois de enviar o comprovante,
@@ -968,16 +1035,13 @@ process.on("SIGINT", desligar);
     if (!pedido) return responder(res, 404, { erro: "Pedido não encontrado" });
     const c = CONTAS[pedido.email];
     if (!c) return responder(res, 404, { erro: "Conta do pedido não existe mais: " + pedido.email });
-    const dias = Math.max(1, Math.min(36500, parseInt(u.searchParams.get("dias") || pedido.dias || 30, 10) || 30));
-    const base = (c.premiumAte && c.premiumAte > Date.now()) ? c.premiumAte : Date.now();
-    c.premiumAte = base + dias * 86400000;
+    const oQue = concederPedido(pedido, c, u.searchParams.get("dias"));
     pedido.status = "aprovado";
     pedido.aprovadoEm = new Date().toISOString();
-    pedido.diasConcedidos = dias;
     persistir();
     persistirPedidos();
-    log("💳✅ Pedido aprovado: " + pedido.email + " +" + dias + " dias VIP");
-    return responder(res, 200, { ok: true, email: pedido.email, premiumAte: c.premiumAte });
+    log("💳✅ Pedido aprovado: " + pedido.email + " " + oQue);
+    return responder(res, 200, { ok: true, email: pedido.email, premiumAte: c.premiumAte, diamantes: c.diamantes || 0 });
   }
   function rejeitarPedido(req, res) {
     const u = checarAdmin(req, res);
@@ -1001,9 +1065,8 @@ process.on("SIGINT", desligar);
     if (!pedido) return responder(res, 404, { erro: "Pedido não encontrado" });
     if (pedido.status !== "aprovado") return responder(res, 400, { erro: "Só dá pra revogar pedido aprovado" });
     const c = CONTAS[pedido.email];
-    if (c && c.premiumAte) {
-      const dias = parseInt(pedido.diasConcedidos || pedido.dias || 0, 10) || 0;
-      c.premiumAte = Math.max(Date.now() - 1, c.premiumAte - dias * 86400000);
+    if (c) {
+      estornarPedido(pedido, c);
       persistir();
     }
     pedido.status = "revogado";

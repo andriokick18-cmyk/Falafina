@@ -876,13 +876,10 @@ body.sem-shell .btn-info-topo{display:none}
 .podio{display:flex;gap:10px;align-items:flex-end;justify-content:center;margin-bottom:16px}
 .podio .pd{flex:1;max-width:150px;text-align:center;background:var(--branco);border:2px solid rgba(33,49,58,.14);border-radius:18px;padding:12px 8px 10px;cursor:pointer;transition:transform .12s}
 .podio .pd:active{transform:translateY(2px)}
-.podio .pd.p1{border-color:var(--sol);background:linear-gradient(180deg,#FFF8E7,#FFF);padding-top:22px;padding-bottom:14px;position:relative;overflow:visible;z-index:1;box-shadow:0 0 0 3px #FFD700,0 8px 20px rgba(255,190,0,.35);animation:reiPulsaBorda 2.4s ease-in-out infinite}
-.podio .pd.p1::before{content:"";position:absolute;inset:-16px;border-radius:50%;z-index:-1;opacity:.9;
-  background:conic-gradient(from 0deg,transparent 0 10deg,rgba(255,215,0,.55) 14deg,transparent 18deg,transparent 70deg,rgba(255,215,0,.55) 74deg,transparent 78deg,transparent 130deg,rgba(255,215,0,.55) 134deg,transparent 138deg,transparent 190deg,rgba(255,215,0,.55) 194deg,transparent 198deg,transparent 250deg,rgba(255,215,0,.55) 254deg,transparent 258deg,transparent 310deg,rgba(255,215,0,.55) 314deg,transparent 318deg,transparent 360deg);
-  animation:reiRaios 7s linear infinite}
-.podio .pd.p1::after{content:"✨";position:absolute;font-size:.85rem;color:#FFD700;top:8px;left:12px;animation:fxPisca 1.3s ease-in-out infinite}
-.podio .pd.p1 .avwrap{animation:reiAvatarPulsa 2.2s ease-in-out infinite}
-.podio .pd.p1 .coroa{font-size:2.3rem;filter:drop-shadow(0 2px 4px rgba(184,134,11,.6));animation:reiCoroaFlutua 1.6s ease-in-out infinite,reiCoroaGlow 1.6s ease-in-out infinite}
+/* 1º lugar: SEM efeito automático (regra do Andrio: efeito só de quem
+   COMPRA borda/estandarte na Loja) — só a moldura dourada e a coroa paradas */
+.podio .pd.p1{border-color:var(--sol);background:linear-gradient(180deg,#FFF8E7,#FFF);padding-top:22px;padding-bottom:14px;position:relative;overflow:visible;z-index:1;box-shadow:0 0 0 3px #FFD700}
+.podio .pd.p1 .coroa{font-size:2.3rem;filter:drop-shadow(0 2px 4px rgba(184,134,11,.6))}
 @keyframes reiRaios{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 @keyframes reiPulsaBorda{0%,100%{box-shadow:0 0 0 3px #FFD700,0 8px 18px rgba(255,200,0,.3)}50%{box-shadow:0 0 0 5px #FFEA80,0 10px 28px rgba(255,200,0,.55)}}
 @keyframes reiCoroaFlutua{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-5px) rotate(4deg)}}
@@ -1713,6 +1710,7 @@ const Nuvem = (() => {
           c.progresso = mesclarProgresso(c.progresso, r.dados.conta.progresso);
           if(r.dados.conta.perfil && !c.perfil) c.perfil = r.dados.conta.perfil;
           if(r.dados.conta.premiumAte) c.premiumAte = r.dados.conta.premiumAte;
+          if(r.dados.conta.diamantes != null) c.diamantes = r.dados.conta.diamantes;
           c.admin = !!r.dados.conta.admin;
           c.pendenteSync = false;
           Contas.salvarAtual(c);
@@ -5497,7 +5495,7 @@ const PROTETOR = {
     COSM.est().gastas += this.PRECO;
     this.dados().comprados++;
     Progresso.salvar();
-    mostrarToast("🛡️ Protetor comprado! Se você faltar 1 dia, ele salva sua sequência sozinho.");
+    mostrarToast("🛡️ Protetor resgatado! Se você faltar 1 dia, ele salva sua sequência sozinho.");
     if(typeof renderLoja === "function") renderLoja();
   }
 };
@@ -7878,7 +7876,20 @@ function abrirZap(msg){ window.open("https://wa.me/" + FF_CONTATO.whatsapp + "?t
 const FF_PIX = { chave: "53981453496", nome: "Andrio Kickhofel" };
 const FF_PLANOS_VIP = [
   { id:"vip30", nome:"30 dias", dias:30, preco:"R$ 30" },
-  { id:"vip60", nome:"60 dias", dias:60, preco:"R$ 50" }
+  { id:"vip60", nome:"60 dias", dias:60, preco:"R$ 50" },
+  /* 💎 pacotes de diamantes: mesmo checkout Pix+comprovante do VIP */
+  { id:"dia100", nome:"💎 100", dias:0, preco:"R$ 10", diamantes:100 },
+  { id:"dia280", nome:"💎 280", dias:0, preco:"R$ 25", diamantes:280 },
+  { id:"dia600", nome:"💎 600", dias:0, preco:"R$ 50", diamantes:600 }
+];
+const FF_TROCAS_DIAMANTES = [
+  { id:"vip7",  ic:"👑", nome:"VIP 7 dias",       custo:90 },
+  { id:"vip30", ic:"👑", nome:"VIP 30 dias",      custo:300 },
+  { id:"vip60", ic:"👑", nome:"VIP 60 dias",      custo:500 },
+  { id:"bau1",  ic:"🎁", nome:"1 Baú",            custo:40 },
+  { id:"bau5",  ic:"🎁", nome:"5 Baús",           custo:180 },
+  { id:"g600",  ic:"🌻", nome:"600 girassóis",    custo:60 },
+  { id:"g1500", ic:"🌻", nome:"1.500 girassóis",  custo:130 }
 ];
 
 /* ---------- 📣 CONVIDAR AMIGOS: cada aluno é um canal de crescimento.
@@ -8057,7 +8068,7 @@ function renderComprarVIP(planoPreSelecionado){
     <div id="pwPlanos" style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:8px">
       ${FF_PLANOS_VIP.map(pl => `<button class="fchip pwplano ${pl.id === planoEscolhido ? "ativo" : ""}" data-pl="${pl.id}">${esc(pl.nome)}<br><b>${esc(pl.preco)}</b></button>`).join("")}
     </div>
-    <div class="secao-t" style="margin-top:18px">2. Pague no Pix</div>
+    <div class="secao-t" style="margin-top:18px">2. Faça sua doação no Pix</div>
     <div style="background:var(--verde-claro);border-radius:14px;padding:14px;margin-top:8px">
       <p style="font-weight:700;font-size:.85rem">Chave Pix (celular):</p>
       <p style="font-family:var(--f-display);font-size:1.2rem;font-weight:700;margin:4px 0" id="pwChavePix">${esc(FF_PIX.chave)}</p>
@@ -8099,7 +8110,7 @@ function renderComprarVIP(planoPreSelecionado){
     try{
       const r = await fetch("/api/pedidos/criar", {
         method:"POST", headers:{ "Content-Type":"application/json" },
-        body: JSON.stringify({ email:c.email, senhaHash:c.senhaHash, nome:c.nome, plano:plano.id, planoNome:plano.nome, dias:plano.dias, valor:plano.preco, comprovante:comprovanteTemp })
+        body: JSON.stringify({ email:c.email, senhaHash:c.senhaHash, nome:c.nome, plano:plano.id, planoNome:plano.nome, dias:plano.dias, valor:plano.preco, comprovante:comprovanteTemp, tipo:plano.diamantes ? "diamantes" : "vip", diamantes:plano.diamantes || 0 })
       });
       const j = await r.json();
       if(j && j.ok){
@@ -8495,7 +8506,7 @@ function renderHome(){
     ${(typeof BAU !== "undefined") ? `<div class="${roletaDisponivel() ? "faixa-bau" : "faixa-trofeu"}" id="homeBauFaixa" style="cursor:pointer">
       <span style="font-size:1.8rem">${roletaDisponivel() ? "🎰" : "🎁"}</span>
       <div style="min-width:0"><b>${roletaDisponivel() ? "Sua Roleta Diária está pronta!" : `Estoque: ${BAU.estoque()} baú${BAU.estoque() === 1 ? "" : "s"} · 🌻 ${COSM.saldo().toLocaleString("pt-BR")}`}</b><br>
-      <small style="font-weight:700">${roletaDisponivel() ? "Gire e ganhe: baús, girassóis e até dias de VIP 👑 (1x por dia)" : "Toque pra abrir seus baús ou comprar mais na Loja"}</small></div>
+      <small style="font-weight:700">${roletaDisponivel() ? "Gire e ganhe: baús, girassóis e até dias de VIP 👑 (1x por dia)" : "Toque pra abrir seus baús ou resgatar mais na Loja"}</small></div>
     </div>` : ""}
     <div class="dica-card" style="margin-top:14px"><img src="mascote.png" alt=""><p><b>Dica do FalaFina:</b> ${dicaDoDia()}</p></div>
   </div>`;
@@ -8920,7 +8931,7 @@ function listaConquistas(resumo){
     M("📦","Tesoureiro","Abra 5 baús", baus>=5, "prata"),
     M("🗝️","Caçador de Tesouros","Abra 20 baús", baus>=20, "ouro"),
     /* 🛍️ Colecionador da Loja (3) */
-    M("🛍️","Primeira Compra","Compre 1 item na Loja", itens>=1, "bronze"),
+    M("🛍️","Primeiro Resgate","Resgate 1 item na Loja", itens>=1, "bronze"),
     M("🧢","Estiloso","Tenha 5 itens da Loja", itens>=5, "prata"),
     M("💠","Colecionador Supremo","Tenha TODAS as 30 peças da Loja", itens>=30, "diamante")
   ];
@@ -11600,7 +11611,7 @@ function renderLoja(){
     if(emUso) botao = `<button class="emuso" data-eq="${chave}">Em uso ✅ (tirar)</button>`;
     else if(tem) botao = `<button class="usar" data-eq="${chave}">Usar</button>`;
     else if(bloqueado) botao = `<button disabled>🔒 Exige nível ${it.req}</button>`;
-    else botao = `<button data-buy="${chave}">Comprar 🌻 ${it.preco.toLocaleString("pt-BR")}</button>`;
+    else botao = `<button data-buy="${chave}">Resgatar 🌻 ${it.preco.toLocaleString("pt-BR")}</button>`;
     return `<div class="loja-item lr-${rar} ${tem ? "tem" : ""}">${emUso ? '<span class="equip-flag">✔ EQUIPADO</span>' : ""}${preview}<span class="lr-tag ${rar}">${NOME_RARIDADE[rar]}</span><b>${it.nome}</b><small style="font-weight:700;color:var(--tinta-suave)">${it.desc}</small>${tem ? "" : `<span class="preco">🌻 ${it.preco.toLocaleString("pt-BR")}</span>`}${botao}</div>`;
   };
   const catalogo = lojaAba === "borda" ? COSM.BORDAS : (lojaAba === "pet" ? COSM.PETS : (lojaAba === "efeito" ? COSM.EFEITOS : null));
@@ -11611,9 +11622,21 @@ function renderLoja(){
     corpo = `<div class="cardb" style="text-align:center;padding:20px 18px;margin-bottom:12px">
       <div style="font-size:2.6rem">👑</div>
       <b style="font-family:var(--f-display);font-size:1.15rem">Vire VIP e estude sem limites</b>
-      <p style="font-weight:700;color:var(--tinta-suave);font-size:.88rem;margin-top:6px">Todas as aulas, jogos e o Modo Carreira liberados, sem teto de XP. Pagamento por Pix — o comprovante é conferido na hora e o VIP ativa sozinho.</p>
+      <p style="font-weight:700;color:var(--tinta-suave);font-size:.88rem;margin-top:6px">Todas as aulas, jogos e o Modo Carreira liberados, sem teto de XP. Doação por Pix — o comprovante é conferido na hora e o VIP ativa sozinho.</p>
     </div>
-    <div class="loja-grid">${FF_PLANOS_VIP.map(pl => `<div class="loja-item"><div style="font-size:2rem">👑</div><b>${esc(pl.nome)} de VIP</b><span class="preco">${esc(pl.preco)}</span><button data-vipplano="${pl.id}">Comprar</button></div>`).join("")}</div>`;
+    <div class="loja-grid">${FF_PLANOS_VIP.map(pl => `<div class="loja-item"><div style="font-size:2rem">👑</div><b>${esc(pl.nome)} de VIP</b><span class="preco">doação de ${esc(pl.preco)}</span><button data-vipplano="${pl.id}">Doar 💝</button></div>`).join("")}</div>`;
+  } else if(lojaAba === "diamantes"){
+    const saldo = (Contas.atual() || {}).diamantes || 0;
+    corpo = `<div class="cardb" style="text-align:center;padding:20px 18px;margin-bottom:12px;background:linear-gradient(180deg,#EAF6FF,#FFF)">
+      <div style="font-size:2.6rem">💎</div>
+      <b style="font-family:var(--f-display);font-size:1.15rem">Diamantes — a moeda premium</b>
+      <p style="font-weight:700;color:var(--tinta-suave);font-size:.88rem;margin-top:6px">Faça uma doação por Pix (o comprovante é conferido na hora, igual ao VIP) e troque seus diamantes por planos, baús e girassóis quando quiser.</p>
+      <p style="font-weight:900;font-size:1.2rem;margin-top:8px">Seu saldo: 💎 <span id="diaSaldo">${saldo}</span></p>
+    </div>
+    <b style="font-family:var(--f-display)">💝 Doe e ganhe diamantes (Pix + comprovante)</b>
+    <div class="loja-grid" style="margin-top:8px">${FF_PLANOS_VIP.filter(pl => pl.diamantes).map(pl => `<div class="loja-item"><div style="font-size:2rem">💎</div><b>${pl.diamantes} Diamantes</b><span class="preco">doação de ${esc(pl.preco)}</span><button data-vipplano="${pl.id}">Doar 💝</button></div>`).join("")}</div>
+    <b style="font-family:var(--f-display);display:block;margin-top:16px">🔁 Trocar diamantes</b>
+    <div class="loja-grid" style="margin-top:8px">${FF_TROCAS_DIAMANTES.map(t => `<div class="loja-item"><div style="font-size:2rem">${t.ic}</div><b>${esc(t.nome)}</b><span class="preco">💎 ${t.custo}</span><button data-troca="${t.id}" ${saldo < t.custo ? "disabled" : ""}>${saldo < t.custo ? "Faltam 💎" : "Trocar"}</button></div>`).join("")}</div>`;
   } else if(lojaAba === "protetor"){
     const ps = PROTETOR.saldo();
     corpo = `<div class="cardb" style="text-align:center;padding:24px 18px">
@@ -11621,7 +11644,7 @@ function renderLoja(){
       <b style="font-family:var(--f-display);font-size:1.15rem">Protetor de Sequência</b>
       <p style="font-weight:700;color:var(--tinta-suave);font-size:.9rem;margin:8px auto;max-width:400px">A vida atropela: um dia sem estudar e o 🔥 morre. Com o Protetor, se você faltar <b>1 dia</b>, ele age <b>sozinho</b> e sua sequência continua viva. (Faltou 2 dias ou mais, nem ele salva 😉)</p>
       <p style="font-weight:800;margin:10px 0">Você tem: ${"🛡️".repeat(ps) || "nenhum"} ${ps}/${PROTETOR.MAX}</p>
-      <button class="btn-principal" id="btProtetor" style="max-width:320px" ${ps >= PROTETOR.MAX ? "disabled" : ""}>${ps >= PROTETOR.MAX ? "Estoque cheio ✔" : `Comprar por 🌻 ${PROTETOR.PRECO}`}</button>
+      <button class="btn-principal" id="btProtetor" style="max-width:320px" ${ps >= PROTETOR.MAX ? "disabled" : ""}>${ps >= PROTETOR.MAX ? "Estoque cheio ✔" : `Resgatar por 🌻 ${PROTETOR.PRECO}`}</button>
       <p style="font-weight:700;font-size:.78rem;color:var(--tinta-suave);margin-top:8px">Quanto mais longa a sequência, mais dói perder — quem tem 🔥 7+ dias não sai de casa sem protetor.</p>
     </div>`;
   } else if(lojaAba === "baus"){
@@ -11638,11 +11661,11 @@ function renderLoja(){
       <b>🍀 Chances por baú</b>
       <p style="font-weight:700;color:var(--tinta-suave);font-size:.85rem;margin-top:6px">🌻10 · 🌻20 · 🌻50 · 🌻100 — comuns e fáceis &nbsp;·&nbsp; 🌻150 incomum &nbsp;·&nbsp; 🌻200 raro (10x mais difícil) &nbsp;·&nbsp; 🖼️ borda de avatar muito rara (100x) &nbsp;·&nbsp; ✨ efeito de ranking raríssimo (200x)</p>
     </div>
-    <div class="secao-t">💰 Comprar mais baús</div>
-    <div class="loja-grid">${BAU.PACOTES.map(pc => `<div class="loja-item"><div style="font-size:2rem">🎁</div><b>${pc.qtd} baús</b><span class="preco">R$ ${pc.rs}</span><button data-baupack="${pc.id}">Comprar</button></div>`).join("")}</div>
+    <div class="secao-t">💝 Doe e ganhe baús</div>
+    <div class="loja-grid">${BAU.PACOTES.map(pc => `<div class="loja-item"><div style="font-size:2rem">🎁</div><b>${pc.qtd} baús</b><span class="preco">doação de R$ ${pc.rs}</span><button data-baupack="${pc.id}">Doar 💝</button></div>`).join("")}</div>
     <p style="font-weight:700;color:var(--tinta-suave);font-size:.8rem;margin-top:8px">Pagamento combinado direto com a equipe pelo WhatsApp — seus baús caem na conta assim que confirmarmos 😊</p>`;
   } else {
-    corpo = `<div class="cardb" style="margin-bottom:12px"><b>💰 Comprar girassóis (em breve)</b>
+    corpo = `<div class="cardb" style="margin-bottom:12px"><b>🌻 Ganhar girassóis (em breve)</b>
       <p style="font-weight:700;color:var(--tinta-suave);font-size:.9rem;margin-top:6px">Pagamento por Pix está chegando. Por enquanto, TODAS as girassóis podem ser ganhas jogando — de graça:</p>
       <p style="font-weight:700;font-size:.88rem;margin-top:8px">🗼 Vencer nível da Escalada: <b>🌻 5 + nível÷5</b> &nbsp;·&nbsp; 🎁 Baú a cada 10 níveis: <b>🌻 50 + nível</b><br>
       🎯 Desafio diário resgatado: <b>🌻 20</b> &nbsp;·&nbsp; ☀️ Primeiro estudo do dia: <b>🌻 10</b><br>
@@ -11657,6 +11680,7 @@ function renderLoja(){
   </div>
   <div class="loja-abas">
     <button class="loja-aba ${lojaAba === "vip" ? "ativa" : ""}" data-laba="vip" style="border-color:var(--sol);background:${lojaAba === "vip" ? "" : "#FFF3D6"}">👑 VIP</button>
+    <button class="loja-aba ${lojaAba === "diamantes" ? "ativa" : ""}" data-laba="diamantes" style="border-color:#3FA9F5;background:${lojaAba === "diamantes" ? "" : "#E3F2FF"}">💎 Diamantes</button>
     <button class="loja-aba ${lojaAba === "borda" ? "ativa" : ""}" data-laba="borda">🖼️ Bordas</button>
     <button class="loja-aba ${lojaAba === "pet" ? "ativa" : ""}" data-laba="pet">🐾 Pets</button>
     <button class="loja-aba ${lojaAba === "efeito" ? "ativa" : ""}" data-laba="efeito">🚩 Estandartes</button>
@@ -11669,6 +11693,31 @@ function renderLoja(){
   $("#lojaConteudo").querySelectorAll("[data-buy]").forEach(b => b.addEventListener("click", () => { const [s, id] = b.dataset.buy.split(":"); COSM.comprar(s, id); }));
   $("#lojaConteudo").querySelectorAll("[data-eq]").forEach(b => b.addEventListener("click", () => { const [s, id] = b.dataset.eq.split(":"); COSM.equipar(s, id); }));
   $("#lojaConteudo").querySelectorAll("[data-vipplano]").forEach(b => b.addEventListener("click", () => abrirComprarVIP(b.dataset.vipplano)));
+  $("#lojaConteudo").querySelectorAll("[data-troca]").forEach(b => b.addEventListener("click", async () => {
+    const c = Contas.atual();
+    if(!c){ mostrarToast("Entre na sua conta primeiro"); return; }
+    b.disabled = true;
+    try{
+      const r = await fetch("/api/diamantes/trocar", { method:"POST", headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({ email:c.email, senhaHash:c.senhaHash, item:b.dataset.troca }) });
+      const j = await r.json();
+      if(!j.ok){ mostrarToast("❌ " + (j.erro || "Não deu pra trocar")); b.disabled = false; return; }
+      /* espelha o que o servidor concedeu — nunca soma local por conta própria */
+      c.diamantes = j.diamantes;
+      if(j.premiumAte) c.premiumAte = j.premiumAte;
+      Contas.salvarAtual(c);
+      if(j.carteira){
+        const est = COSM.est();
+        est.ganhas = Math.max(est.ganhas || 0, j.carteira.ganhas || 0);
+        est.baus.comprados = Math.max(est.baus.comprados || 0, j.carteira.bausComprados || 0);
+        Progresso.salvar();
+      }
+      AVSOM.toca("drop");
+      mostrarToast(`✅ ${j.rotulo} seu! Saldo: 💎 ${j.diamantes}`);
+      renderLoja();
+      atualizarXP();
+    }catch(e){ mostrarToast("❌ Sem conexão com o servidor"); b.disabled = false; }
+  }));
   const btAbrirEstoque = $("#btAbrirEstoque");
   if(btAbrirEstoque) btAbrirEstoque.addEventListener("click", () => abrirLoteBauModal(Math.min(10, BAU.estoque())));
   const btRoletaLoja = $("#btRoletaLoja");
@@ -11678,7 +11727,7 @@ function renderLoja(){
   $("#lojaConteudo").querySelectorAll("[data-baupack]").forEach(b => b.addEventListener("click", () => {
     const pc = BAU.PACOTES.find(p => p.id === b.dataset.baupack); if(!pc) return;
     const eu = Contas.sessao() || "";
-    abrirZap(`Olá! Quero comprar o pacote de ${pc.qtd} baús do FalaFina por R$ ${pc.rs} 🎁 Meu e-mail de cadastro: ${eu}`);
+    abrirZap(`Olá! Quero fazer uma doação de R$ ${pc.rs} pro FalaFina e ganhar o pacote de ${pc.qtd} baús 🎁 Meu e-mail de cadastro: ${eu}`);
     mostrarToast("Combine o pagamento no WhatsApp — assim que confirmarmos, seus baús entram na conta! 🎁");
   }));
 }
@@ -11796,7 +11845,7 @@ function adminAppDesenhar(){
     <div class="stat-mini"><b>${pend.length + autos.length}</b><small>PEDIDOS PRA VER</small></div>
   </div>
   ${autos.length ? `<div class="secao-t" style="margin-top:16px">🔔 Ativados automaticamente — confira (${autos.length})</div>${autos.map(p => cartaoPedido(p, "auto")).join("")}` : ""}
-  <div class="secao-t" style="margin-top:16px">💳 Pedidos de compra Pix ${pend.length ? "(" + pend.length + ")" : ""}</div>
+  <div class="secao-t" style="margin-top:16px">💳 Doações Pix ${pend.length ? "(" + pend.length + ")" : ""}</div>
   ${pend.map(p => cartaoPedido(p, "pend")).join("") || '<p style="font-weight:700;color:var(--tinta-suave);margin-top:8px">Nenhum pedido pendente 😎</p>'}
   ${feitos.length ? `<div class="secao-t" style="margin-top:16px">Últimos processados</div>${feitos.map(p => cartaoPedido(p, "feito")).join("")}` : ""}
   <div class="secao-t" style="margin-top:20px">👥 Alunos</div>
@@ -12023,7 +12072,7 @@ const FF_TITULOS = {
   "tela-ranking":"📊 Ranking", "tela-comunidade":"👥 Comunidade", "tela-meuperfil":"🪪 Meu Perfil",
   "tela-config":"⚙️ Configurações", "tela-simulador":"🎙️ Simulador de Entrevista",
   "tela-entrevista":"🎙️ Entrevista ao vivo", "tela-licao":"📖 Aula", "tela-quiz":"📝 Exercícios",
-  "tela-conclusao":"🎉 Parabéns!", "tela-escalada":"🗼 Escalada", "tela-perfil":"🪪 Perfil", "tela-paywall":"👑 Comprar VIP", "tela-loja":"🛍️ Loja",
+  "tela-conclusao":"🎉 Parabéns!", "tela-escalada":"🗼 Escalada", "tela-perfil":"🪪 Perfil", "tela-paywall":"👑 Apoiar o FalaFina", "tela-loja":"🛍️ Loja",
   "tela-carreira":"🧗 Modo Carreira", "tela-ditado":"👂 Ditado Relâmpago", "tela-jardim":"🌻 Jardim de Palavras",
   "tela-admin":"🔑 Painel Admin",
   "tela-masmorra":"🏰 Masmorra das Palavras",
