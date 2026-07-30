@@ -339,6 +339,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--azul);outline-offse
 
 /* ---------- BOTÃO FLUTUANTE PWA ---------- */
 .pwa-flutuante{position:fixed;right:14px;bottom:14px;z-index:80;display:flex;align-items:flex-start;filter:drop-shadow(0 6px 14px rgba(33,49,58,.25))}
+@media (max-width:979px){ body.logado .pwa-flutuante{ bottom:calc(76px + env(safe-area-inset-bottom)); } } /* não cobre a tabbar */
 .pwa-btn{display:flex;align-items:center;gap:10px;background:var(--tinta);color:#fff;border-radius:16px;padding:12px 16px;font-size:1.4rem}
 .pwa-btn span{text-align:left;line-height:1.2}
 .pwa-btn b{display:block;font-size:.95rem}
@@ -467,6 +468,17 @@ body{ background:var(--fundo); }
 .tb-item .ic{ font-size:1.3rem; }
 .tb-item.ativo{ color:var(--verde); background:var(--verde-claro); }
 @media (max-width:979px){ .sidebar{ display:none; } .tabbar{ display:flex; } }
+/* 📱 TRAVA DE LARGURA: nada pode alargar o viewport do celular — se o
+   layout estourasse, o Chrome dava zoom-out e a tabbar (fixed) sumia
+   pra baixo da dobra. overflow clip impede a expansão pra sempre. */
+html, body{ overflow-x:clip; max-width:100%; }
+@media (max-width:600px){
+  .topo{ flex-wrap:wrap; row-gap:6px; padding:10px 12px; gap:8px; }
+  .topo .titulo-pagina{ font-size:1.1rem; }
+  .pill-grupo{ flex-wrap:wrap; justify-content:flex-end; row-gap:4px; margin-left:auto; }
+  .xp-pill{ font-size:.76rem; padding:4px 9px; gap:4px; }
+  .btn-voltar{ font-size:.78rem; padding:6px 10px; }
+}
 /* No celular, o botão "Fazer o desafio" sobe pra CIMA da tabbar —
    senão a barra de menu engole o botão e a aula não tem como concluir */
 @media (max-width:979px){ body.logado:not(.sem-shell) .rodape-licao{ bottom:calc(58px + env(safe-area-inset-bottom)); padding-bottom:10px; } }
