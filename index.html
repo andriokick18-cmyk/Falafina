@@ -1498,6 +1498,7 @@ body.sem-shell .btn-info-topo{display:none}
 <main class="tela" id="tela-memoria"><div id="memoriaConteudo"></div></main>
 <main class="tela" id="tela-invasao"><div id="invasaoConteudo"></div></main>
 <main class="tela" id="tela-eco"><div id="ecoConteudo"></div></main>
+<main class="tela" id="tela-numeros"><div id="numerosConteudo"></div></main>
 <main class="tela" id="tela-aventura"><div id="aventuraConteudo"></div></main>
 </div><!-- /conteudo -->
 </div><!-- /principal -->
@@ -1761,11 +1762,12 @@ function usuarioCrianca(){ const i = idadeUsuario(); return i !== null && i < 12
 /* ---------- ÁUDIO: voz nativa do aparelho (en-US), custo zero ---------- */
 const Fala = (() => {
   const suportado = !!window.speechSynthesis;
-  let vozEN = null;
+  let vozEN = null, vozPT = null;
   function escolherVoz(){
     if(!suportado) return;
     const vozes = speechSynthesis.getVoices();
     vozEN = vozes.find(v => v.lang === "en-US") || vozes.find(v => v.lang && v.lang.startsWith("en")) || null;
+    vozPT = vozes.find(v => v.lang === "pt-BR") || vozes.find(v => v.lang && v.lang.startsWith("pt")) || null;
   }
   if(suportado){
     escolherVoz();
@@ -1812,7 +1814,23 @@ const Fala = (() => {
     r.onerror = () => { soltar(); mostrarToast("🎤 Não consegui ouvir — fala mais perto!"); };
     try{ r.start(); }catch(e){ soltar(); }
   }
-  return { dizer, ouvir, temMic: !!Rec };
+  /* 🔊 Explicações em PORTUGUÊS: quem tem dificuldade de leitura ouve a
+     tarefa explicada em voz alta (acessibilidade pedida pelo Andrio) */
+  function dizerPT(texto, botao){
+    if(!suportado){ mostrarToast("Seu navegador não tem áudio de voz 😕"); return; }
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(texto);
+    u.lang = "pt-BR";
+    u.rate = 1;
+    if(vozPT) u.voice = vozPT;
+    if(botao){
+      botao.classList.add("tocando");
+      u.onend = () => botao.classList.remove("tocando");
+      u.onerror = () => botao.classList.remove("tocando");
+    }
+    speechSynthesis.speak(u);
+  }
+  return { dizer, dizerPT, ouvir, temMic: !!Rec };
 })();
 
 /* ==================================================================
@@ -11035,11 +11053,206 @@ function avAbrirHeroi(){
   $("#avFecharHeroi").addEventListener("click", () => { $("#avOverlay").innerHTML = ""; });
 }
 
+/* ==================================================================
+   💵 NÚMEROS & DÓLARES — pedido do Andrio: "ensine a pessoa aprender
+   números: 130 dólares, 5 mil dólares… explique como são os números".
+   Aba APRENDER (regras com áudio EN + explicação FALADA em PT) +
+   aba TREINAR (4 níveis: ver→escolher, ouvir→escolher, ouvir→digitar).
+   ================================================================== */
+function numeroEmIngles(n){
+  const uni = ["zero","one","two","three","four","five","six","seven","eight","nine","ten","eleven","twelve","thirteen","fourteen","fifteen","sixteen","seventeen","eighteen","nineteen"];
+  const dez = ["","","twenty","thirty","forty","fifty","sixty","seventy","eighty","ninety"];
+  if(n < 20) return uni[n];
+  if(n < 100) return dez[Math.floor(n / 10)] + (n % 10 ? "-" + uni[n % 10] : "");
+  if(n < 1000) return uni[Math.floor(n / 100)] + " hundred" + (n % 100 ? " " + numeroEmIngles(n % 100) : "");
+  return numeroEmIngles(Math.floor(n / 1000)) + " thousand" + (n % 1000 ? " " + numeroEmIngles(n % 1000) : "");
+}
+const NUM_LICOES = [
+  { ic:"1️⃣", titulo:"De 0 a 12 — cada um tem seu nome", pt:"Do zero ao doze, cada número tem uma palavra própria. É decoreba mesmo — mas são só treze palavrinhas.",
+    exemplos:[[0,"zero"],[1,"one"],[2,"two"],[3,"three"],[5,"five"],[8,"eight"],[10,"ten"],[12,"twelve"]] },
+  { ic:"🔟", titulo:"13 a 19 — a família TEEN", pt:"De treze a dezenove, os números terminam em TEEN. Por isso adolescente em inglês é teenager: a idade dos números teen!",
+    exemplos:[[13,"thirteen"],[15,"fifteen"],[16,"sixteen"],[19,"nineteen"]] },
+  { ic:"🔢", titulo:"20, 30, 40… — a família TY", pt:"As dezenas cheias terminam em T-Y: twenty, thirty, forty. Pra formar 21, é só juntar: twenty-one. 35? Thirty-five. Fácil assim.",
+    exemplos:[[20,"twenty"],[21,"twenty-one"],[35,"thirty-five"],[50,"fifty"],[99,"ninety-nine"]] },
+  { ic:"💯", titulo:"HUNDRED — as centenas", pt:"Cem é one hundred. 130 é one hundred thirty: um-cem-trinta, na ordem que você lê. 350 dólares? Three hundred fifty dollars.",
+    exemplos:[[100,"one hundred"],[130,"one hundred thirty"],[350,"three hundred fifty"],[999,"nine hundred ninety-nine"]] },
+  { ic:"💰", titulo:"THOUSAND — os milhares", pt:"Mil é one thousand. 5 mil dólares é five thousand dollars — exatamente o que você quer ouvir na proposta de salário! 12.500 é twelve thousand five hundred.",
+    exemplos:[[1000,"one thousand"],[5000,"five thousand"],[12500,"twelve thousand five hundred"],[20000,"twenty thousand"]] },
+  { ic:"💵", titulo:"Dólares no dia a dia", pt:"Preço se fala com dollars no final: 130 dólares é one hundred thirty dollars. Salário por hora: fifteen dollars an hour, quinze dólares por hora. Centavos? Ten fifty é 10 dólares e 50 centavos.",
+    exemplos:[[130,"one hundred thirty dollars"],[15,"fifteen dollars an hour"],[5000,"five thousand dollars"]] }
+];
+const NUM_NIVEIS = [
+  { id:0, nome:"0 a 20",        ic:"🌱", min:0,    max:20,    digitar:false },
+  { id:1, nome:"21 a 99",       ic:"🚶", min:21,   max:99,    digitar:false },
+  { id:2, nome:"100 a 999",     ic:"🏃", min:100,  max:999,   digitar:true },
+  { id:3, nome:"Dólares e mil", ic:"🚀", min:1000, max:20000, digitar:true }
+];
+let NUM = null;
+function numSortear(nv){
+  let n = nv.min + Math.floor(Math.random() * (nv.max - nv.min + 1));
+  if(nv.id === 3) n = Math.round(n / 100) * 100; /* valores redondos de salário */
+  return Math.max(nv.min, Math.min(nv.max, n));
+}
+function iniciarNumeros(){
+  if(!podeIniciarTarefaGratis()) return;
+  NUM = null;
+  renderNumerosMenu();
+  irPara("tela-numeros");
+}
+function renderNumerosMenu(){
+  const temVoz = !!window.speechSynthesis;
+  $("#numerosConteudo").innerHTML = `
+  <div style="max-width:620px;margin:0 auto">
+    <div class="cardb" style="padding:16px;text-align:center">
+      <div style="font-size:2.4rem">💵</div>
+      <h2 style="font-family:var(--f-display);margin:4px 0 2px">Números & Dólares</h2>
+      <p style="font-weight:700;color:var(--tinta-suave);font-size:.88rem">Salário, preço, horas: TUDO nos EUA passa por números. Aprenda as 4 famílias e treine até ler <b>$5,000</b> sem piscar.</p>
+    </div>
+    <div class="cardb" style="margin-top:12px;padding:14px">
+      <b style="font-family:var(--f-display)">📖 Aprenda as regras</b>
+      ${NUM_LICOES.map((l, i) => `
+      <div style="border:2px solid rgba(120,90,40,.25);border-radius:14px;padding:12px;margin-top:10px;background:#FDF8EC">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:1.3rem">${l.ic}</span>
+          <b style="flex:1;font-size:.95rem">${l.titulo}</b>
+          ${temVoz ? `<button class="av-btn num-ouvir-pt" data-li="${i}" style="padding:6px 10px;font-size:.75rem">🔊 Explicação</button>` : ""}
+        </div>
+        <p style="font-weight:700;font-size:.85rem;color:var(--tinta-suave);margin-top:6px">${l.pt}</p>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">
+          ${l.exemplos.map(ex => `<button class="fchip num-ex" data-en="${esc(ex[1])}" style="font-size:.82rem;padding:7px 11px">${ex[0] >= 1000 ? ex[0].toLocaleString("en-US") : ex[0]} = <b>${esc(ex[1])}</b> 🔊</button>`).join("")}
+        </div>
+      </div>`).join("")}
+    </div>
+    <div class="cardb" style="margin-top:12px;padding:14px">
+      <b style="font-family:var(--f-display)">🎮 Treine (10 rodadas, ouvido + leitura)</b>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
+        ${NUM_NIVEIS.map(nv => `<button class="btn-principal num-nivel" data-nv="${nv.id}" style="padding:13px 6px;font-size:.92rem">${nv.ic} ${nv.nome}</button>`).join("")}
+      </div>
+    </div>
+    <button class="btn-link" id="numVoltar" style="margin-top:10px">← Voltar pros Jogos</button>
+  </div>`;
+  $("#numerosConteudo").querySelectorAll(".num-ex").forEach(b => b.addEventListener("click", () => Fala.dizer(b.dataset.en, b)));
+  $("#numerosConteudo").querySelectorAll(".num-ouvir-pt").forEach(b => b.addEventListener("click", () => {
+    const l = NUM_LICOES[parseInt(b.dataset.li, 10)];
+    Fala.dizerPT(l.titulo + ". " + l.pt, b);
+  }));
+  $("#numerosConteudo").querySelectorAll(".num-nivel").forEach(b => b.addEventListener("click", () => numComecarTreino(parseInt(b.dataset.nv, 10))));
+  $("#numVoltar").addEventListener("click", () => navPara("pratica"));
+}
+function numComecarTreino(nvId){
+  NUM = { nv: NUM_NIVEIS[nvId], rodada: 1, TOTAL: 10, acertos: 0, xp: 0, resultados: [] };
+  numRodada();
+}
+function numRodada(){
+  const e = NUM, nv = e.nv;
+  const n = numSortear(nv);
+  const emIngles = numeroEmIngles(n) + (nv.id === 3 ? " dollars" : "");
+  const rotulo = v => nv.id === 3 ? "$" + v.toLocaleString("en-US") : String(v);
+  const temVoz = !!window.speechSynthesis;
+  /* modos: ver→escolher EN · ouvir→escolher número · ouvir→digitar (níveis altos) */
+  const modos = ["ver"];
+  if(temVoz) modos.push("ouvir");
+  if(temVoz && nv.digitar && e.rodada > 3) modos.push("digitar");
+  const modo = modos[Math.floor(Math.random() * modos.length)];
+  /* alternativas erradas próximas (pegadinhas de verdade) */
+  const ops = [n];
+  let guarda = 0;
+  while(ops.length < 3 && guarda++ < 60){
+    const o = numSortear(nv);
+    if(!ops.includes(o)) ops.push(o);
+  }
+  for(let k = ops.length - 1; k > 0; k--){ const j = Math.floor(Math.random() * (k + 1)); [ops[k], ops[j]] = [ops[j], ops[k]]; }
+  e.alvo = { n, emIngles, modo, ops };
+  let corpo = "";
+  if(modo === "ver") corpo = `
+    <p style="font-weight:800;font-size:.9rem;color:var(--tinta-suave)">Como se fala em inglês?</p>
+    <div style="font-family:var(--f-display);font-size:2.4rem;font-weight:700;margin:8px 0">${rotulo(n)}</div>
+    <div style="display:grid;gap:8px;margin-top:8px">
+      ${ops.map(o => `<button class="btn-principal num-op" data-n="${o}" style="padding:12px;font-size:.92rem;background:var(--verde)">${esc(numeroEmIngles(o))}${nv.id === 3 ? " dollars" : ""}</button>`).join("")}
+    </div>`;
+  else if(modo === "ouvir") corpo = `
+    <p style="font-weight:800;font-size:.9rem;color:var(--tinta-suave)">Ouça e escolha o número certo:</p>
+    <button class="btn-principal azul" id="numOuvirDeNovo" style="max-width:220px;margin:10px auto">🔊 Ouvir de novo</button>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px">
+      ${ops.map(o => `<button class="btn-principal num-op" data-n="${o}" style="padding:14px 4px;font-size:1.05rem;background:var(--verde)">${rotulo(o)}</button>`).join("")}
+    </div>`;
+  else corpo = `
+    <p style="font-weight:800;font-size:.9rem;color:var(--tinta-suave)">Ouça e DIGITE o número (só algarismos):</p>
+    <button class="btn-principal azul" id="numOuvirDeNovo" style="max-width:220px;margin:10px auto">🔊 Ouvir de novo</button>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <input id="numDigitar" inputmode="numeric" autocomplete="off" placeholder="ex: 130" style="flex:1;min-width:0;padding:12px;border:2.5px solid #7A4F1E;border-radius:12px;font-weight:800;font-size:1.1rem;font-family:inherit">
+      <button class="btn-principal" id="numEnviar" style="max-width:90px;padding:12px">✔</button>
+    </div>`;
+  $("#numerosConteudo").innerHTML = `
+  <div style="max-width:560px;margin:0 auto;text-align:center">
+    <div class="cardb" style="padding:10px 14px;display:flex;justify-content:space-between;align-items:center">
+      <b style="font-family:var(--f-display)">💵 ${e.nv.ic} ${esc(e.nv.nome)}</b>
+      <span style="font-weight:800;font-size:.85rem">${e.rodada}/${e.TOTAL} · ✅ ${e.acertos}</span>
+    </div>
+    <div class="cardb" style="margin-top:10px;padding:20px">${corpo}</div>
+    <button class="btn-link" id="numSair" style="margin-top:8px">← Sair (XP fica guardado)</button>
+  </div>`;
+  const falar = () => Fala.dizer(emIngles);
+  const bo = $("#numOuvirDeNovo");
+  if(bo){ bo.addEventListener("click", () => Fala.dizer(emIngles, bo)); setTimeout(falar, 350); }
+  $("#numerosConteudo").querySelectorAll(".num-op").forEach(b => b.addEventListener("click", () => numResponder(parseInt(b.dataset.n, 10) === n, b)));
+  const inp = $("#numDigitar");
+  if(inp){
+    const envia = () => {
+      const v = parseInt((inp.value || "").replace(/[^\d]/g, ""), 10);
+      if(isNaN(v)) return;
+      numResponder(v === n, null);
+    };
+    $("#numEnviar").addEventListener("click", envia);
+    inp.addEventListener("keydown", ev => { if(ev.key === "Enter") envia(); });
+    inp.focus();
+  }
+  $("#numSair").addEventListener("click", numFim);
+}
+function numResponder(certo, botao){
+  const e = NUM;
+  ENGINE.registrar(e.alvo.modo === "ver" ? "vocab" : "listening", certo);
+  e.resultados.push(certo);
+  if(botao){
+    $("#numerosConteudo").querySelectorAll(".num-op").forEach(b => b.disabled = true);
+    botao.style.background = certo ? "var(--verde-escuro)" : "var(--coral)";
+  }
+  const mostra = e.nv.id === 3 ? "$" + e.alvo.n.toLocaleString("en-US") : e.alvo.n;
+  if(certo){ e.acertos++; e.xp += 5; mostrarToast(`✅ ${mostra} = ${e.alvo.emIngles}`); }
+  else mostrarToast(`❌ Era ${mostra} = "${e.alvo.emIngles}"`);
+  setTimeout(() => {
+    if(e.rodada >= e.TOTAL){ numFim(); return; }
+    e.rodada++;
+    numRodada();
+  }, 1200);
+}
+function numFim(){
+  const e = NUM;
+  if(!e) return;
+  if(e.xp > 0) registrarAtividade(e.xp);
+  const perfeito = e.acertos === e.TOTAL && e.resultados.length === e.TOTAL;
+  if(perfeito) COSM.ganhar(12, "Mestre dos números! 💵");
+  NUM = null;
+  $("#numerosConteudo").innerHTML = `
+  <div class="cardb" style="max-width:480px;margin:24px auto;text-align:center;padding:28px 20px">
+    <div style="font-size:3rem">${perfeito ? "🤑" : "💵"}</div>
+    <h2 style="font-family:var(--f-display);margin:8px 0">${perfeito ? "MESTRE DOS NÚMEROS!" : "Bom treino de números!"}</h2>
+    <p style="font-size:1.05rem;letter-spacing:2px">${e.resultados.map(ok => ok ? "🟩" : "🟥").join("")}</p>
+    <p style="font-weight:700;color:var(--tinta-suave)">✅ ${e.acertos}/${e.TOTAL} · +${e.xp} XP${perfeito ? " · 🌻 +12" : ""}</p>
+    <button class="btn-principal" id="numDeNovo" style="max-width:300px;margin:14px auto 0">💵 Treinar de novo</button>
+    <button class="btn-link" id="numMenuVoltar" style="margin-top:8px">← Menu dos números</button>
+  </div>`;
+  $("#numDeNovo").addEventListener("click", () => renderNumerosMenu());
+  $("#numMenuVoltar").addEventListener("click", () => renderNumerosMenu());
+  atualizarXP();
+}
+
 const JOGOS_LISTA = [
   { id:"carreira",  ic:"🧗", nome:"Modo Carreira",    skill:"vocab",   cor:"#FFF3D1", desc:"Sua história nos EUA em temporadas: domine o VOCABULÁRIO de cada etapa — agência, vaga, visto, chegada, trabalho." },
   { id:"entrevista",ic:"🎙️", nome:"Simulador de Entrevista", skill:"speaking", cor:"#E4EDFA", desc:"Ensaie a entrevista real do visto: agência, empregador, consulado e chegada nos EUA." },
   { id:"masmorra",  ic:"🏰", nome:"Masmorra das Palavras", skill:"vocab", cor:"#EFE4FA", desc:"Guie o herói de pixel: escolha a porta com a palavra certa em inglês e suba a Torre — baús a cada 20 andares." },
   { id:"aventura",  ic:"⚔️", nome:"Aventura FalaFina", skill:"vocab", cor:"#E1F3EA", desc:"O RPG COMPLETO (v2)! 8 biomas, chefes, NPCs com baús secretos em inglês, equipamentos-dica, som — e do Nv60+ você ESCREVE a resposta." },
+  { id:"numeros",   ic:"💵", nome:"Números & Dólares", skill:"listening", cor:"#E1F3EA", desc:"NOVO! $130? $5,000? Aprenda as 4 famílias dos números em inglês e treine salário, preço e horas — de ouvido e de leitura." },
   { id:"memoria",   ic:"🃏", nome:"Memória Mágica", skill:"vocab", cor:"#FFF3D1", desc:"NOVO! Vire as cartas e case o inglês com o português. No difícil, os pares são FRASES inteiras." },
   { id:"invasao",   ic:"👾", nome:"Invasão dos Monstrinhos", skill:"speed", cor:"#FCE4DB", desc:"NOVO! Monstros caem do céu carregando palavras — derrube o certo ANTES de aterrissar." },
   { id:"eco",       ic:"👂", nome:"Eco da Caverna", skill:"listening", cor:"#E4EDFA", desc:"NOVO! Ouça o eco em inglês e acerte qual palavra foi — treino puro de ouvido." },
@@ -11080,6 +11293,12 @@ const JOGOS_TUTORIAL = {
     ["🎯","Os monstros acordam UM POR VEZ, do mais fraco pro CHEFE — a seta dourada em volta do herói aponta seu alvo da vez. Encoste nele e a batalha começa: acertou o inglês, VOCÊ ataca; errou, ELE ataca (−1 ❤️)."],
     ["📿","Monstros dropam EQUIPAMENTOS — e aqui equipamento é DICA: 🗡️ espadas cortam alternativas erradas, 🔮 orbe fala a resposta, 📖 livro mostra como soa, 👑 coroa responde por você. Veja seu corpo equipado na janela 🧍 Herói! O primeiro monstro guarda um LENDÁRIO que aumenta sua vida pra sempre."],
     ["🗺️","Cada mapa tem um ELEMENTO (🌿💧🔥⚡🪨❄️🌪️🌑✨🐉) e um 👑 CHEFE — derrote o chefe pra DESTRAVAR o próximo mapa. Do mapa 11 em diante os monstros voltam ⭐ PERFEITOS: errou, eles se regeneram! As perguntas ficam mais difíceis a cada nível — até virarem frases inteiras."]
+  ]},
+  numeros: { ic:"💵", nome:"Números & Dólares", passos:[
+    ["💰","Nos EUA os números estão em TUDO: salário ($5,000), preço ($130), horas de trabalho. Quem não entende número de ouvido perde dinheiro — literalmente."],
+    ["📖","Primeiro APRENDA: as 4 famílias (0-12 com nome próprio, os TEEN de 13-19, os TY das dezenas, hundred e thousand). Cada regra tem exemplos com 🔊 áudio em inglês — e o botão 🔊 Explicação fala a regra em PORTUGUÊS pra você só ouvir."],
+    ["🎮","Depois TREINE em 4 níveis: veja o número e escolha o inglês, OUÇA e escolha o número, e nos níveis altos ouça e DIGITE — igual anotar um valor que te falaram no telefone."],
+    ["⭐","Cada acerto vale XP e alimenta sua habilidade de escuta. 10 de 10 = bônus de girassóis!"]
   ]},
   memoria: { ic:"🃏", nome:"Memória Mágica", passos:[
     ["🃏","Cartas viradas pra baixo: metade tem palavras em INGLÊS, metade as traduções em PORTUGUÊS. Vire 2 por vez e ache os pares."],
@@ -11143,13 +11362,20 @@ function abrirTutorialJogo(id, aoContinuar){
   const alvo = $("#bauCaixaConteudo");
   alvo.innerHTML = `
     <p class="bau-titulo">${t.ic} Como jogar: ${esc(t.nome)}</p>
+    ${window.speechSynthesis ? `<button class="btn-principal azul" id="tutOuvir" style="max-width:260px;margin:2px auto 8px;padding:9px;font-size:.85rem">🔊 Ouvir a explicação</button>` : ""}
     <div class="tut-passos">${t.passos.map(p2 => `<div class="tut-passo"><span>${p2[0]}</span><p>${p2[1]}</p></div>`).join("")}</div>
     ${aoContinuar ? `<button class="bau-cta" id="tutJogar">Entendi — jogar! ▶</button>` : ""}
     <button class="bau-fechar" id="tutFechar">Fechar</button>`;
   $("#bauOverlay").classList.add("aberto");
-  $("#tutFechar").addEventListener("click", fecharBauModal);
+  const bo = $("#tutOuvir");
+  if(bo) bo.addEventListener("click", () => {
+    const div = document.createElement("div");
+    const frases = t.passos.map(p2 => { div.innerHTML = p2[1]; return div.textContent; });
+    Fala.dizerPT("Como jogar " + t.nome + ". " + frases.join(" "), bo);
+  });
+  $("#tutFechar").addEventListener("click", () => { if(window.speechSynthesis) speechSynthesis.cancel(); fecharBauModal(); });
   const bj = $("#tutJogar");
-  if(bj) bj.addEventListener("click", () => { fecharBauModal(); aoContinuar(); });
+  if(bj) bj.addEventListener("click", () => { if(window.speechSynthesis) speechSynthesis.cancel(); fecharBauModal(); aoContinuar(); });
 }
 function abrirComoConecta(){
   const alvo = $("#bauCaixaConteudo");
@@ -11181,6 +11407,7 @@ function abrirJogoDireto(id){
   else if(id === "entrevista"){ renderSimConfig(); irPara("tela-simulador"); }
   else if(id === "masmorra") iniciarMasmorra();
   else if(id === "aventura") iniciarAventura();
+  else if(id === "numeros") iniciarNumeros();
   else if(id === "memoria") iniciarMemoria();
   else if(id === "invasao") iniciarInvasao();
   else if(id === "eco") iniciarEco();
@@ -11803,7 +12030,8 @@ const FF_TITULOS = {
   "tela-memoria":"🃏 Memória Mágica",
   "tela-invasao":"👾 Invasão dos Monstrinhos",
   "tela-eco":"👂 Eco da Caverna",
-  "tela-aventura":"⚔️ Aventura FalaFina"
+  "tela-aventura":"⚔️ Aventura FalaFina",
+  "tela-numeros":"💵 Números & Dólares"
 };
 const FF_SEM_SHELL = ["tela-onboarding","tela-inicio","tela-cadastro","tela-login","tela-paywall"];
 function ffAposIrPara(tela){
@@ -11815,7 +12043,7 @@ function ffAposIrPara(tela){
   const mapa = { "tela-home":"home", "tela-trilha":"aulas", "tela-pratica":"pratica", "tela-desafios":"home",
     "tela-revisao":"home", "tela-conquistas":"progresso", "tela-ranking":"ranking", "tela-comunidade":"home",
     "tela-meuperfil":"progresso", "tela-config":"progresso", "tela-simulador":"pratica", "tela-entrevista":"pratica",
-    "tela-licao":"aulas", "tela-quiz":"aulas", "tela-escalada":"pratica", "tela-conclusao":"aulas", "tela-carreira":"pratica", "tela-ditado":"pratica", "tela-jardim":"pratica", "tela-loja":"loja", "tela-admin":"admin", "tela-masmorra":"pratica", "tela-memoria":"pratica", "tela-invasao":"pratica", "tela-eco":"pratica", "tela-aventura":"pratica" };
+    "tela-licao":"aulas", "tela-quiz":"aulas", "tela-escalada":"pratica", "tela-conclusao":"aulas", "tela-carreira":"pratica", "tela-ditado":"pratica", "tela-jardim":"pratica", "tela-loja":"loja", "tela-admin":"admin", "tela-masmorra":"pratica", "tela-memoria":"pratica", "tela-invasao":"pratica", "tela-eco":"pratica", "tela-aventura":"pratica", "tela-numeros":"pratica" };
   const ativa = mapa[tela] || "";
   areaAtualRota = ativa || "home";
   document.querySelectorAll(".sb-item").forEach(b => b.classList.toggle("ativo", b.dataset.rota === ativa));

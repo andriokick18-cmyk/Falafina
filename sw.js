@@ -1,4 +1,5 @@
 // FalaFina Service Worker — app instalável e funcionando offline
+// v56: 💵 NÚMEROS & DÓLARES + 🔊 EXPLICAÇÃO FALADA — jogo novo que ensina as 4 famílias dos números ($130, $5,000, salário por hora) com aula + treino em 4 níveis (ver/ouvir/digitar); toda regra tem explicação FALADA em português e todo tutorial de jogo ganhou botão "🔊 Ouvir a explicação" (acessibilidade pra quem tem dificuldade de leitura)
 // v55: 📱 TABBAR DE VOLTA NO CELULAR (bug do Andrio) — o cabeçalho estourava a largura da tela, o Chrome dava zoom-out e a barra de abas (com o 🏆 Ranking) ficava ESCONDIDA abaixo da dobra; agora html/body têm trava overflow-x:clip, o cabeçalho quebra linha no celular e o botão "Baixar o aplicativo" sobe pra não cobrir as abas
 // v54: 🌋 4 BIOMAS NOVOS (Roguelike RPG pack, CC0) — Floresta (pinheiros), Deserto (cactos), Vulcão (lava + árvores mortas) e Místico (chão roxo com gemas); 8 temas rodando nos 10 elementos
 // v53: 🏠 AVENTURA NA HOME + 💾 CONTINUAR — banner dourado do RPG na página inicial (mostra seu mapa e baús secretos) + save do último mapa com botão ▶ CONTINUAR na tela de mapas
@@ -42,7 +43,7 @@
 // v15: faixa-guia nas Aulas + desafios com botão "Treinar agora" que leva pro treino certo
 // v14: Guia de Áreas (Mapa do FalaFina, "?" em toda tela, nomes claros)
 // v8: ícones com nome correto (minúsculo) + NUNCA cacheia /api/ (dados da nuvem sempre frescos)
-const CACHE = "falafina-v55";
+const CACHE = "falafina-v56";
 const ARQUIVOS = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png", "./mascote.png", "./sprites/pico8.png", "./sprites/cidade.png", "./sprites/dungeon.png", "./sprites/roguelike.png"];
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ARQUIVOS)).then(() => self.skipWaiting()));
